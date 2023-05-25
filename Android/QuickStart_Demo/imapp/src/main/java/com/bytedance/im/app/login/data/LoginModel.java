@@ -24,6 +24,10 @@ public class LoginModel {
     private static final String TAG = "LoginModel";
 
     public static void getToken(long uid, OnGetTokenListener listener) {
+        if (HttpClient.getInstance().getRetrofit() == null) {
+            listener.onFailed(new Throwable("need config token api ! "));
+            return;
+        }
         HttpClient.getInstance()
                 .getRetrofit()
                 .create(LoginService.class)
