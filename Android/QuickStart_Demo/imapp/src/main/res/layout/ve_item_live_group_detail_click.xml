@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_conversation_notice"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="1dp"
+    android:background="@color/business_base_white"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/left_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/im_conversation_detail_group_notice"
+        android:textColor="@color/business_im_222"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/right_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="9dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="未设定"
+        android:maxEms="10"
+        android:textColor="@color/business_im_999"
+        android:textSize="14sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@id/iv_conversation_notice"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_conversation_notice"
+        android:layout_width="9dp"
+        android:layout_height="18dp"
+        android:layout_marginLeft="9dp"
+        android:src="@drawable/icon_im_goto"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>

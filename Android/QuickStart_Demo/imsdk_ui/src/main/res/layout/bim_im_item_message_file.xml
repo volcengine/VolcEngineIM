@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_file_content"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="8dp"
+    android:background="@drawable/selector_msg_pressed">
+
+    <ImageView
+        android:id="@+id/iv_file_icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="10dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitEnd"
+        android:src="@drawable/icon_file_msg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_file_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.bytedance.im.ui.message.adapter.ui.widget.custom.CircleProgressView
+        android:id="@+id/pv_circle_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:visibility="gone"
+        app:circle_color="@color/dark_gray"
+        app:circle_max="100"
+        app:circle_progress_color="@color/white"
+        app:circle_text_color="@color/white"
+        app:circle_text_size="12sp"
+        app:circle_width="3dp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_file_icon"
+        app:layout_constraintEnd_toEndOf="@id/iv_file_icon"
+        app:layout_constraintStart_toStartOf="@id/iv_file_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_file_icon"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_file_content"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="20dp"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:maxLines="2"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_file_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="测试测试sssssssssssssssssss"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_file_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="start"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/tv_file_content"
+        app:layout_constraintTop_toBottomOf="@id/tv_file_content"
+        tools:text="100M"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_upload_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="start"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/tv_file_content"
+        app:layout_constraintTop_toBottomOf="@id/tv_file_content"
+        tools:text="上传中……"
+        tools:visibility="visible" />
+
+
+    <TextView
+        android:id="@+id/tv_msg_property"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/shape_im_msg_property_bg"
+        android:gravity="center"
+        android:padding="8dp"
+        android:textColor="@color/business_im_999"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_file_icon"
+        tools:text="[大笑]詹姆斯" />
+
+</android.support.constraint.ConstraintLayout>

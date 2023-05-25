@@ -1,0 +1,10 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="ShoppingJavaNullAnnotationInspect" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ShoppingLateinitInspect" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ShoppingLazyFindInspect" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="ShoppingLetNullInspect" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ShoppingRoomCCUseInspect" enabled="true" level="WARNING" enabled_by_default="true" />
+  </profile>
+</component>

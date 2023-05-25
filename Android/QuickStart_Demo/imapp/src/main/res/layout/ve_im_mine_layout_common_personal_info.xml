@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/business_base_white"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <ImageView
+        android:id="@+id/iv_mine_img"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/icon_recommend_user_default" />
+
+    <TextView
+        android:id="@+id/tv_mine_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:textColor="@color/business_im_222"
+        android:textSize="22sp"
+        app:layout_constraintStart_toEndOf="@id/iv_mine_img"
+        app:layout_constraintTop_toTopOf="@id/iv_mine_img"
+        tools:text="詹姆斯" />
+
+    <TextView
+        android:id="@+id/tv_mine_uuid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:textColor="@color/business_im_999"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_mine_img"
+        app:layout_constraintStart_toEndOf="@id/iv_mine_img"
+        tools:text="uuid" />
+</android.support.constraint.ConstraintLayout>

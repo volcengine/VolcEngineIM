@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bytedance.im.app">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <application
+        android:name=".VEIMApplication"
+        android:allowBackup="false"
+        android:icon="@drawable/im"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Imsdk"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".login.VELoginActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".live.chatRoom.VELiveGroupChatRoomActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".live.conversation.VELiveGroupListActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".main.VEIMMainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".debug.VEEnvSettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".message.VEMessageListActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.page.message_list" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".create.VECreateSingleConversationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".create.VECreateGroupConversationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.VEDetailSingleConversationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.VEDetailGroupConversationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.member.VEGroupMemberAddActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.member.VEGroupMemberRemoveActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.edit.VEEditGroupNameActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.edit.VEEditGroupNoticeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.manager.VEDetailGroupManagerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.member.VEMemberListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.member.VELiveMemberBlockListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.member.VESingleMemberListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.member.VEMemberSelectListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.manager.VEGroupOwnerConfigActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.manager.VEGroupManagerConfigActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.create.VECreateLiveGroupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.create.VEEditCommonActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.detail.VELiveDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.member.VELiveMemberListActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".live.edit.VEEditLiveNameActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".live.edit.VEEditLiveDesActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".live.member.VELiveMemberRemoveActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".live.edit.VEEditLiveNoticeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".live.edit.VEEditLivePortraitActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".live.edit.VEEditLiveOwnerActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".live.member.VELiveMemberSilentListActivity"
+            android:screenOrientation="portrait"/>
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path_im" />
+        </provider>
+    </application>
+
+</manifest>

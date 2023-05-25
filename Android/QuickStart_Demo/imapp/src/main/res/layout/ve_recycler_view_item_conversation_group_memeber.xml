@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:padding="3dp">
+
+    <ImageView
+        android:id="@+id/iv_conversation_member_head_img"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        tools:src="@drawable/icon_recommend_user_default"
+        android:scaleType="centerInside"/>
+
+    <TextView
+        android:id="@+id/tv_conversation_member_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="詹姆斯"
+        android:textSize="8sp"
+        android:textColor="@color/business_im_999"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>
