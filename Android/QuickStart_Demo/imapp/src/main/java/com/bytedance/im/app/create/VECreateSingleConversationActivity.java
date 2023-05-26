@@ -9,7 +9,7 @@ import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.app.message.VEMessageListActivity;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 import com.bytedance.im.app.user.BIMUserListActivity;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class VECreateSingleConversationActivity extends BIMUserListActivity {
 
     @Override
     protected void onUserClick(BIMUser user) {
-        createSingleConversationAndStart(user.getUuid());
+        createSingleConversationAndStart(user.getUserID());
     }
 
     private void createSingleConversationAndStart(long toUid) {

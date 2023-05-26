@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public class VEUserSelectAdapter extends RecyclerView.Adapter<VEUserSelectViewHo
             if (selectList.size() == 1) {
                 VEUserSelectWrapper userSelectWrapper = data.get(position);
                 VEUserSelectWrapper lastSelectWrapper = selectList.get(0);
-                if (userSelectWrapper.getUser().getUuid() != lastSelectWrapper.getUser().getUuid()) {
+                if (userSelectWrapper.getUser().getUserID() != lastSelectWrapper.getUser().getUserID()) {
                     lastSelectWrapper.isSelect = !lastSelectWrapper.isSelect;
                     userSelectWrapper.isSelect = true;
                 } else {

@@ -2,15 +2,16 @@ package com.bytedance.im.ui.member;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.model.BIMMember;
-import com.bytedance.im.core.proto.GroupRole;
 import com.bytedance.im.ui.R;
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 import com.bytedance.im.ui.user.UserManager;
 
 public class BIMMemberViewHolder extends RecyclerView.ViewHolder {
@@ -34,7 +35,14 @@ public class BIMMemberViewHolder extends RecyclerView.ViewHolder {
             res = user.getHeadImg();
             name = user.getNickName();
         }
-        userHeadImg.setImageResource(res);
+        if (TextUtils.isEmpty(user.getUrl())) {
+            userHeadImg.setImageResource(res);
+        } else {
+            Glide.with(userHeadImg.getContext()).load(user.getUrl())
+                    .placeholder(R.drawable.icon_recommend_user_default)
+                    .error(R.drawable.icon_recommend_user_default)
+                    .into(userHeadImg);
+        }
         if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
             name += "[群主]";
         } else if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {

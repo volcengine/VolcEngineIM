@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
 public class BIMConversationListFragment extends Fragment {
     private static final String TAG = "VEConversationListFragment";
     private RecyclerView recyclerView;
@@ -246,6 +245,10 @@ public class BIMConversationListFragment extends Fragment {
         getActivity().startActivity(intent);
     }
 
+    /**
+     * 设置会话列表 item 监听
+     * @param onItemClickListener item 点击监听
+     */
     public void setOnItemClickListener(OnConversationClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }

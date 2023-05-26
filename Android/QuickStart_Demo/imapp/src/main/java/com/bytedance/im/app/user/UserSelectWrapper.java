@@ -1,7 +1,7 @@
 package com.bytedance.im.app.user;
 
 
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 
 public class UserSelectWrapper extends BaseSelectWrapper<BIMUser>{
     private boolean isShowUid;

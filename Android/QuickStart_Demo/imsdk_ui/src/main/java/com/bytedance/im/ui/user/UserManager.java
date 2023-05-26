@@ -1,6 +1,8 @@
 package com.bytedance.im.ui.user;
 
 
+import com.bytedance.im.ui.api.BIMUser;
+
 import java.util.List;
 
 public class UserManager {
@@ -13,14 +15,14 @@ public class UserManager {
         private static final UserManager instance = new UserManager();
     }
 
-    private UserProvider userProvider;
+    private BIMUserProvider BIMUserProvider;
 
-    public void setUserProvider(UserProvider userProvider) {
-        this.userProvider = userProvider;
+    public void setUserProvider(BIMUserProvider BIMUserProvider) {
+        this.BIMUserProvider = BIMUserProvider;
     }
 
-    public UserProvider getUserProvider() {
-        return userProvider;
+    public BIMUserProvider getUserProvider() {
+        return BIMUserProvider;
     }
 
     public String getUserName(long uid){

@@ -29,11 +29,10 @@ import com.bytedance.im.app.main.VEIMMainActivity;
 import com.bytedance.im.app.debug.VEEnvSettingActivity;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 import com.bytedance.im.app.login.data.UserMock;
 import com.bytedance.im.app.login.data.LoginModel;
 import com.bytedance.im.app.login.model.UserToken;
-import com.bytedance.im.core.api.interfaces.BIMSyncServerListener;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 
 import java.util.List;
@@ -114,11 +113,11 @@ public class VELoginActivity extends Activity {
     }
 
     private void doLogin(BIMUser user) {
-        Log.i(TAG, "doLogin() uid: " + user.getUuid());
-        LoginModel.getToken(user.getUuid(), new LoginModel.OnGetTokenListener() {
+        Log.i(TAG, "doLogin() uid: " + user.getUserID());
+        LoginModel.getToken(user.getUserID(), new LoginModel.OnGetTokenListener() {
             @Override
             public void onGetToken(String token) {
-                loginIM(user.getUuid(), token);
+                loginIM(user.getUserID(), token);
             }
 
             @Override

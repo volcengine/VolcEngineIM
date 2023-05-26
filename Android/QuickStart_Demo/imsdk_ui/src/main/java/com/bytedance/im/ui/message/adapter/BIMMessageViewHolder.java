@@ -3,18 +3,20 @@ package com.bytedance.im.ui.message.adapter;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.bumptech.glide.Glide;
 import com.bytedance.im.core.api.enums.BIMMessageStatus;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.ui.utils.BIMUtils;
 import com.bytedance.im.core.api.model.BIMMessage;
@@ -60,10 +62,12 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         BIMMessage bimMessage = wrapper.getBimMessage();
         BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(bimMessage.getSenderUID());
         int portraitRes = R.drawable.icon_recommend_user_default;
+        String portraitUrl = "";
         String userName = "" + wrapper.getBimMessage().getSenderUID();
         if (user != null) {
             portraitRes = user.getHeadImg();
             userName = user.getNickName();
+            portraitUrl = user.getUrl();
         }
 
         //撤回
@@ -110,7 +114,14 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
             curUserNameView = userNameLeft;
         }
         if (curPortraitView != null) {
-            curPortraitView.setImageResource(portraitRes);
+            if (TextUtils.isEmpty(portraitUrl)) {
+                curPortraitView.setImageResource(portraitRes);
+            } else {
+                Glide.with(curPortraitView.getContext()).load(portraitUrl)
+                        .placeholder(R.drawable.icon_recommend_user_default)
+                        .error(R.drawable.icon_recommend_user_default)
+                        .into(curPortraitView);
+            }
         }
         if (curUserNameView != null) {
             curUserNameView.setText(userName);

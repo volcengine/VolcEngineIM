@@ -39,7 +39,7 @@ import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
 import com.bytedance.im.ui.message.adapter.ui.widget.VEInPutView;
 import com.bytedance.im.ui.message.adapter.ui.widget.pop.BIMMessageOptionPopupWindow;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.ui.utils.BIMPermissionController;
 import com.bytedance.im.ui.utils.FileUtils;
@@ -56,7 +56,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
 
 public class BIMMessageListFragment extends Fragment {
     private static final String TAG = "VEMessageListFragment";

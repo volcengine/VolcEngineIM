@@ -12,10 +12,8 @@ import com.bytedance.im.core.api.enums.BIMLogLevel;
 import com.bytedance.im.core.api.interfaces.BIMLogListener;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.user.BIMUser;
-import com.bytedance.im.ui.user.UserProvider;
-
-import java.util.List;
+import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.user.BIMUserProvider;
 
 public class VEIMApplication extends Application {
     private static final String TAG = "VEIMApplication";
@@ -46,15 +44,10 @@ public class VEIMApplication extends Application {
             swimLean = SpUtils.getInstance().getPpeSwimLane();
         }
         BIMUIClient.getInstance().init(this, APP_ID, env, swimLean, config);
-        BIMUIClient.getInstance().setUserProvider(new UserProvider() {
+        BIMUIClient.getInstance().setUserProvider(new BIMUserProvider() {
             @Override
             public BIMUser getUserInfo(long uid) {
                 return UserMock.getInstance().getUserInfo(uid);
-            }
-
-            @Override
-            public List<BIMUser> getAllUserInfo() {
-                return UserMock.getInstance().getMockLoginUserList();
             }
         });
     }

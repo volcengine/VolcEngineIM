@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class BIMUserSelectAdapter extends RecyclerView.Adapter<BaseSelectViewHol
         this.context = context;
         this.selectSingle = isSelectSingle;
         for (BIMUser user : list) {
-            if (user.getUuid() == BIMUIClient.getInstance().getCurUserId()) continue; //排除掉自己
+            if (user.getUserID() == BIMUIClient.getInstance().getCurUserId()) continue; //排除掉自己
             data.add(new UserSelectWrapper(user, R.layout.ve_im_recycler_view_item_user_select_notid, isShowUid));
         }
     }
@@ -62,7 +62,7 @@ public class BIMUserSelectAdapter extends RecyclerView.Adapter<BaseSelectViewHol
             if (selectList.size() == 1) {
                 UserSelectWrapper userSelectWrapper = data.get(position);
                 UserSelectWrapper lastSelectWrapper = selectList.get(0);
-                if (userSelectWrapper.getInfo().getUuid() != lastSelectWrapper.getInfo().getUuid()) {
+                if (userSelectWrapper.getInfo().getUserID() != lastSelectWrapper.getInfo().getUserID()) {
                     lastSelectWrapper.isSelect = !lastSelectWrapper.isSelect;
                     userSelectWrapper.isSelect = true;
                 } else {

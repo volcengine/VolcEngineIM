@@ -32,7 +32,7 @@ public class BIMUserSelectViewHolder extends BaseSelectViewHolder<UserSelectWrap
         checkBox.setImageResource(R.drawable.icon_im_radio_checked);
         if (userSelectWrapper.isShowUid()) {
             tvUid.setVisibility(View.VISIBLE);
-            tvUid.setText("UserID:" + userSelectWrapper.getInfo().getUuid());
+            tvUid.setText("UserID:" + userSelectWrapper.getInfo().getUserID());
         } else {
             tvUid.setVisibility(View.GONE);
         }

@@ -20,7 +20,7 @@ import com.bytedance.im.core.api.enums.BIMConnectStatus;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.app.login.VELoginActivity;
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.core.api.interfaces.BIMConnectListener;
 
@@ -54,7 +54,7 @@ public class VEMineFragment extends Fragment {
             ivPortrait.setImageResource(user.getHeadImg());
         }
         tvName.setText(user.getNickName());
-        tvUid.setText(String.valueOf(user.getUuid()));
+        tvUid.setText(String.valueOf(user.getUserID()));
         tvAppId.setText(String.valueOf(BIMUIClient.getInstance().getAppId()));
         tvAppVersionName.setText(BuildConfig.VERSION_NAME);
         tvSDKVersionName.setText(BIMUIClient.getInstance().getVersion());

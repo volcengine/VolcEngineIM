@@ -13,8 +13,8 @@ import android.widget.TextView;
 
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.ui.user.BIMUser;
-import com.bytedance.im.ui.user.UserManager;
+import com.bytedance.im.app.login.data.UserMock;
+import com.bytedance.im.ui.api.BIMUser;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -51,7 +51,7 @@ public class BIMUserSelectActivity extends Activity implements View.OnClickListe
         back = findViewById(R.id.back);
         back.setOnClickListener(this);
         confirm.setOnClickListener(this);
-        List<BIMUser> data = filter(UserManager.geInstance().getUserProvider().getAllUserInfo(),excludeList,includeList);
+        List<BIMUser> data = filter(UserMock.getInstance().getMockLoginUserList(),excludeList,includeList);
         adapter = new BIMUserSelectAdapter(this, data, isSinglePick(), isShowUid());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
@@ -62,7 +62,7 @@ public class BIMUserSelectActivity extends Activity implements View.OnClickListe
             Iterator<BIMUser> iterator = all.iterator();
             while (iterator.hasNext()) {
                 BIMUser user = iterator.next();
-                if (excludeList.contains((int) user.getUuid())) {
+                if (excludeList.contains((int) user.getUserID())) {
                     iterator.remove();
                 }
             }
@@ -70,7 +70,7 @@ public class BIMUserSelectActivity extends Activity implements View.OnClickListe
             Iterator<BIMUser> iterator = all.iterator();
             while (iterator.hasNext()) {
                 BIMUser user = iterator.next();
-                if (!includeList.contains((int) user.getUuid())) {
+                if (!includeList.contains((int) user.getUserID())) {
                     iterator.remove();
                 }
             }
@@ -89,8 +89,8 @@ public class BIMUserSelectActivity extends Activity implements View.OnClickListe
             ArrayList<Integer> uidList = new ArrayList<>();
             ArrayList<Long> confirmList = new ArrayList<>();
             for (BIMUser user : result) {
-                confirmList.add(user.getUuid());
-                uidList.add((int) user.getUuid());
+                confirmList.add(user.getUserID());
+                uidList.add((int) user.getUserID());
             }
 
             if (!uidList.isEmpty() && !onConfirmClick(confirmList)) {

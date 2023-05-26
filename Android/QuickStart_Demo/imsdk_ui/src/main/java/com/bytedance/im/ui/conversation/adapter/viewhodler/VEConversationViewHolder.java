@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.model.inner.msg.BIMCustomElement;
@@ -18,7 +19,7 @@ import com.bytedance.im.ui.conversation.adapter.VEViewHolder;
 import com.bytedance.im.ui.conversation.model.VEConvBaseWrapper;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.ui.utils.BIMUtils;
 import com.bytedance.im.core.api.model.BIMConversation;
@@ -66,6 +67,14 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
                 img = user.getHeadImg();
                 name = user.getNickName();
             }
+            if (TextUtils.isEmpty(user.getUrl())) {
+                userHeadImg.setImageResource(img);
+            } else {
+                Glide.with(userHeadImg.getContext()).load(user.getUrl())
+                        .placeholder(R.drawable.icon_recommend_user_default)
+                        .error(R.drawable.icon_recommend_user_default)
+                        .into(userHeadImg);
+            }
         } else {
             //todo 组件化
             if (!TextUtils.isEmpty(bimConversation.getName())) {
@@ -74,8 +83,8 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
                 name = "未命名群聊";
             }
             img = R.drawable.default_icon_group;
+            userHeadImg.setImageResource(img);
         }
-        userHeadImg.setImageResource(img);
         nickName.setText(name);
         int textColor = R.color.business_im_222;
         if (bimConversation.isDissolved()) {

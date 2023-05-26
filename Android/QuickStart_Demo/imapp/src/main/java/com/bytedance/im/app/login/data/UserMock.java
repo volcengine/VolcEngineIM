@@ -1,7 +1,7 @@
 package com.bytedance.im.app.login.data;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class UserMock {
 
     public BIMUser getUserInfo(long uid) {
         for (BIMUser user : data) {
-            if (user.getUuid() == uid) {
+            if (user.getUserID() == uid) {
                 return user;
             }
         }
@@ -48,7 +48,7 @@ public class UserMock {
 
     public void updateName(long uid, String nickName) {
         for (BIMUser user : data) {
-            if (user.getUuid() == uid) {
+            if (user.getUserID() == uid) {
                 user.setNickName(nickName);
             }
         }

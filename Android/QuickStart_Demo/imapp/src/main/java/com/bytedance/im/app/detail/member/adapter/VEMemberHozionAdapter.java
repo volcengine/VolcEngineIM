@@ -19,7 +19,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.bytedance.im.app.R;
 import com.bytedance.im.core.api.model.BIMMember;
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 import com.bytedance.im.ui.user.UserManager;
 
 import java.util.ArrayList;

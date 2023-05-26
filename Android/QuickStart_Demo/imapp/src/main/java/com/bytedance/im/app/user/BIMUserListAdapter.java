@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 
 import java.util.List;
 

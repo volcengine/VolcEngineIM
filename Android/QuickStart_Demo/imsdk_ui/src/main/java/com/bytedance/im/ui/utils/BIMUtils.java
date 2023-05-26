@@ -3,11 +3,10 @@ package com.bytedance.im.ui.utils;
 import android.content.Context;
 
 import com.bytedance.im.core.api.enums.BIMConversationType;
-import com.bytedance.im.ui.user.BIMUser;
+import com.bytedance.im.ui.api.BIMUser;
 import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.core.proto.ConversationType;
 import com.google.gson.Gson;
 
 import org.json.JSONException;

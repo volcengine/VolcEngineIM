@@ -4,7 +4,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.bytedance.im.app.VEIMApplication;
-import com.bytedance.im.ui.user.BIMUser;
 import com.bytedance.im.app.login.net.HttpClient;
 import com.bytedance.im.app.login.net.LoginService;
 
