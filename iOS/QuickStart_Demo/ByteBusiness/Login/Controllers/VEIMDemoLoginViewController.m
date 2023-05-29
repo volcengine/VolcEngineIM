@@ -165,23 +165,6 @@
         return;
     }
     
-    
-//    if (self.inputField.text){
-//        VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
-//        user.userID = [self.inputField.text integerValue];
-//        user.name = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:user.userID];
-//        user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:user.userID];
-//        [[VEIMDemoUserManager sharedManager] loginWithUser:user completion:^(NSError * _Nullable error) {
-//            if (!error) {
-//                [BIMToastView toast:@"登录成功"];
-//                [self dismissViewControllerAnimated:YES completion:nil];
-//            }else{
-//                [BIMToastView toast:[NSString stringWithFormat:@"登录失败：%@", error.localizedDescription]];
-//            }
-//        }];
-//        return;
-//    }
-    
     if (self.currentSelectedUser) {
         [[VEIMDemoUserManager sharedManager] loginWithUser:self.currentSelectedUser completion:^(NSError * _Nullable error) {
             if (!error) {

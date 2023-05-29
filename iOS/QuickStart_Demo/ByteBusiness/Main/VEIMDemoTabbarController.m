@@ -31,7 +31,7 @@
     [self setupTabBarItems];
     
     
-    [[BDIMDebugManager sharedManager] showDebugEntrance:self];
+//    [[BDIMDebugManager sharedManager] showDebugEntrance:self];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:kVEIMDemoUserDidLoginNotification object:nil];
     

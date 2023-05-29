@@ -156,6 +156,9 @@
 }
 
 - (void)setEnv:(BDIMDebugNetworkEnvType)env{
+    if (_env == env) {
+        return;
+    }
     _env = env;
     [[NSUserDefaults standardUserDefaults] setObject:@(env) forKey:kBDIMDebugNetworkEnv];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -163,6 +166,9 @@
 }
 
 - (void)setCountry:(BDIMDebugNetworkCountryType)country{
+    if (_country == country) {
+        return;
+    }
     BOOL isOverseaSwitch = NO;
     if ((_country == BDIMDebugNetworkCountryTypeChina && country != BDIMDebugNetworkCountryTypeChina) || (_country != BDIMDebugNetworkCountryTypeChina && _country == BDIMDebugNetworkCountryTypeChina)) {
         isOverseaSwitch = YES;
@@ -174,9 +180,9 @@
 }
 
 - (void)loadNetworkConfig{
-    self.config = [[NSDictionary alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"BDIMNetworkConfig" ofType:@"plist"]];
-    self.country = [[[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkCountry] intValue];
-    self.env = [[[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkEnv] intValue];
+    _config = [[NSDictionary alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"BDIMNetworkConfig" ofType:@"plist"]];
+    _country = [[[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkCountry] intValue];
+    _env = [[[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkEnv] intValue];
 }
 
 

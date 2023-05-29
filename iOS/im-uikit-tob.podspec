@@ -15,7 +15,7 @@ Pod::Spec.new do |spec|
        TODO: Add long description of the pod here.
                    DESC
 
-  spec.homepage     = "https://code.byted.org/im/TIMSDK"
+  spec.homepage     = "https://github.com"
   spec.license      = { :type => "MIT", :file => "FILE_LICENSE" }
   spec.author             = { "yangzhanjiang" => "yangzhanjiang@bytedance.com" }
   spec.ios.deployment_target = '9.0'

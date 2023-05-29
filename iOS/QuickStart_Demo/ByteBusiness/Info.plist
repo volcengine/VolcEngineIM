@@ -20,29 +20,6 @@
 	<string>9.9.9</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
-	<key>IMConfig</key>
-	<dict>
-		<key>IMAppID</key>
-		<string>2717</string>
-		<key>IMFrontierAppKey</key>
-		<string>e0f82475ab9dbf5717d18b4a9c0d7fd0</string>
-		<key>IMFrontierBOEBaseURL</key>
-		<string>ws://frontier-boe.bytedance.net:80/ws/v2</string>
-		<key>IMFrontierBaseURL</key>
-		<string>wss://frontier.snssdk.com/ws/v2</string>
-		<key>IMFrontierID</key>
-		<string>89</string>
-		<key>IMFrontierMethodKey</key>
-		<integer>1</integer>
-		<key>IMFrontierServiceKey</key>
-		<integer>3</integer>
-		<key>IMHTTPBaseURL</key>
-		<string>http://imapi.snssdk.com</string>
-		<key>IMInboxes</key>
-		<array>
-			<string>0</string>
-		</array>
-	</dict>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
