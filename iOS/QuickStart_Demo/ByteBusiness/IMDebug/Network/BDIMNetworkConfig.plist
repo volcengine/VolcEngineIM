@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Tob</key>
+	<dict>
+		<key>PPE</key>
+		<dict>
+			<key>tokenUrl</key>
+			<string>https://imapi.sinf.net/imcloud</string>
+			<key>apiUrl</key>
+			<string>https://imapi.volcvideo.com</string>
+		</dict>
+		<key>BOE</key>
+		<dict>
+			<key>tokenUrl</key>
+			<string>https://imapi-boe.sinf.net/imcloud</string>
+			<key>apiUrl</key>
+			<string>https://imapi-boe.sinf.net</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

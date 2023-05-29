@@ -1,0 +1,42 @@
+#source 'https://github.com/bytedance/cocoapods_sdk_source_repo.git'
+source 'https://github.com/volcengine/volcengine-specs.git'
+source 'https://github.com/CocoaPods/Specs.git'
+
+ platform :ios, '9.0'
+
+target 'ByteBusiness' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  # use_frameworks!
+
+  # Pods for VEIMDemo
+  
+  pod 'im-uikit-tob',
+  :path=>'../'
+  
+#    三方库
+  pod 'Masonry'
+  pod 'MJRefresh'
+  pod 'SDWebImage'
+  pod 'JSONModel'
+  pod 'MBProgressHUD'
+
+#    debug tools
+  pod 'FLEX', '3.1.2'
+
+  target 'ByteBusinessTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'ByteBusinessUITests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end
+
+post_install do |installer|
+  installer.pods_project.build_configurations.each do |config|
+    config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+  end
+end

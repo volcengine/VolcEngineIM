@@ -1,0 +1,9 @@
+// ADD_BY_MANUAL
+CODE_SIGN_ENTITLEMENTS =
+DEVELOPMENT_TEAM = XXHND5J98K
+PROVISIONING_PROFILE = comssiphoneucentercninhouse
+PROVISIONING_PROFILE_SPECIFIER = comssiphoneucentercninhouse
+CODE_SIGN_IDENTITY = iPhone Distribution
+CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Distribution
+PROVISIONING_STYLE = Manual
+CODE_SIGN_STYLE = Manual
