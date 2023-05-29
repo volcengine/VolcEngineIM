@@ -13,7 +13,7 @@
 #import "VEIMDemoMyinfoController.h"
 #import "VEIMDemoDefine.h"
 #import "BIMUnreadLabel.h"
-#import "VEIMDemoLiveGroupListController.h"
+//#import "VEIMDemoLiveGroupListController.h"
 
 #import <Masonry/Masonry.h>
 

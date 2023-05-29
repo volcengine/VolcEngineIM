@@ -10,10 +10,6 @@
 		24CA06252982177D4D83A7CA /* libPods-ByteBusiness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C84286B277613D233D18BAE9 /* libPods-ByteBusiness.a */; };
 		25EE374C2433167100AB5267 /* ByteBusinessTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 25EE374B2433167100AB5267 /* ByteBusinessTests.m */; };
 		25EE37572433167100AB5267 /* ByteBusinessUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 25EE37562433167100AB5267 /* ByteBusinessUITests.m */; };
-		2B003ABB2A246298008059CB /* BIMLiveGroupListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B003AB92A246298008059CB /* BIMLiveGroupListDataSource.m */; };
-		2B003ABE2A2462B1008059CB /* BIMLiveGroupListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B003ABC2A2462B1008059CB /* BIMLiveGroupListController.m */; };
-		2B015F902A1F828B00ECD1EE /* VEIMDemoLiveGroupListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B015F8E2A1F828B00ECD1EE /* VEIMDemoLiveGroupListDataSource.m */; };
-		2B015F932A1F82A500ECD1EE /* BIMLiveGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B015F912A1F82A500ECD1EE /* BIMLiveGroupCell.m */; };
 		2B015FA02A1F951D00ECD1EE /* VEIMDemoUserManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B015F952A1F951D00ECD1EE /* VEIMDemoUserManager.m */; };
 		2B015FA12A1F951D00ECD1EE /* VEIMDemoUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B015F982A1F951D00ECD1EE /* VEIMDemoUser.m */; };
 		2B015FA22A1F951D00ECD1EE /* VEIMDemoLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B015F9C2A1F951D00ECD1EE /* VEIMDemoLoginViewController.m */; };
@@ -21,18 +17,9 @@
 		2B0CF807292E4E93007FC3DE /* VEIMDemoConversationSettingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B0CF806292E4E93007FC3DE /* VEIMDemoConversationSettingController.m */; };
 		2B0CF80B292E50B0007FC3DE /* VEIMDemoUserListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B0CF80A292E50B0007FC3DE /* VEIMDemoUserListCell.m */; };
 		2B0CF80E292E50DA007FC3DE /* VEIMDemoUserListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B0CF80D292E50DA007FC3DE /* VEIMDemoUserListItem.m */; };
-		2B17B28F29F7CE81005396FA /* VEIMDemoLiveGroupSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B17B28E29F7CE81005396FA /* VEIMDemoLiveGroupSettingViewController.m */; };
-		2B1A38BF29F5B49700FA239E /* VEIMDemoLiveGroupChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1A38BE29F5B49700FA239E /* VEIMDemoLiveGroupChatViewController.m */; };
-		2B1A38C229F5C3BF00FA239E /* VEIMDemoLiveGroupChatTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1A38C129F5C3BF00FA239E /* VEIMDemoLiveGroupChatTitleView.m */; };
-		2B329E8629F627D6002B4514 /* VEIMDemoAllLiveGroupListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B329E8529F627D6002B4514 /* VEIMDemoAllLiveGroupListController.m */; };
-		2B329E8929F65F28002B4514 /* VEIMDemoSetInpuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B329E8829F65F28002B4514 /* VEIMDemoSetInpuViewController.m */; };
 		2B3ABB872684642600B114E2 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB842684642600B114E2 /* Debug.xcconfig */; };
 		2B3ABB882684642600B114E2 /* Release_inhouse.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB852684642600B114E2 /* Release_inhouse.xcconfig */; };
 		2B3ABB892684642600B114E2 /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB862684642600B114E2 /* Release.xcconfig */; };
-		2B3F4EFD29F80C6A00FAA940 /* VEIMDemoUserListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B3F4EFC29F80C6A00FAA940 /* VEIMDemoUserListViewController.m */; };
-		2B3F4F0029F8D91800FAA940 /* VEIMDemoSilentListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B3F4EFF29F8D91800FAA940 /* VEIMDemoSilentListViewController.m */; };
-		2B3F4F0329F8DFD500FAA940 /* VEIMDemoBlockListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B3F4F0229F8DFD500FAA940 /* VEIMDemoBlockListViewController.m */; };
-		2B3F4F0629F8E55700FAA940 /* VEIMDemoOnlineListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B3F4F0529F8E55700FAA940 /* VEIMDemoOnlineListViewController.m */; };
 		2B8E543A292E734600A2A416 /* VEIMDemoConversationSettingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8E5439292E734600A2A416 /* VEIMDemoConversationSettingCell.m */; };
 		2B8E543E292E748D00A2A416 /* VEIMDemoSettingModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8E543D292E748D00A2A416 /* VEIMDemoSettingModel.m */; };
 		2B8E5441292E77A500A2A416 /* VEIMDemoInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8E5440292E77A500A2A416 /* VEIMDemoInputController.m */; };
@@ -74,9 +61,6 @@
 		2BA90DC92921EB2800154F35 /* VEIMDemoMyinfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA90D7D2921EB2800154F35 /* VEIMDemoMyinfoController.m */; };
 		2BA90DCA2921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA90D802921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m */; };
 		2BA90DCC2921EB9D00154F35 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BA90DCB2921EB9D00154F35 /* Assets.xcassets */; };
-		2BE8FBC829F53DF100A7B96D /* VEIMDemoLiveGroupListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE8FBC729F53DF100A7B96D /* VEIMDemoLiveGroupListController.m */; };
-		2BE8FBCE29F5511B00A7B96D /* VEIMDemoCreateLiveGroupController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE8FBCD29F5511B00A7B96D /* VEIMDemoCreateLiveGroupController.m */; };
-		2BE8FBDD29F553B800A7B96D /* VEIMDemoCreateLiveGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE8FBDC29F553B800A7B96D /* VEIMDemoCreateLiveGroupCell.m */; };
 		2BF1BA0B29A5E7B6007145D0 /* VEIMDemoConversationListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BF1BA0A29A5E7B6007145D0 /* VEIMDemoConversationListController.m */; };
 		2BF1BA0E29A5FD01007145D0 /* VEIMDemoChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BF1BA0D29A5FD01007145D0 /* VEIMDemoChatViewController.m */; };
 		6261DB9224643D4B00FC11F8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6261DB9124643D4B00FC11F8 /* CoreGraphics.framework */; };
@@ -119,14 +103,6 @@
 		25EE37562433167100AB5267 /* ByteBusinessUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ByteBusinessUITests.m; sourceTree = "<group>"; };
 		25EE37582433167100AB5267 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		25EE37AF24332C7D00AB5267 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
-		2B003AB92A246298008059CB /* BIMLiveGroupListDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BIMLiveGroupListDataSource.m; sourceTree = "<group>"; };
-		2B003ABA2A246298008059CB /* BIMLiveGroupListDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BIMLiveGroupListDataSource.h; sourceTree = "<group>"; };
-		2B003ABC2A2462B1008059CB /* BIMLiveGroupListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BIMLiveGroupListController.m; sourceTree = "<group>"; };
-		2B003ABD2A2462B1008059CB /* BIMLiveGroupListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BIMLiveGroupListController.h; sourceTree = "<group>"; };
-		2B015F8E2A1F828B00ECD1EE /* VEIMDemoLiveGroupListDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoLiveGroupListDataSource.m; sourceTree = "<group>"; };
-		2B015F8F2A1F828B00ECD1EE /* VEIMDemoLiveGroupListDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VEIMDemoLiveGroupListDataSource.h; sourceTree = "<group>"; };
-		2B015F912A1F82A500ECD1EE /* BIMLiveGroupCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BIMLiveGroupCell.m; sourceTree = "<group>"; };
-		2B015F922A1F82A500ECD1EE /* BIMLiveGroupCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BIMLiveGroupCell.h; sourceTree = "<group>"; };
 		2B015F952A1F951D00ECD1EE /* VEIMDemoUserManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoUserManager.m; sourceTree = "<group>"; };
 		2B015F972A1F951D00ECD1EE /* VEIMDemoUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VEIMDemoUser.h; sourceTree = "<group>"; };
 		2B015F982A1F951D00ECD1EE /* VEIMDemoUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoUser.m; sourceTree = "<group>"; };
@@ -141,27 +117,9 @@
 		2B0CF80A292E50B0007FC3DE /* VEIMDemoUserListCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoUserListCell.m; sourceTree = "<group>"; };
 		2B0CF80C292E50DA007FC3DE /* VEIMDemoUserListItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoUserListItem.h; sourceTree = "<group>"; };
 		2B0CF80D292E50DA007FC3DE /* VEIMDemoUserListItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoUserListItem.m; sourceTree = "<group>"; };
-		2B17B28D29F7CE81005396FA /* VEIMDemoLiveGroupSettingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoLiveGroupSettingViewController.h; sourceTree = "<group>"; };
-		2B17B28E29F7CE81005396FA /* VEIMDemoLiveGroupSettingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoLiveGroupSettingViewController.m; sourceTree = "<group>"; };
-		2B1A38BD29F5B49700FA239E /* VEIMDemoLiveGroupChatViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoLiveGroupChatViewController.h; sourceTree = "<group>"; };
-		2B1A38BE29F5B49700FA239E /* VEIMDemoLiveGroupChatViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoLiveGroupChatViewController.m; sourceTree = "<group>"; };
-		2B1A38C029F5C3BF00FA239E /* VEIMDemoLiveGroupChatTitleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoLiveGroupChatTitleView.h; sourceTree = "<group>"; };
-		2B1A38C129F5C3BF00FA239E /* VEIMDemoLiveGroupChatTitleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoLiveGroupChatTitleView.m; sourceTree = "<group>"; };
-		2B329E8429F627D6002B4514 /* VEIMDemoAllLiveGroupListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAllLiveGroupListController.h; sourceTree = "<group>"; };
-		2B329E8529F627D6002B4514 /* VEIMDemoAllLiveGroupListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoAllLiveGroupListController.m; sourceTree = "<group>"; };
-		2B329E8729F65F28002B4514 /* VEIMDemoSetInpuViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoSetInpuViewController.h; sourceTree = "<group>"; };
-		2B329E8829F65F28002B4514 /* VEIMDemoSetInpuViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoSetInpuViewController.m; sourceTree = "<group>"; };
 		2B3ABB842684642600B114E2 /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		2B3ABB852684642600B114E2 /* Release_inhouse.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release_inhouse.xcconfig; sourceTree = "<group>"; };
 		2B3ABB862684642600B114E2 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
-		2B3F4EFB29F80C6A00FAA940 /* VEIMDemoUserListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoUserListViewController.h; sourceTree = "<group>"; };
-		2B3F4EFC29F80C6A00FAA940 /* VEIMDemoUserListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoUserListViewController.m; sourceTree = "<group>"; };
-		2B3F4EFE29F8D91800FAA940 /* VEIMDemoSilentListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoSilentListViewController.h; sourceTree = "<group>"; };
-		2B3F4EFF29F8D91800FAA940 /* VEIMDemoSilentListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoSilentListViewController.m; sourceTree = "<group>"; };
-		2B3F4F0129F8DFD500FAA940 /* VEIMDemoBlockListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoBlockListViewController.h; sourceTree = "<group>"; };
-		2B3F4F0229F8DFD500FAA940 /* VEIMDemoBlockListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoBlockListViewController.m; sourceTree = "<group>"; };
-		2B3F4F0429F8E55700FAA940 /* VEIMDemoOnlineListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoOnlineListViewController.h; sourceTree = "<group>"; };
-		2B3F4F0529F8E55700FAA940 /* VEIMDemoOnlineListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoOnlineListViewController.m; sourceTree = "<group>"; };
 		2B8E5438292E734600A2A416 /* VEIMDemoConversationSettingCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoConversationSettingCell.h; sourceTree = "<group>"; };
 		2B8E5439292E734600A2A416 /* VEIMDemoConversationSettingCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoConversationSettingCell.m; sourceTree = "<group>"; };
 		2B8E543C292E748D00A2A416 /* VEIMDemoSettingModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoSettingModel.h; sourceTree = "<group>"; };
@@ -241,12 +199,6 @@
 		2BA90D802921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoMyinfoHeaderCell.m; sourceTree = "<group>"; };
 		2BA90D812921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VEIMDemoMyinfoHeaderCell.h; sourceTree = "<group>"; };
 		2BA90DCB2921EB9D00154F35 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		2BE8FBC629F53DF100A7B96D /* VEIMDemoLiveGroupListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoLiveGroupListController.h; sourceTree = "<group>"; };
-		2BE8FBC729F53DF100A7B96D /* VEIMDemoLiveGroupListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoLiveGroupListController.m; sourceTree = "<group>"; };
-		2BE8FBCC29F5511B00A7B96D /* VEIMDemoCreateLiveGroupController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoCreateLiveGroupController.h; sourceTree = "<group>"; };
-		2BE8FBCD29F5511B00A7B96D /* VEIMDemoCreateLiveGroupController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoCreateLiveGroupController.m; sourceTree = "<group>"; };
-		2BE8FBDB29F553B800A7B96D /* VEIMDemoCreateLiveGroupCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoCreateLiveGroupCell.h; sourceTree = "<group>"; };
-		2BE8FBDC29F553B800A7B96D /* VEIMDemoCreateLiveGroupCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoCreateLiveGroupCell.m; sourceTree = "<group>"; };
 		2BF1BA0929A5E7B6007145D0 /* VEIMDemoConversationListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoConversationListController.h; sourceTree = "<group>"; };
 		2BF1BA0A29A5E7B6007145D0 /* VEIMDemoConversationListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoConversationListController.m; sourceTree = "<group>"; };
 		2BF1BA0C29A5FD01007145D0 /* VEIMDemoChatViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoChatViewController.h; sourceTree = "<group>"; };
@@ -329,7 +281,6 @@
 		25EE372E2433166D00AB5267 /* ByteBusiness */ = {
 			isa = PBXGroup;
 			children = (
-				2BF0C4F529E82C3A004872CE /* Live */,
 				2B0CF803292E44C6007FC3DE /* ConversationSetting */,
 				2BA90DCB2921EB9D00154F35 /* Assets.xcassets */,
 				2BA90D512921EB2800154F35 /* Application */,
@@ -713,141 +664,6 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		2BF0C4F529E82C3A004872CE /* Live */ = {
-			isa = PBXGroup;
-			children = (
-				2BF0C4FA29E82DC1004872CE /* LiveConversationSetting */,
-				2BF0C4F729E82C53004872CE /* LiveConversation */,
-				2BF0C4F629E82C50004872CE /* LiveChat */,
-			);
-			path = Live;
-			sourceTree = "<group>";
-		};
-		2BF0C4F629E82C50004872CE /* LiveChat */ = {
-			isa = PBXGroup;
-			children = (
-				2BF0C4FF29E82E3F004872CE /* View */,
-				2BF0C4FE29E82E25004872CE /* DataSource */,
-				2BF0C4FD29E82E1C004872CE /* Controller */,
-			);
-			path = LiveChat;
-			sourceTree = "<group>";
-		};
-		2BF0C4F729E82C53004872CE /* LiveConversation */ = {
-			isa = PBXGroup;
-			children = (
-				2BF0C50029E82E83004872CE /* View */,
-				2BF0C4F929E82D3C004872CE /* Controller */,
-				2BF0C4F829E82D2D004872CE /* DataSource */,
-			);
-			path = LiveConversation;
-			sourceTree = "<group>";
-		};
-		2BF0C4F829E82D2D004872CE /* DataSource */ = {
-			isa = PBXGroup;
-			children = (
-				2B003ABA2A246298008059CB /* BIMLiveGroupListDataSource.h */,
-				2B003AB92A246298008059CB /* BIMLiveGroupListDataSource.m */,
-				2B015F8F2A1F828B00ECD1EE /* VEIMDemoLiveGroupListDataSource.h */,
-				2B015F8E2A1F828B00ECD1EE /* VEIMDemoLiveGroupListDataSource.m */,
-			);
-			path = DataSource;
-			sourceTree = "<group>";
-		};
-		2BF0C4F929E82D3C004872CE /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				2B003ABD2A2462B1008059CB /* BIMLiveGroupListController.h */,
-				2B003ABC2A2462B1008059CB /* BIMLiveGroupListController.m */,
-				2BE8FBC629F53DF100A7B96D /* VEIMDemoLiveGroupListController.h */,
-				2BE8FBC729F53DF100A7B96D /* VEIMDemoLiveGroupListController.m */,
-				2BE8FBCC29F5511B00A7B96D /* VEIMDemoCreateLiveGroupController.h */,
-				2BE8FBCD29F5511B00A7B96D /* VEIMDemoCreateLiveGroupController.m */,
-				2B329E8429F627D6002B4514 /* VEIMDemoAllLiveGroupListController.h */,
-				2B329E8529F627D6002B4514 /* VEIMDemoAllLiveGroupListController.m */,
-			);
-			path = Controller;
-			sourceTree = "<group>";
-		};
-		2BF0C4FA29E82DC1004872CE /* LiveConversationSetting */ = {
-			isa = PBXGroup;
-			children = (
-				2BF0C50129E82E88004872CE /* View */,
-				2BF0C4FC29E82DF3004872CE /* DataSource */,
-				2BF0C4FB29E82DE7004872CE /* Controller */,
-			);
-			path = LiveConversationSetting;
-			sourceTree = "<group>";
-		};
-		2BF0C4FB29E82DE7004872CE /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				2B17B28D29F7CE81005396FA /* VEIMDemoLiveGroupSettingViewController.h */,
-				2B17B28E29F7CE81005396FA /* VEIMDemoLiveGroupSettingViewController.m */,
-				2B3F4EFB29F80C6A00FAA940 /* VEIMDemoUserListViewController.h */,
-				2B3F4EFC29F80C6A00FAA940 /* VEIMDemoUserListViewController.m */,
-				2B3F4EFE29F8D91800FAA940 /* VEIMDemoSilentListViewController.h */,
-				2B3F4EFF29F8D91800FAA940 /* VEIMDemoSilentListViewController.m */,
-				2B3F4F0129F8DFD500FAA940 /* VEIMDemoBlockListViewController.h */,
-				2B3F4F0229F8DFD500FAA940 /* VEIMDemoBlockListViewController.m */,
-				2B3F4F0429F8E55700FAA940 /* VEIMDemoOnlineListViewController.h */,
-				2B3F4F0529F8E55700FAA940 /* VEIMDemoOnlineListViewController.m */,
-			);
-			path = Controller;
-			sourceTree = "<group>";
-		};
-		2BF0C4FC29E82DF3004872CE /* DataSource */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = DataSource;
-			sourceTree = "<group>";
-		};
-		2BF0C4FD29E82E1C004872CE /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				2B1A38BD29F5B49700FA239E /* VEIMDemoLiveGroupChatViewController.h */,
-				2B1A38BE29F5B49700FA239E /* VEIMDemoLiveGroupChatViewController.m */,
-			);
-			path = Controller;
-			sourceTree = "<group>";
-		};
-		2BF0C4FE29E82E25004872CE /* DataSource */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = DataSource;
-			sourceTree = "<group>";
-		};
-		2BF0C4FF29E82E3F004872CE /* View */ = {
-			isa = PBXGroup;
-			children = (
-				2B1A38C029F5C3BF00FA239E /* VEIMDemoLiveGroupChatTitleView.h */,
-				2B1A38C129F5C3BF00FA239E /* VEIMDemoLiveGroupChatTitleView.m */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		2BF0C50029E82E83004872CE /* View */ = {
-			isa = PBXGroup;
-			children = (
-				2B015F922A1F82A500ECD1EE /* BIMLiveGroupCell.h */,
-				2B015F912A1F82A500ECD1EE /* BIMLiveGroupCell.m */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		2BF0C50129E82E88004872CE /* View */ = {
-			isa = PBXGroup;
-			children = (
-				2BE8FBDB29F553B800A7B96D /* VEIMDemoCreateLiveGroupCell.h */,
-				2BE8FBDC29F553B800A7B96D /* VEIMDemoCreateLiveGroupCell.m */,
-				2B329E8729F65F28002B4514 /* VEIMDemoSetInpuViewController.h */,
-				2B329E8829F65F28002B4514 /* VEIMDemoSetInpuViewController.m */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
 		6E67D12A448E561862444F0B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1121,7 +937,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2BA90DC92921EB2800154F35 /* VEIMDemoMyinfoController.m in Sources */,
-				2BE8FBDD29F553B800A7B96D /* VEIMDemoCreateLiveGroupCell.m in Sources */,
 				2BA90D922921EB2800154F35 /* BDIMDebugDragButton.m in Sources */,
 				2BA90DAB2921EB2800154F35 /* VEIMDemoImagePickerController.m in Sources */,
 				2BA90DC12921EB2800154F35 /* VEIMDemoBaseView.m in Sources */,
@@ -1130,8 +945,6 @@
 				2BA90D932921EB2800154F35 /* BDIMDebugBaseModel.m in Sources */,
 				2BA90DBD2921EB2800154F35 /* VEIMDemoNavigationViewController.m in Sources */,
 				2B0CF80E292E50DA007FC3DE /* VEIMDemoUserListItem.m in Sources */,
-				2B3F4EFD29F80C6A00FAA940 /* VEIMDemoUserListViewController.m in Sources */,
-				2B3F4F0029F8D91800FAA940 /* VEIMDemoSilentListViewController.m in Sources */,
 				2BA90D872921EB2800154F35 /* BDIMDebugNetworkEnvironmentController.m in Sources */,
 				2BA90DC32921EB2800154F35 /* VEIMDemoPaddingLabel.m in Sources */,
 				2B015FA22A1F951D00ECD1EE /* VEIMDemoLoginViewController.m in Sources */,
@@ -1146,39 +959,26 @@
 				2B015FA02A1F951D00ECD1EE /* VEIMDemoUserManager.m in Sources */,
 				2BF1BA0B29A5E7B6007145D0 /* VEIMDemoConversationListController.m in Sources */,
 				2BA90DCA2921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m in Sources */,
-				2B3F4F0629F8E55700FAA940 /* VEIMDemoOnlineListViewController.m in Sources */,
-				2BE8FBC829F53DF100A7B96D /* VEIMDemoLiveGroupListController.m in Sources */,
 				2BA90D952921EB2800154F35 /* BDIMDebugBaseController.m in Sources */,
 				2BA90D8F2921EB2800154F35 /* BDIMDebugMenuController.m in Sources */,
-				2B003ABB2A246298008059CB /* BIMLiveGroupListDataSource.m in Sources */,
-				2B1A38BF29F5B49700FA239E /* VEIMDemoLiveGroupChatViewController.m in Sources */,
-				2B17B28F29F7CE81005396FA /* VEIMDemoLiveGroupSettingViewController.m in Sources */,
 				2B8E544729307C8E00A2A416 /* VEIMDemoIMManager+Conversation.m in Sources */,
-				2B015F902A1F828B00ECD1EE /* VEIMDemoLiveGroupListDataSource.m in Sources */,
 				2B015FA12A1F951D00ECD1EE /* VEIMDemoUser.m in Sources */,
 				2BA90D902921EB2800154F35 /* BDIMDebugMenuIconModel.m in Sources */,
-				2B329E8629F627D6002B4514 /* VEIMDemoAllLiveGroupListController.m in Sources */,
 				2B8E543A292E734600A2A416 /* VEIMDemoConversationSettingCell.m in Sources */,
 				2BA90D912921EB2800154F35 /* BDIMDebugFPSLabel.m in Sources */,
 				2BA90DBA2921EB2800154F35 /* main.m in Sources */,
 				2BA90D852921EB2800154F35 /* BDIMDebugNetworkRequestCell.m in Sources */,
 				2BA90DB32921EB2800154F35 /* VEIMDemoUserSelectionController.m in Sources */,
 				2BA90D982921EB2800154F35 /* VEIMDemoCommonMenu.m in Sources */,
-				2B329E8929F65F28002B4514 /* VEIMDemoSetInpuViewController.m in Sources */,
 				2BA90D8B2921EB2800154F35 /* BDIMDebugToast.m in Sources */,
 				2BA90DC42921EB2800154F35 /* VEIMDemoIMManager.m in Sources */,
 				2BA90D8E2921EB2800154F35 /* BDIMDebugMenuItem.m in Sources */,
 				2B015FA32A1F951D00ECD1EE /* VEIMDemoTestUserCell.m in Sources */,
 				2B8E544429307B6800A2A416 /* VEIMDemoIMManager+Message.m in Sources */,
-				2B003ABE2A2462B1008059CB /* BIMLiveGroupListController.m in Sources */,
 				2BA90D972921EB2800154F35 /* VEIMDemoRouter.m in Sources */,
 				2B8E543E292E748D00A2A416 /* VEIMDemoSettingModel.m in Sources */,
 				2BA90D8A2921EB2800154F35 /* BDIMDebugNetworkRequest.m in Sources */,
-				2B1A38C229F5C3BF00FA239E /* VEIMDemoLiveGroupChatTitleView.m in Sources */,
-				2BE8FBCE29F5511B00A7B96D /* VEIMDemoCreateLiveGroupController.m in Sources */,
 				2B0CF80B292E50B0007FC3DE /* VEIMDemoUserListCell.m in Sources */,
-				2B3F4F0329F8DFD500FAA940 /* VEIMDemoBlockListViewController.m in Sources */,
-				2B015F932A1F82A500ECD1EE /* BIMLiveGroupCell.m in Sources */,
 				2BA90D942921EB2800154F35 /* BDIMDebugTableViewCell.m in Sources */,
 				2BA90DB52921EB2800154F35 /* VEIMDemoTabbarController.m in Sources */,
 				2B8E5441292E77A500A2A416 /* VEIMDemoInputController.m in Sources */,
