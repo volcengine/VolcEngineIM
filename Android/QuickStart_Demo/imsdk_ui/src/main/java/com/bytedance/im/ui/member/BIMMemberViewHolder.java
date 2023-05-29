@@ -31,18 +31,20 @@ public class BIMMemberViewHolder extends RecyclerView.ViewHolder {
         BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(member.getUserID());
         String name = "" + member.getUserID();
         int res = R.drawable.icon_recommend_user_default;
+        userHeadImg.setImageResource(res);
         if (user != null) {
             res = user.getHeadImg();
             name = user.getNickName();
+            if (TextUtils.isEmpty(user.getUrl())) {
+                userHeadImg.setImageResource(res);
+            } else {
+                Glide.with(userHeadImg.getContext()).load(user.getUrl())
+                        .placeholder(R.drawable.icon_recommend_user_default)
+                        .error(R.drawable.icon_recommend_user_default)
+                        .into(userHeadImg);
+            }
         }
-        if (TextUtils.isEmpty(user.getUrl())) {
-            userHeadImg.setImageResource(res);
-        } else {
-            Glide.with(userHeadImg.getContext()).load(user.getUrl())
-                    .placeholder(R.drawable.icon_recommend_user_default)
-                    .error(R.drawable.icon_recommend_user_default)
-                    .into(userHeadImg);
-        }
+
         if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
             name += "[群主]";
         } else if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {

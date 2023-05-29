@@ -62,18 +62,18 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
             BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(bimConversation.getOppositeUserID());
             if (user == null) {
                 name = String.valueOf(bimConversation.getOppositeUserID());
-                img = R.drawable.icon_recommend_user_default;
+                userHeadImg.setImageResource(R.drawable.icon_recommend_user_default);
             } else {
                 img = user.getHeadImg();
                 name = user.getNickName();
-            }
-            if (TextUtils.isEmpty(user.getUrl())) {
-                userHeadImg.setImageResource(img);
-            } else {
-                Glide.with(userHeadImg.getContext()).load(user.getUrl())
-                        .placeholder(R.drawable.icon_recommend_user_default)
-                        .error(R.drawable.icon_recommend_user_default)
-                        .into(userHeadImg);
+                if (TextUtils.isEmpty(user.getUrl())) {
+                    userHeadImg.setImageResource(img);
+                } else {
+                    Glide.with(userHeadImg.getContext()).load(user.getUrl())
+                            .placeholder(R.drawable.icon_recommend_user_default)
+                            .error(R.drawable.icon_recommend_user_default)
+                            .into(userHeadImg);
+                }
             }
         } else {
             //todo 组件化
