@@ -3,7 +3,7 @@ PODS:
   - FLEX (3.1.2)
   - Godzippa (2.1.1)
   - IGListKit/Diffing (3.4.0)
-  - im-uikit-tob (1.1.0):
+  - im-uikit-tob (1.0.0):
     - imsdk-tob (= 1.1.0)
     - Masonry
     - MJRefresh
@@ -105,9 +105,9 @@ PODS:
   - RangersAppLog/Host/CN (6.13.2):
     - RangersAppLog/Core
   - RSSwizzle (0.1.0)
-  - SDWebImage (5.15.5):
-    - SDWebImage/Core (= 5.15.5)
-  - SDWebImage/Core (5.15.5)
+  - SDWebImage (5.15.8):
+    - SDWebImage/Core (= 5.15.8)
+  - SDWebImage/Core (5.15.8)
   - SQLiteRepairKit (1.2.2):
     - WCDBOptimizedSQLCipher (~> 1.2.0)
   - TTNetworkManager (5.0.29.26):
@@ -132,7 +132,7 @@ PODS:
 
 DEPENDENCIES:
   - FLEX (= 3.1.2)
-  - im-uikit-tob (from `../`)
+  - im-uikit-tob (= 1.0.0)
   - JSONModel
   - Masonry
   - MBProgressHUD
@@ -161,22 +161,19 @@ SPEC REPOS:
     - WCDBOptimizedSQLCipher
     - YYCache
   https://github.com/volcengine/volcengine-specs.git:
+    - im-uikit-tob
     - imsdk-tob
     - OneKit
     - RangersAppLog
     - TTNetworkManager
     - TTSDK
 
-EXTERNAL SOURCES:
-  im-uikit-tob:
-    :path: "../"
-
 SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   FLEX: e13e805fc3eec8732cc227d1f7508770d46e9587
   Godzippa: f438af100364a775ef0707d29ab152c356375fbf
   IGListKit: 7a5d788e9fb746bcd402baa8e8b24bc3bd2a5a07
-  im-uikit-tob: 99ca4c6a9d99022da7cc23ce79e9721474fb9432
+  im-uikit-tob: 3fe7c2cbbe27f00b8ef4731cd8df60306775481c
   imsdk-tob: 1c83e9614c2474c327caf298ce06144257a7f0bb
   JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
@@ -190,7 +187,7 @@ SPEC CHECKSUMS:
   Protobuf: 120350fc38646e2dedc26f49ecba778184ea1de2
   RangersAppLog: aca2ba1dd540ae001120f5fe1e391aafc82aa1c7
   RSSwizzle: d561958f595028bfcef98c7d55c318b3878a61c6
-  SDWebImage: fd7e1a22f00303e058058278639bf6196ee431fe
+  SDWebImage: cb032eba469c54e0000e78bcb0a13cdde0a52798
   SQLiteRepairKit: 35aaae5a8838adb85f5b1eb4d796055be6060a4b
   TTNetworkManager: 499c35f6a64acc78b417c415a05ed7289443e4fa
   TTSDK: 52ee1a9675e1f313fa9102475c7331268dca7524
@@ -198,6 +195,6 @@ SPEC CHECKSUMS:
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: ef8bf81828866ef8ec5ff1536d06b09928711bb7
+PODFILE CHECKSUM: f1a13060340099ae33c087da87a91865d409e1b5
 
 COCOAPODS: 1.8.4

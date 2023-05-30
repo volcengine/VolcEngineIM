@@ -874,11 +874,11 @@ static CGFloat textHei = 0;
             fileModel.type = BIMInputMenuTypeFile;
             [_menuMAry btd_addObject:fileModel];
         }
-        BIMInputMenuModel *customCoverModel = [[BIMInputMenuModel alloc] init];
-        customCoverModel.titleStr = @"自定义消息";
-        customCoverModel.iconStr = @"icon_photo";
-        customCoverModel.type = BIMInputMenuTypeCustomMessage;
-        [_menuMAry btd_addObject:customCoverModel];
+//        BIMInputMenuModel *customCoverModel = [[BIMInputMenuModel alloc] init];
+//        customCoverModel.titleStr = @"自定义消息";
+//        customCoverModel.iconStr = @"icon_photo";
+//        customCoverModel.type = BIMInputMenuTypeCustomMessage;
+//        [_menuMAry btd_addObject:customCoverModel];
     }
 
     return _menuMAry;

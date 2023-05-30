@@ -35,10 +35,6 @@
 
 - (BOOL)initSDK:(int)sdkAppID config:(BIMSDKConfig *)config
 {
-    if (sdkAppID == 0) {
-        NSAssert(sdkAppID != 0, @"从[控制台](https://console.volcengine.com/rtc/im/appManage)获取的应用 ID");
-        return NO;
-    }
     return [[BIMClient sharedInstance] initSDK:sdkAppID config:config];
 }
 

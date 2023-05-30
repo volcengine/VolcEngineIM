@@ -15,13 +15,13 @@ Pod::Spec.new do |spec|
        TODO: Add long description of the pod here.
                    DESC
 
-  spec.homepage     = "https://github.com"
+  spec.homepage     = "https://github.com/volcengine/VolcEngineIM.git"
   spec.license      = { :type => "MIT", :file => "FILE_LICENSE" }
   spec.author             = { "yangzhanjiang" => "yangzhanjiang@bytedance.com" }
   spec.ios.deployment_target = '9.0'
-  spec.source           = { :git => 'git@code.byted.org:im/TIMSDK.git', :tag => spec.version.to_s }
+  spec.source           = { :git => 'git@github.com:volcengine/VolcEngineIM.git', :tag => spec.version.to_s }
 
-  spec.source_files  = '**/BIMUIKit/**/*'
+  spec.source_files  = '**/BIMUIKit/**/*.{h,m,c}'
 
   spec.resource_bundles = {
       'TIMOEmoji' => ['**/BIMUIKit/**/TIMOEmoji.bundle/**/*'],
@@ -29,12 +29,13 @@ Pod::Spec.new do |spec|
   }
 
 
-  spec.frameworks = "UIKit"
+  spec.frameworks = 'UIKit', 'AVKit'
 
   spec.dependency 'Masonry'
   spec.dependency 'MJRefresh'
   spec.dependency 'SDWebImage'
   spec.dependency 'imsdk-tob', '1.1.0'
+
 
   spec.requires_arc = true
 
