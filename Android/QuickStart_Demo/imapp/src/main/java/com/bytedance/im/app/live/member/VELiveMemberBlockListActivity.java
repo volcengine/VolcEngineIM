@@ -55,7 +55,7 @@ public class VELiveMemberBlockListActivity extends Activity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(null);
         conversationShortId = getIntent().getLongExtra(CONVERSATION_SHORT_ID, 0L);
-        adapter = new VEMemberListAdapter(this, member -> showOperation(member));
+        adapter = new VEMemberListAdapter(this, member -> showOperation(member),true);
         recyclerView.setAdapter(adapter);
         findViewById(R.id.tv_more).setVisibility(View.VISIBLE);
         findViewById(R.id.tv_more).setOnClickListener((view) -> VEEditCommonActivity.startForResult(this, "添加进群黑名单", "",10, REQUEST_EDIT_UID));

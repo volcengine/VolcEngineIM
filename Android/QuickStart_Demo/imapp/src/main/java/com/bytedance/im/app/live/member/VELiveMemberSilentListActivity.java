@@ -55,7 +55,7 @@ public class VELiveMemberSilentListActivity extends Activity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(null);
         conversationShortId = getIntent().getLongExtra(CONVERSATION_SHORT_ID, 0L);
-        adapter = new VEMemberListAdapter(this, member -> showOperation(member),true);
+        adapter = new VEMemberListAdapter(this, member -> showOperation(member));
         recyclerView.setAdapter(adapter);
         findViewById(R.id.tv_more).setVisibility(View.VISIBLE);
         findViewById(R.id.tv_more).setOnClickListener((view) -> VEEditCommonActivity.startForResult(this, "添加禁言黑名单", "",100, REQUEST_EDIT_UID));

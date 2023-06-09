@@ -17,7 +17,6 @@ import com.bytedance.im.ui.user.BIMUserProvider;
 
 public class VEIMApplication extends Application {
     private static final String TAG = "VEIMApplication";
-    public static final int APP_ID = 0;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -43,7 +42,7 @@ public class VEIMApplication extends Application {
         } else if (env == Constants.ENV_PPE) {
             swimLean = SpUtils.getInstance().getPpeSwimLane();
         }
-        BIMUIClient.getInstance().init(this, APP_ID, env, swimLean, config);
+        BIMUIClient.getInstance().init(this, Constants.APP_ID, env, swimLean, config);
         BIMUIClient.getInstance().setUserProvider(new BIMUserProvider() {
             @Override
             public BIMUser getUserInfo(long uid) {

@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
 import com.bytedance.im.app.login.adapter.VEUserSelectAdapter;
 import com.bytedance.im.app.main.VEIMMainActivity;
@@ -114,17 +116,24 @@ public class VELoginActivity extends Activity {
 
     private void doLogin(BIMUser user) {
         Log.i(TAG, "doLogin() uid: " + user.getUserID());
-        LoginModel.getToken(user.getUserID(), new LoginModel.OnGetTokenListener() {
-            @Override
-            public void onGetToken(String token) {
-                loginIM(user.getUserID(), token);
-            }
+        if (!TextUtils.isEmpty(Constants.token) && Constants.uid > 0) {
+            // 快速体验，可直接配置 (uid,token)
+            loginIM(Constants.uid, Constants.token);
+        } else {
+            // 正常使用
+            // 获取 token 需要业务服务实现，  https://www.volcengine.com/docs/6348/291043
+            LoginModel.getToken(user.getUserID(), new LoginModel.OnGetTokenListener() {
+                @Override
+                public void onGetToken(String token) {
+                    loginIM(user.getUserID(), token);
+                }
 
-            @Override
-            public void onFailed(Throwable t) {
-                Toast.makeText(VELoginActivity.this, R.string.login_get_token_error, Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailed(Throwable t) {
+                    Toast.makeText(VELoginActivity.this, R.string.login_get_token_error, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     /**

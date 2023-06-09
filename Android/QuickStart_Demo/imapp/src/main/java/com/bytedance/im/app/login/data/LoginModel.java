@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.bytedance.im.app.VEIMApplication;
+import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.login.net.HttpClient;
 import com.bytedance.im.app.login.net.LoginService;
 
@@ -30,7 +31,7 @@ public class LoginModel {
         HttpClient.getInstance()
                 .getRetrofit()
                 .create(LoginService.class)
-                .getToken(uid, VEIMApplication.APP_ID)
+                .getToken(uid, Constants.APP_ID)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
