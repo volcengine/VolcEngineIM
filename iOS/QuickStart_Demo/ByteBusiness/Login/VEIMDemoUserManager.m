@@ -149,34 +149,49 @@
     
     [self.progressHUD showAnimated:YES];
     
-    NSString *tokenUrl = [[BDIMDebugNetworkManager sharedManager] tokenUrl];
-    NSString *URL = [NSString stringWithFormat:@"%@/get_token?appID=%@&userID=%lld",tokenUrl, kVEIMDemoAppID, user.userID];
-    [TTNetworkManager.shareInstance requestForJSONWithResponse:URL params:nil method:@"GET" needCommonParams:YES callback:^(NSError *error, id obj, TTHttpResponse *response) {
-        NSString *token = @"";
-        if (error == nil && [obj isKindOfClass:[NSDictionary class]]) {
-            token = [(NSDictionary *)obj objectForKey:@"Token"];
-        }
-        
-        if (token.length && user) {
-            self.currentUser = user;
-            self.currentUser.userToken = token;
-            [self saveCurrentUser:user];
-            [[BIMUIClient sharedInstance] login:@(self.currentUser.userID).stringValue token:self.currentUser.userToken completion:^(BIMError * _Nullable error) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.progressHUD hideAnimated:YES];
-                    if (completion){
-                        completion(error);
-                    }
-                });
-            }];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kVEIMDemoUserDidLoginNotification object:nil];
-        }else{
-            [self.progressHUD hideAnimated:YES];
-            if (completion) {
-                completion([NSError errorWithDomain:kVEIMDemoErrorDomain code:VEIMDemoErrorTypeFormatError userInfo:@{NSLocalizedDescriptionKey : @"Response params error"}]);
+    if (kVEIMDemoToken.length) {
+        self.currentUser = user;
+        self.currentUser.userToken = kVEIMDemoToken;
+        [self saveCurrentUser:user];
+        [[BIMUIClient sharedInstance] login:@(self.currentUser.userID).stringValue token:self.currentUser.userToken completion:^(BIMError * _Nullable error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.progressHUD hideAnimated:YES];
+                if (completion){
+                    completion(error);
+                }
+            });
+        }];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kVEIMDemoUserDidLoginNotification object:nil];
+    } else {
+        NSString *tokenUrl = [[BDIMDebugNetworkManager sharedManager] tokenUrl];
+        NSString *URL = [NSString stringWithFormat:@"%@/get_token?appID=%@&userID=%lld",tokenUrl, kVEIMDemoAppID, user.userID];
+        [TTNetworkManager.shareInstance requestForJSONWithResponse:URL params:nil method:@"GET" needCommonParams:YES callback:^(NSError *error, id obj, TTHttpResponse *response) {
+            NSString *token = @"";
+            if (error == nil && [obj isKindOfClass:[NSDictionary class]]) {
+                token = [(NSDictionary *)obj objectForKey:@"Token"];
             }
-        }
-    }];
+            
+            if (token.length && user) {
+                self.currentUser = user;
+                self.currentUser.userToken = token;
+                [self saveCurrentUser:user];
+                [[BIMUIClient sharedInstance] login:@(self.currentUser.userID).stringValue token:self.currentUser.userToken completion:^(BIMError * _Nullable error) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.progressHUD hideAnimated:YES];
+                        if (completion){
+                            completion(error);
+                        }
+                    });
+                }];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kVEIMDemoUserDidLoginNotification object:nil];
+            }else{
+                [self.progressHUD hideAnimated:YES];
+                if (completion) {
+                    completion([NSError errorWithDomain:kVEIMDemoErrorDomain code:VEIMDemoErrorTypeFormatError userInfo:@{NSLocalizedDescriptionKey : @"Response params error"}]);
+                }
+            }
+        }];
+    }
 }
 
 - (NSMutableArray<VEIMDemoUser *> *)createTestUsers:(BOOL)needSelection{

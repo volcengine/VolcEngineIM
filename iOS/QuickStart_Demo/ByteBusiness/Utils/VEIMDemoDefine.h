@@ -11,8 +11,10 @@
 #define VEIMDemoDefine_h
 
 
-///从[控制台](https://console.volcengine.com/rtc/im/appManage)获取的应用 ID。
-#define kVEIMDemoAppID @"0"
+///IM config
+//////从[控制台](https://console.volcengine.com/rtc/im/appManage)获取的应用 ID。
+#define kVEIMDemoAppID @""
+#define kVEIMDemoToken @""
 
 ///Error
 #define kVEIMDemoErrorDomain @"VEIMDemoErrorDomain"

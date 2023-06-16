@@ -85,8 +85,11 @@
     self.loginPromptLabel.scrollEnabled = NO;
     self.loginPromptLabel.editable = NO;
     NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:@"已阅读并同意"];
-    NSAttributedString *proto = [[NSAttributedString alloc] initWithString:@"个人信息授权与保护声明协议" attributes:@{NSLinkAttributeName:[NSURL URLWithString:@"https://bytedance.feishu.cn/docx/ENHxdrIbJoe3ggx9nq8c9hWXnxy"]}];
-    [str appendAttributedString:proto];
+    NSAttributedString *user = [[NSAttributedString alloc] initWithString:@"用户协议" attributes:@{NSLinkAttributeName:[NSURL URLWithString:@"https://www.volcengine.com/docs/6348/975891"]}];
+    [str appendAttributedString:user];
+    [str appendAttributedString:[[NSAttributedString alloc] initWithString:@" 和 "]];
+    NSAttributedString *privacy = [[NSAttributedString alloc] initWithString:@"隐私政策" attributes:@{NSLinkAttributeName:[NSURL URLWithString:@"https://www.volcengine.com/docs/6348/975890"]}];
+    [str appendAttributedString:privacy];
     
     self.loginPromptLabel.attributedText = str;
     
@@ -108,7 +111,7 @@
 
     [self.welcomeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(24);
-        make.top.mas_equalTo(KScreenHeight<680?	60:140);
+        make.top.mas_equalTo(KScreenHeight<680?    60:140);
     }];
     
     [self.promptLabel mas_makeConstraints:^(MASConstraintMaker *make) {
