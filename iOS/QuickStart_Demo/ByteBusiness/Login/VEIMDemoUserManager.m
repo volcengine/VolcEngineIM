@@ -55,11 +55,19 @@
     self = [super init];
     if (self) {
         _userDict = [NSMutableDictionary dictionary];
-        NSData *userData = [[NSUserDefaults standardUserDefaults] valueForKey:kVEIMDemoUserUserdefaultKey];
-        NSError *error;
-        VEIMDemoUser *user = [NSKeyedUnarchiver unarchivedObjectOfClass:[VEIMDemoUser class] fromData:userData error:&error];
-        if (user && !error) {
+        
+        if (kVEIMDemoUserID.length && kVEIMDemoToken.length) {
+            VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
+            user.userID = [kVEIMDemoUserID longLongValue];
+            user.userToken = kVEIMDemoToken;
             self.currentUser = user;
+        } else {
+            NSData *userData = [[NSUserDefaults standardUserDefaults] valueForKey:kVEIMDemoUserUserdefaultKey];
+            NSError *error;
+            VEIMDemoUser *user = [NSKeyedUnarchiver unarchivedObjectOfClass:[VEIMDemoUser class] fromData:userData error:&error];
+            if (user && !error) {
+                self.currentUser = user;
+            }
         }
         
         [self initSDK];

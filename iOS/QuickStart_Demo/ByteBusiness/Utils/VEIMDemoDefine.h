@@ -15,6 +15,7 @@
 //////从[控制台](https://console.volcengine.com/rtc/im/appManage)获取的应用 ID。
 #define kVEIMDemoAppID @""
 #define kVEIMDemoToken @""
+#define kVEIMDemoUserID @""
 
 ///Error
 #define kVEIMDemoErrorDomain @"VEIMDemoErrorDomain"
