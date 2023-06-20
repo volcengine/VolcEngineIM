@@ -184,11 +184,29 @@ public class VELoginActivity extends Activity {
             public void onClick(@NonNull View widget) {
                 Intent intent = new Intent();
                 intent.setAction("android.intent.action.VIEW");
-                Uri content_url = Uri.parse("https://bytedance.feishu.cn/docx/ENHxdrIbJoe3ggx9nq8c9hWXnxy");
+                Uri content_url = Uri.parse("https://www.volcengine.com/docs/6348/975891");
                 intent.setData(content_url);
                 startActivity(intent);
             }
-        },7,protoStr.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        },7,11, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        spannableString.setSpan(new ClickableSpan() {
+            @Override
+            public void updateDrawState(@NonNull TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setColor(getResources().getColor(R.color.business_im_sky_blue));
+                ds.setUnderlineText(false);
+            }
+
+            @Override
+            public void onClick(@NonNull View widget) {
+                Intent intent = new Intent();
+                intent.setAction("android.intent.action.VIEW");
+                Uri content_url = Uri.parse("https://www.volcengine.com/docs/6348/975890");
+                intent.setData(content_url);
+                startActivity(intent);
+            }
+        },14,protoStr.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         tvProtocol.setText(spannableString);
         tvProtocol.setMovementMethod(LinkMovementMethod.getInstance());
         tvProtocol.setHighlightColor(Color.TRANSPARENT);

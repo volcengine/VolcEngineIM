@@ -32,6 +32,7 @@ public class BIMShareCustomMessageUI extends BaseCustomElementUI {
             tvTitle.setTextColor(tvTitle.getContext().getResources().getColor(R.color.business_im_222));
         }
         BIMShareElement content = (BIMShareElement) bimMessage.getElement();
+        tvTitle.setText(content.getText());
     }
 
     @Override

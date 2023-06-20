@@ -139,7 +139,7 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
 
 
     /**
-     * 移除会话。
+     * 移出会话。
      *
      * @param list
      */
@@ -152,7 +152,7 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
     }
 
     /**
-     * 移除
+     * 移出
      *
      * @param index
      */

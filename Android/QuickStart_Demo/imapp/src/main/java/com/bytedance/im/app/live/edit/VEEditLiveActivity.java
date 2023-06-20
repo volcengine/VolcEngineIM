@@ -11,8 +11,10 @@ import android.widget.TextView;
 import com.bytedance.im.app.R;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
+import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.live.BIMLiveExpandService;
 
 public class VEEditLiveActivity extends Activity {
@@ -40,7 +42,8 @@ public class VEEditLiveActivity extends Activity {
             @Override
             public void onSuccess(BIMConversation conversation) {
                 editText.setText(onUpdateEditText(conversation));
-                if(conversation.getOwnerId() == BIMClient.getInstance().getCurrentUserID()){
+                BIMMember member = conversation.getCurrentMember();
+                if (member != null && (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN || member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER)) {
                     editText.setEnabled(true);
                     confirm.setVisibility(View.VISIBLE);
                 }

@@ -2,7 +2,6 @@ package com.bytedance.im.app.detail.member.adapter;
 
 import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.model.BIMMember;
-import com.bytedance.im.core.proto.GroupRole;
 
 public class MemberWrapper {
     public static final int TYPE_NORMAL = 0;
@@ -13,7 +12,8 @@ public class MemberWrapper {
     public boolean isSelect;
     private int order;
     private boolean isOwner;
-    private boolean forceSilentGone;
+    private boolean isShowSilent;
+    private boolean isShowOnline;
     public MemberWrapper(BIMMember member, int type) {
         order = generateOrder(member, type);
         this.member = member;
@@ -40,12 +40,20 @@ public class MemberWrapper {
         return order;
     }
 
-    public boolean isForceSilentGone() {
-        return forceSilentGone;
+    public boolean isShowSilent() {
+        return isShowSilent;
     }
 
-    public void setForceSilentGone(boolean forceSilentGone) {
-        this.forceSilentGone = forceSilentGone;
+    public void setShowSilent(boolean showSilent) {
+        this.isShowSilent = showSilent;
+    }
+
+    public boolean isShowOnline() {
+        return isShowOnline;
+    }
+
+    public void setShowOnline(boolean showOnline) {
+        isShowOnline = showOnline;
     }
 
     private int generateOrder(BIMMember member, int type) {

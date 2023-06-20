@@ -66,7 +66,7 @@ public class VEConvFragment extends Fragment {
         lp.alpha = 0.7f;
         getActivity().getWindow().setAttributes(lp);
 
-        //弹窗消失时移除全局阴影
+        //弹窗消失时移出全局阴影
         popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {

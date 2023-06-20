@@ -21,21 +21,23 @@ import com.bytedance.im.live.api.model.BIMLiveMemberListResult;
 import java.util.List;
 
 public class VELiveMemberSelectListActivity extends Activity {
-    private static final String TAG = "VEMemberListActivity";
+    private static final String TAG = "VELiveMemberSelectListActivity";
     protected static final String CONVERSATION_SHORT_ID = "conversation_short_id";
 
     private RecyclerView memberListV;
     private VEMemberSelectAdapter adapter;
-    private long cursor = -1;
-    private long pageSize = 20;
-    private boolean hasMore = true;
     protected long conversationId = -1;
-
+    private VEAllMemberListViewModel allMemberListViewModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ve_im_activity_member_list_select_layout);
         conversationId = getIntent().getLongExtra(CONVERSATION_SHORT_ID, -1);
+        allMemberListViewModel = new VEAllMemberListViewModel(conversationId, memberList -> {
+            if (adapter != null) {
+                adapter.appendMemberList(memberList);
+            }
+        });
         findViewById(R.id.back).setOnClickListener(v -> finish());
         findViewById(R.id.tv_confirm).setOnClickListener(v -> {
             onConfirmClick(adapter.getSelectMember());
@@ -53,29 +55,12 @@ public class VELiveMemberSelectListActivity extends Activity {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (VELiveUtils.isScrollToBottom(recyclerView) && hasMore) {
-                    loadData();
+                if (VELiveUtils.isScrollToBottom(recyclerView)) {
+                    allMemberListViewModel.loadMore();
                 }
             }
         });
-        loadData();
-    }
-
-    private void loadData() {
-        BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroupMemberOnlineList(conversationId, cursor, pageSize,new BIMResultCallback<BIMLiveMemberListResult>() {
-            @Override
-            public void onSuccess(BIMLiveMemberListResult resultMemberList) {
-                Log.i(TAG, "getLiveGroupMemberOnlineList() hasMore: " + resultMemberList.isHasMore());
-                hasMore = resultMemberList.isHasMore();
-                cursor = resultMemberList.getNextCursor();
-                adapter.appendMemberList(filter(resultMemberList.getMemberList()));
-            }
-
-            @Override
-            public void onFailed(BIMErrorCode code) {
-
-            }
-        });
+        allMemberListViewModel.loadMore();
     }
 
     protected List<BIMMember> filter(List<BIMMember> members) {

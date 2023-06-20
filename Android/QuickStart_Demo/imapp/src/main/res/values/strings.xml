@@ -61,7 +61,7 @@
     <string name="im_conversation_detail_conversation_leave">退出</string>
     <string name="im_conversation_group_set_manager">设置管理员</string>
     <string name="im_conversation_group_set_master">群主身份转让</string>
-    <string name="im_login_group_protocol_txt">已阅读并同意 个人信息授权与保护声明</string>
+    <string name="im_login_group_protocol_txt">已阅读并同意 用户协议 与 隐私政策</string>
     <string name="im_video_chat">视频通话</string>
     <string name="im_voice_chat">语音通话</string>
     <string name="im_rtc_normal">普通模式</string>

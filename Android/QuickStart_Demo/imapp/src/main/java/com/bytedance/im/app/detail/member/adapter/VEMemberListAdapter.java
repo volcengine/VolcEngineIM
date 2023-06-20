@@ -17,12 +17,14 @@ public class VEMemberListAdapter extends RecyclerView.Adapter<MemberViewHolder> 
     private Context mContext;
     private List<MemberWrapper> data;
     private OnMemberClickListener listener;
-    private boolean foreSilentGone;
+    private boolean isShowSilent;
+    private boolean isShowOnline;
 
     public VEMemberListAdapter(Context mContext, List<BIMMember> memberList, OnMemberClickListener listener) {
         this.mContext = mContext;
         this.listener = listener;
-        this.foreSilentGone = false;
+        this.isShowSilent = true;
+        this.isShowOnline = false;
         data = new ArrayList<>();
         if (memberList != null && !memberList.isEmpty()) {
             for (BIMMember member : memberList) {
@@ -33,20 +35,23 @@ public class VEMemberListAdapter extends RecyclerView.Adapter<MemberViewHolder> 
     }
 
     public VEMemberListAdapter(Context mContext, OnMemberClickListener listener) {
-        this(mContext, listener, false);
+        this(mContext, listener, true,false);
     }
-    public VEMemberListAdapter(Context mContext, OnMemberClickListener listener, boolean foreSilentGone) {
+
+    public VEMemberListAdapter(Context mContext, OnMemberClickListener listener, boolean isShowSilent, boolean isShowOnline) {
         this.mContext = mContext;
         this.data = new ArrayList<>();
         this.listener = listener;
-        this.foreSilentGone = foreSilentGone;
+        this.isShowSilent = isShowSilent;
+        this.isShowOnline = isShowOnline;
     }
 
     public void appendMemberList(List<BIMMember> list) {
         if (list != null) {
             for (BIMMember member : list) {
                 MemberWrapper wrapper = new MemberWrapper(member, MemberWrapper.TYPE_NORMAL);
-                wrapper.setForceSilentGone(foreSilentGone);
+                wrapper.setShowSilent(isShowSilent);
+                wrapper.setShowOnline(isShowOnline);
                 data.add(wrapper);
             }
             notifyDataSetChanged();

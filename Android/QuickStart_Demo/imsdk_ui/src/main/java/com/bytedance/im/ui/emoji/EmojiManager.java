@@ -57,7 +57,7 @@ public class EmojiManager {
         if (content == null || context == null) {
             return null;
         }
-        //先移除已经添加加入的span
+        //先移出已经添加加入的span
         if (content instanceof Spannable) {
             Spannable spanContent = (Spannable) content;
             EmojiCenterImageSpan[] spans = spanContent.getSpans(0, content.length(), EmojiCenterImageSpan.class);
