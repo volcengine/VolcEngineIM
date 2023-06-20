@@ -50,8 +50,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.4'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
     //远程依赖
-    implementation 'com.bytedance.im:im-uikit-tob:1.1.2'
-    implementation 'com.bytedance.im:imsdk-tob:1.1.2'
+    implementation 'com.bytedance.im:im-uikit-tob:1.1.4'
+    implementation 'com.bytedance.im:imsdk-tob:1.1.4'
     //本地依赖
 //    implementation project(':imsdk_ui')
 }
