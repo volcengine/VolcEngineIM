@@ -35,7 +35,7 @@ public class VEGroupMemberRemoveActivity extends VEMemberSelectListActivity {
         super.onCreate(savedInstanceState);
         conversationId = getIntent().getStringExtra(CONVERSATION_ID);
         TextView title = findViewById(R.id.tv_title);
-        title.setText("移除群成员");
+        title.setText("移出群成员");
     }
 
     public static void start(Activity activity, String conversationId) {
@@ -63,14 +63,14 @@ public class VEGroupMemberRemoveActivity extends VEMemberSelectListActivity {
             List<Long> uidList = new ArrayList<>();
             for (BIMMember member : selectList) {
                 if (selfMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN && member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
-                    //管理员不可以移除管理员
-                    Toast.makeText(VEGroupMemberRemoveActivity.this, "移除失败", Toast.LENGTH_SHORT).show();
+                    //管理员不可以移出管理员
+                    Toast.makeText(VEGroupMemberRemoveActivity.this, "移出失败", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 uidList.add(member.getUserID());
             }
 
-            waitDialog = ProgressDialog.show(VEGroupMemberRemoveActivity.this, "移除成员中,稍等...", "");
+            waitDialog = ProgressDialog.show(VEGroupMemberRemoveActivity.this, "移出成员中,稍等...", "");
             String text = UserManager.geInstance().builderNamelist(uidList) + " 退出群聊 ";
             BIMGroupNotifyElement content = new BIMGroupNotifyElement();
             content.setText(text);
@@ -92,14 +92,14 @@ public class VEGroupMemberRemoveActivity extends VEMemberSelectListActivity {
                         @Override
                         public void onSuccess() {
                             waitDialog.dismiss();
-                            Toast.makeText(VEGroupMemberRemoveActivity.this, "移除成功", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(VEGroupMemberRemoveActivity.this, "移出成功", Toast.LENGTH_SHORT).show();
                             finish();
                         }
 
                         @Override
                         public void onFailed(BIMErrorCode code) {
                             waitDialog.dismiss();
-                            Toast.makeText(VEGroupMemberRemoveActivity.this, "移除失败", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(VEGroupMemberRemoveActivity.this, "移出失败", Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     });

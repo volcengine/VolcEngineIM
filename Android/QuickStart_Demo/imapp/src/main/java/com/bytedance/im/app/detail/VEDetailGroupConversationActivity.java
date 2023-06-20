@@ -28,7 +28,6 @@ import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.app.detail.edit.VEEditGroupNameActivity;
 import com.bytedance.im.app.detail.edit.VEEditGroupNoticeActivity;
-import com.bytedance.im.app.detail.manager.VEDetailGroupManagerActivity;
 import com.bytedance.im.app.detail.member.VEGroupMemberAddActivity;
 import com.bytedance.im.app.detail.member.VEGroupMemberRemoveActivity;
 import com.bytedance.im.app.detail.member.VEMemberListActivity;
@@ -82,7 +81,7 @@ public class VEDetailGroupConversationActivity extends Activity {
         recyclerView = findViewById(R.id.recycler_view_member);
         tvGroupName = findViewById(R.id.tv_conversation_group_name);
         tvNotice = findViewById(R.id.tv_conversation_group_notice_null);
-        optionManager = findViewById(R.id.cl_conversation_master_manage);
+        optionManager = findViewById(R.id.cl_conversation_owner_manage);
         optionDissolveGroup = findViewById(R.id.fl_dissolve_group);
         optionQuitGroup = findViewById(R.id.fl_quit_group);
         noticeArrow = findViewById(R.id.iv_conversation_notice);

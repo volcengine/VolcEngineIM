@@ -30,6 +30,7 @@
         </activity>
         <activity
             android:name=".live.chatRoom.VELiveGroupChatRoomActivity"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".live.conversation.VELiveGroupListActivity"
@@ -42,6 +43,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".message.VEMessageListActivity"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -118,6 +120,10 @@
         <activity android:name=".live.edit.VEEditLiveOwnerActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".live.member.VELiveMemberSilentListActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".live.member.VELiveMemberSilentWhiteListActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".live.member.VELiveMemberMasterListActivity"
             android:screenOrientation="portrait"/>
         <provider
             android:name="android.support.v4.content.FileProvider"

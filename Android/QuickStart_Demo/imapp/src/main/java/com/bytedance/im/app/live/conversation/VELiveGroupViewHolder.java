@@ -9,7 +9,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
 import com.bytedance.im.core.api.BIMClient;
+import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.model.BIMConversation;
+import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.conversation.adapter.VEViewHolder;
 import com.bytedance.im.ui.conversation.model.VEConvBaseWrapper;
 
@@ -41,11 +43,19 @@ public class VELiveGroupViewHolder extends VEViewHolder<VEConvBaseWrapper<BIMCon
         }
         nickName.setTextColor(itemView.getContext().getResources().getColor(textColor));
         BIMConversation conversation = conversationVEConversationWrapper.getInfo();
-        if (conversation.getOwnerId() == BIMClient.getInstance().getCurrentUserID()) {
-            tvDetail.setText("群主");
+        BIMMember curMember = conversation.getCurrentMember();
+        tvDetail.setVisibility(View.GONE);
+        if (curMember != null) {
             tvDetail.setVisibility(View.VISIBLE);
-        } else {
-            tvDetail.setVisibility(View.GONE);
+            if (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
+                tvDetail.setText("群主");
+            } else if (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
+                tvDetail.setText("管理员");
+            } else if (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_NORMAL) {
+                tvDetail.setText("成员");
+            } else if (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_VISITOR) {
+                tvDetail.setText("游客");
+            }
         }
     }
 

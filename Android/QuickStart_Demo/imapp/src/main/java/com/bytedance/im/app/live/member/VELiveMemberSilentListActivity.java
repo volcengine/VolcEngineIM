@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class VELiveMemberSilentListActivity extends Activity {
-    private static String TAG = "VELiveGroupMemberBlockListActivity";
+    private static String TAG = "VELiveMemberSilentListActivity";
     private static String CONVERSATION_SHORT_ID = "conversation_short_id";
 
     private static final int REQUEST_EDIT_UID = 0;
@@ -75,12 +75,12 @@ public class VELiveMemberSilentListActivity extends Activity {
         List dialogInfo = new ArrayList<android.util.Pair<String, VELiveGroupDialogUtils.BottomInputDialogListener>>();
         dialogInfo.add(new android.util.Pair("移出成员", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> BIMClient.getInstance().getService(BIMLiveExpandService.class).removeLiveGroupMemberSilentList(conversationShortId, Collections.singletonList(member.getUserID()), new BIMSimpleCallback() {
             public void onSuccess() {
-                Toast.makeText(VELiveMemberSilentListActivity.this, "移除禁言黑名单成功" + member.getUserID(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(VELiveMemberSilentListActivity.this, "移出禁言黑名单成功" + member.getUserID(), Toast.LENGTH_SHORT).show();
                 adapter.remove(member.getUserID());
             }
 
             public void onFailed(BIMErrorCode code) {
-                Toast.makeText(VELiveMemberSilentListActivity.this, "移除禁言黑名单失败" + member.getUserID(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(VELiveMemberSilentListActivity.this, "移出禁言黑名单失败" + member.getUserID(), Toast.LENGTH_SHORT).show();
             }
 
         })));

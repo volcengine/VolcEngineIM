@@ -74,7 +74,7 @@ public class VEGroupManagerConfigActivity extends VEMemberSelectListActivity {
                 addList.add(uid);
             }
         }
-        //移除管理员
+        //移出管理员
         List<Long> removeList = new ArrayList<>();
         for (long uid : oldManagerUidList) {
             if (!selectUidList.contains(uid)) {
@@ -109,14 +109,14 @@ public class VEGroupManagerConfigActivity extends VEMemberSelectListActivity {
                 public void onSuccess() {
                     sendRemoveManagerMessage(removeList);
                     waitRemoveDialog.dismiss();
-                    Toast.makeText(VEGroupManagerConfigActivity.this, "移除成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VEGroupManagerConfigActivity.this, "移出成功", Toast.LENGTH_SHORT).show();
                     checkEnd();
                 }
 
                 @Override
                 public void onFailed(BIMErrorCode code) {
                     waitRemoveDialog.dismiss();
-                    Toast.makeText(VEGroupManagerConfigActivity.this, "移除失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VEGroupManagerConfigActivity.this, "移出失败", Toast.LENGTH_SHORT).show();
                     checkEnd();
                 }
             });
@@ -127,7 +127,7 @@ public class VEGroupManagerConfigActivity extends VEMemberSelectListActivity {
 
     private void checkEnd(){
         if ((waitAddDialog == null || !waitAddDialog.isShowing())   //添加管理员完成
-                && (waitRemoveDialog == null || !waitRemoveDialog.isShowing())) {   //移除管理员完成
+                && (waitRemoveDialog == null || !waitRemoveDialog.isShowing())) {   //移出管理员完成
             finish();
         }
     }

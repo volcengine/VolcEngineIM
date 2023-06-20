@@ -1,7 +1,10 @@
 package com.bytedance.im.app.detail.member.adapter;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -41,15 +44,33 @@ public class MemberViewHolder extends RecyclerView.ViewHolder {
         } else if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
             name += "[管理员]";
         }
-        if (memberWrapper.isForceSilentGone()) {
-            ivSilent.setVisibility(View.GONE);
-        } else {
+//        else if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_VISITOR) {
+//            name += "[游客]";
+//        } else if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_NORMAL) {
+//            name += "[成员]";
+//        }
+        boolean showOnlineTag = memberWrapper.isShowOnline() &&(member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN || member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER);
+        if (showOnlineTag) {
+            if (member.isOnline()) {
+                name += " 在线";
+            } else {
+                name += " 离线";
+            }
+        }
+        if (memberWrapper.isShowSilent()) {
             if (member.getSilentStatus() == BIMBlockStatus.BIM_BLOCK_STATUS_BLOCK) {
                 ivSilent.setVisibility(View.VISIBLE);
             } else {
                 ivSilent.setVisibility(View.GONE);
             }
+        } else {
+            ivSilent.setVisibility(View.GONE);
         }
-        nickName.setText(name);
+
+        SpannableString nameSpannableStr = new SpannableString(name);
+        if (showOnlineTag && nameSpannableStr.length() >= 2) {
+            nameSpannableStr.setSpan(new ForegroundColorSpan(Color.LTGRAY), nameSpannableStr.length() - 2, nameSpannableStr.length(), 0);
+        }
+        nickName.setText(nameSpannableStr);
     }
 }

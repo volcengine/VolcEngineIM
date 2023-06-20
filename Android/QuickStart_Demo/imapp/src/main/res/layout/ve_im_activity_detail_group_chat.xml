@@ -162,7 +162,7 @@
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/cl_conversation_master_manage"
+        android:id="@+id/cl_conversation_owner_manage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
@@ -180,7 +180,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/iv_conversation_master_manage"
+            android:id="@+id/iv_conversation_owner_manage"
             android:layout_width="9dp"
             android:layout_height="18dp"
             android:layout_marginLeft="9dp"

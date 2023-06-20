@@ -12,14 +12,11 @@ import android.widget.Toast;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.detail.member.adapter.VEMemberListAdapter;
 import com.bytedance.im.app.live.utils.VELiveUtils;
-import com.bytedance.im.core.api.BIMClient;
-import com.bytedance.im.core.api.enums.BIMErrorCode;
-import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMember;
-import com.bytedance.im.live.BIMLiveExpandService;
-import com.bytedance.im.live.api.model.BIMLiveMemberListResult;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class VELiveMemberListActivity extends Activity {
 
@@ -28,10 +25,9 @@ public class VELiveMemberListActivity extends Activity {
 
     private RecyclerView memberListV;
     private VEMemberListAdapter adapter;
-    private long cursor = -1;
-    private long pageSize = 20;
-    private boolean hasMore = true;
     private long conversationId;
+
+    private VEAllMemberListViewModel allMemberListViewModel;
 
     public static void start(Activity activity, long conversationId) {
         Intent intent = new Intent(activity, VELiveMemberListActivity.class);
@@ -44,11 +40,12 @@ public class VELiveMemberListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ve_im_activity_member_list_layout);
         conversationId = getIntent().getLongExtra(CONVERSATION_ID, 0);
+        allMemberListViewModel = new VEAllMemberListViewModel(conversationId, memberList -> appendMemberList(memberList));
         findViewById(R.id.back).setOnClickListener(v -> finish());
         memberListV = findViewById(R.id.user_list);
         memberListV.setItemAnimator(null);
         memberListV.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new VEMemberListAdapter(VELiveMemberListActivity.this, member -> onMemberClick(member));
+        adapter = new VEMemberListAdapter(VELiveMemberListActivity.this, member -> onMemberClick(member),false,true);
         memberListV.setAdapter(adapter);
         memberListV.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -59,32 +56,19 @@ public class VELiveMemberListActivity extends Activity {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (VELiveUtils.isScrollToBottom(recyclerView) && hasMore) {
-                    loadData();
+                if(VELiveUtils.isScrollToBottom(recyclerView)){
+                    allMemberListViewModel.loadMore();
                 }
             }
         });
-        loadData();
+        allMemberListViewModel.loadMore();
     }
 
-    private void loadData() {
-        BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroupMemberOnlineList(conversationId, cursor, pageSize, new BIMResultCallback<BIMLiveMemberListResult>() {
-            @Override
-            public void onSuccess(BIMLiveMemberListResult resultMemberList) {
-                cursor = resultMemberList.getNextCursor();
-                hasMore = resultMemberList.isHasMore();
-                appendMemberList(resultMemberList.getMemberList());
-            }
-
-            @Override
-            public void onFailed(BIMErrorCode code) {
-                Toast.makeText(VELiveMemberListActivity.this, "加载失败:" + code, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private void appendMemberList(List<BIMMember> list) {
-        adapter.appendMemberList(list);
+        if (adapter != null) {
+            adapter.appendMemberList(list);
+        }
     }
 
     protected void onMemberClick(BIMMember member) {
