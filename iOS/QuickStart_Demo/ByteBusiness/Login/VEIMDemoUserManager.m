@@ -56,18 +56,11 @@
     if (self) {
         _userDict = [NSMutableDictionary dictionary];
         
-        if (kVEIMDemoUserID.length && kVEIMDemoToken.length) {
-            VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
-            user.userID = [kVEIMDemoUserID longLongValue];
-            user.userToken = kVEIMDemoToken;
+        NSData *userData = [[NSUserDefaults standardUserDefaults] valueForKey:kVEIMDemoUserUserdefaultKey];
+        NSError *error;
+        VEIMDemoUser *user = [NSKeyedUnarchiver unarchivedObjectOfClass:[VEIMDemoUser class] fromData:userData error:&error];
+        if (user && !error) {
             self.currentUser = user;
-        } else {
-            NSData *userData = [[NSUserDefaults standardUserDefaults] valueForKey:kVEIMDemoUserUserdefaultKey];
-            NSError *error;
-            VEIMDemoUser *user = [NSKeyedUnarchiver unarchivedObjectOfClass:[VEIMDemoUser class] fromData:userData error:&error];
-            if (user && !error) {
-                self.currentUser = user;
-            }
         }
         
         [self initSDK];
@@ -158,6 +151,7 @@
     [self.progressHUD showAnimated:YES];
     
     if (kVEIMDemoToken.length) {
+        user.userID = [kVEIMDemoUserID longLongValue];
         self.currentUser = user;
         self.currentUser.userToken = kVEIMDemoToken;
         [self saveCurrentUser:user];
