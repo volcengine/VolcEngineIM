@@ -32,6 +32,7 @@ import com.bytedance.im.app.live.member.VELiveMemberMasterListActivity;
 import com.bytedance.im.app.live.member.VELiveMemberRemoveActivity;
 import com.bytedance.im.app.live.member.VELiveMemberSilentListActivity;
 import com.bytedance.im.app.live.member.VELiveMemberSilentWhiteListActivity;
+import com.bytedance.im.app.live.member.VELiveOnLineQueryActivity;
 import com.bytedance.im.app.login.data.UserMock;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMBlockStatus;
@@ -73,6 +74,7 @@ public class VELiveDetailActivity extends Activity {
     private View optionBlockLayout;
     private View optionDissolveGroup;
     private View optionQuitGroup;
+    private View optionOnlineInfoLayout;
     private Switch silentSwitch;
     private long ownerId;
 
@@ -105,6 +107,7 @@ public class VELiveDetailActivity extends Activity {
         setContentView(R.layout.ve_im_activity_detail_live_group_chat);
         TextView title = findViewById(R.id.message_list_title);
         title.setText("直播群详情");
+        optionOnlineInfoLayout = findViewById(R.id.cl_conversation_online_info);
         optionNameLayout = findViewById(R.id.cl_conversation_name);
         optionIconLayout = findViewById(R.id.cl_conversation_icon);
         optionNoticeLayout = findViewById(R.id.cl_conversation_notice);
@@ -128,18 +131,19 @@ public class VELiveDetailActivity extends Activity {
         silentSwitch = findViewById(R.id.switch_silent);
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
         findViewById(R.id.iv_goto_member).setOnClickListener(v -> VELiveMemberListActivity.start(this, conversationShortId));
+        optionOnlineInfoLayout.setOnClickListener(v -> VELiveOnLineQueryActivity.start(this, conversationShortId));
         optionNameLayout.setOnClickListener(v -> VEEditLiveNameActivity.start(this, conversationShortId));
         optionIconLayout.setOnClickListener(v -> VEEditLivePortraitActivity.start(this, conversationShortId));
         optionDesLayout.setOnClickListener(v -> VEEditLiveDesActivity.start(this, conversationShortId));
         optionNoticeLayout.setOnClickListener(v -> VEEditLiveNoticeActivity.start(this, conversationShortId));
-        optionMyNickNamLayout.setOnClickListener(v -> VEEditCommonActivity.startForResult(this, "我的群昵称", tvNickName.getText().toString(),10, REQUEST_CODE_NICKNAME));
+        optionMyNickNamLayout.setOnClickListener(v -> VEEditCommonActivity.startForResult(this, "我的群昵称", tvNickName.getText().toString(), 10, REQUEST_CODE_NICKNAME));
         silentSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> switchSilent(buttonView, isChecked));
         optionSilentBlockLayout.setOnClickListener(v -> VELiveMemberSilentListActivity.start(this, conversationShortId));
         optionSilentWhiteLayout.setOnClickListener(v -> VELiveMemberSilentWhiteListActivity.start(this, conversationShortId));
         optionBlockLayout.setOnClickListener(v -> VELiveMemberBlockListActivity.start(this, conversationShortId));
         optionOwnerManagerLayout.setOnClickListener(v -> VEEditLiveOwnerActivity.start(this, conversationShortId));
         optionMasterManagerLayout.setOnClickListener(v -> {
-            VELiveMemberMasterListActivity.start(this,conversationShortId);
+            VELiveMemberMasterListActivity.start(this, conversationShortId);
 
         });
         optionDissolveGroup.setOnClickListener(v -> dissolveGroup());
@@ -171,10 +175,10 @@ public class VELiveDetailActivity extends Activity {
         refreshDetailView();
     }
 
-    private void updateConvSilentWLUI(boolean isSilent){
+    private void updateConvSilentWLUI(boolean isSilent) {
         if (isSilent) {
             optionSilentWhiteLayout.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             optionSilentWhiteLayout.setVisibility(View.GONE);
         }
     }
@@ -188,14 +192,14 @@ public class VELiveDetailActivity extends Activity {
                 String name = VEDetailController.getGroupName(conversation);
                 String notice = VEDetailController.getNotice(conversation);
                 String des = VEDetailController.getDescription(conversation);
-                String url =  conversation.getPortraitURL();
+                String url = conversation.getPortraitURL();
                 boolean isConvSilent = conversation.getBlockStatus() == BIMBlockStatus.BIM_BLOCK_STATUS_BLOCK;
                 tvGroupName.setText(name);
                 tvNotice.setText(notice);
                 tvDes.setText(des);
                 Glide.with(tvIcon.getContext()).load(url).into(tvIcon);
                 ownerId = bimConversation.getOwnerId();
-                tvOnlineCount.setText(bimConversation.getOnLineMemberCount()+" 人");
+                tvOnlineCount.setText(bimConversation.getOnLineMemberCount() + " 人");
                 silentSwitch.setChecked(isConvSilent);
                 updateConvSilentWLUI(isConvSilent);
                 if (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_NORMAL || curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_VISITOR) {

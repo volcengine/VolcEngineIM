@@ -34,7 +34,7 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".live.conversation.VELiveGroupListActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".main.VEIMMainActivity"
             android:screenOrientation="portrait" />
@@ -107,24 +107,40 @@
         <activity
             android:name=".live.member.VELiveMemberListActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".live.edit.VEEditLiveNameActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".live.edit.VEEditLiveDesActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".live.member.VELiveMemberRemoveActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".live.edit.VEEditLiveNoticeActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".live.edit.VEEditLivePortraitActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".live.edit.VEEditLiveOwnerActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".live.member.VELiveMemberSilentListActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".live.member.VELiveMemberSilentWhiteListActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".live.member.VELiveMemberMasterListActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".live.edit.VEEditLiveNameActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.edit.VEEditLiveDesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.member.VELiveMemberRemoveActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.edit.VEEditLiveNoticeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.edit.VEEditLivePortraitActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.edit.VEEditLiveOwnerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.member.VELiveMemberSilentListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.member.VELiveMemberSilentWhiteListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.member.VELiveMemberMasterListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.member.VELiveOnLineQueryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.member.VELiveOnlineQueryResultActivity"
+            android:screenOrientation="portrait" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
