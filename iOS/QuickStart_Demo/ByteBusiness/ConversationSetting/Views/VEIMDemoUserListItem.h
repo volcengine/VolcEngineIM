@@ -9,7 +9,6 @@
 #import "VEIMDemoBaseView.h"
 #import "VEIMDemoUserManager.h"
 
-@protocol BIMMember;
 NS_ASSUME_NONNULL_BEGIN
 
 @interface VEIMDemoUserListItem : VEIMDemoBaseView
@@ -17,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIImageView *userPortrait;
 @property (nonatomic, strong) UILabel *userName;
 
-- (void)refreshWithParticipant: (id <BIMMember> )participant;
+- (void)refreshWithParticipant: (long long)uid;
 
 @end
 

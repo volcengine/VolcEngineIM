@@ -9,6 +9,7 @@
 #import "VEIMDemoUserManager.h"
 #import "VEIMDemoDefine.h"
 #import "UIImage+BTDAdditions.h"
+#import "BIMToastView.h"
 
 #import <Masonry/Masonry.h>
 
@@ -16,14 +17,15 @@
 @property (nonatomic, strong) UIImageView *portrait;
 @property (nonatomic, strong) UILabel *name;
 @property (nonatomic, strong) UILabel *uidLabel;
+@property (nonatomic, strong) VEIMDemoUser *user;
 @end
 
 @implementation VEIMDemoMyinfoHeaderCell
 
 - (void)setupUIElemets{
     [super setupUIElemets];
-    self.userInteractionEnabled = NO;
-    
+//    self.userInteractionEnabled = NO;
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
     self.portrait = [UIImageView new];
     [self.contentView addSubview:self.portrait];
     
@@ -33,9 +35,14 @@
     [self.contentView addSubview:self.name];
     
     self.uidLabel = [UILabel new];
+    self.uidLabel.userInteractionEnabled = YES;
     self.uidLabel.textColor = kIM_Sub_Color;
     self.uidLabel.font = [UIFont systemFontOfSize:14];
     [self.contentView addSubview:self.uidLabel];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(copyUid)];
+    [self.uidLabel addGestureRecognizer:tap];
+    
     
     self.portrait.layer.cornerRadius = 18;
     [self.portrait mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -55,6 +62,7 @@
     }];
 }
 - (void)refreshWithUser:(VEIMDemoUser *)user{
+    _user = user;
     if (!user) {
         self.portrait.image = [UIImage btd_imageWithColor:[UIColor lightGrayColor]];
         self.name.text = @"未登录";
@@ -65,5 +73,14 @@
         self.uidLabel.text = [NSString stringWithFormat:@"UID: %lld",user.userID];
     }
 }
+
+- (void)copyUid
+{
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = @(self.user.userID).stringValue;
+    [BIMToastView toast:[NSString stringWithFormat:@"已复制UID:%@", pasteboard.string] withDuration:0.5];
+}
+
+
 
 @end

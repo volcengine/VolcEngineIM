@@ -7,7 +7,6 @@
 
 #import "BIMBaseTableViewController.h"
 
-#import <imsdk-tob/BIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

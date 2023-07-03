@@ -21,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) BOOL isNeedSelection;
 @property (nonatomic, assign) BOOL isSelected;
+@property (nonatomic, assign) BOOL disableLongPress;
+@property (nonatomic, copy) NSString *onlineString;
 
 @end
 

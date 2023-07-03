@@ -16,6 +16,7 @@
 #import <OneKit/ByteDanceKit.h>
 //#import <imsdk-tob/BIMDebugManager.h>
 #import "BIMUIClient.h"
+#import "VEIMDemoIMManager.h"
 
 @interface VEIMDemoUserManager ()<BIMConnectListener>
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
@@ -63,11 +64,11 @@
             self.currentUser = user;
         }
         
+        // IMSDK
         [self initSDK];
         
-        [[BIMClient sharedInstance] addConnectListener:self];
         
-        [self setupDefaultUser];
+        [[BIMClient sharedInstance] addConnectListener:self];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:BDIMDebugNetworkChangeNotification object:nil];
         
@@ -87,6 +88,9 @@
     [[BIMUIClient sharedInstance] initSDK:[kVEIMDemoAppID integerValue]  config:config];
     
     [[BIMUIClient sharedInstance] setUserProvider:^BIMUser * _Nullable(long long userID) {
+        if (userID == 0) {
+            return nil;
+        }
         BIMUser *user = [[BIMUser alloc] init];
         user.nickName = [self nicknameForTestUser:userID];
         user.headImg = [UIImage imageNamed:[self portraitForTestUser:userID]];
@@ -105,11 +109,15 @@
         return;
     }
     if (!self.currentUser) {
-        VEIMDemoLoginViewController *loginVC = [[VEIMDemoLoginViewController alloc] init];
-        [[VEIMDemoRouter shared] presentViewController:loginVC fullScreen:YES animated:YES];
+        [self presentLoginVC];
     }else{
         [self loginWithUser:self.currentUser completion:nil];
     }
+}
+
+- (void)presentLoginVC
+{
+    [[VEIMDemoIMManager sharedManager].accountProvider showLoginVC];
 }
 
 - (void)logout {
@@ -151,7 +159,6 @@
     [self.progressHUD showAnimated:YES];
     
     if (kVEIMDemoToken.length) {
-        user.userID = [kVEIMDemoUserID longLongValue];
         self.currentUser = user;
         self.currentUser.userToken = kVEIMDemoToken;
         [self saveCurrentUser:user];
@@ -196,21 +203,6 @@
     }
 }
 
-- (NSMutableArray<VEIMDemoUser *> *)createTestUsers:(BOOL)needSelection{
-    NSMutableArray *testUsers = [NSMutableArray array];
-    for (int i = 1; i<11; i++) {
-        long long userId = 10000+i;
-        VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
-        user.userID = userId;
-        user.isNeedSelection = needSelection;
-        user.name = [NSString stringWithFormat:@"测试用户%d",i];
-        user.portrait = [NSString stringWithFormat:@"icon_recommond_user_%d",i];
-        
-        [testUsers addObject:user];
-    }
-    return testUsers;
-}
-
 - (void)saveCurrentUser: (VEIMDemoUser *)user{
     NSData *userData = [NSKeyedArchiver archivedDataWithRootObject:user requiringSecureCoding:NO error:nil];
     if (userData) {
@@ -224,7 +216,7 @@
     if (user.portrait) {
         return user.portrait;
     } else {
-        return @"icon_recommond_user_1";
+        return @"icon_recommend_user_default";
     }
 }
 
@@ -233,7 +225,7 @@
     if (user) {
         return user.name;
     } else {
-        return [NSString stringWithFormat:@"测试用户%lld",userID];
+        return [NSString stringWithFormat:@"用户%lld",userID];
     }
 }
 
@@ -250,14 +242,6 @@
         user.userID = userID;
         user.name = nickName;
         [self.userDict setObject:user forKey:@(userID)];
-    }
-}
-
-- (void)setupDefaultUser
-{
-    NSArray<VEIMDemoUser *> *users = [self createTestUsers:YES];
-    for (VEIMDemoUser *user in users) {
-        [self.userDict setObject:user forKey:@(user.userID)];
     }
 }
 
@@ -281,7 +265,7 @@
 #pragma mark - BIMConnectListener
 
 - (void)onTokenInvalid {
-    UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"账号已过期，请重新登陆" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"账号已过期，请重新登录" message:nil preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *sure = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         [self logout];
     }];

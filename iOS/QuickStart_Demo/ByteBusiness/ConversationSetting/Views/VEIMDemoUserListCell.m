@@ -52,6 +52,7 @@
     UIBlurEffect *eff = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
     self.arrowBg = [[UIVisualEffectView alloc]initWithEffect:eff];
     self.arrowBg.alpha = 0.8;
+    self.arrowBg.userInteractionEnabled = NO;
     [self.contentView addSubview:self.arrowBg];
     
     self.arrow = [UIImageView new];
@@ -171,16 +172,16 @@
     self.subTitleLabel.frame = CGRectMake(arrowBgX - subTitleW, 0, subTitleW, self.contentView.bounds.size.height);
 }
 
-- (void)refreshWithConversationParticipants:(NSOrderedSet *)participants{
+- (void)refreshWithConversationParticipants:(NSArray *)participants{
     for (UIView *sub in self.userItems) {
         [sub removeFromSuperview];
     }
     
     [self.userItems removeAllObjects];
     
-    for (id <BIMMember> participant in participants) {
+    for (NSNumber *uid in participants) {
         VEIMDemoUserListItem *item = [[VEIMDemoUserListItem alloc] init];
-        [item refreshWithParticipant:participant];
+        [item refreshWithParticipant:uid.longLongValue];
         [self.contentScrollView addSubview:item];
         [self.userItems addObject:item];
     }

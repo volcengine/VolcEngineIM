@@ -10,6 +10,7 @@
 
 @interface VEIMDemoTestUserCell ()
 
+@property (nonatomic, strong) UILabel *onlineLabel;
 
 @end
 
@@ -22,6 +23,7 @@
     [self.checkMark setImage:[UIImage imageNamed:@"icon_duoxuan_normal"] forState:UIControlStateNormal];
     [self.checkMark setImage:[UIImage imageNamed:@"icon_duoxuan_sel"] forState:UIControlStateSelected];
     [self.contentView addSubview:self.checkMark];
+    self.checkMark.userInteractionEnabled = NO;
     
     [self.checkMark mas_makeConstraints:^(MASConstraintMaker *make) {
         make.width.height.mas_equalTo(16);
@@ -35,6 +37,16 @@
         make.width.height.mas_equalTo(16);
         make.right.mas_equalTo(-24);
         make.centerY.equalTo(self.contentView);
+    }];
+    
+    self.onlineLabel = [UILabel new];
+    self.onlineLabel.font = [UIFont systemFontOfSize:12];
+    self.onlineLabel.textColor = [UIColor lightGrayColor];
+    [self.contentView addSubview:self.onlineLabel];
+    
+    [self.onlineLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.nameLabel.mas_right).with.offset(12);
+        make.centerY.equalTo(self.nameLabel);
     }];
     
     UILongPressGestureRecognizer *longGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
@@ -53,6 +65,8 @@
     self.subTitleLabel.text = nil;
 //    self.subTitleLabel.text = [NSString stringWithFormat:@"UserID: %lld",user.userID];
     self.checkMark.selected = user.isSelected;
+    
+    self.onlineLabel.text = user.onlineString;
     
     if (user.isNeedSelection) {
         self.checkMark.enabled = YES;

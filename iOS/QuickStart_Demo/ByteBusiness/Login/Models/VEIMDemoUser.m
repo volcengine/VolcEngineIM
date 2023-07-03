@@ -31,4 +31,17 @@
     return self;
 }
 
+#pragma mark - Equal
+
+- (BOOL)isEqual:(VEIMDemoUser *)object {
+    if (self == object) return YES;
+    if (![object isMemberOfClass:self.class]) return NO;
+    
+    return self.userID == object.userID;
+}
+
+- (NSUInteger)hash {
+    return self.userID;
+}
+
 @end

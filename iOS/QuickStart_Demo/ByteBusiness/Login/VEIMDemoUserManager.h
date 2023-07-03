@@ -17,13 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedManager;
 
 @property (nonatomic, strong) VEIMDemoUser *currentUser;
-//@property (nonatomic, strong) NSMutableArray<VEIMDemoUser *> *testUsers;
+
 
 - (void)showLoginVCIfNeed;
 
 - (void)loginWithUser:(VEIMDemoUser *)user completion:(void (^ _Nullable)(NSError * _Nullable))completion;
-
-- (NSMutableArray <VEIMDemoUser *> *)createTestUsers: (BOOL)needSelection;
 
 - (void)logout;
 

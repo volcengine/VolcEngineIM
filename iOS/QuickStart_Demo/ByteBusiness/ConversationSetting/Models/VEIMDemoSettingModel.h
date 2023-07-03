@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL isNeedSwitch;
 @property (nonatomic, assign) BOOL switchOn;
 @property (nonatomic, strong) void(^switchHandler)(UISwitch *swt);
+@property (nonatomic, assign) BOOL switchDisable;
 
 + (instancetype)settingWithTitle: (NSString *)title detail: (NSString *)detail isNeedSwitch: (BOOL)isNeedSwitch switchOn: (BOOL)on;
 

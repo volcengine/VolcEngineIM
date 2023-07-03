@@ -90,6 +90,9 @@
     
     kWeakSelf(self)
     [cell setLongPressHandler:^(UILongPressGestureRecognizer * _Nonnull gesture) {
+        if (user.disableLongPress) {
+            return;
+        }
         if ([weakself.delegate respondsToSelector:@selector(userSelectVC:didLongPressUser:indexPath:)]) {
             [weakself.delegate userSelectVC:weakself didLongPressUser:user indexPath:indexPath];
         }

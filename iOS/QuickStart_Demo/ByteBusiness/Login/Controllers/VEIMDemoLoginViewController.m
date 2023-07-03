@@ -17,16 +17,15 @@
 @interface VEIMDemoLoginViewController () <UITableViewDelegate, UITableViewDataSource, UITextViewDelegate>
 
 @property (nonatomic, strong) UILabel *welcomeLabel;
-@property (nonatomic, strong) UILabel *promptLabel;
-@property (nonatomic, strong) UITableView *testUsersContainer;
+//@property (nonatomic, strong) UILabel *promptLabel;
+//@property (nonatomic, strong) UITableView *testUsersContainer;
 @property (nonatomic, strong) UITextView *loginPromptLabel;
 @property (nonatomic, strong) UIButton *checkMark;
 @property (nonatomic, strong) UIButton *loginBtn;
+@property (nonatomic, strong) UILabel *infoLabel;
 
-@property (nonatomic, strong) NSMutableArray <VEIMDemoUser *> *testUsers;
+//@property (nonatomic, strong) NSMutableArray <VEIMDemoUser *> *testUsers;
 @property (nonatomic, strong) VEIMDemoUser *currentSelectedUser;
-
-//@property (nonatomic, strong) UITextField *inputField;
 
 @end
 
@@ -44,9 +43,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.testUsers = [[VEIMDemoUserManager sharedManager] createTestUsers:YES];
+//    self.testUsers = [[VEIMDemoUserManager sharedManager] createTestUsers:YES];
+    VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
+    user.userID = [kVEIMDemoUserID longLongValue];
+    user.userToken = kVEIMDemoToken;
+    user.name = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:user.userID];
+    self.currentSelectedUser = user;
 }
-
 
 
 - (void)setupUIElements{
@@ -59,16 +62,16 @@
     self.welcomeLabel.font = [UIFont boldSystemFontOfSize:24];
     self.welcomeLabel.text = @"欢迎登录IM Demo";
     
-    self.promptLabel = [[UILabel alloc] init];
-    [self.view addSubview:self.promptLabel];
-    self.promptLabel.font = [UIFont systemFontOfSize:16];
-    self.promptLabel.text = @"请从以下账号中选择一个进行登录";
+    self.infoLabel = [[UILabel alloc] init];
+    self.infoLabel.numberOfLines = 0;
+    self.infoLabel.font = [UIFont systemFontOfSize:14];
+    NSMutableString *infoString = [NSMutableString string];
+    [infoString appendFormat:@"APPID: %@", kVEIMDemoAppID];
+    [infoString appendFormat:@"\n\n用户ID: %@", kVEIMDemoUserID];
+    [infoString appendFormat:@"\n\ntoken: %@", kVEIMDemoToken];
+    self.infoLabel.text = infoString;
+    [self.view addSubview:self.infoLabel];
     
-    self.testUsersContainer = [[UITableView alloc] init];
-    self.testUsersContainer.delegate = self;
-    self.testUsersContainer.dataSource = self;
-    [self.testUsersContainer registerClass:[VEIMDemoTestUserCell class] forCellReuseIdentifier:@"VEIMDemoTestUserCell"];
-    [self.view addSubview:self.testUsersContainer];
     
     self.checkMark = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.checkMark setImage:[UIImage imageNamed:@"icon_duoxuan_normal"] forState:UIControlStateNormal];
@@ -100,38 +103,24 @@
     self.loginBtn.layer.borderWidth = 2;
     self.loginBtn.layer.borderColor = [UIColor blackColor].CGColor;
     [self.loginBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    
-//    self.inputField = [UITextField new];
-//    self.inputField.layer.borderColor = [UIColor blackColor].CGColor;
-//    self.inputField.layer.borderWidth = 1.0;
-//    self.inputField.placeholder = @"输入自定义uid登录";
-//    [self.view addSubview:self.inputField];
-    
-    
+        
 
     [self.welcomeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(24);
-        make.top.mas_equalTo(KScreenHeight<680?    60:140);
+        make.top.mas_equalTo(KScreenHeight<680?	60:140);
     }];
     
-    [self.promptLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.infoLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.welcomeLabel);
-        make.top.equalTo(self.welcomeLabel.mas_bottom).with.offset(24);
+        make.top.equalTo(self.welcomeLabel.mas_bottom).with.offset(100);
         make.right.mas_lessThanOrEqualTo(-24);
-    }];
-    
-    [self.testUsersContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(0);
-        make.top.equalTo(self.promptLabel.mas_bottom).with.offset(12);
-        make.right.mas_equalTo(-24);
-        make.height.mas_equalTo(360);
     }];
     
     [self.checkMark mas_makeConstraints:^(MASConstraintMaker *make) {
         make.width.height.mas_equalTo(16);
-        make.left.equalTo(self.welcomeLabel);
-        make.top.equalTo(self.testUsersContainer.mas_bottom).with.offset(24);
-        
+        make.left.equalTo(self.infoLabel);
+        make.top.equalTo(self.infoLabel.mas_bottom).with.offset(24);
+
     }];
     
     [self.loginPromptLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -148,12 +137,6 @@
         make.height.mas_equalTo(40);
     }];
     
-//    [self.inputField mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.left.equalTo(self.welcomeLabel);
-//        make.top.equalTo(self.loginBtn.mas_bottom).offset(16);
-//        make.right.mas_equalTo(-24);
-//    }];
-    
 }
 
 - (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(nonnull NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction
@@ -165,6 +148,11 @@
 - (void)loginBtnClicked: (id)sender{
     if (!self.checkMark.selected) {
         [BIMToastView toast:@"请同意协议后登录"];
+        return;
+    }
+    
+    if (!kVEIMDemoUserID.length) {
+        [BIMToastView toast:@"uid不能为空，请在kVEIMDemoUserID中填写正确的uid"];
         return;
     }
     
@@ -186,46 +174,5 @@
     self.checkMark.selected = !self.checkMark.selected;
     
 }
-
-
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    VEIMDemoTestUserCell *cell = [tableView dequeueReusableCellWithIdentifier:@"VEIMDemoTestUserCell"];
-    VEIMDemoUser *user = [self.testUsers objectAtIndex:indexPath.row];
-    [cell hideSilentMark:YES];
-    cell.user = user;
-    return cell;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-//    if (self.currentSelectedUser) {
-//        self.currentSelectedUser.isSelected = NO;
-//    }
-//    VEIMDemoUser *user = [self.testUsers objectAtIndex:indexPath.row];
-//    user.isSelected = YES;
-//    self.currentSelectedUser = user;
-    VEIMDemoUser *user = [self.testUsers objectAtIndex:indexPath.row];
-    if (self.currentSelectedUser) {
-        if (self.currentSelectedUser == user) {
-            user.isSelected = NO;
-            self.currentSelectedUser = nil;
-        } else {
-            self.currentSelectedUser.isSelected = NO;
-            user.isSelected = YES;
-            self.currentSelectedUser = user;
-        }
-    } else {
-        user.isSelected = YES;
-        self.currentSelectedUser = user;
-    }
-    
-    [tableView reloadData];
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.testUsers.count;
-}
-
 
 @end

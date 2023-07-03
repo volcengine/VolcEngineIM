@@ -11,7 +11,7 @@
 
 @interface BIMConversationListDataSource () <BIMConversationListListener>
 
-@property (nonatomic, assign) long long currentSortOrder;
+@property (nonatomic, assign) long long currentCursor;
 
 @property (nonatomic, assign) BOOL hasMore;
 
@@ -50,9 +50,9 @@
 //TODO: block 循环引用
 - (void)loadNexPageConversationsWithCompletion:(void (^)(NSError * _Nullable))completion
 {
-    [[BIMClient sharedInstance] getConversationList:self.currentSortOrder count:self.pageSize completion:^(NSArray<BIMConversation *> * _Nonnull conversations, BOOL hasMore, BIMError * _Nullable error) {
+    [[BIMClient sharedInstance] getConversationList:self.currentCursor count:self.pageSize completion:^(NSArray<BIMConversation *> * _Nonnull conversations, BOOL hasMore, long long nextCursor, BIMError * _Nullable error) {
         if (conversations.count) {
-            self.currentSortOrder = conversations.lastObject.sortOrder;
+            self.currentCursor = nextCursor;
         }
         self.hasMore = hasMore;
         [self p_binaryInsertChatList:conversations];

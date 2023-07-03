@@ -17,6 +17,7 @@
 @property (nonatomic, strong) NSMutableDictionary *messageDict;
 @property (nonatomic, assign) BOOL hasMore;
 @property (nonatomic, strong) NSLock *lock;
+@property (nonatomic, strong) BIMMessage *earliestMessage;
 @end
 
 @implementation BIMChatViewDataSource
@@ -81,11 +82,11 @@
 {
     BIMGetMessageOption *option = [[BIMGetMessageOption alloc] init];
     option.limit = self.pageSize ?: 20;
-    option.earliestMessage = self.messageList.lastObject;
-    
+    option.earliestMessage = self.earliestMessage;
     kWeakSelf(self);
-    [[BIMClient sharedInstance] getHistoryMessageList:self.conversation.conversationID option:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMError * _Nullable error) {
+    [[BIMClient sharedInstance] getHistoryMessageList:self.conversation.conversationID option:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable earliestMessage, BIMError * _Nullable error) {
         if (!error) {
+            weakself.earliestMessage = earliestMessage;
             [weakself.lock lock];
             [weakself.p_messageList addObjectsFromArray:messages];
             [messages enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {

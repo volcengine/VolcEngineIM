@@ -49,6 +49,7 @@
         self.swt.hidden = NO;
         
         self.swt.on = model.switchOn;
+        self.swt.enabled = !model.switchDisable;
     }else{
         self.arrow.hidden = NO;
         self.swt.hidden = YES;

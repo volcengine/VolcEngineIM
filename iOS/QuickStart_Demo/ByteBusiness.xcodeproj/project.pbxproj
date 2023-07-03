@@ -20,6 +20,7 @@
 		2B3ABB872684642600B114E2 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB842684642600B114E2 /* Debug.xcconfig */; };
 		2B3ABB882684642600B114E2 /* Release_inhouse.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB852684642600B114E2 /* Release_inhouse.xcconfig */; };
 		2B3ABB892684642600B114E2 /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB862684642600B114E2 /* Release.xcconfig */; };
+		2B8AFFF62A48460600E25AA2 /* VEIMDemoSelectUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8AFFF52A48460600E25AA2 /* VEIMDemoSelectUserViewController.m */; };
 		2B8E543A292E734600A2A416 /* VEIMDemoConversationSettingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8E5439292E734600A2A416 /* VEIMDemoConversationSettingCell.m */; };
 		2B8E543E292E748D00A2A416 /* VEIMDemoSettingModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8E543D292E748D00A2A416 /* VEIMDemoSettingModel.m */; };
 		2B8E5441292E77A500A2A416 /* VEIMDemoInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8E5440292E77A500A2A416 /* VEIMDemoInputController.m */; };
@@ -61,6 +62,7 @@
 		2BA90DC92921EB2800154F35 /* VEIMDemoMyinfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA90D7D2921EB2800154F35 /* VEIMDemoMyinfoController.m */; };
 		2BA90DCA2921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA90D802921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m */; };
 		2BA90DCC2921EB9D00154F35 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BA90DCB2921EB9D00154F35 /* Assets.xcassets */; };
+		2BD4DC902A4B02F400A08AA7 /* VEIMDemoAccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD4DC8F2A4B02F400A08AA7 /* VEIMDemoAccountManager.m */; };
 		2BF1BA0B29A5E7B6007145D0 /* VEIMDemoConversationListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BF1BA0A29A5E7B6007145D0 /* VEIMDemoConversationListController.m */; };
 		2BF1BA0E29A5FD01007145D0 /* VEIMDemoChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BF1BA0D29A5FD01007145D0 /* VEIMDemoChatViewController.m */; };
 		6261DB9224643D4B00FC11F8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6261DB9124643D4B00FC11F8 /* CoreGraphics.framework */; };
@@ -120,6 +122,8 @@
 		2B3ABB842684642600B114E2 /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		2B3ABB852684642600B114E2 /* Release_inhouse.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release_inhouse.xcconfig; sourceTree = "<group>"; };
 		2B3ABB862684642600B114E2 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		2B8AFFF42A48460600E25AA2 /* VEIMDemoSelectUserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoSelectUserViewController.h; sourceTree = "<group>"; };
+		2B8AFFF52A48460600E25AA2 /* VEIMDemoSelectUserViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoSelectUserViewController.m; sourceTree = "<group>"; };
 		2B8E5438292E734600A2A416 /* VEIMDemoConversationSettingCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoConversationSettingCell.h; sourceTree = "<group>"; };
 		2B8E5439292E734600A2A416 /* VEIMDemoConversationSettingCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoConversationSettingCell.m; sourceTree = "<group>"; };
 		2B8E543C292E748D00A2A416 /* VEIMDemoSettingModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoSettingModel.h; sourceTree = "<group>"; };
@@ -199,6 +203,9 @@
 		2BA90D802921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoMyinfoHeaderCell.m; sourceTree = "<group>"; };
 		2BA90D812921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VEIMDemoMyinfoHeaderCell.h; sourceTree = "<group>"; };
 		2BA90DCB2921EB9D00154F35 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2BD4DC8D2A4AE81E00A08AA7 /* VEIMDemoAccountProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAccountProtocol.h; sourceTree = "<group>"; };
+		2BD4DC8E2A4B02F400A08AA7 /* VEIMDemoAccountManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAccountManager.h; sourceTree = "<group>"; };
+		2BD4DC8F2A4B02F400A08AA7 /* VEIMDemoAccountManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoAccountManager.m; sourceTree = "<group>"; };
 		2BF1BA0929A5E7B6007145D0 /* VEIMDemoConversationListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoConversationListController.h; sourceTree = "<group>"; };
 		2BF1BA0A29A5E7B6007145D0 /* VEIMDemoConversationListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoConversationListController.m; sourceTree = "<group>"; };
 		2BF1BA0C29A5FD01007145D0 /* VEIMDemoChatViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoChatViewController.h; sourceTree = "<group>"; };
@@ -265,6 +272,7 @@
 				25EE372D2433166D00AB5267 /* Products */,
 				81953F06DB8ED1E5CBCF68E1 /* Pods */,
 				6E67D12A448E561862444F0B /* Frameworks */,
+				2BC1719F2A3B391E0044BBE3 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -326,6 +334,9 @@
 			children = (
 				2B015F992A1F951D00ECD1EE /* VEIMDemoUserManager.h */,
 				2B015F952A1F951D00ECD1EE /* VEIMDemoUserManager.m */,
+				2BD4DC8E2A4B02F400A08AA7 /* VEIMDemoAccountManager.h */,
+				2BD4DC8F2A4B02F400A08AA7 /* VEIMDemoAccountManager.m */,
+				2BD4DC8D2A4AE81E00A08AA7 /* VEIMDemoAccountProtocol.h */,
 				2B015F962A1F951D00ECD1EE /* Models */,
 				2B015F9A2A1F951D00ECD1EE /* Controllers */,
 				2B015F9D2A1F951D00ECD1EE /* Views */,
@@ -545,6 +556,8 @@
 			children = (
 				2BA90D432921EB2700154F35 /* VEIMDemoUserSelectionController.h */,
 				2BA90D442921EB2700154F35 /* VEIMDemoUserSelectionController.m */,
+				2B8AFFF42A48460600E25AA2 /* VEIMDemoSelectUserViewController.h */,
+				2B8AFFF52A48460600E25AA2 /* VEIMDemoSelectUserViewController.m */,
 			);
 			path = UserSelect;
 			sourceTree = "<group>";
@@ -662,6 +675,13 @@
 				2BA90D812921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.h */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		2BC1719F2A3B391E0044BBE3 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		6E67D12A448E561862444F0B /* Frameworks */ = {
@@ -960,6 +980,7 @@
 				2BF1BA0B29A5E7B6007145D0 /* VEIMDemoConversationListController.m in Sources */,
 				2BA90DCA2921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m in Sources */,
 				2BA90D952921EB2800154F35 /* BDIMDebugBaseController.m in Sources */,
+				2B8AFFF62A48460600E25AA2 /* VEIMDemoSelectUserViewController.m in Sources */,
 				2BA90D8F2921EB2800154F35 /* BDIMDebugMenuController.m in Sources */,
 				2B8E544729307C8E00A2A416 /* VEIMDemoIMManager+Conversation.m in Sources */,
 				2B015FA12A1F951D00ECD1EE /* VEIMDemoUser.m in Sources */,
@@ -978,6 +999,7 @@
 				2BA90D972921EB2800154F35 /* VEIMDemoRouter.m in Sources */,
 				2B8E543E292E748D00A2A416 /* VEIMDemoSettingModel.m in Sources */,
 				2BA90D8A2921EB2800154F35 /* BDIMDebugNetworkRequest.m in Sources */,
+				2BD4DC902A4B02F400A08AA7 /* VEIMDemoAccountManager.m in Sources */,
 				2B0CF80B292E50B0007FC3DE /* VEIMDemoUserListCell.m in Sources */,
 				2BA90D942921EB2800154F35 /* BDIMDebugTableViewCell.m in Sources */,
 				2BA90DB52921EB2800154F35 /* VEIMDemoTabbarController.m in Sources */,
@@ -1127,7 +1149,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = comssiphoneucentercninhouse;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release_inhouse;
 		};
@@ -1292,10 +1317,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "veIM demo";
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusiness.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = Z82FG78PSA;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1326,8 +1349,10 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Cosign iOS Wildcard (FVVAIMB7VD)";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1367,7 +1392,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = comssiphoneucentercninhouse;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

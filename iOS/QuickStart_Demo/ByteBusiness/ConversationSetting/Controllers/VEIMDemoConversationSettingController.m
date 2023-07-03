@@ -17,6 +17,7 @@
 #import "BIMToastView.h"
 #import "VEIMDemoIMManager+Message.h"
 #import "VEIMDemoIMManager+Conversation.h"
+#import "VEIMDemoSelectUserViewController.h"
 
 typedef enum : NSUInteger {
     VEIMDemoConversationActionTypeDefault = 0,
@@ -25,7 +26,7 @@ typedef enum : NSUInteger {
     VEIMDemoConversationActionTypeManageParticipants = 3,
 } VEIMDemoConversationActionType;
 
-@interface VEIMDemoConversationSettingController () <VEIMDemoUserSelectionControllerDelegate>
+@interface VEIMDemoConversationSettingController () <VEIMDemoUserSelectionControllerDelegate, BIMConversationListListener>
 @property (nonatomic, strong) BIMConversation *conversation;
 
 @property (nonatomic, strong) id <BIMMember> currentParticant;
@@ -226,6 +227,12 @@ typedef enum : NSUInteger {
     [self.tableview registerClass:[VEIMDemoConversationSettingCell class] forCellReuseIdentifier:@"VEIMDemoConversationSettingCell"];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.tableview reloadData];
+}
+
 #pragma mark - tableview delegate & datasource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -244,7 +251,7 @@ typedef enum : NSUInteger {
     if (indexPath.section == 0) {
         VEIMDemoUserListCell *userListCell = [tableView dequeueReusableCellWithIdentifier:@"VEIMDemoUserListCell"];
         NSArray *participants = [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID];
-        [userListCell refreshWithConversationParticipants:participants];
+        [userListCell refreshWithConversationParticipants:[participants valueForKey:@"userID"]];
         BOOL canAdd = self.currentParticant.role == BIM_MEMBER_ROLE_OWNER;
         BOOL canRemove = self.currentParticant.role == BIM_MEMBER_ROLE_OWNER || self.currentParticant.role == BIM_MEMBER_ROLE_ADMIN;
         userListCell.canAdd = canAdd;
@@ -253,22 +260,12 @@ typedef enum : NSUInteger {
         userListCell.addHandler = ^{
             weakself.actionType = VEIMDemoConversationActionTypeAddParticipant;
             
-            NSMutableArray *users = [[VEIMDemoUserManager sharedManager] createTestUsers:YES];
-            NSMutableArray *usersM = [users mutableCopy];
-            NSArray *participants = [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID];
-            for (VEIMDemoUser *user in users) {
-                for (id <BIMMember> participant in participants) {
-                    if (user.userID == participant.userID) {
-                        [usersM removeObject:user];
-                        break;
-                    }
-                }
-            }
-            VEIMDemoUserSelectionController *userController = [[VEIMDemoUserSelectionController alloc] initWithUsers:usersM];
-            userController.style = VEIMDemoUserSelectionStyleMultiSelection;
-            userController.delegate = weakself;
-            userController.title = @"邀请成员入群";
-            [weakself.navigationController pushViewController:userController animated:YES];
+            VEIMDemoSelectUserViewController *vc = [[VEIMDemoSelectUserViewController alloc] init];
+            vc.conversationType = BIM_CONVERSATION_TYPE_GROUP_CHAT;
+            vc.conversation = weakself.conversation;
+            vc.showType = VEIMDemoSelectUserShowTypeAddParticipants;
+            vc.title = @"添加成员";
+            [weakself.navigationController pushViewController:vc animated:YES];
             
         };
         
@@ -312,7 +309,7 @@ typedef enum : NSUInteger {
             VEIMDemoUserSelectionController *userController = [[VEIMDemoUserSelectionController alloc] initWithUsers:users];
             userController.style = VEIMDemoUserSelectionStyleMultiSelection;
             userController.delegate = weakself;
-            userController.title = @"移除群成员";
+            userController.title = @"移出群成员";
             [weakself.navigationController pushViewController:userController animated:YES];
         };
         
@@ -404,7 +401,12 @@ typedef enum : NSUInteger {
         case VEIMDemoConversationActionTypeAddParticipant:{
             [[VEIMDemoIMManager sharedManager] addUsers:users con:self.conversation completion:^(NSError * _Nullable error) {
                 if (error) {
-                    NSString *toast = (error.code == BIM_SERVER_ERROR_CREATE_CONVERSATION_MORE_THAN_LIMIT) ? @"加群个数超过上限" : [NSString stringWithFormat:@"创建群聊失败: %@",error.localizedDescription];
+                    NSString *toast = [NSString stringWithFormat:@"添加失败: %@",error.localizedDescription];
+                    if (error.code == BIM_SERVER_ADD_MEMBER_MORE_THAN_LIMIT) {
+                        toast = error.localizedDescription;
+                    } else if (error.code == BIM_SERVER_ADD_MEMBER_TOUCH_LIMIT) {
+                        toast = @"群成员已达上限";
+                    }
                     [BIMToastView toast:toast];
                 }
                 [weakself.tableview reloadData];

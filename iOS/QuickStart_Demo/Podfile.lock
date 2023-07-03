@@ -2,17 +2,17 @@ PODS:
   - Bolts/Tasks (1.9.1)
   - FLEX (3.1.2)
   - Godzippa (2.1.1)
-  - IGListKit/Diffing (3.4.0)
-  - im-uikit-tob (1.0.0):
-    - imsdk-tob (= 1.1.0)
+  - IGListDiffKit (4.0.0)
+  - im-uikit-tob (1.0.1):
+    - imsdk-tob (= 1.1.5)
     - Masonry
     - MJRefresh
     - SDWebImage
-  - imsdk-tob (1.1.0):
-    - imsdk-tob/BIMSDK (= 1.1.0)
-  - imsdk-tob/BIMSDK (1.1.0):
+  - imsdk-tob (1.1.5):
+    - imsdk-tob/BIMSDK (= 1.1.5)
+  - imsdk-tob/BIMSDK (1.1.5):
     - Bolts/Tasks
-    - IGListKit/Diffing
+    - IGListDiffKit
     - imsdk-tob/Feature_EssentialPB
     - libextobjc
     - Mantle
@@ -27,7 +27,7 @@ PODS:
     - TTSDK/Uploader
     - WCDB (~> 1.0.6)
     - YYCache
-  - imsdk-tob/Feature_EssentialPB (1.1.0):
+  - imsdk-tob/Feature_EssentialPB (1.1.5):
     - Protobuf
   - JSONModel (1.8.0)
   - libextobjc (0.6):
@@ -132,7 +132,7 @@ PODS:
 
 DEPENDENCIES:
   - FLEX (= 3.1.2)
-  - im-uikit-tob (= 1.0.0)
+  - im-uikit-tob (= 1.0.1)
   - JSONModel
   - Masonry
   - MBProgressHUD
@@ -144,7 +144,7 @@ SPEC REPOS:
     - Bolts
     - FLEX
     - Godzippa
-    - IGListKit
+    - IGListDiffKit
     - JSONModel
     - libextobjc
     - Mantle
@@ -172,9 +172,9 @@ SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   FLEX: e13e805fc3eec8732cc227d1f7508770d46e9587
   Godzippa: f438af100364a775ef0707d29ab152c356375fbf
-  IGListKit: 7a5d788e9fb746bcd402baa8e8b24bc3bd2a5a07
-  im-uikit-tob: 3fe7c2cbbe27f00b8ef4731cd8df60306775481c
-  imsdk-tob: 1c83e9614c2474c327caf298ce06144257a7f0bb
+  IGListDiffKit: 665d6cf43ce726e676013db9c7d6c4294259b6b2
+  im-uikit-tob: cb021ca75b869b3043d36a65bcaa4f6a5218823d
+  imsdk-tob: 5d914c9553e860e5eb3980e13e3d4fce38a13323
   JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
@@ -195,6 +195,6 @@ SPEC CHECKSUMS:
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: f1a13060340099ae33c087da87a91865d409e1b5
+PODFILE CHECKSUM: 41bad51ab9615f93a43601f9863be9d86aaccc87
 
 COCOAPODS: 1.12.0

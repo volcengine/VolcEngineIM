@@ -41,9 +41,9 @@
     }];
 }
 
-- (void)refreshWithParticipant:(id <BIMMember> )participant{
-    self.userName.text = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:participant.userID];
-    self.userPortrait.image = [UIImage imageNamed:[[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID]];
+- (void)refreshWithParticipant:(long long)uid {
+    self.userName.text = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:uid];
+    self.userPortrait.image = [UIImage imageNamed:[[VEIMDemoUserManager sharedManager] portraitForTestUser:uid]];
 }
 
 @end

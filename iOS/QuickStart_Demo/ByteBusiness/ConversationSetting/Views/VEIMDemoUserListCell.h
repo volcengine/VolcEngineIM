@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) void(^addHandler)(void);
 @property (nonatomic, strong) void(^minusHandler)(void);
 
-- (void)refreshWithConversationParticipants: (NSOrderedSet *)participants;
+- (void)refreshWithConversationParticipants: (NSArray *)participants;
 
 @end
 
