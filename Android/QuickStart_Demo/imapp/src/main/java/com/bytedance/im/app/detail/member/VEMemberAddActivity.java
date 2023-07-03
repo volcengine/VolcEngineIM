@@ -109,7 +109,7 @@ public class VEMemberAddActivity extends VEUserAddActivity {
     private void sendAddMemberMessage(List<Long> addIdList) {
         String text = UserManager.geInstance().getUserName(BIMUIClient.getInstance().getCurUserId())
                 + " 邀请 "
-                + UserManager.geInstance().builderNamelist(addIdList);
+                + UserManager.geInstance().builderNamelist(addIdList) +" 加入群聊";
         BIMGroupNotifyElement content = new BIMGroupNotifyElement();
         content.setText(text);
         BIMMessage addMemberMessage = BIMUIClient.getInstance().createCustomMessage(content);

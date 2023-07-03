@@ -68,7 +68,7 @@ public class VECreateGroupActivity extends VEUserAddActivity {
     private void sendAddMemberMessage(BIMConversation conversation, List<Long> uidList) {
         String text = UserManager.geInstance().getUserName(BIMUIClient.getInstance().getCurUserId())
                 + " 邀请 "
-                + UserManager.geInstance().builderNamelist(uidList);
+                + UserManager.geInstance().builderNamelist(uidList) +" 加入群聊";
         BIMGroupNotifyElement content = new BIMGroupNotifyElement();
         content.setText(text);
         BIMMessage createAddMemberMessage = BIMUIClient.getInstance().createCustomMessage(content);

@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.detail.member.VESingleMemberListActivity;
 import com.bytedance.im.app.detail.member.adapter.VEMemberHozionAdapter;
+import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
@@ -63,20 +64,17 @@ public class VEDetailSingleConversationActivity extends Activity {
         BIMUIClient.getInstance().getGroupMemberList(conversationId, new BIMResultCallback<List<BIMMember>>() {
             @Override
             public void onSuccess(List<BIMMember> memberList) {
-                if (memberList != null) {
-                    if (memberList.size() >= 2) {
-                        Iterator<BIMMember> iterator = memberList.iterator();
-                        while (iterator.hasNext()) {
-                            BIMMember member = iterator.next();
-                            if (member.getUserID() == BIMUIClient.getInstance().getCurUserId()) {
-                                iterator.remove();
-                                break;
-                            }
-                        }
-                    }
-                    adapter.updateUserInfoList(memberList, false, false);
+
+                if (memberList != null
+                        && memberList.size() >= 2
+                        && memberList.get(0).getUserID() == BIMClient.getInstance().getCurrentUserID()
+                        && memberList.get(1).getUserID() == BIMClient.getInstance().getCurrentUserID()) {
+                    //自己和自己发起聊天
+                    memberList.remove(1);
                 }
+                adapter.updateUserInfoList(memberList, false, false);
             }
+
 
             @Override
             public void onFailed(BIMErrorCode code) {
