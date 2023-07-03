@@ -180,6 +180,8 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
         }
         if (lastMsg.getText() == null || lastMsg.getText().toString().isEmpty()) {
             lastMsg.setVisibility(View.GONE);
+        }else {
+            lastMsg.setVisibility(View.VISIBLE);
         }
     }
 }

@@ -56,10 +56,10 @@ public class BIMGroupMemberListActivity extends Activity {
     }
 
     protected void onMemberClick(BIMMember member) {
-        ArrayList<Integer> uidList = new ArrayList<>();
-        uidList.add((int) member.getUserID());
+        ArrayList<Long> uidList = new ArrayList<>();
+        uidList.add(member.getUserID());
         Intent data = new Intent();
-        data.putIntegerArrayListExtra(RESULT_ID_LIST, uidList);
+        data.putExtra(RESULT_ID_LIST, uidList);
         setResult(RESULT_OK, data);
         finish();
     }

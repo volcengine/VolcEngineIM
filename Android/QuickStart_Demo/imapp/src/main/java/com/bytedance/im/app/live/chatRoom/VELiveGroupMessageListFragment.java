@@ -18,9 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.live.chatRoom.operation.VELiveMessageOptionPopWindow;
 import com.bytedance.im.app.live.detail.VELiveDetailActivity;
-import com.bytedance.im.app.login.data.UserMock;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMBlockStatus;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -36,10 +36,8 @@ import com.bytedance.im.live.api.BIMLiveGroupMemberEventListener;
 import com.bytedance.im.live.api.BIMLiveMessageListener;
 import com.bytedance.im.live.api.enmus.BIMMessagePriority;
 import com.bytedance.im.ui.log.BIMLog;
-import com.bytedance.im.ui.message.BIMMessageListFragment;
 import com.bytedance.im.ui.message.adapter.BIMMessageAdapter;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
-import com.bytedance.im.ui.message.adapter.ui.widget.pop.BIMMessageOptionPopupWindow;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
 
 import java.util.HashMap;
@@ -74,9 +72,6 @@ public class VELiveGroupMessageListFragment extends Fragment {
             //更新本地数据
             if (message.getExtra() != null) {
                 String nickName = message.getExtra().get(EXT_NICK_NAME);
-                if (!TextUtils.isEmpty(nickName)) {
-                    UserMock.getInstance().updateName(message.getSenderUID(), nickName);
-                }
             }
             if (bimConversation != null && message.getConversationShortID() == bimConversation.getConversationShortID()) {
                 if (adapter.appendOrUpdate(message) == BIMMessageAdapter.APPEND) {
@@ -332,7 +327,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
         }
         BIMLog.i(TAG, "sendMessage() uuid: " + msg.getUuid());
         Map<String, String> nickNameExt = new HashMap<String, String>();
-        nickNameExt.put(EXT_NICK_NAME, UserMock.getInstance().getUserInfo(BIMClient.getInstance().getCurrentUserID()).getNickName());
+//        nickNameExt.put(EXT_NICK_NAME, getUserInfo(BIMClient.getInstance().getCurrentUserID()).getNickName());
         msg.setExtra(nickNameExt);
         BIMClient.getInstance().getService(BIMLiveExpandService.class).sendLiveGroupMessage(msg, bimConversation, messagePriority, new BIMSendCallback() {
 

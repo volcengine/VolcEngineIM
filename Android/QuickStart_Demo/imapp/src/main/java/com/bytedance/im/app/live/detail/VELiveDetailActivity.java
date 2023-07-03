@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.detail.VEDetailController;
 import com.bytedance.im.app.detail.member.adapter.VEMemberHozionAdapter;
 import com.bytedance.im.app.live.create.VEEditCommonActivity;
@@ -33,7 +34,6 @@ import com.bytedance.im.app.live.member.VELiveMemberRemoveActivity;
 import com.bytedance.im.app.live.member.VELiveMemberSilentListActivity;
 import com.bytedance.im.app.live.member.VELiveMemberSilentWhiteListActivity;
 import com.bytedance.im.app.live.member.VELiveOnLineQueryActivity;
-import com.bytedance.im.app.login.data.UserMock;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMBlockStatus;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -166,7 +166,7 @@ public class VELiveDetailActivity extends Activity {
             }
         });
         recyclerView.setAdapter(adapter);
-        tvNickName.setText(UserMock.getInstance().getUserInfo(BIMClient.getInstance().getCurrentUserID()).getNickName());
+        tvNickName.setText(VEIMApplication.accountProvider.getUserProvider().getUserInfo(BIMClient.getInstance().getCurrentUserID()).getNickName());
     }
 
     @Override
@@ -324,7 +324,6 @@ public class VELiveDetailActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_NICKNAME) {
             String myNickName = data.getStringExtra(VEEditCommonActivity.RESULT_TEXT);
-            UserMock.getInstance().updateName(BIMClient.getInstance().getCurrentUserID(), myNickName);
             tvNickName.setText(myNickName);
         }
     }

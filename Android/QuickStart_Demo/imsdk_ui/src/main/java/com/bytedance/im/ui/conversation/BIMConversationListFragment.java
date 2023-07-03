@@ -183,12 +183,7 @@ public class BIMConversationListFragment extends Fragment {
                 if (conversationList != null) {
                     for (BIMConversation conversation : conversationList) {
                         if (conversation != null) {
-                            if (!conversation.isDissolved() && !conversation.isMember()) {
-                                //本人被踢出,删除会话
-                                BIMClient.getInstance().deleteConversation(conversation.getConversationID(), null);
-                            } else {
-                                updateList.add(conversation);
-                            }
+                            updateList.add(conversation);
                         }
                     }
                 }

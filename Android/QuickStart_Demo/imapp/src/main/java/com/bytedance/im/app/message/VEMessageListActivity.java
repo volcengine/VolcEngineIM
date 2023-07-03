@@ -71,6 +71,11 @@ public class VEMessageListActivity extends Activity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshConversation();
+    }
 
     private void refreshConversation() {
         BIMUIClient.getInstance().getConversation(conversationId, new BIMResultCallback<BIMConversation>() {

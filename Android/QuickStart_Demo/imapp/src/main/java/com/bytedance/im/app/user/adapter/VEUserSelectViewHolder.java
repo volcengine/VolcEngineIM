@@ -1,4 +1,4 @@
-package com.bytedance.im.app.login.adapter;
+package com.bytedance.im.app.user.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;

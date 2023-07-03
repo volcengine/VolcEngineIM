@@ -337,7 +337,7 @@ public class BIMMessageListFragment extends Fragment {
                 }
             } else if (requestCode == REQUEST_CODE_SELECT_USER_FOR_AT) {
                 //选成员
-                List<Integer> selectUid = data.getIntegerArrayListExtra(BIMGroupMemberListActivity.RESULT_ID_LIST);
+                List<Long> selectUid = (List<Long>) data.getSerializableExtra(BIMGroupMemberListActivity.RESULT_ID_LIST);
                 StringBuffer mentionStr = new StringBuffer();
                 for (long uid : selectUid) {
                     BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(uid);
@@ -367,7 +367,7 @@ public class BIMMessageListFragment extends Fragment {
             return;
         }
         isSyncing = true;
-        Toast.makeText(getActivity(), "加载更多历史消息中...", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "加载更多历史消息中...", Toast.LENGTH_SHORT).show();
         BIMGetMessageOption option = new BIMGetMessageOption.Builder().isNeedServer(true).limit(20).earliestMessage(earliestMessage).build();
         BIMClient.getInstance().getHistoryMessageList(conversationId, option, new BIMResultCallback<BIMMessageListResult>() {
             @Override
@@ -382,7 +382,7 @@ public class BIMMessageListFragment extends Fragment {
             @Override
             public void onFailed(BIMErrorCode code) {
                 BIMLog.i(TAG, "onFailed() code: " + code);
-                Toast.makeText(getActivity(), "出错了 code：" + code, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "出错了 code：" + code, Toast.LENGTH_SHORT).show();
                 isSyncing = false;
             }
         });

@@ -139,6 +139,13 @@ public class BIMUIClient {
     /**
      * @hidden
      */
+    public BIMMessage createTextMessage(String text){
+        return BIMClient.getInstance().createTextMessage(text);
+    }
+
+    /**
+     * @hidden
+     */
     public BIMMessage createCustomMessage(String json) {
         return BIMClient.getInstance().createCustomMessage(json);
     }

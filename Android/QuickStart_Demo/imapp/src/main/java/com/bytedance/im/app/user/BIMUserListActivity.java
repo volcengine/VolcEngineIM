@@ -9,9 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.login.data.UserMock;
 import com.bytedance.im.ui.api.BIMUser;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class BIMUserListActivity extends Activity {
         setContentView(R.layout.ve_im_activity_user_list_layout);
         findViewById(R.id.back).setOnClickListener(v -> finish());
         userListV = findViewById(R.id.user_list);
-        List<BIMUser> all = UserMock.getInstance().getMockLoginUserList();
+        List<BIMUser> all = new ArrayList<>();//todo 用户系统
         //以下不会同时传
         List<Integer> excludeList = getIntent().getIntegerArrayListExtra(EXCLUDE_ID_LIST);  //排除的id
         List<Integer> includeList = getIntent().getIntegerArrayListExtra(INCLUDE_ID_LIST);  //包含的id

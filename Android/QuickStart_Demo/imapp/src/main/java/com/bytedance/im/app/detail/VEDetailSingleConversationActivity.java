@@ -19,6 +19,7 @@ import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.BIMUIClient;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class VEDetailSingleConversationActivity extends Activity {
@@ -62,7 +63,19 @@ public class VEDetailSingleConversationActivity extends Activity {
         BIMUIClient.getInstance().getGroupMemberList(conversationId, new BIMResultCallback<List<BIMMember>>() {
             @Override
             public void onSuccess(List<BIMMember> memberList) {
-                adapter.updateUserInfoList(memberList, false, false);
+                if (memberList != null) {
+                    if (memberList.size() >= 2) {
+                        Iterator<BIMMember> iterator = memberList.iterator();
+                        while (iterator.hasNext()) {
+                            BIMMember member = iterator.next();
+                            if (member.getUserID() == BIMUIClient.getInstance().getCurUserId()) {
+                                iterator.remove();
+                                break;
+                            }
+                        }
+                    }
+                    adapter.updateUserInfoList(memberList, false, false);
+                }
             }
 
             @Override

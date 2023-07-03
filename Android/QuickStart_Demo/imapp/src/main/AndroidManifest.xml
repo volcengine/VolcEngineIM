@@ -30,8 +30,8 @@
         </activity>
         <activity
             android:name=".live.chatRoom.VELiveGroupChatRoomActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".live.conversation.VELiveGroupListActivity"
             android:screenOrientation="portrait" />
@@ -43,27 +43,24 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".message.VEMessageListActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="com.bytedance.im.page.message_list" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".create.VECreateSingleConversationActivity"
+            android:name=".create.VECreateSingleActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".create.VECreateGroupConversationActivity"
+            android:name=".user.VEUserAddActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".detail.VEDetailSingleConversationActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".detail.VEDetailGroupConversationActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".detail.member.VEGroupMemberAddActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".detail.member.VEGroupMemberRemoveActivity"
@@ -139,6 +136,15 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".live.member.VELiveOnlineQueryResultActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".create.VECreateGroupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".user.BIMUserSelectActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.member.VEMemberAddActivity"
             android:screenOrientation="portrait" />
 
         <provider

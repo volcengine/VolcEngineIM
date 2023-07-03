@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bytedance.im.app.message.VEMessageListActivity;
+import com.bytedance.im.app.user.VEUserAddActivity;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSendCallback;
@@ -13,37 +15,32 @@ import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMGroupInfo;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.app.message.VEMessageListActivity;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
-import com.bytedance.im.app.user.BIMUserSelectActivity;
 import com.bytedance.im.ui.user.UserManager;
 
 import java.util.List;
 
-public class VECreateGroupConversationActivity extends BIMUserSelectActivity {
-    private static final String TAG = "VECreateGroupConversationActivity";
+public class VECreateGroupActivity extends VEUserAddActivity {
+    private static final String TAG = "VECreateGroupActivity";
     private ProgressDialog waitDialog;
 
     public static void start(Context context) {
-        Intent intent = new Intent(context, VECreateGroupConversationActivity.class);
+        Intent intent = new Intent(context, VECreateGroupActivity.class);
         context.startActivity(intent);
     }
 
-    @Override
-    protected boolean isSinglePick() {
-        return false;
-    }
 
     @Override
-    protected boolean onConfirmClick(List<Long> uidList) {
-        if (uidList == null || uidList.isEmpty()) return true;
+    protected void onConfirmClick(List<Long> uidList) {
+        if (uidList == null || uidList.isEmpty()) {
+            Toast.makeText(this, "请添加群成员", Toast.LENGTH_SHORT).show();
+            return;
+        }
         createGroupConversationAndStart(uidList);
-        return true;
     }
-
 
     private void createGroupConversationAndStart(List<Long> uidList) {
-        waitDialog = ProgressDialog.show(VECreateGroupConversationActivity.this, "创建群组中,稍等...", "");
+        waitDialog = ProgressDialog.show(this, "创建群组中,稍等...", "");
         BIMGroupInfo groupInfo = new BIMGroupInfo.BIMGroupInfoBuilder().name("未命名群聊").build();
         BIMUIClient.getInstance().createGroupConversation(groupInfo, uidList, new BIMResultCallback<BIMConversation>() {
 
@@ -58,9 +55,11 @@ public class VECreateGroupConversationActivity extends BIMUserSelectActivity {
                 Log.i(TAG, "createGroupConversationAndStart() onFailed() code: " + code);
                 waitDialog.dismiss();
                 if (code == BIMErrorCode.BIM_SERVER_ERROR_CREATE_CONVERSATION_MORE_THAN_LIMIT) {
-                    Toast.makeText(VECreateGroupConversationActivity.this, "加群个数超过上限", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VECreateGroupActivity.this, "加群个数超过上限", Toast.LENGTH_SHORT).show();
+                } else if (code == BIMErrorCode.BIM_SERVER_ERROR_CREATE_CONVERSATION_MEMBER_TOUCH_LIMIT) {
+                    Toast.makeText(VECreateGroupActivity.this, "群成员已达上限", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(VECreateGroupConversationActivity.this, "创建群聊失败 code: " + code, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VECreateGroupActivity.this, "创建群聊失败 code: " + code, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -88,7 +87,7 @@ public class VECreateGroupConversationActivity extends BIMUserSelectActivity {
             @Override
             public void onSuccess(BIMMessage bimMessage) {
                 waitDialog.dismiss();
-                VEMessageListActivity.start(VECreateGroupConversationActivity.this, conversation.getConversationID());
+                VEMessageListActivity.start(VECreateGroupActivity.this, conversation.getConversationID());
                 finish();
             }
 

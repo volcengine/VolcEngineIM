@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.detail.manager.VEGroupManagerConfigActivity;
+import com.bytedance.im.app.detail.member.VEMemberAddActivity;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
@@ -28,7 +29,6 @@ import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.app.detail.edit.VEEditGroupNameActivity;
 import com.bytedance.im.app.detail.edit.VEEditGroupNoticeActivity;
-import com.bytedance.im.app.detail.member.VEGroupMemberAddActivity;
 import com.bytedance.im.app.detail.member.VEGroupMemberRemoveActivity;
 import com.bytedance.im.app.detail.member.VEMemberListActivity;
 import com.bytedance.im.app.detail.member.adapter.VEMemberHozionAdapter;
@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VEDetailGroupConversationActivity extends Activity {
-    private static final String TAG = "VEDetailGroupConversationActivity";
+    private static final String TAG = "VEDetailGroupActivity";
     private static final String CONVERSATION_ID = "conversation_id";
     public static final String IS_DELETE_LOCAL = "is_delete_local";
     private String conversationId;
@@ -90,7 +90,7 @@ public class VEDetailGroupConversationActivity extends Activity {
         adapter = new VEMemberHozionAdapter(this, new VEMemberHozionAdapter.OnClickListener() {
             @Override
             public void onAddClick() {
-                VEGroupMemberAddActivity.start(VEDetailGroupConversationActivity.this, conversationId, getCurAllMemberIdList());
+                VEMemberAddActivity.start(VEDetailGroupConversationActivity.this, conversationId);
             }
 
             @Override
@@ -210,18 +210,6 @@ public class VEDetailGroupConversationActivity extends Activity {
             }
         });
     }
-
-    public ArrayList<Integer> getCurAllMemberIdList() {
-        ArrayList<Integer> r = new ArrayList<>();
-        if (allMemberList == null) {
-            return r;
-        }
-        for (BIMMember member : allMemberList) {
-            r.add((int) member.getUserID());
-        }
-        return r;
-    }
-
 
     private void quitGroup() {
         if (!checkConversationValid(bimConversation)) {

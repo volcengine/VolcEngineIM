@@ -1,4 +1,4 @@
-package com.bytedance.im.app.login.adapter;
+package com.bytedance.im.app.user.adapter;
 
 import com.bytedance.im.ui.api.BIMUser;
 

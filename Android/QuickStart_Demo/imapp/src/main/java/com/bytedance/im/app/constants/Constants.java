@@ -6,7 +6,7 @@ public class Constants {
 
     public static final String token = "";
 
-    public static final long uid = -1;
+    public static final long uid = 0L;
 
     /**
      * 线上环境

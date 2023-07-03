@@ -52,7 +52,7 @@ public class VEMemberListActivity extends Activity {
             @Override
             public void onSuccess(List<BIMMember> members) {
                 Log.i(TAG, "refreshUserListView() members.size(): " + members.size());
-                adapter = new VEMemberListAdapter(VEMemberListActivity.this, members, member -> onMemberClick(member));
+                adapter = new VEMemberListAdapter(VEMemberListActivity.this, filterMember(members), member -> onMemberClick(member));
                 memberListV.setAdapter(adapter);
             }
 
@@ -65,5 +65,9 @@ public class VEMemberListActivity extends Activity {
 
     protected void onMemberClick(BIMMember member) {
         Toast.makeText(VEMemberListActivity.this, "敬请期待", Toast.LENGTH_SHORT).show();
+    }
+
+    protected List<BIMMember> filterMember(List<BIMMember> members){
+        return members;
     }
 }

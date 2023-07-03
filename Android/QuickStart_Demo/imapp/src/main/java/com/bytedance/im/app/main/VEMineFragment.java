@@ -1,10 +1,12 @@
 package com.bytedance.im.app.main;
 
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -64,22 +66,8 @@ public class VEMineFragment extends Fragment {
         tvAppId.setText(String.valueOf(BIMUIClient.getInstance().getAppId()));
         tvAppVersionName.setText(BuildConfig.VERSION_NAME);
         tvSDKVersionName.setText(BIMUIClient.getInstance().getVersion());
-        flLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doLogout();
-            }
-        });
-        topPanel.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                String mineUid = "" + BIMClient.getInstance().getCurrentUserID();
-                ClipData mClipData = ClipData.newPlainText("UID", mineUid);
-                ((ClipboardManager) v.getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(mClipData);
-                Toast.makeText(getActivity(), "已复制 uid: " + mineUid, Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
+        flLogout.setOnClickListener(v -> doLogout());
+        topPanel.setOnClickListener(v -> copyUidToBoard(v.getContext()));
         updateConnectStatus(BIMUIClient.getInstance().getConnectStatus());
         BIMUIClient.getInstance().addConnectListenerListener(connectListener);
         return view;
@@ -94,8 +82,19 @@ public class VEMineFragment extends Fragment {
 
         @Override
         public void onTokenInvalid(BIMErrorCode code) {
-            Toast.makeText(getActivity(), "token 过期,请重新登录", Toast.LENGTH_SHORT).show();
-            doLogout();
+//            Toast.makeText(getActivity(), "token 过期,请重新登录", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("账号已过期，请重新登录");
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    doLogout();
+                }
+            });
+            builder.setCancelable(false);
+            builder.show();
         }
     };
 
@@ -120,5 +119,12 @@ public class VEMineFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         BIMUIClient.getInstance().removeConnectListener(connectListener);
+    }
+
+    private void copyUidToBoard(Context context){
+        String mineUid = "" + BIMClient.getInstance().getCurrentUserID();
+        ClipData mClipData = ClipData.newPlainText("UID", mineUid);
+        ((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(mClipData);
+        Toast.makeText(getActivity(), "已复制 uid: " + mineUid, Toast.LENGTH_SHORT).show();
     }
 }

@@ -51,6 +51,9 @@
             android:layout_width="wrap_content"
             android:textStyle="bold"
             android:textSize="8sp"
+            android:maxWidth="36dp"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
@@ -124,9 +127,11 @@
         <TextView
             android:id="@+id/tv_msg_head_name_send"
             android:layout_marginTop="2dp"
-
+            android:maxWidth="36dp"
+            android:ellipsize="end"
             android:textSize="10sp"
             android:textStyle="bold"
+            android:singleLine="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

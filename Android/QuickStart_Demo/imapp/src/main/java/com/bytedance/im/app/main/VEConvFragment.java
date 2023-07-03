@@ -13,8 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.create.VECreateGroupConversationActivity;
-import com.bytedance.im.app.create.VECreateSingleConversationActivity;
+import com.bytedance.im.app.create.VECreateGroupActivity;
+import com.bytedance.im.app.user.VEUserAddActivity;
+import com.bytedance.im.app.create.VECreateSingleActivity;
 
 public class VEConvFragment extends Fragment {
     private static final String TAG = "VEConvFragment";
@@ -52,9 +53,9 @@ public class VEConvFragment extends Fragment {
             public void onClick(View v) {
                 int id = v.getId();
                 if (id == R.id.ll_create_single) {
-                    VECreateSingleConversationActivity.start(getActivity());
+                    VECreateSingleActivity.start(getActivity());
                 } else if (id == R.id.ll_create_group) {
-                    VECreateGroupConversationActivity.start(getActivity());
+                    VECreateGroupActivity.start(getActivity());
                 }
                 popupWindow.dismiss();
             }

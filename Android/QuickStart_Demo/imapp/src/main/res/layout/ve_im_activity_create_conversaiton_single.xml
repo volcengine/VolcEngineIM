@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.constraint.ConstraintLayout
         android:id="@+id/action_bar"
         android:layout_width="match_parent"
@@ -12,10 +11,10 @@
 
         <ImageView
             android:id="@+id/back"
-            android:padding="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
+            android:padding="10dp"
             android:src="@drawable/icon_im_back_black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -26,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:text="移出群成员"
+            android:text="发起单聊"
             android:textColor="@color/business_im_222"
             android:textSize="22sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -40,16 +39,20 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="14dp"
             android:padding="10dp"
-            android:text="确认"
-            android:textColor="@color/business_im_222"
+            android:text="确定"
+            android:textColor="@android:color/holo_blue_light"
             android:textSize="22sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/user_list"
+    <EditText
+        android:id="@+id/edit"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="60dp"
+        android:background="@drawable/shape_im_login_input_bg"
+        android:hint="请输入用户ID"
+        android:inputType="number"
+        android:singleLine="true"/>
 </LinearLayout>

@@ -27,7 +27,6 @@ public class BIMUserSelectAdapter extends RecyclerView.Adapter<BaseSelectViewHol
         this.context = context;
         this.selectSingle = isSelectSingle;
         for (BIMUser user : list) {
-            if (user.getUserID() == BIMUIClient.getInstance().getCurUserId()) continue; //排除掉自己
             data.add(new UserSelectWrapper(user, R.layout.ve_im_recycler_view_item_user_select_notid, isShowUid));
         }
     }
