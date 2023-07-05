@@ -49,6 +49,7 @@ typedef NS_ENUM(NSInteger, IMTextAudioType) {
 @property (nonatomic, strong) UIButton *emojiBtn;
 @property (nonatomic, strong) UIButton *addBtn;
 @property (nonatomic, strong) UIButton *recordBtn;
+@property (nonatomic, strong) UIButton *priorityBtn;
 @property (nonatomic, strong) BIMInputMoreMenuView *moreMenuView;
 @property (nonatomic, strong) BIMStickerKeyboard *stickerKeyboard;
 
@@ -410,6 +411,51 @@ typedef NS_ENUM(NSInteger, IMTextAudioType) {
     [self setReferMessage:nil];
 }
 
+- (void)showPriorityAction:(UIButton *)btn
+{
+    UIAlertController *alertVC = [[UIAlertController alloc] init];
+    UIAlertAction *low = [UIAlertAction actionWithTitle:@"消息优先级：低" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.priority = BIMInputToolPriorityLow;
+    }];
+    UIAlertAction *normal = [UIAlertAction actionWithTitle:@"消息优先级：普通" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.priority = BIMInputToolPriorityNormal;
+    }];
+    UIAlertAction *high = [UIAlertAction actionWithTitle:@"消息优先级：高" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.priority = BIMInputToolPriorityHigh;
+    }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    
+    [alertVC addAction:high];
+    [alertVC addAction:normal];
+    [alertVC addAction:low];
+    [alertVC addAction:cancel];
+    
+    [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alertVC animated:YES completion:nil];
+}
+
+- (void)setPriority:(BIMInputToolPriority)priority
+{
+    _priority = priority;
+    switch (priority) {
+        case BIMInputToolPriorityLow:
+            [self.priorityBtn setTitle:@"低" forState:UIControlStateNormal];
+            break;
+        case BIMInputToolPriorityNormal:
+            [self.priorityBtn setTitle:@"普通" forState:UIControlStateNormal];
+            break;
+        case BIMInputToolPriorityHigh:
+            [self.priorityBtn setTitle:@"高" forState:UIControlStateNormal];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+
 #pragma mark - KVO
 
 - (void)addObserver
@@ -754,6 +800,12 @@ static CGFloat textHei = 0;
 
 - (void)sendTextMessage
 {
+    NSString *content = [self currentlyComposedMessageText];
+    if (content.length == 0) {
+        [BIMToastView toast:@"不能发送空白消息"];
+        return;
+    }
+    
     NSMutableArray *mentionUids;
     if (self.mentionUsers.count) {
         mentionUids = [NSMutableArray array];
@@ -874,6 +926,7 @@ static CGFloat textHei = 0;
             fileModel.type = BIMInputMenuTypeFile;
             [_menuMAry btd_addObject:fileModel];
         }
+        // UIKit不保留，后续可以抽到Demo层实现
 //        BIMInputMenuModel *customCoverModel = [[BIMInputMenuModel alloc] init];
 //        customCoverModel.titleStr = @"自定义消息";
 //        customCoverModel.iconStr = @"icon_photo";
@@ -911,6 +964,10 @@ static CGFloat textHei = 0;
         [self.toolBgView addSubview:self.recordBtn];
         [self addSubview:self.moreMenuView];
         [self addSubview:self.stickerKeyboard];
+        if (type == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+            [self.toolBgView addSubview:self.priorityBtn];
+            self.priority = BIMMessagePriorityNormal;
+        }
 
         self.moreMenuView.listMAry = [NSMutableArray arrayWithArray:self.menuMAry];
 
@@ -1002,6 +1059,20 @@ static CGFloat textHei = 0;
     }
 
     return _emojiBtn;
+}
+
+- (UIButton *)priorityBtn
+{
+    if (!_priorityBtn) {
+        _priorityBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _priorityBtn.titleLabel.font = [UIFont systemFontOfSize:10];
+        [_priorityBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        _priorityBtn.layer.borderColor = [UIColor blackColor].CGColor;
+        _priorityBtn.layer.borderWidth = 0.5;
+        _priorityBtn.layer.cornerRadius = 2;
+        [_priorityBtn addTarget:self action:@selector(showPriorityAction:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _priorityBtn;
 }
 
 - (UIButton *)addBtn
@@ -1128,7 +1199,8 @@ static CGFloat textHei = 0;
             make.bottom.mas_equalTo(-8);
             make.top.mas_equalTo(8);
             make.height.mas_equalTo(textViewHei);
-            make.right.equalTo(self.emojiBtn.mas_left).offset(-8);
+            UIView *rightView = self.convType == BIM_CONVERSATION_TYPE_LIVE_GROUP ? self.priorityBtn : self.emojiBtn;
+            make.right.equalTo(rightView.mas_left).offset(-8);
         }];
     } else if (self.taType == IMTextAudioTypeAudio) {
         [self.recordBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
@@ -1139,10 +1211,20 @@ static CGFloat textHei = 0;
             make.right.equalTo(self.emojiBtn.mas_left).offset(-16);
         }];
     }
+    
+    if (self.convType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        [self.priorityBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.tempTextView.mas_right).offset(12);
+            
+            make.width.height.mas_equalTo(24);
+            make.bottom.mas_equalTo(-16);
+        }];
+    }
 
     [self.emojiBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
+        UIView *leftView = self.convType == BIM_CONVERSATION_TYPE_LIVE_GROUP ? self.priorityBtn : self.tempTextView;
         if (self.taType == IMTextAudioTypeText) {
-            make.left.equalTo(self.tempTextView.mas_right).offset(12);
+            make.left.equalTo(leftView.mas_right).offset(12);
         } else if (self.taType == IMTextAudioTypeAudio) {
             make.left.equalTo(self.recordBtn.mas_right).offset(12);
         }

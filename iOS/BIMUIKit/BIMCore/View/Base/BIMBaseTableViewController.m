@@ -19,9 +19,9 @@
 }
 - (void)setupUIElements{
     [super setupUIElements];
-    UINavigationBarAppearance *app = [[UINavigationBarAppearance alloc] init];
-    app.backgroundColor = [UIColor whiteColor];
-    self.navigationController.navigationBar.standardAppearance = app;
+//    UINavigationBarAppearance *app = [[UINavigationBarAppearance alloc] init];
+//    app.backgroundColor = [UIColor whiteColor];
+//    self.navigationController.navigationBar.standardAppearance = app;
     
     self.tableview = [[UITableView alloc] initWithFrame:self.view.bounds style:[self tableviewStyle]];
     self.tableview.frame = self.view.bounds;

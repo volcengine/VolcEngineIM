@@ -10,6 +10,11 @@
 #import "BIMInputMenuModel.h"
 
 typedef NS_ENUM(NSInteger, BIMConversationType);
+typedef NS_ENUM(NSUInteger, BIMInputToolPriority) {
+    BIMInputToolPriorityLow = 0,
+    BIMInputToolPriorityNormal = 1,
+    BIMInputToolPriorityHigh = 2,
+};
 @class BIMMessage;
 @protocol BIMInputToolViewDelegate <NSObject>
 
@@ -32,6 +37,7 @@ typedef NS_ENUM(NSInteger, BIMConversationType);
 @property (nonatomic, assign) BOOL isBroadCast;
 @property (nonatomic, strong) BIMMessage *referMessage;
 @property (nonatomic, strong) NSString *referMessageHint;
+@property (nonatomic, assign) BIMInputToolPriority priority;
 
 - (instancetype)initWithConvType:(BIMConversationType)type;
 

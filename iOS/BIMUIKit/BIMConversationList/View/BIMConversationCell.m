@@ -108,7 +108,7 @@
     NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] init];
     if (conversation.draftText) {
         [attrString appendAttributedString:[[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"草稿：%@",conversation.draftText]]];
-    }else if (conversation.lastMessage) {
+    } else if (conversation.lastMessage) {
         NSAttributedString *mentionString = [[NSAttributedString alloc] initWithString:@"" attributes:nil];
 //        if (conversation.hasUnreadMention) {
 //            mentionString = [[NSAttributedString alloc] initWithString:@"[有人@你] " attributes:@{NSForegroundColorAttributeName : [UIColor redColor]}];
@@ -164,6 +164,8 @@
         }
         [attrString appendAttributedString:mentionString];
         [attrString appendAttributedString:[[NSAttributedString alloc] initWithString:displayStr]];
+    } else {
+        self.dateLabel.text = conversation.updatedTime.im_stringDate;
     }
     
     self.subTitleLabel.text = attrString.string;
@@ -173,8 +175,21 @@
     [self setupConstraints];
 }
 
-
-
+- (void)setupConstraints{
+    [super setupConstraints];
+    
+    
+    [self.nameLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.portrait.mas_right).with.offset(12);
+        make.top.mas_equalTo(12);
+    }];
+    [self.subTitleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.nameLabel);
+        make.top.equalTo(self.nameLabel.mas_bottom).with.offset(8);
+        make.right.mas_equalTo(-60);
+    }];
+    
+}
 
 
 @end

@@ -34,7 +34,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    [self setupDataSource];
 }
 
 - (void)setupUIElements{
@@ -67,16 +67,28 @@
 }
 
 - (void)userDidLogin{
-    // 登录成功后才能初始化 IM_ConversationsDataSource
-    self.conversationDataSource = [[BIMConversationListDataSource alloc] init];
-    self.conversationDataSource.delegate = self;
-    self.conversationDataSource.pageSize = 100;
-    [self loadNexPageConversations];
+    [self setupDataSource];
 }
 
 - (void)userDidLogout{
     self.conversationDataSource = nil;
     [self.tableview reloadData];
+}
+
+- (void)setupDataSource
+{
+    if (self.conversationDataSource) {
+        return;
+    }
+    // 登录
+    if (![BIMClient sharedInstance].getCurrentUserID) {
+        return;
+    }
+    // 登录成功后才能初始化 IM_ConversationsDataSource
+    self.conversationDataSource = [[BIMConversationListDataSource alloc] init];
+    self.conversationDataSource.delegate = self;
+    self.conversationDataSource.pageSize = 100;
+    [self loadNexPageConversations];
 }
 
 #pragma mark - loadData

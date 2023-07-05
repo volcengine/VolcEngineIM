@@ -8,7 +8,7 @@
 #import "BIMBaseViewController.h"
 #import "BIMUIDefine.h"
 
-@interface BIMBaseViewController ()
+@interface BIMBaseViewController ()<UIGestureRecognizerDelegate>
 
 @end
 
@@ -29,6 +29,23 @@
     
     [self setupUIElements];
     [self registerNotification];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    self.navigationController.interactivePopGestureRecognizer.delegate = self;
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    if (self.navigationController.viewControllers.count > 1) {
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
 - (void)registerNotification{

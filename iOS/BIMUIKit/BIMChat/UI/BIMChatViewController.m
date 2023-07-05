@@ -26,6 +26,7 @@
 #import <Masonry/Masonry.h>
 #import <AVFoundation/AVPlayer.h>
 #import <AVKit/AVPlayerViewController.h>
+#import <SDWebImage/SDWebImageError.h>
 
 #import <imsdk-tob/BIMSDK.h>
 
@@ -73,6 +74,9 @@
 }
 
 - (BOOL)headerRefreshEnable{
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        return NO;
+    }
     return YES;
 }
 
@@ -84,7 +88,7 @@
         [weakself.tableview.mj_header endRefreshing];
         
         if (error) {
-            [BIMToastView toast:[NSString stringWithFormat:@"聊天详情页--->加载历史消息失败--->%@", error.localizedDescription]];
+            [BIMToastView toast:[NSString stringWithFormat:@"%@", error.localizedDescription]];
         } else {
             [weakself.tableview reloadData];
             
@@ -280,6 +284,39 @@
     return items;
 }
 
+- (NSMutableArray *)generateLiveGroupMenuForMessage: (BIMMessage *)message{
+    NSMutableArray *items = [NSMutableArray array];
+    if (message.msgType == BIM_MESSAGE_TYPE_TEXT) {
+        [items addObject:[BIMChatMenuItemModel modelWithTitle:@"复制" icon:@"icon_copy" type:BIMChatMenuTypeCopy]];
+    }
+    NSString *priority = message.ext[@"s:message_priority"];
+    
+    NSString *priorityTitle = @"";
+    if (!priority) {
+        priorityTitle = @"未知";
+    } else {
+        switch (priority.integerValue) {
+            case 0:
+                priorityTitle = @"低";
+                break;
+            case 1:
+                priorityTitle = @"普通";
+                break;
+            case 2:
+                priorityTitle = @"高";
+                break;
+
+            default:
+                break;
+        }
+    }
+    
+    [items addObject:[BIMChatMenuItemModel modelWithTitle:priorityTitle icon:@"icon_menu_read" type:999999]];
+    
+    [items addObject:[BIMChatMenuItemModel modelWithTitle:@"调试" icon:@"icon_menu_read" type:BIMChatMenuTypeDebug]];
+    return items;
+}
+
 
 #pragma mark - Functional
 - (void)conversationStatusUpdateProcess
@@ -333,7 +370,7 @@
             sendMessage.ext = ext.copy;
         }
         
-        [[BIMClient sharedInstance] sendLiveGroupMessage:sendMessage                       conversation:self.conversation.conversationID completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+        [[BIMClient sharedInstance] sendLiveGroupMessage:sendMessage                       conversation:self.conversation.conversationID priority:self.inputTool.priority completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
             if (error) {
                 [BIMToastView toast:[NSString stringWithFormat:@"消息发送失败:%@", error.localizedDescription]];
             }
@@ -483,16 +520,15 @@
     }
     
     if (![cell isKindOfClass:[BIMSystemMsgChatCell class]]) {
-        // 直播群屏蔽长按手势
-        if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
-            cell.longPressHandler = nil;
-        } else {
-            [cell setLongPressHandler:^(UILongPressGestureRecognizer * _Nonnull gesture) {
-                [weakself.menu showItems:[weakself generateMenuForMessage:msg] onView:gesture.view message:msg];
-            }];
-        }
-    }else{
-        cell.longPressHandler = nil;
+        [cell setLongPressHandler:^(UILongPressGestureRecognizer * _Nonnull gesture) {
+            NSArray *items = nil;
+            if (weakself.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+                items = [weakself generateLiveGroupMenuForMessage:msg];
+            } else {
+                items = [weakself generateMenuForMessage:msg];
+            }
+            [weakself.menu showItems:items onView:gesture.view message:msg];
+        }];
     }
     cell.delegate = self;
 
@@ -536,16 +572,37 @@
 }
 
 #pragma mark - Cell delegate
-- (void)chatCell:(BIMBaseChatCell *)cell didClickRetryBtnWithMessage:(BIMMessage *)message{
-    [[BIMClient sharedInstance] sendMessage:message conversationId:self.conversation.conversationID saved:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+- (void)chatCell:(BIMBaseChatCell *)cell didClickRetryBtnWithMessage:(BIMMessage *)sendMessage{
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        long long currentUID = [BIMClient sharedInstance].getCurrentUserID.longLongValue;
+    
+        BIMUser *user = [BIMUIClient sharedInstance].userProvider(currentUID);
+        NSString *nickName = user.nickName;
+        if (nickName) {
+            NSMutableDictionary *ext = [NSMutableDictionary dictionary];
+            [ext addEntriesFromDictionary:sendMessage.ext];
+            [ext setObject:nickName forKey:@"a:live_group_nick_name"];
+            sendMessage.ext = ext.copy;
+        }
+        
+        [[BIMClient sharedInstance] sendLiveGroupMessage:sendMessage                       conversation:self.conversation.conversationID priority:self.inputTool.priority completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
             if (error) {
-                [BIMToastView toast:[NSString stringWithFormat:@"消息储存失败:%@",error.localizedDescription]];
-            }
-        } progress:nil completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
-            if (error) {
-                [BIMToastView toast:[NSString stringWithFormat:@"消息发送失败:%@",error.localizedDescription]];
+                [BIMToastView toast:[NSString stringWithFormat:@"消息发送失败:%@", error.localizedDescription]];
             }
         }];
+        return;
+    } else {
+        [[BIMClient sharedInstance] sendMessage:sendMessage conversationId:self.conversation.conversationID saved:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+                if (error) {
+                    [BIMToastView toast:[NSString stringWithFormat:@"消息储存失败:%@",error.localizedDescription]];
+                }
+            } progress:nil completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+                if (error) {
+                    [BIMToastView toast:[NSString stringWithFormat:@"消息发送失败:%@",error.localizedDescription]];
+                }
+            }];
+    }
+    
 }
 
 - (void)cell:(BIMFileChatCell *)cell didClickImageContent:(BIMMessage *)message{
@@ -586,6 +643,23 @@
     }
 }
 
+- (void)cell:(BIMFileChatCell *)cell fileLoadFinish:(BIMMessage *)message error:(NSError *)error
+{
+    if (!error || error.code == SDWebImageErrorCancelled) {
+        return;
+    }
+    if (error.code == SDWebImageErrorInvalidDownloadStatusCode) {
+        [[BIMClient sharedInstance] refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
+            if (error) {
+                [BIMToastView toast:error.localizedDescription];
+            }
+        }];
+    } else if (error.code == SDWebImageErrorCancelled) {
+        
+    } else {
+        [BIMToastView toast:error.localizedDescription];
+    }
+}
 
 #pragma mark - 表情回复
 - (void)menuView:(BIMChatMenuViewNew *)menu didClickEmoji:(BIMEmoji *)emoji message:(BIMMessage *)message{
@@ -667,9 +741,27 @@
             [self.inputTool setReferMessage:message];
             break;
         }
+        case BIMChatMenuTypeDebug:{
+            NSString *msg = [[message valueForKey:@"message"] description];
+            [self showTextCopyAlertWithTitle:@"调试" message:msg];
+            break;
+        }
         default:
             break;
     }
+}
+
+- (void)showTextCopyAlertWithTitle:(NSString *)title message:(NSString *)message
+{
+    UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+    UIAlertAction *copy = [UIAlertAction actionWithTitle:@"复制" style:UIAlertActionStyleDefault handler:^(UIAlertAction *_Nonnull action) {
+        UIPasteboard.generalPasteboard.string = message;
+        [BIMToastView toast:@"已复制"];
+    }];
+    [alertVC addAction:cancel];
+    [alertVC addAction:copy];
+    [self presentViewController:alertVC animated:YES completion:nil];
 }
 
 

@@ -91,7 +91,7 @@ static NSString *const TIMStickerPageViewReuseID = @"TIMStickerPageView";
 {
     CGFloat bottomInset = 0;
     if (@available(iOS 11.0, *)) {
-        bottomInset = UIApplication.sharedApplication.delegate.window.safeAreaInsets.bottom;
+//        bottomInset = UIApplication.sharedApplication.delegate.window.safeAreaInsets.bottom;
     }
     return TIMStickerTopInset + TIMStickerScrollViewHeight + TIMKeyboardPageControlTopMargin + TIMKeyboardPageControlHeight + TIMKeyboardPageControlBottomMargin + TIMKeyboardCoverButtonHeight + bottomInset;
 }

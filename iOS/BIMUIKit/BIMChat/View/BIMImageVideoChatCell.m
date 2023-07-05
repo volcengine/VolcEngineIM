@@ -13,6 +13,7 @@
 #import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVAssetImageGenerator.h>
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <SDWebImage/SDWebImageError.h>
 
 @interface BIMImageVideoChatCell ()
 @property (nonatomic, assign) BOOL isShowingLocalImage;
@@ -77,22 +78,10 @@
             } else if (file.originImg.url.length > 0 && ![file.originImg.url isEqualToString:@"(null)"]) {
                 imageURL = file.originImg.url;
             }
-//            [self.imageContent bd_setImageWithURL:[NSURL URLWithString:imageURL] placeholder:nil options:0 completion:^(BDWebImageRequest *request, UIImage *image, NSData *data, NSError *error, BDWebImageResultFrom from) {
-//                if (error) {
-//                    [[BIMClient sharedInstance] refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
-//                        if (error) {
-//                            [BIMToastView toast:[NSString stringWithFormat:@"加载图片失败：%@",error.localizedDescription]];
-//                        }
-//                    }];
-//                }
-//            }];
+            
             [self.imageContent sd_setImageWithURL:[NSURL URLWithString:imageURL] placeholderImage:nil options:0 completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                if (error) {
-                    [[BIMClient sharedInstance] refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
-                        if (error) {
-                            [BIMToastView toast:[NSString stringWithFormat:@"加载图片失败：%@",error.localizedDescription]];
-                        }
-                    }];
+                if ([self.delegate respondsToSelector:@selector(cell:fileLoadFinish:error:)]) {
+                    [self.delegate cell:self fileLoadFinish:message error:error];
                 }
             }];
         }
@@ -104,12 +93,6 @@
             UIImage *img = [self thumbnailImageForVideo:[NSURL fileURLWithPath:self.localFilePath] atTime:1];
             self.imageContent.image = img;
         } else {
-//            [self.imageContent bd_setImageWithURL:[NSURL URLWithString:file.coverImg.url] placeholder:nil options:0 completion:^(BDWebImageRequest *request, UIImage *image, NSData *data, NSError *error, BDWebImageResultFrom from) {
-//                if (error) {
-//                    [BIMToastView toast:error.localizedDescription];
-//                }
-//            }];
-            
             [self.imageContent sd_setImageWithURL:[NSURL URLWithString:file.coverImg.url] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                 if (error) {
                     [BIMToastView toast:error.localizedDescription];

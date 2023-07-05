@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)cell:(BIMFileChatCell *)cell didClickImageContent: (BIMMessage *)message;
 
+- (void)cell:(BIMFileChatCell *)cell fileLoadFinish:(BIMMessage *)message error:(NSError *)error;
+
 @end
 
 @interface BIMFileChatCell : BIMBaseChatCell
