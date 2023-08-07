@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  color: #666;
+  font-size: 12px;
+
+  .name {
+    color: #6647ff;
+  }
+}

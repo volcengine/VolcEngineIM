@@ -1,0 +1,73 @@
+.layout {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+
+  .text {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .logo-title-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    span {
+      margin-left: 12px;
+    }
+  }
+
+  .input-wrapper{
+    margin-top: 32px;
+
+    //input:-webkit-autofill,
+    //input:-webkit-autofill:hover,
+    //input:-webkit-autofill:focus,
+    //input:-webkit-autofill:active{
+    //  transition: background-color 5000s ease-in-out 0s;
+    //}
+  }
+
+  .select-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 64px;
+
+    .select {
+      width: 300px;
+    }
+  }
+
+  .code-input :global(.arco-input-inner-wrapper) {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .agreement-wrapper {
+    display: flex;
+    justify-content: center;
+
+    .agreement-box {
+      width: 300px;
+      font-size: 12px;
+    }
+  }
+
+  .button-wrapper {
+    display: flex;
+    justify-content: center;
+
+    .button {
+      width: 100%;
+    }
+  }
+}
