@@ -16,7 +16,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useNavigate } from '@modern-js/runtime/router';
 
 import styles from './index.module.scss';
-import { BUSINESS_BACKEND_TOKEN_ENABLE, IM_TOKEN_KEY, SMS_ENABLE, USER_ID_KEY } from '../../constant';
+import { BUSINESS_BACKEND_TOKEN_ENABLE, IM_TOKEN_KEY, SDK_OPTION, SMS_ENABLE, USER_ID_KEY } from '../../constant';
 import { Storage } from '../../utils/storage';
 import { DefaultUserIds, UserId } from '../../store';
 
@@ -28,6 +28,7 @@ import LogoSvg from './logo_huoshanyinqin.svg';
 import { useCountDown, useRequest } from 'ahooks';
 import classNames from 'classnames'; // 单站点登录Web接口
 import { sendCode, smsLogin } from './account';
+import { BytedIM } from '@volcengine/im-web-sdk';
 
 const Login = () => {
   const setUserId = useSetRecoilState(UserId);
@@ -51,7 +52,23 @@ const Login = () => {
       if (!SMS_ENABLE) {
         const userIdStr = form.getFieldValue('userId');
         Storage.set(USER_ID_KEY, userIdStr, Date.now() + 7 * 24 * 60 * 60 * 1000);
-        if (!BUSINESS_BACKEND_TOKEN_ENABLE) Storage.set(IM_TOKEN_KEY, form.getFieldValue('userToken'));
+        if (!BUSINESS_BACKEND_TOKEN_ENABLE) {
+          const instance = new BytedIM({
+            ...SDK_OPTION,
+            token: form.getFieldValue('userToken'),
+            userId: form.getFieldValue('userId'),
+            deviceId: form.getFieldValue('userId'),
+          });
+          try {
+            const resp = await instance.checkToken();
+            console.log(resp);
+          } catch (error) {
+            console.log({ ...error });
+            return Message.error('Token 校验失败，请重新生成 Token');
+          }
+
+          Storage.set(IM_TOKEN_KEY, form.getFieldValue('userToken'));
+        }
         setUserId(userIdStr);
         navigate('/');
         return;

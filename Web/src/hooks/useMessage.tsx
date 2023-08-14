@@ -19,6 +19,22 @@ let markReadTimer: any = null;
 let toMarkReadList: Array<{ key: number; value: Message }> = [];
 let calcVideoInstance: CalcVideo;
 
+function sendMessageCheckCode(result) {
+  switch (result.statusCode) {
+    case im_proto.StatusCode.NOT_FRIEND:
+      ArcoMessage.error('对方不是你的好友，无法发送消息');
+      break;
+    case 3:
+      if (result.checkCode.eq(100)) {
+        ArcoMessage.error(`该用户已注销，不存在`);
+      }
+      break;
+    default:
+      break;
+  }
+  return result;
+}
+
 const useMessage = () => {
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
   const currentConversation = useRecoilValue(CurrentConversation);
@@ -58,14 +74,7 @@ const useMessage = () => {
       bytedIMInstance?.event?.emit?.(IMEvent.MessageUpsert, null, message);
     }
 
-    const resp = await bytedIMInstance.sendMessage({ message, priority });
-    if (resp.statusCode) {
-      if (resp.statusCode === 3 && resp.checkCode.eq(100)) {
-        ArcoMessage.error(`该用户已注销，不存在`);
-      } else {
-        ArcoMessage.error(`${SEND_MESSAGE_STATUS_STR[resp.statusCode]} ${resp.logid}`);
-      }
-    }
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
     setReferenceMessage(null);
   };
 
@@ -84,7 +93,7 @@ const useMessage = () => {
       },
     });
 
-    await bytedIMInstance.sendMessage({ message });
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message }));
   };
 
   /**
@@ -110,7 +119,7 @@ const useMessage = () => {
       },
     });
 
-    await bytedIMInstance.sendMessage({ message });
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message }));
     setTimeout(() => {
       URL.revokeObjectURL(objectUrl);
     });
@@ -142,7 +151,7 @@ const useMessage = () => {
       },
     });
 
-    await bytedIMInstance.sendMessage({ message });
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message }));
   };
 
   /**
@@ -159,7 +168,7 @@ const useMessage = () => {
         onUploadProcess: res => setFileUploadProcess(cur => ({ ...cur, [message.clientId]: res })),
       },
     });
-    await bytedIMInstance.sendMessage({ message });
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message }));
   };
 
   /**
@@ -175,7 +184,7 @@ const useMessage = () => {
         text,
       }),
     });
-    await bytedIMInstance.sendMessage({ message });
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message }));
   };
 
   /**
@@ -194,7 +203,7 @@ const useMessage = () => {
       bytedIMInstance?.event?.emit?.(IMEvent.MessageUpsert, null, message);
     }
 
-    await bytedIMInstance.sendMessage({ message, priority });
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
   };
 
   /**

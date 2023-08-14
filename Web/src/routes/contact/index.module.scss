@@ -1,0 +1,46 @@
+.layout {
+  height: 400px;
+}
+
+.form-wrapper {
+  margin-top: 150px;
+  padding: 64px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+  .text {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .select-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 64px;
+
+    .select {
+      width: 300px;
+    }
+  }
+
+  .agreement-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 45px;
+
+    .agreement-box {
+      width: 300px;
+      font-size: 12px;
+    }
+  }
+
+  .button-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+
+    .button {
+      width: 300px;
+    }
+  }
+}

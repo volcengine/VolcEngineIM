@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle, useCallback, useState } from 'react';
 import classNames from 'classnames';
-import { useRecoilState } from 'recoil';
-import { Message } from '@volcengine/im-web-sdk';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { im_proto, Message } from '@volcengine/im-web-sdk';
 import BScroll from '@better-scroll/core';
-import { useDebounceFn, useThrottleFn } from 'ahooks';
+import { useDebounceFn, useRequest, useThrottleFn } from 'ahooks';
 
-import { ScrollRef } from '../../../../store';
+import { BytedIMInstance, CurrentConversation, ScrollRef } from '../../../../store';
 import { useScroll, useUpdate } from '../../../../hooks';
 import { ACCOUNTS_INFO } from '../../../../constant';
 import { isSystemMsgType } from '../../../../utils';
@@ -18,6 +18,9 @@ import { MessageSystem } from '../../../../components/MessageLayout/components';
 import MessageLayout from '../MessageLayout';
 
 import ListBox from './Styles';
+import { Button, Message as ArcoMessage } from '@arco-design/web-react';
+import { BytedIM } from '@volcengine/im-web-sdk';
+import Long from 'long';
 
 export interface IScrollViewRef {
   instance?: BScroll;
@@ -215,6 +218,34 @@ const MessageList = (props: MessageListProps<any>, ref: any) => {
     [scrollRef.current, handleScrollToBottom, handleRefresh]
   );
 
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
+  const currentConversation = useRecoilValue(CurrentConversation);
+
+  const {
+    loading: historyLoading,
+    run: loadLiveHistory,
+    data,
+    mutate,
+  } = useRequest<Awaited<ReturnType<BytedIM['getLiveGroupHistoryMessageListOnline']>>, []>(
+    async () => {
+      const resp = await bytedIMInstance?.getLiveGroupHistoryMessageListOnline({
+        conversation: currentConversation,
+        limit: 20,
+        fromIndex: data?.nextIndex,
+      });
+      window.dispatchEvent(new CustomEvent('loadLiveHistory', { detail: resp }));
+      if (!resp.hasMore) {
+        ArcoMessage.info('没有更多历史消息了');
+      }
+      return resp;
+    },
+    { manual: true }
+  );
+
+  useEffect(() => {
+    mutate(undefined);
+  }, [currentConversation.id]);
+
   return (
     <ListBox className={classNames(`${prefixCls}-list`, className)} key={id} {...restProps}>
       <ScrollView
@@ -240,6 +271,19 @@ const MessageList = (props: MessageListProps<any>, ref: any) => {
               </div>
             </div>
           )}
+          {data?.hasMore ?? true ? (
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <Button
+                loading={historyLoading}
+                type={'text'}
+                onClick={() => {
+                  loadLiveHistory();
+                }}
+              >
+                {historyLoading ? '加载更多历史消息中' : '加载历史消息'}
+              </Button>
+            </div>
+          ) : null}
           {dataSource.map((messageItem: Message, index: number) => {
             const { ext = {}, sender } = messageItem || {};
             const messageId = ext['s:client_message_id'] || '';

@@ -1,7 +1,7 @@
-import React, { FC, memo, useEffect, useState } from 'react';
+import React, { FC, memo, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Message, Modal, Tooltip } from '@arco-design/web-react';
-import { IconExport, IconLiveBroadcast, IconMessage, IconPoweroff } from '@arco-design/web-react/icon';
+import { IconExport, IconLiveBroadcast, IconMessage, IconPoweroff, IconUserGroup } from '@arco-design/web-react/icon';
 import classNames from 'classnames';
 import { BytedIM, im_proto } from '@volcengine/im-web-sdk';
 import { useLocation, useNavigate } from '@modern-js/runtime/router';
@@ -10,17 +10,13 @@ import { Avatar, Badge } from '..';
 import AppNavBarBox from './Styles';
 import { ACCOUNT_CHECK_ENABLE, ACCOUNTS_INFO, ENABLE_LIVE_DEMO, USER_ID_KEY } from '../../constant';
 import { Storage } from '../../utils/storage';
-import { BytedIMInstance, Conversations, UnReadTotal, Messages, Participants, UserId } from '../../store';
+import { BytedIMInstance, Conversations, Messages, Participants, UnReadTotal, UserId } from '../../store';
 import { useLive } from '../../hooks/useLive';
 import { useRequest, useTimeout } from 'ahooks';
 import { deleteAccount } from '../../apis/app';
+import { useUnreadFriendApplyCount } from '../../hooks';
 
 interface AppNavBarProps {}
-
-const PATHNAMES = {
-  '/': 0,
-  '/live': 1,
-};
 
 function DeleteAccountModal({ visible, setVisible }: { visible: boolean; setVisible: Function }) {
   const bytedIMInstance = useRecoilValue<BytedIM>(BytedIMInstance);
@@ -97,33 +93,32 @@ const AppNavBar: FC<AppNavBarProps> = props => {
   const location = useLocation();
   const [deleteAccountModalShow, setDeleteAccountModalShow] = useState(false);
 
-  const [activeIndex, setActiveIndex] = useState(PATHNAMES[location.pathname] ?? 0);
-
   const navbarItems: any = [
     {
       key: 'message',
+      route: '/',
       icon: <IconMessage className="im-icon" />,
       name: '消息',
       handleClick: () => {
-        if (activeIndex === 0) {
-          return;
-        }
-        clearCurrentLiveConversationStatus();
         navigate('/');
-        setActiveIndex(0);
       },
     },
     ENABLE_LIVE_DEMO && {
       key: 'live',
+      route: '/live',
       icon: <IconLiveBroadcast className="im-icon" />,
       name: '直播',
       handleClick: () => {
-        if (activeIndex === 1) {
-          return;
-        }
-        clearCurrentLiveConversationStatus();
         navigate('/live');
-        setActiveIndex(1);
+      },
+    },
+    {
+      key: 'contact',
+      route: '/contact',
+      icon: <IconUserGroup className="im-icon" />,
+      name: '通讯录',
+      handleClick: () => {
+        navigate('/contact');
       },
     },
     ACCOUNT_CHECK_ENABLE && {
@@ -161,11 +156,14 @@ const AppNavBar: FC<AppNavBarProps> = props => {
     },
   ].filter(Boolean);
 
+  const activeIndex = navbarItems.findIndex(item => item.route === location.pathname);
+
   const [popupVisible, setPopupVisible] = useState(true);
   useTimeout(() => {
     setPopupVisible(undefined);
   }, 2000);
 
+  const unreadApplyCount = useUnreadFriendApplyCount();
   return (
     <AppNavBarBox className="app-navbar">
       <Tooltip
@@ -203,11 +201,24 @@ const AppNavBar: FC<AppNavBarProps> = props => {
             'is-active': activeIndex === index,
           });
 
-          const count = unReadTotal && index === 0 ? unReadTotal : 0;
+          let count = 0;
+          if (unReadTotal && item.key === 'message') count = unReadTotal;
+          else if (item.key === 'contact') {
+            count = unreadApplyCount;
+          }
 
           return (
             <Tooltip key={item.key} content={item.name} position="rt" trigger="hover">
-              <div className={itemCls} onClick={() => item.handleClick?.()}>
+              <div
+                className={itemCls}
+                onClick={() => {
+                  if (activeIndex === index) {
+                    return;
+                  }
+                  clearCurrentLiveConversationStatus();
+                  item.handleClick?.();
+                }}
+              >
                 <Badge count={count}>{item.icon}</Badge>
               </div>
             </Tooltip>
