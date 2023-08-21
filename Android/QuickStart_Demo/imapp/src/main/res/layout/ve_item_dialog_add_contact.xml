@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="150dp"
+    android:orientation="vertical"
+    android:id="@+id/cl_dialog_bottom"
+    android:layout_width="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:text="添加好友"
+            android:textSize="18sp"
+            android:id="@+id/tv_main"
+            android:paddingTop="12dp"
+            android:layout_height="50dp"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"/>
+
+        <EditText
+            android:hint="请输入uid"
+            android:id="@+id/et_uid"
+            android:singleLine="true"
+            android:inputType="number"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:text="取消"
+        android:textColor="#00BFA5"
+        android:id="@+id/tv_reject"
+        android:layout_marginEnd="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/tv_confirm"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_confirm" />
+
+    <TextView
+        android:text="确认"
+        android:textColor="#00BFA5"
+        android:id="@+id/tv_confirm"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+</android.support.constraint.ConstraintLayout>

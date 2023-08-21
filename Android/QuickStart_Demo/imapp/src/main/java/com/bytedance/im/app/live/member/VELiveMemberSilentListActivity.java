@@ -58,7 +58,7 @@ public class VELiveMemberSilentListActivity extends Activity {
         adapter = new VEMemberListAdapter(this, member -> showOperation(member));
         recyclerView.setAdapter(adapter);
         findViewById(R.id.tv_more).setVisibility(View.VISIBLE);
-        findViewById(R.id.tv_more).setOnClickListener((view) -> VEEditCommonActivity.startForResult(this, "添加禁言黑名单", "",100, REQUEST_EDIT_UID));
+        findViewById(R.id.tv_more).setOnClickListener((view) -> VEEditCommonActivity.startForResult(this, "添加禁言黑名单", "",19, REQUEST_EDIT_UID));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {

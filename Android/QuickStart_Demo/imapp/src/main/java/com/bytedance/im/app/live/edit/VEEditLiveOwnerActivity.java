@@ -18,7 +18,7 @@ public class VEEditLiveOwnerActivity extends VEEditLiveActivity {
 
     @Override
     protected int initMaxEditCount() {
-        return 10;
+        return 19;
     }
 
     @Override
@@ -28,7 +28,8 @@ public class VEEditLiveOwnerActivity extends VEEditLiveActivity {
         try {
             uid = Long.parseLong(text);
         } catch (Exception e) {
-
+            Toast.makeText(VEEditLiveOwnerActivity.this, "", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         BIMClient.getInstance().getService(BIMLiveExpandService.class).transLiveGroupOwner(conversationId, uid, new BIMSimpleCallback() {

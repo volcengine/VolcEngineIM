@@ -21,25 +21,5 @@ public class VEIMApplication extends Application {
     public void onCreate() {
         super.onCreate();
         SpUtils.getInstance().init(this);   //初始化sp
-        init();
-        PreventProcessKill.registerApplication(this);
-    }
-
-    private void init() {
-        //用户                provider.init(getApplication(), Constants.APP_ID, SpUtils.getInstance().getEnv());
-
-        //imsdk
-        BIMSDKConfig config = new BIMSDKConfig();
-        config.setLogListener((logLevel, content) -> Log.i("imsdk", content));
-        int env = SpUtils.getInstance().getEnv();
-        String swimLean = "";
-        if (env == Constants.ENV_BOE) {
-            swimLean = SpUtils.getInstance().getBoeSwimLane();
-        } else if (env == Constants.ENV_PPE) {
-            swimLean = SpUtils.getInstance().getPpeSwimLane();
-        }
-        BIMUIClient.getInstance().init(this, Constants.APP_ID, env, swimLean, config);
-        accountProvider.init(this, Constants.APP_ID, SpUtils.getInstance().getEnv());
-        BIMUIClient.getInstance().setUserProvider(accountProvider.getUserProvider());
     }
 }

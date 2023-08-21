@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.contact.mainList.VEContactListFragment;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.BIMUIClient;
@@ -28,6 +29,7 @@ public class VEIMMainActivity extends Activity implements View.OnClickListener {
     private Fragment conversationListFragment;
     private Fragment veMineFragment;
     private Fragment liveGroupFragment;
+    private Fragment contactFragment;
     private View convTab;
     private View mineTab;
     private View liveGroupTab;
@@ -35,11 +37,15 @@ public class VEIMMainActivity extends Activity implements View.OnClickListener {
     private static final String TAG_CONVERSATION = "tag_conversation";
     private static final String TAG_MINE = "tag_mine";
     private static final String TAG_LIVE_GROUP = "tag_live_group";
+    private static final String TAG_CONTACT = "tag_contact";
     private int currentTab = -1;
     private TextView convTabTv;
     private TextView mineTabTv;
     private TextView liveGroupTabTv;
     private ImageView liveGroupTabIv;
+    private TextView contactTabTv;
+    private View contactTab;
+    private TextView contactTvUnread;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, VEIMMainActivity.class);
@@ -58,10 +64,14 @@ public class VEIMMainActivity extends Activity implements View.OnClickListener {
         liveGroupTab = findViewById(R.id.rl_live_group);
         liveGroupTabTv = findViewById(R.id.tv_live_group);
         liveGroupTabIv = findViewById(R.id.iv_live_group);
+        contactTab = findViewById(R.id.rl_contact);
+        contactTabTv = findViewById(R.id.tv_contact);
+        contactTvUnread = findViewById(R.id.tv_contact_unread);
         totalUnread = findViewById(R.id.tv_conversation_unread_num);
         convTab.setOnClickListener(this);
         mineTab.setOnClickListener(this);
         liveGroupTab.setOnClickListener(this);
+        contactTab.setOnClickListener(this);
         BIMUIClient.getInstance().addConversationListener(new BIMConversationListListener() {
             @Override
             public void onNewConversation(List<BIMConversation> conversationList) {
@@ -101,6 +111,7 @@ public class VEIMMainActivity extends Activity implements View.OnClickListener {
         conversationListFragment = getFragmentManager().findFragmentByTag(TAG_CONVERSATION);
         veMineFragment = getFragmentManager().findFragmentByTag(TAG_MINE);
         liveGroupFragment = getFragmentManager().findFragmentByTag(TAG_LIVE_GROUP);
+        contactFragment = getFragmentManager().findFragmentByTag(TAG_CONTACT);
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         if (conversationListFragment == null) {
@@ -115,6 +126,15 @@ public class VEIMMainActivity extends Activity implements View.OnClickListener {
             liveGroupFragment = new VELiveGroupFragment();
             transaction.add(R.id.page_container, liveGroupFragment, TAG_LIVE_GROUP);
         }
+        if (contactFragment == null) {
+            VEContactListFragment contactListFragment = new VEContactListFragment();
+            contactListFragment.setUnreadCountListener(num -> {
+                contactTvUnread.setVisibility(num > 0 ? View.VISIBLE : View.GONE);
+                contactTvUnread.setText(num > 99 ? "99+" : ("" + num));
+            });
+            contactFragment = contactListFragment;
+            transaction.add(R.id.page_container, contactFragment, TAG_CONTACT);
+        }
         transaction.commit();
 
         if (currentTab == -1) {
@@ -126,19 +146,26 @@ public class VEIMMainActivity extends Activity implements View.OnClickListener {
 
     public void switchTab(int id) {
         currentTab = id;
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.hide(veMineFragment).hide(liveGroupFragment).hide(conversationListFragment).hide(contactFragment);
+
         switch (id) {
             case R.id.rl_conversation:
-                getFragmentManager().beginTransaction().show(conversationListFragment).hide(veMineFragment).hide(liveGroupFragment).commit();
+                ft.show(conversationListFragment);
                 break;
             case R.id.rl_mine:
-                getFragmentManager().beginTransaction().show(veMineFragment).hide(conversationListFragment).hide(liveGroupFragment).commit();
+                ft.show(veMineFragment);
                 break;
             case R.id.rl_live_group:
-                getFragmentManager().beginTransaction().show(liveGroupFragment).hide(conversationListFragment).hide(veMineFragment).commit();
+                ft.show(liveGroupFragment);
+                break;
+            case R.id.rl_contact:
+                ft.show(contactFragment);
                 break;
             default:
                 break;
         }
+        ft.commit();
         setTagColor();
     }
 
@@ -152,10 +179,18 @@ public class VEIMMainActivity extends Activity implements View.OnClickListener {
         if (liveGroupTabTv != null) {
             liveGroupTabTv.setTextColor(currentTab == R.id.rl_live_group ? SELECTED_COLOR : UNSELECTED_COLOR);
         }
+        if (contactTabTv != null) {
+            contactTabTv.setTextColor(currentTab == R.id.rl_contact ? SELECTED_COLOR : UNSELECTED_COLOR);
+        }
     }
 
     @Override
     public void onClick(View v) {
         switchTab(v.getId());
+    }
+
+    @Override
+    public void onBackPressed() {
+        return;
     }
 }

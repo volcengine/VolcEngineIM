@@ -80,4 +80,12 @@ public class VELiveMemberSelectListActivity extends Activity {
     protected void onConfirmClick(List<BIMMember> selectList) {
 
     }
+
+    /**
+     * 是否展示角色标签，如管理员
+     * @return
+     */
+    protected boolean isShowTag(){
+        return true;
+    }
 }

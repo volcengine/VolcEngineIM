@@ -1,6 +1,7 @@
 package com.bytedance.im.ui.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.ui.api.BIMUser;
@@ -38,9 +39,10 @@ public class BIMUtils {
             JSONObject o = new JSONObject(contentStr);
             JSONObject textO = new JSONObject(o.getString("text"));
             String innerText = textO.getString("innerText");
+            Log.i("fixWebContent","fixed Web");
             return innerText;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.i("fixWebContent","fixed Web no need");
         }
         return "";
     }
@@ -49,9 +51,10 @@ public class BIMUtils {
         try {
             JSONObject o = new JSONObject(hint);
             String innerText = o.getString("innerText");
+            Log.i("fixWebContent","fixed WebHint ");
             return innerText;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.i("fixWebContent","fixed WebHint no need");
         }
         return "";
     }

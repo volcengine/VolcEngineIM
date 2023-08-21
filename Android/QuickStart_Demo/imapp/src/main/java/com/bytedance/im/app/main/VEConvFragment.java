@@ -14,12 +14,12 @@ import android.widget.PopupWindow;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.create.VECreateGroupActivity;
-import com.bytedance.im.app.user.VEUserAddActivity;
 import com.bytedance.im.app.create.VECreateSingleActivity;
 
 public class VEConvFragment extends Fragment {
     private static final String TAG = "VEConvFragment";
     private ImageView createIv;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

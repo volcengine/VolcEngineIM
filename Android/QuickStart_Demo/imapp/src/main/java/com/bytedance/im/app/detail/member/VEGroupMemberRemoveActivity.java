@@ -115,4 +115,9 @@ public class VEGroupMemberRemoveActivity extends VEMemberSelectListActivity {
             finish();
         }
     }
+
+    @Override
+    protected boolean isShowTag() {
+        return false;
+    }
 }

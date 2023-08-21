@@ -79,4 +79,6 @@
 
     <string name="im_push_message_channel_name">imDemo消息推送</string>
     <string name="im_push_message_channel_description">imDemo消息推送</string>
+    <string name="unregister_description">注销后，当前账户的所有数据将会被删除且无法找回。\n注销后，当前账户所创建的群聊将自动转让群主后退出。\n注销一经开始将无法撤回。</string>
+    <string name="im_app_app_tag"> </string>
 </resources>

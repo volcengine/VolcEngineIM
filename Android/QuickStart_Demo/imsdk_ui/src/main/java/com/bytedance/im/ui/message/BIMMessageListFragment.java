@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Selection;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -352,6 +353,7 @@ public class BIMMessageListFragment extends Fragment {
                 stringBuffer.append(mentionStr);
 
                 inPutView.getmInputEt().setText(stringBuffer.toString());
+                Selection.setSelection(inPutView.getmInputEt().getText(), inPutView.getmInputEt().getText().length()); //移动光标到尾部
             }  else {
                 if (msgOptionMenu != null) {
                     //长按弹窗处理
@@ -452,7 +454,7 @@ public class BIMMessageListFragment extends Fragment {
     private void sendCustomMessage() {
         BIMShareElement shareVEContent = new BIMShareElement();
         shareVEContent.setLink("https://www.volcengine.com/");
-        shareVEContent.setText("火山引擎");
+        shareVEContent.setText("欢迎体验火山引擎即时通讯IM Demo");
         BIMMessage customMessage = BIMClient.getInstance().createCustomMessage(BIMMessageManager.getInstance().encode(shareVEContent));
         sendMessage(customMessage);
     }
@@ -503,10 +505,16 @@ public class BIMMessageListFragment extends Fragment {
             public void onError(BIMMessage bimMessage, BIMErrorCode code) {
                 BIMLog.i(TAG, "sendMessage onError() uuid: " + bimMessage.getUuid() + " code: " + code + " thread:" + Thread.currentThread());
                 if (code == BIMErrorCode.BIM_UPLOAD_FILE_SIZE_OUT_LIMIT) {
-                    Toast.makeText(getActivity(), "文件过大", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "消息发送失败：文件大小超过限制", Toast.LENGTH_SHORT).show();
                     return;
                 } else if (code == BIMErrorCode.BIM_CONVERSATION_NOT_EXIST) {
                     Toast.makeText(getActivity(), "发送失败 code: " + code, Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (code == BIMErrorCode.BIM_SERVER_ERROR_SEND_MESSAGE_TOO_LARGE) {
+                    Toast.makeText(getActivity(), "消息发送失败：消息内容超过限制", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (code == BIMErrorCode.BIM_SERVER_NOT_FRIEND) {
+                    Toast.makeText(getActivity(), "对方不是你的好友，无法发送消息", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
                     Toast.makeText(getActivity(), "发送失败 code: " + code, Toast.LENGTH_SHORT).show();

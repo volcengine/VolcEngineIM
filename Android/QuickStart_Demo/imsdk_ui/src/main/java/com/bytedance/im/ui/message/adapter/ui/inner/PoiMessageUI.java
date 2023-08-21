@@ -36,7 +36,7 @@ public class PoiMessageUI extends BaseCustomElementUI {
 
     @Override
     public boolean isEnableRecall(BIMMessage bimMessage) {
-        return bimMessage.isSelf();
+        return bimMessage.isSelf() && bimMessage.getServerMsgId() > 0;
     }
 
     @Override

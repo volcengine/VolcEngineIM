@@ -58,7 +58,7 @@ public class VELiveMemberBlockListActivity extends Activity {
         adapter = new VEMemberListAdapter(this, member -> showOperation(member), false, false);
         recyclerView.setAdapter(adapter);
         findViewById(R.id.tv_more).setVisibility(View.VISIBLE);
-        findViewById(R.id.tv_more).setOnClickListener((view) -> VEEditCommonActivity.startForResult(this, "添加进群黑名单", "",10, REQUEST_EDIT_UID));
+        findViewById(R.id.tv_more).setOnClickListener((view) -> VEEditCommonActivity.startForResult(this, "添加进群黑名单", "",19, REQUEST_EDIT_UID));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {

@@ -18,6 +18,7 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
     private Context mContext;
     private List<MemberWrapper> data;
     private boolean selectSingle = false;
+    private boolean isShowTag = true;
 
     /**
      * 普通群是全量
@@ -26,12 +27,14 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
      * @param memberList
      * @param checkedList
      */
-    public VEMemberSelectAdapter(Context mContext, List<BIMMember> memberList, List<BIMMember> checkedList) {
+    public VEMemberSelectAdapter(Context mContext, List<BIMMember> memberList, List<BIMMember> checkedList, boolean isTag) {
         this.mContext = mContext;
         data = new ArrayList<>();
+        this.isShowTag = isTag;
         if (memberList != null && !memberList.isEmpty()) {
             for (BIMMember member : memberList) {
                 MemberWrapper wrapper = new MemberWrapper(member, MemberWrapper.TYPE_NORMAL);
+                wrapper.setShowTag(isShowTag);
                 if (checkedList != null && checkedList.contains(member)) {
                     wrapper.isSelect = true;
                 }
@@ -44,8 +47,9 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
         MemberUtils.sort(data);
     }
 
+
     public VEMemberSelectAdapter(Context mContext) {
-        this(mContext, new ArrayList<>(), new ArrayList<>());
+        this(mContext, new ArrayList<>(), new ArrayList<>(),true);
     }
 
     @NonNull
@@ -98,6 +102,7 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
         if (list == null) return;
         for (BIMMember member : list) {
             MemberWrapper memberWrapper = new MemberWrapper(member, MemberWrapper.TYPE_NORMAL);
+            memberWrapper.setShowTag(isShowTag);
             if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
                 memberWrapper.setOwner(true);
             }

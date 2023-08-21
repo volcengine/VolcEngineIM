@@ -52,9 +52,9 @@ public class VELiveGroupViewHolder extends VEViewHolder<VEConvBaseWrapper<BIMCon
             } else if (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
                 tvDetail.setText("管理员");
             } else if (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_NORMAL) {
-                tvDetail.setText("成员");
+                tvDetail.setText(" ");
             } else if (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_VISITOR) {
-                tvDetail.setText("游客");
+                tvDetail.setText(" ");
             }
         }
     }

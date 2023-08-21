@@ -39,16 +39,13 @@ public class MemberViewHolder extends RecyclerView.ViewHolder {
             name = user.getNickName();
         }
         userHeadImg.setImageResource(res);
-        if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
-            name += "[群主]";
-        } else if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
-            name += "[管理员]";
+        if (memberWrapper.isShowTag()) {
+            if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
+                name += "[群主]";
+            } else if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
+                name += "[管理员]";
+            }
         }
-//        else if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_VISITOR) {
-//            name += "[游客]";
-//        } else if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_NORMAL) {
-//            name += "[成员]";
-//        }
         boolean showOnlineTag = memberWrapper.isShowOnline() &&(member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN || member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER);
         if (showOnlineTag) {
             if (member.isOnline()) {

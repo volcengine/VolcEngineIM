@@ -1,6 +1,5 @@
 package com.bytedance.im.app.login;
 
-import android.app.Application;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Color;
@@ -22,14 +21,12 @@ import android.widget.Toast;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.constants.Constants;
-import com.bytedance.im.app.debug.VEEnvSettingActivity;
 import com.bytedance.im.interfaces.BIMAuthProvider;
 import com.bytedance.im.interfaces.BIMLoginListener;
 import com.bytedance.im.ui.api.BIMUser;
 
 public class VELoginFragment extends Fragment implements BIMAuthProvider {
     private static final String TAG = "VELoginFragment";
-    private int toDebugCount = 0;
     private ImageView agreeCheck;
     private View agreeLayout;
     private View loginLayout;
@@ -55,10 +52,8 @@ public class VELoginFragment extends Fragment implements BIMAuthProvider {
         view.findViewById(R.id.tv_login_title).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toDebugCount++;
-                if (toDebugCount == 3) {
-                    VEEnvSettingActivity.start(getActivity());
-                    toDebugCount = 0;
+                if (loginListener != null) {
+                    loginListener.onDebugClick();
                 }
             }
         });
@@ -99,6 +94,9 @@ public class VELoginFragment extends Fragment implements BIMAuthProvider {
             }
         });
         initProtoString();
+        if (loginListener != null) {
+            loginListener.onProtoAgree();
+        }
     }
 
     private void initProtoString() {

@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.live.chatRoom.operation.VELiveMessageOptionPopWindow;
 import com.bytedance.im.app.live.detail.VELiveDetailActivity;
 import com.bytedance.im.core.api.BIMClient;
@@ -35,6 +33,8 @@ import com.bytedance.im.live.api.BIMLiveConversationListener;
 import com.bytedance.im.live.api.BIMLiveGroupMemberEventListener;
 import com.bytedance.im.live.api.BIMLiveMessageListener;
 import com.bytedance.im.live.api.enmus.BIMMessagePriority;
+import com.bytedance.im.live.api.model.BIMLiveJoinGroupResult;
+import com.bytedance.im.live.api.model.BIMLiveMessageListResult;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.adapter.BIMMessageAdapter;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
@@ -55,15 +55,16 @@ public class VELiveGroupMessageListFragment extends Fragment {
     private BIMConversation bimConversation;
     private RecyclerView recyclerView;
     private BIMMessageAdapter adapter;
-    private BIMMessage earliestMessage;
-    private Boolean hasMore = false;
-    private Boolean isSyncing = false;
+
     private VELiveGroupInputView inPutView;
     private long conversationShortId = -1L;
     private BIMLiveExpandService service;
     private BIMMessagePriority messagePriority = BIMMessagePriority.NORMAL;
     private Handler getOnlineHandler = new Handler();
     private VELiveMessageOptionPopWindow msgOptionMenu;
+    private Boolean hasMore = false;
+    private Boolean isSyncing = false;
+    private long earliestCursor; //最旧的消息游标
 
 
     private BIMLiveMessageListener messageListener = new BIMLiveMessageListener() {
@@ -178,14 +179,16 @@ public class VELiveGroupMessageListFragment extends Fragment {
         service.addLiveGroupMessageListener(messageListener);
         service.addLiveGroupMemberListener(memberEventListener);
         service.addLiveConversationListener(conversationListListener);
-        service.joinLiveGroup(conversationShortId, new BIMResultCallback<BIMConversation>() {
+        service.joinLiveGroup(conversationShortId, new BIMResultCallback<BIMLiveJoinGroupResult>() {
 
             @Override
-            public void onSuccess(BIMConversation conversation) {
+            public void onSuccess(BIMLiveJoinGroupResult bimLiveJoinGroupResult) {
                 Toast.makeText(getActivity(), "加入成功", Toast.LENGTH_SHORT).show();
-                bimConversation = conversation;
-                tvTitle.setText(conversation.getName());
-                refreshOnlineNum(conversation.getOnLineMemberCount());
+                bimConversation = bimLiveJoinGroupResult.getConversation();
+                tvTitle.setText(bimConversation.getName());
+                refreshOnlineNum(bimConversation.getOnLineMemberCount());
+                earliestCursor = bimLiveJoinGroupResult.getJoinMessageCursor();
+                loadData();
             }
 
             public void onFailed(BIMErrorCode code) {
@@ -259,12 +262,19 @@ public class VELiveGroupMessageListFragment extends Fragment {
                     if (hasMore) {
                         loadData();
                     } else {
-                        Toast.makeText(getActivity(), "没有更多了", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "没有更多历史消息了", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (isSlideToBottom(recyclerView) && newState == 0 && !hasMore) {
+                    Toast.makeText(getActivity(), "没有更多历史消息了", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
-        loadData();
         initInputView();
         startGetOnlineCount();
         return v;
@@ -292,7 +302,38 @@ public class VELiveGroupMessageListFragment extends Fragment {
     }
 
     private void loadData() {
-        BIMLog.i(TAG, "loadData()");
+        BIMLog.i(TAG, "loadData() isSyncing:"+isSyncing);
+        if (isSyncing) {
+            return;
+        }
+        isSyncing = true;
+        if (isAdded()) {
+            Toast.makeText(getActivity(), "加载更多历史消息中...", Toast.LENGTH_SHORT).show();
+        }
+        BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroupHistoryMessageList(conversationShortId, earliestCursor,20, new BIMResultCallback<BIMLiveMessageListResult>() {
+            @Override
+            public void onSuccess(BIMLiveMessageListResult bimLiveMsgBodyListResult) {
+                BIMLog.i(TAG, "loadData() success result: "+bimLiveMsgBodyListResult);
+                earliestCursor = bimLiveMsgBodyListResult.getNextCursor();
+                hasMore = bimLiveMsgBodyListResult.isHasMore();
+                List<BIMMessage> list = bimLiveMsgBodyListResult.getMessageList();
+                if (list != null) {
+                    for (BIMMessage message : list) {
+                        adapter.inertHeadOrUpdate(message);
+                    }
+                }
+                isSyncing = false;
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+                BIMLog.i(TAG, "loadData() failed");
+                if (isAdded()) {
+                    Toast.makeText(getActivity(), "加载失败 code: "+code, Toast.LENGTH_SHORT).show();
+                }
+                isSyncing = false;
+            }
+        });
     }
 
     private boolean isSlideToBottom(RecyclerView recyclerView) {
@@ -311,7 +352,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
     private void sendCustomMessage() {
         BIMShareElement shareVEContent = new BIMShareElement();
         shareVEContent.setLink("https://www.volcengine.com/");
-        shareVEContent.setText("欢迎体验即时通信IM demo");
+        shareVEContent.setText("欢迎体验火山引擎即时通讯IM Demo");
         BIMMessage customMessage = BIMClient.getInstance().createCustomMessage(BIMMessageManager.getInstance().encode(shareVEContent));
         sendMessage(customMessage);
     }

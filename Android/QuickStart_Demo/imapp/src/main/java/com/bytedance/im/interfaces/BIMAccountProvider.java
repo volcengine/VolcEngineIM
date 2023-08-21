@@ -4,6 +4,7 @@ package com.bytedance.im.interfaces;
 import android.app.Application;
 import android.app.Fragment;
 
+import com.bytedance.im.ui.api.interfaces.BIMCancelListener;
 import com.bytedance.im.ui.user.BIMUserProvider;
 
 /**
@@ -36,4 +37,10 @@ public interface BIMAccountProvider {
      */
     <T extends Fragment & BIMAuthProvider> T createLoginFragment();
 
+    /**
+     *  注销账号
+     * @param listener 注销回调
+     * @param timeout  超时时间
+     */
+    void unregister(BIMCancelListener listener, long timeout);
 }

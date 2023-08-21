@@ -14,6 +14,7 @@ public class MemberWrapper {
     private boolean isOwner;
     private boolean isShowSilent;
     private boolean isShowOnline;
+    private boolean isShowTag = true;
     public MemberWrapper(BIMMember member, int type) {
         order = generateOrder(member, type);
         this.member = member;
@@ -70,5 +71,13 @@ public class MemberWrapper {
             order = 600;
         }
         return order;
+    }
+
+    public boolean isShowTag() {
+        return isShowTag;
+    }
+
+    public void setShowTag(boolean showTag) {
+        isShowTag = showTag;
     }
 }

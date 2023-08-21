@@ -1,6 +1,7 @@
 package com.bytedance.im.app.login;
 
 import android.app.Activity;
+import android.app.Application;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -15,8 +16,11 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
+import com.bytedance.im.app.debug.VEEnvSettingActivity;
 import com.bytedance.im.app.main.VEIMMainActivity;
+import com.bytedance.im.app.sysbug.PreventProcessKill;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.interfaces.BIMAuthProvider;
 import com.bytedance.im.interfaces.BIMLoginListener;
 import com.bytedance.im.ui.BIMUIClient;
@@ -28,6 +32,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
     private static final String TAG = "VELoginActivity";
 
     private Fragment loginFragment;
+    private int toDebugCount = 0;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, VELoginActivity.class);
@@ -38,10 +43,6 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ve_im_activity_login);
-        UserToken userToken = SpUtils.getInstance().getLoginUserInfo();
-        if (userToken != null) {
-            loginIM(userToken.getUid(), userToken.getName(), userToken.getToken());
-        }
         initLoginFragment();
     }
 
@@ -60,10 +61,39 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         ft.commitAllowingStateLoss();
     }
 
+    /**
+     *  点击同意弹窗
+     */
+    @Override
+    public void onProtoAgree() {
+        //同意协议,后初始化sdk
+        Log.i(TAG,"onProtoAgree()");
+        init(getApplication());
+        //如果登录过直接登录
+        UserToken userToken = SpUtils.getInstance().getLoginUserInfo();
+        if (userToken != null) {
+            loginIM(userToken.getUid(), userToken.getName(), userToken.getToken());
+        }
+    }
+
+    /**
+     * 点击登录按钮
+     * @param user
+     * @param token
+     */
     @Override
     public void doLogin(BIMUser user, String token) {
         Log.i(TAG, "doLogin() uid: " + user.getUserID() + " token:" + token);
         loginIM(user.getUserID(), user.getNickName(), token);
+    }
+
+    @Override
+    public void onDebugClick() {
+        toDebugCount++;
+        if (toDebugCount == 3) {
+            VEEnvSettingActivity.start(this);
+            toDebugCount = 0;
+        }
     }
 
     /**
@@ -93,7 +123,24 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         });
     }
 
-    private void loginIM(BIMUser user, String token) {
-        loginIM(user.getUserID(), user.getNickName(), token);
+    /**
+     * 初始化
+     * @param application
+     */
+    public void init(Application application) {
+        Log.i(TAG,"initSDK()");
+        //imsdk
+        BIMSDKConfig config = new BIMSDKConfig();
+        config.setLogListener((logLevel, content) -> Log.i("imsdk", content));
+        int env = SpUtils.getInstance().getEnv();
+        String swimLean = "";
+        if (env == Constants.ENV_BOE) {
+            swimLean = SpUtils.getInstance().getBoeSwimLane();
+        } else if (env == Constants.ENV_PPE) {
+            swimLean = SpUtils.getInstance().getPpeSwimLane();
+        }
+        BIMUIClient.getInstance().init(application, Constants.APP_ID, env, swimLean, config);
+        VEIMApplication.accountProvider.init(application, Constants.APP_ID, SpUtils.getInstance().getEnv());
+        BIMUIClient.getInstance().setUserProvider(VEIMApplication.accountProvider.getUserProvider());
     }
 }

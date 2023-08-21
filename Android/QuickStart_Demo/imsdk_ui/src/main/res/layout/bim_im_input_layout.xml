@@ -243,7 +243,7 @@
             android:id="@+id/tv_input_optional_custom_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="自定义"
             android:textColor="@color/business_im_555"
             android:textSize="12sp"

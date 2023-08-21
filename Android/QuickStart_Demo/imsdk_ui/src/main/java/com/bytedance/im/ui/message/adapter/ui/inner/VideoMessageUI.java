@@ -51,7 +51,6 @@ public class VideoMessageUI extends BaseCustomElementUI {
         BIMVideoElement videoElement = (BIMVideoElement) msg.getElement();
         if (msg.isSelf()) {
             CircleProgressView circleProgressView = itemView.findViewById(R.id.pv_circle_view);
-            Log.i("qinxue","progress: "+videoElement.getProgress());
             if (videoElement.getProgress() > 0 && (msg.getMsgStatus() != BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS
                     || msg.getMsgStatus() != BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL)) {
                 circleProgressView.setVisibility(View.VISIBLE);
@@ -150,7 +149,7 @@ public class VideoMessageUI extends BaseCustomElementUI {
 
     @Override
     public boolean isEnableRecall(BIMMessage bimMessage) {
-        return bimMessage.isSelf();
+        return bimMessage.isSelf() && bimMessage.getServerMsgId() > 0;
     }
 
     @Override

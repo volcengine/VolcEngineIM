@@ -44,12 +44,6 @@ public class BIMMemberViewHolder extends RecyclerView.ViewHolder {
                         .into(userHeadImg);
             }
         }
-
-        if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
-            name += "[群主]";
-        } else if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
-            name += "[管理员]";
-        }
         nickName.setText(name);
     }
 }

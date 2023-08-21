@@ -49,7 +49,7 @@ public class VEMemberSelectListActivity extends Activity {
                     }
                 }
                 if (members != null) {
-                    adapter = new VEMemberSelectAdapter(VEMemberSelectListActivity.this, filter(members), onInitCheckList(members));
+                    adapter = new VEMemberSelectAdapter(VEMemberSelectListActivity.this, filter(members), onInitCheckList(members), isShowTag());
                     memberListV.setAdapter(adapter);
                 }
             }
@@ -77,5 +77,9 @@ public class VEMemberSelectListActivity extends Activity {
 
     protected void onConfirmClick(List<BIMMember> selectList) {
 
+    }
+
+    protected boolean isShowTag(){
+        return true;
     }
 }

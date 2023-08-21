@@ -22,7 +22,8 @@
         <activity
             android:name=".login.VELoginActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="android.intent.action.MAIN" />
@@ -40,6 +41,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".debug.VEEnvSettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".contact.inviteList.VEContactInviteActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".contact.blockList.VEContactBlockListActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".message.VEMessageListActivity"

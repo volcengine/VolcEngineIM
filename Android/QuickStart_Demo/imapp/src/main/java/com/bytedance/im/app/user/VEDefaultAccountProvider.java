@@ -9,6 +9,7 @@ import com.bytedance.im.interfaces.BIMAccountProvider;
 import com.bytedance.im.interfaces.BIMAuthProvider;
 import com.bytedance.im.interfaces.BIMUserExistChecker;
 import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.interfaces.BIMCancelListener;
 import com.bytedance.im.ui.user.BIMUserProvider;
 
 import java.util.HashMap;
@@ -40,5 +41,10 @@ public class VEDefaultAccountProvider implements BIMAccountProvider {
     @Override
     public <T extends Fragment & BIMAuthProvider> T createLoginFragment() {
         return (T) new VELoginFragment();
+    }
+
+    @Override
+    public void unregister(BIMCancelListener listener, long timeout) {
+        listener.onFailed(-1, "not implement");
     }
 }

@@ -107,7 +107,7 @@ public class VELiveGroupInputView extends FrameLayout {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s == null || s.toString().isEmpty()) {
+                if (s == null || s.toString().isEmpty() || !isTextValid(s.toString())) {
                     tvSend.setVisibility(View.GONE);
                     ivCustom.setVisibility(View.VISIBLE);
                 } else {
@@ -170,5 +170,16 @@ public class VELiveGroupInputView extends FrameLayout {
         popupWindow.setWidth(width);
         popupWindow.setOutsideTouchable(true);
         popupWindow.showAsDropDown(tvPriority, 0, -1 * (height + tvPriority.getHeight() + 20), Gravity.BOTTOM);
+    }
+
+    private boolean isTextValid(String text) {
+        if (null != text && !text.isEmpty()) {
+            for (char c: text.toCharArray()) {
+                if (c != ' ' && c != '\t' && c != '\n') {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

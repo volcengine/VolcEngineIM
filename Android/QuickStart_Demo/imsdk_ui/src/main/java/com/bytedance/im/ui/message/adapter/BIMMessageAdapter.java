@@ -2,6 +2,7 @@ package com.bytedance.im.ui.message.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -137,7 +138,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
                 int insertIndex = findInsertIndex(message);
                 if (insertIndex == data.size()) {
                     data.add(curMsgWrap);
-                    notifyItemInserted(data.size());
+                    notifyItemInserted(insertIndex);
                     BIMLog.i(TAG, "insertMessage uuid: " + message.getUuid() + " insertIndex: " + insertIndex + " append!");
                     return INSERT;
                 } else {
@@ -180,7 +181,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
     }
 
     /**
-     * 直接追加到尾部，不排序
+     * 直接追加到尾部，不排序(直播群用）
      */
     public int appendOrUpdate(BIMMessage bimMessage){
         int containsIndex = findIndex(bimMessage);
@@ -190,16 +191,29 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
             notifyItemChanged(containsIndex);
             return UPDATE;
         }else {
-            if(data.isEmpty()){
-                data.add(curMsgWrap);
-                notifyDataSetChanged();
-            }else {
-                data.add(0,curMsgWrap);
-                notifyItemInserted(0);
-            }
+            data.add(0, curMsgWrap);
+            notifyItemInserted(0);
             return APPEND;
         }
     }
+    /**
+     * 直接追加到头部，不排序(直播群用）
+     */
+    public int inertHeadOrUpdate(BIMMessage bimMessage) {
+        BIMMessageWrapper curMsgWrap = wrapper(bimMessage);
+        int containsIndex = findIndex(bimMessage);
+        if (containsIndex != -1) {
+            data.set(containsIndex, curMsgWrap);
+            notifyItemChanged(containsIndex);
+            return UPDATE;
+        } else {
+            int pos = data.size();
+            data.add(pos, curMsgWrap);
+            notifyItemInserted(pos);
+            return INSERT;
+        }
+    }
+
 
     private BIMMessageWrapper wrapper(BIMMessage bimMessage) {
         if (bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_CUSTOM) {

@@ -28,6 +28,7 @@ public class EmojiGroupView extends RelativeLayout implements AbsListView.OnItem
     private static final int LINES = 3;
     private static final int PAGE_COUNT = COLUMNS * LINES;//每页表情个数
     public static final int DELETE_CODE = -10000;
+    public static final int EMPTY_CODE = -10001;
     public static final int ATTRIBUTE_VALUE_DELETE = 0;
     public static final int ATTRIBUTE_VALUE_CLOSE = 1;
 
@@ -35,6 +36,7 @@ public class EmojiGroupView extends RelativeLayout implements AbsListView.OnItem
     private ViewPagerAdapter mPagerAdapter;
     private EmojiClickListener mEmojiClickListener;
     private int mExtraIcon;
+    private boolean needFillSpace = true;
 
     private Map<Integer, List<EmojiInfo>> mEmotionGroups = new HashMap<>();
 
@@ -100,11 +102,24 @@ public class EmojiGroupView extends RelativeLayout implements AbsListView.OnItem
         }
 
         if (lastIndex != 0){
+            if (needFillSpace) {
+                fillEmojiSpace(lastIndex, emojiInfos);
+            }
             EmojiInfo info = new EmojiInfo();
             info.code = DELETE_CODE;
             info.resId = mExtraIcon;
             info.text = "[删除]";
-            emojiInfos.add(emojiInfos.size(),info);
+            emojiInfos.add(emojiInfos.size(), info);
+        }
+    }
+
+    private void fillEmojiSpace(int lastIndex, List<EmojiInfo> emojiInfos) {
+        for (int i = lastIndex; i < PAGE_COUNT - 1; i++) {
+            EmojiInfo info = new EmojiInfo();
+            info.code = EMPTY_CODE;
+            info.resId = 0;
+            info.text = "";
+            emojiInfos.add(emojiInfos.size(), info);
         }
     }
 

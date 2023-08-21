@@ -210,7 +210,7 @@ public class BIMConversationListFragment extends Fragment {
     private void showConversationOperation(BIMConversation conversation) {
         BIMLog.i(TAG, "showConversationOperation cid: " + conversation.getConversationID() + " name: " + conversation.getName());
         String[] conversationOptionType = new String[]{
-                "删除并上报后端",
+                "删除",
         };
         new AlertDialog.Builder(getActivity())
                 .setItems(conversationOptionType, new DialogInterface.OnClickListener() {

@@ -65,7 +65,7 @@ public class VELiveMemberSilentWhiteListActivity extends Activity {
         },true,false);
         recyclerView.setAdapter(adapter);
         more = findViewById(R.id.tv_more);
-        more.setOnClickListener((view) -> VEEditCommonActivity.startForResult(this, "添加禁言白名单", "", 100, REQUEST_EDIT_UID));
+        more.setOnClickListener((view) -> VEEditCommonActivity.startForResult(this, "添加禁言白名单", "", 19, REQUEST_EDIT_UID));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -125,6 +125,7 @@ public class VELiveMemberSilentWhiteListActivity extends Activity {
                 uid = Long.parseLong(data.getStringExtra(VEEditCommonActivity.RESULT_TEXT));
             } catch (Exception e) {
                 Toast.makeText(this, "请输入用户id", Toast.LENGTH_SHORT).show();
+                return;
             }
             List<Long> uidList = new ArrayList<>();
             uidList.add(uid);

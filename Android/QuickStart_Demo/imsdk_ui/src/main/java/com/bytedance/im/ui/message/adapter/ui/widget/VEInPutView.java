@@ -232,7 +232,7 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (s == null || s.toString().isEmpty()) {
+            if (s == null || s.toString().isEmpty() || !isTextValid(s.toString())) {
                 sendBtn.setVisibility(View.GONE);
             } else {
                 sendBtn.setVisibility(View.VISIBLE);
@@ -312,6 +312,17 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
             }
             return true;
         }
+    }
+
+    private boolean isTextValid(String text) {
+        if (null != text && !text.isEmpty()) {
+            for (char c: text.toCharArray()) {
+                if (c != ' ' && c != '\t' && c != '\n') {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public BIMMessage getRefMessage() {

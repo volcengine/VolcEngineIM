@@ -7,20 +7,27 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.BuildConfig;
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
+import com.bytedance.im.app.login.model.UserToken;
+import com.bytedance.im.app.utils.VECancelUtils;
 import com.bytedance.im.app.login.VELoginActivity;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMConnectStatus;
@@ -40,8 +47,12 @@ public class VEMineFragment extends Fragment {
     private TextView tvAppVersionName;
     private TextView tvSDKVersionName;
     private TextView tvConnect;
+    private View flProto;
+    private View flPolicy;
     private View flLogout;
+    private View flPermission;
     private View topPanel;
+    private FrameLayout flDeleteAccount;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -55,6 +66,9 @@ public class VEMineFragment extends Fragment {
         tvSDKVersionName = view.findViewById(R.id.tv_sdk_version_name);
         tvConnect = view.findViewById(R.id.tv_connect_status);
         flLogout = view.findViewById(R.id.fl_logout);
+        flProto = view.findViewById(R.id.fl_proto);
+        flPolicy = view.findViewById(R.id.fl_privacy_policy);
+        flPermission = view.findViewById(R.id.fl_permission);
         BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(BIMUIClient.getInstance().getCurUserId());
         if (user == null) {
             ivPortrait.setImageResource(R.drawable.icon_recommend_user_default);
@@ -68,8 +82,13 @@ public class VEMineFragment extends Fragment {
         tvSDKVersionName.setText(BIMUIClient.getInstance().getVersion());
         flLogout.setOnClickListener(v -> doLogout());
         topPanel.setOnClickListener(v -> copyUidToBoard(v.getContext()));
+        initCancelItem(view, this::doLogout);
         updateConnectStatus(BIMUIClient.getInstance().getConnectStatus());
         BIMUIClient.getInstance().addConnectListenerListener(connectListener);
+        flProto.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975891"));
+        flPolicy.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975890"));
+        flPermission.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975909"));
+        initTag(view);
         return view;
     }
 
@@ -126,5 +145,45 @@ public class VEMineFragment extends Fragment {
         ClipData mClipData = ClipData.newPlainText("UID", mineUid);
         ((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(mClipData);
         Toast.makeText(getActivity(), "已复制 uid: " + mineUid, Toast.LENGTH_SHORT).show();
+    }
+
+    private void initCancelItem(View view, VECancelUtils.CancelAccountCallback callback) {
+        FrameLayout flDeleteAccount = view.findViewById(R.id.fl_delete_account);
+        flDeleteAccount.setOnClickListener(fl -> {
+            VECancelUtils.showCancelDialog(view.getContext(), callback);
+        });
+    }
+
+    private void toProtocol(String url) {
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        Uri content_url = Uri.parse(url);
+        intent.setData(content_url);
+        startActivity(intent);
+    }
+
+    /**
+     * 提供环境，打包等调试信息
+     * @param view
+     */
+    private void initTag(View view) {
+        TextView tag = view.findViewById(R.id.tag);
+        String label = view.getContext().getResources().getString(R.string.im_app_app_tag) +"\n";
+
+        if (BIMClient.getInstance().getEnv() == Constants.ENV_BOE) {
+            String env = " boe\n";
+            label += env;
+        }
+        UserToken userToken = SpUtils.getInstance().getLoginUserInfo();
+        if (userToken != null) {
+            label += userToken.getName();
+        }
+        tag.setText(label);
+        boolean isQA = TextUtils.isEmpty(label.trim());
+        if (isQA) {
+            tag.setVisibility(View.GONE);
+        } else {
+            tag.setVisibility(View.VISIBLE);
+        }
     }
 }

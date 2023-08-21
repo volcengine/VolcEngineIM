@@ -36,4 +36,11 @@ public interface BIMAccountProvider {
      */
     <T extends Fragment & BIMAuthProvider> T createLoginFragment();
 
+    /**
+     * 注销
+     *
+     * @param listener 注销回调函数
+     * @param timeout 注销超时时间
+     */
+    void unregister(BIMCancelListener listener, long timeout);
 }
