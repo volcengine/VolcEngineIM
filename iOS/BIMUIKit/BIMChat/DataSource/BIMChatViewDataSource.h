@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class BIMChatViewDataSource;
+@class BIMChatViewDataSource, BIMError;
 
 @protocol BIMChatViewDataSourceDelegate <NSObject>
 //
@@ -22,6 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BIMChatViewDataSource : NSObject
 
 - (instancetype)initWithConversation:(BIMConversation *)conversation;
+
+- (instancetype)initWithConversation:(BIMConversation *)conversation joinMessageCursor:(long long)joinMessageCursor;
+
 
 @property (nonatomic, weak) id<BIMChatViewDataSourceDelegate> delegate;
 
@@ -41,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSUInteger)indexOfItem:(nonnull BIMMessage *)item;
 
-- (void)loadOlderMessagesWithCompletionBlock:(void (^)(NSError *_Nullable error))completion;
+- (void)loadOlderMessagesWithCompletionBlock:(void (^)(BIMError *_Nullable error))completion;
 
 @end
 

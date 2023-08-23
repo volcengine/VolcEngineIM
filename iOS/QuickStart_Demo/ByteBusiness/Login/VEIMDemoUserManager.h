@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) VEIMDemoUser *currentUser;
 
+- (void)initSDK;
+
 
 - (void)showLoginVCIfNeed;
 

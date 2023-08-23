@@ -58,7 +58,7 @@ static NSString *const EMOJI_PREFIX = @"emoji_";
 
 - (void)initStickers
 {
-    NSString *emojiBundlePath = [[NSBundle bundleForClass:self.class] pathForResource:@"TIMOEmoji" ofType:@"bundle"];
+    NSString *emojiBundlePath = [[NSBundle bundleForClass:self.class] pathForResource:@"TIMOEmojiNew" ofType:@"bundle"];
     NSBundle *emojiBundle = [NSBundle bundleWithPath:emojiBundlePath];
     NSString *plistPath = [emojiBundle pathForResource:@"emoji_all" ofType:@"plist"];
     NSArray *array = [NSArray arrayWithContentsOfFile:plistPath];
@@ -125,7 +125,7 @@ static NSString *const EMOJI_PREFIX = @"emoji_";
                 TIMStickerMatchingResult *emojiMatchingResult = [[TIMStickerMatchingResult alloc] init];
                 emojiMatchingResult.range = result.range;
                 emojiMatchingResult.showingDes = showingDescription;
-                emojiMatchingResult.emojiImage = [UIImage imageNamed:[@"TIMOEmoji.bundle" stringByAppendingPathComponent:emoji.imageName]];
+                emojiMatchingResult.emojiImage = [UIImage imageNamed:[@"TIMOEmojiNew.bundle" stringByAppendingPathComponent:emoji.imageName]];
                 [emojiMatchingResults addObject:emojiMatchingResult];
             }
         }
@@ -139,7 +139,8 @@ static NSString *const EMOJI_PREFIX = @"emoji_";
     if (self.emojiDict[emojiDescription]) {
         BIMEmoji *emoji = [[BIMEmoji alloc] init];
         emoji.emojiDes = emojiDescription;
-        emoji.imageName = [NSString stringWithFormat:@"%@%@", EMOJI_PREFIX, self.emojiDict[emojiDescription]];
+//        emoji.imageName = [NSString stringWithFormat:@"%@%@", EMOJI_PREFIX, self.emojiDict[emojiDescription]];
+        emoji.imageName = [NSString stringWithFormat:@"%@", self.emojiDict[emojiDescription]];
         return emoji;
     }
     return nil;

@@ -6,6 +6,7 @@
 //
 
 #import "BIMUIDefine.h"
+#import <OneKit/BTDMacros.h>
 
 #ifndef VEIMDemoDefine_h
 #define VEIMDemoDefine_h
@@ -24,6 +25,14 @@
 #define kVEIMDemoUserDidLoginNotification @"kVEIMDemoUserDidLoginNotification"
 #define kVEIMDemoUserDidLogoutNotification @"kVEIMDemoUserDidLogoutNotification"
 #define kVEIMDemoUserUserdefaultKey @"kVEIMDemoUserUserdefaultKey"
+
+/// Agreement
+#define kVEIMDemoUserAgreement @"https://www.volcengine.com/docs/6348/975891"
+#define kVEIMDemoPrivacyAgreement @"https://www.volcengine.com/docs/6348/975890"
+#define kVEIMDemoPermissionList @"https://www.volcengine.com/docs/6348/975909"
+
+#define kVEIMDemoUIDLength 19
+
 
 typedef enum : NSUInteger {
     VEIMDemoErrorTypeFormatError = 3200,

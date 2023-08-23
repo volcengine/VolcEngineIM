@@ -13,6 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithTitle: (NSString *)title text: (NSString *)text maxWordCount: (NSInteger)max editable: (BOOL)editable handler: (void(^)(NSString *text))hander;
 
+// 是否纯数字键盘
+@property (nonatomic, assign) BOOL isNumberPad;
+
 @end
 
 NS_ASSUME_NONNULL_END

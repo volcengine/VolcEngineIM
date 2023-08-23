@@ -14,6 +14,7 @@
 #import "VEIMDemoUserListCell.h"
 #import "VEIMDemoUserSelectionController.h"
 #import "VEIMDemoIMManager+Conversation.h"
+#import <Onekit/NSString+BTDAdditions.h>
 
 static NSInteger const kMaxCount = 5;
 
@@ -314,7 +315,7 @@ static NSInteger const kMaxCount = 5;
 #pragma mark - UITextFieldDelegate
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    if (![self validateNumber:string]) {
+    if (![string btd_containsNumberOnly]) {
         return NO;
     }
     if(range.length + range.location > textField.text.length) {
@@ -323,7 +324,7 @@ static NSInteger const kMaxCount = 5;
 
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
 
-    return newLength <= 20;
+    return newLength <= kVEIMDemoUIDLength;
 }
 
 - (void)textFieldDidChange:(UITextField *)textField

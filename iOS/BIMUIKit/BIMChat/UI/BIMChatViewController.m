@@ -27,6 +27,7 @@
 #import <AVFoundation/AVPlayer.h>
 #import <AVKit/AVPlayerViewController.h>
 #import <SDWebImage/SDWebImageError.h>
+#import <OneKit/BTDMacros.h>
 
 #import <imsdk-tob/BIMSDK.h>
 
@@ -52,6 +53,8 @@
 
 @property (nonatomic, strong) BIMParticipantsInConversationDataSource *participantsDataSource;
 
+@property (nonatomic, assign) long long joinMessageCursor;
+
 @end
 
 @implementation BIMChatViewController
@@ -74,9 +77,6 @@
 }
 
 - (BOOL)headerRefreshEnable{
-    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
-        return NO;
-    }
     return YES;
 }
 
@@ -84,7 +84,12 @@
     NSInteger oldCount = self.messageDataSource.numberOfItems;
     
     kWeakSelf(self);
-    [self.messageDataSource loadOlderMessagesWithCompletionBlock:^(NSError *_Nullable error) {
+    if (!self.messageDataSource.hasMore) {
+        [self.tableview.mj_header endRefreshing];
+        [BIMToastView toast:@"没有更多历史消息了"];
+        return;
+    }
+    [self.messageDataSource loadOlderMessagesWithCompletionBlock:^(BIMError *_Nullable error) {
         [weakself.tableview.mj_header endRefreshing];
         
         if (error) {
@@ -144,16 +149,18 @@
 - (void)setupMsgs{
     [[BIMClient sharedInstance] markConversationRead:self.conversation.conversationID completion:nil];
     
-    self.messageDataSource = [[BIMChatViewDataSource alloc] initWithConversation:self.conversation];
+    self.messageDataSource = [[BIMChatViewDataSource alloc] initWithConversation:self.conversation joinMessageCursor:self.joinMessageCursor];
     self.messageDataSource.delegate = self;
     
-    kWeakSelf(self)
-    [self.messageDataSource loadOlderMessagesWithCompletionBlock:^(NSError * _Nullable error) {
-        [weakself.tableview reloadData];
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [weakself scrollViewToBottom:NO];
-        });
+    @weakify(self);
+    [self.messageDataSource loadOlderMessagesWithCompletionBlock:^(BIMError * _Nullable error) {
+        @strongify(self);
+        [CATransaction begin];
+        [self.tableview reloadData];
+        if (self.messageDataSource.numberOfItems > 1) {
+            [self.tableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.messageDataSource.numberOfItems - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        }
+        [CATransaction commit];
     }];
     
     [self conversationStatusUpdateProcess];
@@ -245,9 +252,9 @@
     
     BIMVideoElement *element = message.element;
     if (element.isExpired) {
-        kWeakSelf(self);
+        @weakify(self);
         [[BIMClient sharedInstance] refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
-            kStrongSelf(self);
+            @strongify(self);
             if (error) {
                 [BIMToastView toast:@"播放链接错误，无法播放"];
             } else {
@@ -275,11 +282,13 @@
     }
     [items addObject:[BIMChatMenuItemModel modelWithTitle:@"删除" icon:@"icon_del" type:BIMChatMenuTypeDel]];
     
-    if (message.senderUID == [BIMClient sharedInstance].getCurrentUserID.longLongValue) {
-        [items addObject:[BIMChatMenuItemModel modelWithTitle:@"撤回" icon:@"icon_recall" type:BIMChatMenuTypeRecall]];
-    }
-    if (!self.conversation.isDissolved) {
-        [items addObject:[BIMChatMenuItemModel modelWithTitle:@"引用" icon:@"icon_menu_read" type:BIMChatMenuTypeReferMessage]];
+    if (message.msgStatus != BIM_MESSAGE_STATUS_FAILED) {
+        if (message.senderUID == [BIMClient sharedInstance].getCurrentUserID.longLongValue) {
+            [items addObject:[BIMChatMenuItemModel modelWithTitle:@"撤回" icon:@"icon_recall" type:BIMChatMenuTypeRecall]];
+        }
+        if (!self.conversation.isDissolved) {
+            [items addObject:[BIMChatMenuItemModel modelWithTitle:@"引用" icon:@"icon_menu_read" type:BIMChatMenuTypeReferMessage]];
+        }
     }
     return items;
 }
@@ -343,7 +352,10 @@
 }
 
 - (void)scrollViewToBottom: (BOOL)animated{
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    @weakify(self);
+    NSTimeInterval delay = animated ? 0.25 : 0;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        @strongify(self);
         if (self.tableview.contentSize.height > self.tableview.bounds.size.height) {
             [self.tableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.messageDataSource.numberOfItems - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:animated];
         }
@@ -352,6 +364,29 @@
 
 
 #pragma mark - InputTool
+- (void)sendMessageToastWithError:(BIMError *)error
+{
+    NSString *toast = [NSString stringWithFormat:@"消息发送失败:%@", error.localizedDescription];
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        if (error.code == BIM_UPLOAD_FILE_SIZE_OUT_LIMIT) {
+            toast = [NSString stringWithFormat:@"消息发送失败: 文件大小超过限制"];
+        } else if (error.code == BIM_SERVER_ERROR_SEND_MESSAGE_TOO_LARGE) {
+            toast = [NSString stringWithFormat:@"消息发送失败: 消息内容超过限制"];
+        }
+    } else {
+        if (error.code == BIM_UPLOAD_FILE_SIZE_OUT_LIMIT) {
+            toast = [NSString stringWithFormat:@"消息发送失败: 文件大小超过限制"];
+        } else if (error.code == BIM_SERVER_ERROR_SEND_MESSAGE_TOO_LARGE) {
+            toast = [NSString stringWithFormat:@"消息发送失败: 消息内容超过限制"];
+        } else if ([error.localizedDescription isEqualToString:@"该用户已注销，不存在"]) {
+            toast = error.localizedDescription;
+        } else if (error.code == BIM_SERVER_NOT_FRIEND) {
+            toast = @"对方不是你的好友，无法发送消息";
+        }
+    }
+    [BIMToastView toast:toast];
+}
+
 - (void)disableInputToolWithReason:(NSString *)reason
 {
     // 目前仅限制了输入，仍然可以发送property表情和消息发送重试，但是会发送失败，仅自见
@@ -370,9 +405,11 @@
             sendMessage.ext = ext.copy;
         }
         
+        @weakify(self);
         [[BIMClient sharedInstance] sendLiveGroupMessage:sendMessage                       conversation:self.conversation.conversationID priority:self.inputTool.priority completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+            @strongify(self);
             if (error) {
-                [BIMToastView toast:[NSString stringWithFormat:@"消息发送失败:%@", error.localizedDescription]];
+                [self sendMessageToastWithError:error];
             }
         }];
         return;
@@ -388,11 +425,7 @@
             
         } completion:^(BIMMessage * _Nonnull message, BIMError * _Nullable error) {
             if (error) {
-                NSString *toast = [NSString stringWithFormat:@"消息发送失败: %@",error.localizedDescription];
-                if (error.code == BIM_UPLOAD_FILE_SIZE_OUT_LIMIT) {
-                    toast = [NSString stringWithFormat:@"消息发送失败: 文件过大"];
-                }
-                [BIMToastView toast:toast];
+                [self sendMessageToastWithError:error];
             }
         }];
     }
@@ -440,7 +473,10 @@
 
 - (void)chatViewDataSourceDidReloadAllMessage:(BIMChatViewDataSource *)dataSource scrollToBottom:(BOOL)scrollToBottom
 {
-    [[BIMClient sharedInstance] markConversationRead:self.conversation.conversationID completion:nil];
+    if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        [[BIMClient sharedInstance] markConversationRead:self.conversation.conversationID completion:nil];
+    }
+    
     [self.tableview reloadData];
 
     // 新消息到来时滚动至底部
@@ -496,7 +532,6 @@
 
 - (BIMBaseChatCell *)dequestCellForMessage: (BIMMessage *)msg tableView: (UITableView *)tableView{
     BIMBaseChatCell *cell;
-    kWeakSelf(self)
     if (msg.isRecalled) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"BIMDemoSystemMsgChatCell"];
     } else if (msg.msgType == BIM_MESSAGE_TYPE_CUSTOM){
@@ -519,15 +554,17 @@
         cell = [tableView dequeueReusableCellWithIdentifier:@"BIMDemoTextChatCell"];
     }
     
+    @weakify(self);
     if (![cell isKindOfClass:[BIMSystemMsgChatCell class]]) {
         [cell setLongPressHandler:^(UILongPressGestureRecognizer * _Nonnull gesture) {
+            @strongify(self);
             NSArray *items = nil;
-            if (weakself.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
-                items = [weakself generateLiveGroupMenuForMessage:msg];
+            if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+                items = [self generateLiveGroupMenuForMessage:msg];
             } else {
-                items = [weakself generateMenuForMessage:msg];
+                items = [self generateMenuForMessage:msg];
             }
-            [weakself.menu showItems:items onView:gesture.view message:msg];
+            [self.menu showItems:items onView:gesture.view referView:self.inputTool message:msg];
         }];
     }
     cell.delegate = self;
@@ -585,20 +622,24 @@
             sendMessage.ext = ext.copy;
         }
         
+        @weakify(self);
         [[BIMClient sharedInstance] sendLiveGroupMessage:sendMessage                       conversation:self.conversation.conversationID priority:self.inputTool.priority completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+            @strongify(self);
             if (error) {
-                [BIMToastView toast:[NSString stringWithFormat:@"消息发送失败:%@", error.localizedDescription]];
+                [self sendMessageToastWithError:error];
             }
         }];
         return;
     } else {
+        @weakify(self);
         [[BIMClient sharedInstance] sendMessage:sendMessage conversationId:self.conversation.conversationID saved:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
                 if (error) {
                     [BIMToastView toast:[NSString stringWithFormat:@"消息储存失败:%@",error.localizedDescription]];
                 }
             } progress:nil completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+                @strongify(self);
                 if (error) {
-                    [BIMToastView toast:[NSString stringWithFormat:@"消息发送失败:%@",error.localizedDescription]];
+                    [self sendMessageToastWithError:error];
                 }
             }];
     }

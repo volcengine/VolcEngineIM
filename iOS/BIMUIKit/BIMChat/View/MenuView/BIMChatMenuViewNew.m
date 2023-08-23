@@ -41,7 +41,7 @@
     return self;
 }
 
-- (void)showItems:(NSMutableArray<BIMChatMenuItemModel *> *)items onView:(nonnull UIView *)view message: (BIMMessage *)message{
+- (void)showItems:(NSMutableArray<BIMChatMenuItemModel *> *)items onView:(nonnull UIView *)view referView:(UIView *)referView message: (BIMMessage *)message{
     if (!self.hidden) {
         return;
     }
@@ -62,7 +62,14 @@
 //    CGFloat menuBottomHeight = 52;
     CGFloat menuBottomHeight = 0;
     CGFloat menuTopHeight = items.count > 7?121:121-45;
-    BOOL showingDownward = menuY + menuTopHeight + menuBottomHeight >= kAppWindow.bounds.size.height - 120;
+    BOOL showingDownward;
+    if (referView) {
+        CGRect referViewFrame = [referView.superview convertRect:referView.frame toView:kAppWindow];
+        CGFloat referViewMinY = CGRectGetMinY(referViewFrame);
+        showingDownward = menuY + menuTopHeight + menuBottomHeight >= referViewMinY;
+    } else {
+        showingDownward = menuY + menuTopHeight + menuBottomHeight >= kAppWindow.bounds.size.height - 120;
+    }
     if (showingDownward) {
         menuY = convertedFrame.origin.y - 6 - menuTopHeight - menuBottomHeight;
     }
@@ -181,7 +188,7 @@
         return nil;
     }
 
-    return [UIImage imageNamed:[@"TIMOEmoji.bundle" stringByAppendingPathComponent:name]];
+    return [UIImage imageNamed:[@"TIMOEmojiNew.bundle" stringByAppendingPathComponent:name]];
 }
 
 - (void)menuEmojiViewDidClickEmoji:(BIMEmoji *)emoji{

@@ -212,7 +212,7 @@ static NSString *const TIMStickerPageViewReuseID = @"TIMStickerPageView";
         return nil;
     }
 
-    return [UIImage imageNamed:[@"TIMOEmoji.bundle" stringByAppendingPathComponent:name]];
+    return [UIImage imageNamed:[@"TIMOEmojiNew.bundle" stringByAppendingPathComponent:name]];
 }
 
 - (void)changeStickerToIndex:(NSUInteger)toIndex

@@ -9,7 +9,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "im-uikit-tob"
-  spec.version      = "1.0.3"
+  spec.version      = "1.1.0"
   spec.summary      = "IM UIKit"
   spec.description  = <<-DESC
        TODO: Add long description of the pod here.
@@ -24,7 +24,7 @@ Pod::Spec.new do |spec|
   spec.source_files  = '**/BIMUIKit/**/*.{h,m,c}'
 
   spec.resource_bundles = {
-      'TIMOEmoji' => ['**/BIMUIKit/**/TIMOEmoji.bundle/**/*'],
+      'TIMOEmojiNew' => ['**/BIMUIKit/**/TIMOEmojiNew.bundle/**/*'],
       'BIMUIKit' => ['**/BIMUIKit/**/BIMUIKit.bundle/*']
   }
 
@@ -34,8 +34,7 @@ Pod::Spec.new do |spec|
   spec.dependency 'Masonry'
   spec.dependency 'MJRefresh'
   spec.dependency 'SDWebImage'
-  spec.dependency 'imsdk-tob', '1.1.5'
-
+  spec.dependency 'imsdk-tob', '1.2.1'
 
   spec.requires_arc = true
 

@@ -8,6 +8,7 @@
 #import "AppDelegate.h"
 #import "VEIMDemoIMManager.h"
 #import "VEIMDemoAccountManager.h"
+#import "VEIMDemoUserManager.h"
 #import <OneKit/UIImage+BTDAdditions.h>
 #import <OneKit/OneKitApp.h>
 
@@ -41,7 +42,6 @@
         [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
     }
     
-    [OneKitApp startWithLaunchOptions:launchOptions];
     
     Class cls = NSClassFromString(@"VEIMDemoSMSAccountManager");
     if (cls) {
@@ -51,11 +51,27 @@
     }
     
     
+    
+    // 同意了隐私协议才能初始化SDK
+    if ([VEIMDemoIMManager sharedManager].accountProvider.isAgreeUserPirvacyAgreement) {
+        [self agreeUserPirvacyAgreement];
+    } else {
+        __weak typeof(self) weakSelf = self;
+        [VEIMDemoIMManager sharedManager].accountProvider.agreeUserPirvacyAgreementCompletion = ^{
+            [weakSelf agreeUserPirvacyAgreement];
+        };
+    }
+    
+    
 //    [[UIBarButtonItem appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor clearColor]}forState:UIControlStateNormal];//将title 文字的颜色改为透明
 //    [[UIBarButtonItem appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor clearColor]}forState:UIControlStateHighlighted];//将title 文字的颜色改为透明
     
     return YES;
 }
 
+- (void)agreeUserPirvacyAgreement {
+    [OneKitApp startWithLaunchOptions:nil];
+    [[VEIMDemoUserManager sharedManager] initSDK];
+}
 
 @end

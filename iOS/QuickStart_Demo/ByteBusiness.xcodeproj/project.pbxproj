@@ -17,15 +17,25 @@
 		2B0CF807292E4E93007FC3DE /* VEIMDemoConversationSettingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B0CF806292E4E93007FC3DE /* VEIMDemoConversationSettingController.m */; };
 		2B0CF80B292E50B0007FC3DE /* VEIMDemoUserListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B0CF80A292E50B0007FC3DE /* VEIMDemoUserListCell.m */; };
 		2B0CF80E292E50DA007FC3DE /* VEIMDemoUserListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B0CF80D292E50DA007FC3DE /* VEIMDemoUserListItem.m */; };
+		2B3182D72A7CA6D3006973CD /* UIAlertController+Dismiss.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B3182D62A7CA6D3006973CD /* UIAlertController+Dismiss.m */; };
 		2B3ABB872684642600B114E2 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB842684642600B114E2 /* Debug.xcconfig */; };
 		2B3ABB882684642600B114E2 /* Release_inhouse.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB852684642600B114E2 /* Release_inhouse.xcconfig */; };
 		2B3ABB892684642600B114E2 /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB862684642600B114E2 /* Release.xcconfig */; };
+		2B548E902A5D79E200FF7088 /* BIMFriendListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B548E8F2A5D79E200FF7088 /* BIMFriendListController.m */; };
+		2B548E952A5D7D9A00FF7088 /* BIMFriendListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B548E942A5D7D9A00FF7088 /* BIMFriendListDataSource.m */; };
+		2B548E9C2A5D905500FF7088 /* BIMFriendListHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B548E9B2A5D905500FF7088 /* BIMFriendListHeaderCell.m */; };
+		2B817F8B2A5D59AF0004C404 /* VEIMDemoFriendListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B817F8A2A5D59AF0004C404 /* VEIMDemoFriendListController.m */; };
 		2B8AFFF62A48460600E25AA2 /* VEIMDemoSelectUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8AFFF52A48460600E25AA2 /* VEIMDemoSelectUserViewController.m */; };
 		2B8E543A292E734600A2A416 /* VEIMDemoConversationSettingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8E5439292E734600A2A416 /* VEIMDemoConversationSettingCell.m */; };
 		2B8E543E292E748D00A2A416 /* VEIMDemoSettingModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8E543D292E748D00A2A416 /* VEIMDemoSettingModel.m */; };
 		2B8E5441292E77A500A2A416 /* VEIMDemoInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8E5440292E77A500A2A416 /* VEIMDemoInputController.m */; };
 		2B8E544429307B6800A2A416 /* VEIMDemoIMManager+Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8E544329307B6800A2A416 /* VEIMDemoIMManager+Message.m */; };
 		2B8E544729307C8E00A2A416 /* VEIMDemoIMManager+Conversation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8E544629307C8E00A2A416 /* VEIMDemoIMManager+Conversation.m */; };
+		2B977F212A663D9900568407 /* VEIMDemoFriendApplyListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B977F202A663D9900568407 /* VEIMDemoFriendApplyListController.m */; };
+		2B977F242A663FDC00568407 /* VEIMDemoFriendApplyListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B977F232A663FDC00568407 /* VEIMDemoFriendApplyListCell.m */; };
+		2B977F272A66B8F700568407 /* BIMFriendListUserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B977F262A66B8F700568407 /* BIMFriendListUserCell.m */; };
+		2B977F2A2A678D9B00568407 /* VEIMDemoFriendBlackListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B977F292A678D9B00568407 /* VEIMDemoFriendBlackListController.m */; };
+		2BA798AA2A94E8F60086FB90 /* UIWindow+FixCrashOnInputKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA798A92A94E8F60086FB90 /* UIWindow+FixCrashOnInputKeyboard.m */; };
 		2BA90D822921EB2800154F35 /* BDIMDebugDatabaseController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA90CCD2921EB2600154F35 /* BDIMDebugDatabaseController.m */; };
 		2BA90D842921EB2800154F35 /* BDIMDebugNetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA90CD22921EB2600154F35 /* BDIMDebugNetworkManager.m */; };
 		2BA90D852921EB2800154F35 /* BDIMDebugNetworkRequestCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA90CD32921EB2600154F35 /* BDIMDebugNetworkRequestCell.m */; };
@@ -62,15 +72,16 @@
 		2BA90DC92921EB2800154F35 /* VEIMDemoMyinfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA90D7D2921EB2800154F35 /* VEIMDemoMyinfoController.m */; };
 		2BA90DCA2921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA90D802921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m */; };
 		2BA90DCC2921EB9D00154F35 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BA90DCB2921EB9D00154F35 /* Assets.xcassets */; };
+		2BC3D4872A4974F400457512 /* VEIMDemoAppInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC3D4862A4974F400457512 /* VEIMDemoAppInfoCell.m */; };
+		2BC3D48E2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC3D48D2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.m */; };
 		2BD4DC902A4B02F400A08AA7 /* VEIMDemoAccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD4DC8F2A4B02F400A08AA7 /* VEIMDemoAccountManager.m */; };
+		2BDC4CC72A737107007F47B6 /* VEIMDemoFriendApplyListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDC4CC62A737107007F47B6 /* VEIMDemoFriendApplyListDataSource.m */; };
 		2BF1BA0B29A5E7B6007145D0 /* VEIMDemoConversationListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BF1BA0A29A5E7B6007145D0 /* VEIMDemoConversationListController.m */; };
 		2BF1BA0E29A5FD01007145D0 /* VEIMDemoChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BF1BA0D29A5FD01007145D0 /* VEIMDemoChatViewController.m */; };
 		6261DB9224643D4B00FC11F8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6261DB9124643D4B00FC11F8 /* CoreGraphics.framework */; };
 		6261DB9424643D5200FC11F8 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6261DB9324643D5200FC11F8 /* ExternalAccessory.framework */; };
 		6261DB9624643D5800FC11F8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6261DB9524643D5800FC11F8 /* Foundation.framework */; };
 		6261DB9824643D5F00FC11F8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6261DB9724643D5F00FC11F8 /* UIKit.framework */; };
-		7B981B861C3564319D2A0427 /* libPods-ByteBusiness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C84286B277613D233D18BAE9 /* libPods-ByteBusiness.a */; };
-		9EFBE841736B84C14B0A2FB3 /* libPods-ByteBusiness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C84286B277613D233D18BAE9 /* libPods-ByteBusiness.a */; };
 		AAE69C0ED029ADD449315A70 /* libPods-ByteBusiness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C84286B277613D233D18BAE9 /* libPods-ByteBusiness.a */; };
 		C9B76075E6E70F8216746367 /* libPods-ByteBusinessTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A56B97357A5D85FCBD7C13C5 /* libPods-ByteBusinessTests.a */; };
 		DE0CF711FAA556B2F756820E /* libPods-ByteBusinessUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 096390C4C44A614D7C2D34B3 /* libPods-ByteBusinessUITests.a */; };
@@ -119,9 +130,19 @@
 		2B0CF80A292E50B0007FC3DE /* VEIMDemoUserListCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoUserListCell.m; sourceTree = "<group>"; };
 		2B0CF80C292E50DA007FC3DE /* VEIMDemoUserListItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoUserListItem.h; sourceTree = "<group>"; };
 		2B0CF80D292E50DA007FC3DE /* VEIMDemoUserListItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoUserListItem.m; sourceTree = "<group>"; };
+		2B3182D52A7CA6D3006973CD /* UIAlertController+Dismiss.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+Dismiss.h"; sourceTree = "<group>"; };
+		2B3182D62A7CA6D3006973CD /* UIAlertController+Dismiss.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+Dismiss.m"; sourceTree = "<group>"; };
 		2B3ABB842684642600B114E2 /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		2B3ABB852684642600B114E2 /* Release_inhouse.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release_inhouse.xcconfig; sourceTree = "<group>"; };
 		2B3ABB862684642600B114E2 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		2B548E8E2A5D79E200FF7088 /* BIMFriendListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BIMFriendListController.h; sourceTree = "<group>"; };
+		2B548E8F2A5D79E200FF7088 /* BIMFriendListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BIMFriendListController.m; sourceTree = "<group>"; };
+		2B548E932A5D7D9A00FF7088 /* BIMFriendListDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BIMFriendListDataSource.h; sourceTree = "<group>"; };
+		2B548E942A5D7D9A00FF7088 /* BIMFriendListDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BIMFriendListDataSource.m; sourceTree = "<group>"; };
+		2B548E9A2A5D905500FF7088 /* BIMFriendListHeaderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BIMFriendListHeaderCell.h; sourceTree = "<group>"; };
+		2B548E9B2A5D905500FF7088 /* BIMFriendListHeaderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BIMFriendListHeaderCell.m; sourceTree = "<group>"; };
+		2B817F892A5D59AF0004C404 /* VEIMDemoFriendListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoFriendListController.h; sourceTree = "<group>"; };
+		2B817F8A2A5D59AF0004C404 /* VEIMDemoFriendListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoFriendListController.m; sourceTree = "<group>"; };
 		2B8AFFF42A48460600E25AA2 /* VEIMDemoSelectUserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoSelectUserViewController.h; sourceTree = "<group>"; };
 		2B8AFFF52A48460600E25AA2 /* VEIMDemoSelectUserViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoSelectUserViewController.m; sourceTree = "<group>"; };
 		2B8E5438292E734600A2A416 /* VEIMDemoConversationSettingCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoConversationSettingCell.h; sourceTree = "<group>"; };
@@ -134,6 +155,16 @@
 		2B8E544329307B6800A2A416 /* VEIMDemoIMManager+Message.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "VEIMDemoIMManager+Message.m"; sourceTree = "<group>"; };
 		2B8E544529307C8E00A2A416 /* VEIMDemoIMManager+Conversation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VEIMDemoIMManager+Conversation.h"; sourceTree = "<group>"; };
 		2B8E544629307C8E00A2A416 /* VEIMDemoIMManager+Conversation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "VEIMDemoIMManager+Conversation.m"; sourceTree = "<group>"; };
+		2B977F1F2A663D9900568407 /* VEIMDemoFriendApplyListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoFriendApplyListController.h; sourceTree = "<group>"; };
+		2B977F202A663D9900568407 /* VEIMDemoFriendApplyListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoFriendApplyListController.m; sourceTree = "<group>"; };
+		2B977F222A663FDC00568407 /* VEIMDemoFriendApplyListCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoFriendApplyListCell.h; sourceTree = "<group>"; };
+		2B977F232A663FDC00568407 /* VEIMDemoFriendApplyListCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoFriendApplyListCell.m; sourceTree = "<group>"; };
+		2B977F252A66B8F700568407 /* BIMFriendListUserCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BIMFriendListUserCell.h; sourceTree = "<group>"; };
+		2B977F262A66B8F700568407 /* BIMFriendListUserCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BIMFriendListUserCell.m; sourceTree = "<group>"; };
+		2B977F282A678D9B00568407 /* VEIMDemoFriendBlackListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoFriendBlackListController.h; sourceTree = "<group>"; };
+		2B977F292A678D9B00568407 /* VEIMDemoFriendBlackListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoFriendBlackListController.m; sourceTree = "<group>"; };
+		2BA798A82A94E8F60086FB90 /* UIWindow+FixCrashOnInputKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWindow+FixCrashOnInputKeyboard.h"; sourceTree = "<group>"; };
+		2BA798A92A94E8F60086FB90 /* UIWindow+FixCrashOnInputKeyboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWindow+FixCrashOnInputKeyboard.m"; sourceTree = "<group>"; };
 		2BA90CCD2921EB2600154F35 /* BDIMDebugDatabaseController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BDIMDebugDatabaseController.m; sourceTree = "<group>"; };
 		2BA90CCE2921EB2600154F35 /* BDIMDebugDatabaseController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BDIMDebugDatabaseController.h; sourceTree = "<group>"; };
 		2BA90CD02921EB2600154F35 /* BDIMDebugNetworkRequestMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BDIMDebugNetworkRequestMonitor.h; sourceTree = "<group>"; };
@@ -203,9 +234,15 @@
 		2BA90D802921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoMyinfoHeaderCell.m; sourceTree = "<group>"; };
 		2BA90D812921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VEIMDemoMyinfoHeaderCell.h; sourceTree = "<group>"; };
 		2BA90DCB2921EB9D00154F35 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2BC3D4852A4974F400457512 /* VEIMDemoAppInfoCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAppInfoCell.h; sourceTree = "<group>"; };
+		2BC3D4862A4974F400457512 /* VEIMDemoAppInfoCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoAppInfoCell.m; sourceTree = "<group>"; };
+		2BC3D48C2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAccountCancellationManager.h; sourceTree = "<group>"; };
+		2BC3D48D2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoAccountCancellationManager.m; sourceTree = "<group>"; };
 		2BD4DC8D2A4AE81E00A08AA7 /* VEIMDemoAccountProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAccountProtocol.h; sourceTree = "<group>"; };
 		2BD4DC8E2A4B02F400A08AA7 /* VEIMDemoAccountManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAccountManager.h; sourceTree = "<group>"; };
 		2BD4DC8F2A4B02F400A08AA7 /* VEIMDemoAccountManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoAccountManager.m; sourceTree = "<group>"; };
+		2BDC4CC52A737107007F47B6 /* VEIMDemoFriendApplyListDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoFriendApplyListDataSource.h; sourceTree = "<group>"; };
+		2BDC4CC62A737107007F47B6 /* VEIMDemoFriendApplyListDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoFriendApplyListDataSource.m; sourceTree = "<group>"; };
 		2BF1BA0929A5E7B6007145D0 /* VEIMDemoConversationListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoConversationListController.h; sourceTree = "<group>"; };
 		2BF1BA0A29A5E7B6007145D0 /* VEIMDemoConversationListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoConversationListController.m; sourceTree = "<group>"; };
 		2BF1BA0C29A5FD01007145D0 /* VEIMDemoChatViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoChatViewController.h; sourceTree = "<group>"; };
@@ -235,8 +272,6 @@
 			files = (
 				6261DB9224643D4B00FC11F8 /* CoreGraphics.framework in Frameworks */,
 				6261DB9824643D5F00FC11F8 /* UIKit.framework in Frameworks */,
-				7B981B861C3564319D2A0427 /* libPods-ByteBusiness.a in Frameworks */,
-				9EFBE841736B84C14B0A2FB3 /* libPods-ByteBusiness.a in Frameworks */,
 				6261DB9424643D5200FC11F8 /* ExternalAccessory.framework in Frameworks */,
 				24CA06252982177D4D83A7CA /* libPods-ByteBusiness.a in Frameworks */,
 				AAE69C0ED029ADD449315A70 /* libPods-ByteBusiness.a in Frameworks */,
@@ -289,6 +324,8 @@
 		25EE372E2433166D00AB5267 /* ByteBusiness */ = {
 			isa = PBXGroup;
 			children = (
+				2B817F882A5D58F40004C404 /* FriendList */,
+				2BC3D48B2A4AE83200457512 /* AccountCancellation */,
 				2B0CF803292E44C6007FC3DE /* ConversationSetting */,
 				2BA90DCB2921EB9D00154F35 /* Assets.xcassets */,
 				2BA90D512921EB2800154F35 /* Application */,
@@ -307,6 +344,8 @@
 				2B3ABB832684642600B114E2 /* xcconfig */,
 				25EE37402433167000AB5267 /* Info.plist */,
 				25EE37AF24332C7D00AB5267 /* PrefixHeader.pch */,
+				2BA798A82A94E8F60086FB90 /* UIWindow+FixCrashOnInputKeyboard.h */,
+				2BA798A92A94E8F60086FB90 /* UIWindow+FixCrashOnInputKeyboard.m */,
 			);
 			path = ByteBusiness;
 			sourceTree = "<group>";
@@ -406,6 +445,15 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		2B3182D42A7CA33F006973CD /* Category */ = {
+			isa = PBXGroup;
+			children = (
+				2B3182D52A7CA6D3006973CD /* UIAlertController+Dismiss.h */,
+				2B3182D62A7CA6D3006973CD /* UIAlertController+Dismiss.m */,
+			);
+			path = Category;
+			sourceTree = "<group>";
+		};
 		2B3ABB832684642600B114E2 /* xcconfig */ = {
 			isa = PBXGroup;
 			children = (
@@ -414,6 +462,56 @@
 				2B3ABB862684642600B114E2 /* Release.xcconfig */,
 			);
 			path = xcconfig;
+			sourceTree = "<group>";
+		};
+		2B548E912A5D7D2D00FF7088 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				2B817F892A5D59AF0004C404 /* VEIMDemoFriendListController.h */,
+				2B817F8A2A5D59AF0004C404 /* VEIMDemoFriendListController.m */,
+				2B548E8E2A5D79E200FF7088 /* BIMFriendListController.h */,
+				2B548E8F2A5D79E200FF7088 /* BIMFriendListController.m */,
+				2B977F1F2A663D9900568407 /* VEIMDemoFriendApplyListController.h */,
+				2B977F202A663D9900568407 /* VEIMDemoFriendApplyListController.m */,
+				2B977F282A678D9B00568407 /* VEIMDemoFriendBlackListController.h */,
+				2B977F292A678D9B00568407 /* VEIMDemoFriendBlackListController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		2B548E922A5D7D4200FF7088 /* DataSource */ = {
+			isa = PBXGroup;
+			children = (
+				2B548E932A5D7D9A00FF7088 /* BIMFriendListDataSource.h */,
+				2B548E942A5D7D9A00FF7088 /* BIMFriendListDataSource.m */,
+				2BDC4CC52A737107007F47B6 /* VEIMDemoFriendApplyListDataSource.h */,
+				2BDC4CC62A737107007F47B6 /* VEIMDemoFriendApplyListDataSource.m */,
+			);
+			path = DataSource;
+			sourceTree = "<group>";
+		};
+		2B548E962A5D7EBE00FF7088 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				2B548E9A2A5D905500FF7088 /* BIMFriendListHeaderCell.h */,
+				2B548E9B2A5D905500FF7088 /* BIMFriendListHeaderCell.m */,
+				2B977F222A663FDC00568407 /* VEIMDemoFriendApplyListCell.h */,
+				2B977F232A663FDC00568407 /* VEIMDemoFriendApplyListCell.m */,
+				2B977F252A66B8F700568407 /* BIMFriendListUserCell.h */,
+				2B977F262A66B8F700568407 /* BIMFriendListUserCell.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		2B817F882A5D58F40004C404 /* FriendList */ = {
+			isa = PBXGroup;
+			children = (
+				2B3182D42A7CA33F006973CD /* Category */,
+				2B548E962A5D7EBE00FF7088 /* View */,
+				2B548E922A5D7D4200FF7088 /* DataSource */,
+				2B548E912A5D7D2D00FF7088 /* Controller */,
+			);
+			path = FriendList;
 			sourceTree = "<group>";
 		};
 		2B8E543B292E739B00A2A416 /* Models */ = {
@@ -673,6 +771,8 @@
 			children = (
 				2BA90D802921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m */,
 				2BA90D812921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.h */,
+				2BC3D4852A4974F400457512 /* VEIMDemoAppInfoCell.h */,
+				2BC3D4862A4974F400457512 /* VEIMDemoAppInfoCell.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -682,6 +782,15 @@
 			children = (
 			);
 			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		2BC3D48B2A4AE83200457512 /* AccountCancellation */ = {
+			isa = PBXGroup;
+			children = (
+				2BC3D48C2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.h */,
+				2BC3D48D2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.m */,
+			);
+			path = AccountCancellation;
 			sourceTree = "<group>";
 		};
 		6E67D12A448E561862444F0B /* Frameworks */ = {
@@ -959,20 +1068,26 @@
 				2BA90DC92921EB2800154F35 /* VEIMDemoMyinfoController.m in Sources */,
 				2BA90D922921EB2800154F35 /* BDIMDebugDragButton.m in Sources */,
 				2BA90DAB2921EB2800154F35 /* VEIMDemoImagePickerController.m in Sources */,
+				2B977F272A66B8F700568407 /* BIMFriendListUserCell.m in Sources */,
 				2BA90DC12921EB2800154F35 /* VEIMDemoBaseView.m in Sources */,
 				2BA90DBB2921EB2800154F35 /* AppDelegate.m in Sources */,
 				2BA90D8D2921EB2800154F35 /* BDIMDebugWeakProxy.m in Sources */,
 				2BA90D932921EB2800154F35 /* BDIMDebugBaseModel.m in Sources */,
 				2BA90DBD2921EB2800154F35 /* VEIMDemoNavigationViewController.m in Sources */,
+				2B977F2A2A678D9B00568407 /* VEIMDemoFriendBlackListController.m in Sources */,
+				2B548E9C2A5D905500FF7088 /* BIMFriendListHeaderCell.m in Sources */,
 				2B0CF80E292E50DA007FC3DE /* VEIMDemoUserListItem.m in Sources */,
 				2BA90D872921EB2800154F35 /* BDIMDebugNetworkEnvironmentController.m in Sources */,
 				2BA90DC32921EB2800154F35 /* VEIMDemoPaddingLabel.m in Sources */,
 				2B015FA22A1F951D00ECD1EE /* VEIMDemoLoginViewController.m in Sources */,
+				2B3182D72A7CA6D3006973CD /* UIAlertController+Dismiss.m in Sources */,
 				2BA90D8C2921EB2800154F35 /* UIView+BDIMDebugToast.m in Sources */,
 				2BA90D882921EB2800154F35 /* BDIMDebugNetworkRequestMonitor.m in Sources */,
 				2BA90D842921EB2800154F35 /* BDIMDebugNetworkManager.m in Sources */,
 				2B0CF807292E4E93007FC3DE /* VEIMDemoConversationSettingController.m in Sources */,
+				2B977F212A663D9900568407 /* VEIMDemoFriendApplyListController.m in Sources */,
 				2BA90D892921EB2800154F35 /* BDIMDebugNetworkRequestInfoView.m in Sources */,
+				2BDC4CC72A737107007F47B6 /* VEIMDemoFriendApplyListDataSource.m in Sources */,
 				2BF1BA0E29A5FD01007145D0 /* VEIMDemoChatViewController.m in Sources */,
 				2BA90D822921EB2800154F35 /* BDIMDebugDatabaseController.m in Sources */,
 				2BA90D962921EB2800154F35 /* BDIMDebugManager.m in Sources */,
@@ -985,17 +1100,23 @@
 				2B8E544729307C8E00A2A416 /* VEIMDemoIMManager+Conversation.m in Sources */,
 				2B015FA12A1F951D00ECD1EE /* VEIMDemoUser.m in Sources */,
 				2BA90D902921EB2800154F35 /* BDIMDebugMenuIconModel.m in Sources */,
+				2BA798AA2A94E8F60086FB90 /* UIWindow+FixCrashOnInputKeyboard.m in Sources */,
 				2B8E543A292E734600A2A416 /* VEIMDemoConversationSettingCell.m in Sources */,
 				2BA90D912921EB2800154F35 /* BDIMDebugFPSLabel.m in Sources */,
 				2BA90DBA2921EB2800154F35 /* main.m in Sources */,
 				2BA90D852921EB2800154F35 /* BDIMDebugNetworkRequestCell.m in Sources */,
 				2BA90DB32921EB2800154F35 /* VEIMDemoUserSelectionController.m in Sources */,
 				2BA90D982921EB2800154F35 /* VEIMDemoCommonMenu.m in Sources */,
+				2B817F8B2A5D59AF0004C404 /* VEIMDemoFriendListController.m in Sources */,
 				2BA90D8B2921EB2800154F35 /* BDIMDebugToast.m in Sources */,
 				2BA90DC42921EB2800154F35 /* VEIMDemoIMManager.m in Sources */,
+				2B548E952A5D7D9A00FF7088 /* BIMFriendListDataSource.m in Sources */,
 				2BA90D8E2921EB2800154F35 /* BDIMDebugMenuItem.m in Sources */,
 				2B015FA32A1F951D00ECD1EE /* VEIMDemoTestUserCell.m in Sources */,
+				2B977F242A663FDC00568407 /* VEIMDemoFriendApplyListCell.m in Sources */,
 				2B8E544429307B6800A2A416 /* VEIMDemoIMManager+Message.m in Sources */,
+				2BC3D4872A4974F400457512 /* VEIMDemoAppInfoCell.m in Sources */,
+				2B548E902A5D79E200FF7088 /* BIMFriendListController.m in Sources */,
 				2BA90D972921EB2800154F35 /* VEIMDemoRouter.m in Sources */,
 				2B8E543E292E748D00A2A416 /* VEIMDemoSettingModel.m in Sources */,
 				2BA90D8A2921EB2800154F35 /* BDIMDebugNetworkRequest.m in Sources */,
@@ -1004,6 +1125,7 @@
 				2BA90D942921EB2800154F35 /* BDIMDebugTableViewCell.m in Sources */,
 				2BA90DB52921EB2800154F35 /* VEIMDemoTabbarController.m in Sources */,
 				2B8E5441292E77A500A2A416 /* VEIMDemoInputController.m in Sources */,
+				2BC3D48E2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1149,10 +1271,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = comssiphoneucentercninhouse;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release_inhouse;
 		};
@@ -1349,10 +1468,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1392,10 +1508,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = comssiphoneucentercninhouse;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

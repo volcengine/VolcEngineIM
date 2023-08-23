@@ -9,6 +9,7 @@
 #import "BIMChatViewDataSource.h"
 #import "BIMUIDefine.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <OneKit/BTDMacros.h>
 
 @interface BIMChatViewDataSource () <BIMMessageListener>
 @property (nonatomic, strong) BIMConversation *conversation;
@@ -18,17 +19,19 @@
 @property (nonatomic, assign) BOOL hasMore;
 @property (nonatomic, strong) NSLock *lock;
 @property (nonatomic, strong) BIMMessage *earliestMessage;
+@property (nonatomic, assign) long long liveGroupNextCursor;
 @end
 
 @implementation BIMChatViewDataSource
 
-- (instancetype)initWithConversation:(BIMConversation *)conversation
+- (instancetype)initWithConversation:(BIMConversation *)conversation joinMessageCursor:(long long)joinMessageCursor
 {
     if (self = [super init]) {
         _conversation = conversation;
         _p_messageList = [NSMutableArray array];
         _messageDict = [NSMutableDictionary dictionary];
         _lock = [[NSLock alloc] init];
+        _liveGroupNextCursor = joinMessageCursor;
         if (_conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
             [[BIMClient sharedInstance] addLiveGroupMessageListener:self];
         } else {
@@ -36,6 +39,11 @@
         }
     }
     return self;
+}
+
+- (instancetype)initWithConversation:(BIMConversation *)conversation
+{
+    return [self initWithConversation:conversation joinMessageCursor:0];
 }
 
 - (void)dealloc
@@ -78,30 +86,54 @@
     return self.messageList.count - index - 1;
 }
 
-- (void)loadOlderMessagesWithCompletionBlock:(void (^)(NSError * _Nullable))completion
+- (void)loadOlderMessagesWithCompletionBlock:(void (^)(BIMError * _Nullable))completion
 {
-    BIMGetMessageOption *option = [[BIMGetMessageOption alloc] init];
-    option.limit = self.pageSize ?: 20;
-    option.earliestMessage = self.earliestMessage;
-    kWeakSelf(self);
-    [[BIMClient sharedInstance] getHistoryMessageList:self.conversation.conversationID option:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable earliestMessage, BIMError * _Nullable error) {
-        if (!error) {
-            weakself.earliestMessage = earliestMessage;
-            [weakself.lock lock];
-            [weakself.p_messageList addObjectsFromArray:messages];
-            [messages enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                weakself.messageDict[obj.uuid] = obj;
-            }];
-            [weakself.lock unlock];
-            weakself.hasMore = hasMore;
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.messageList = [self.p_messageList copy];
-            if (completion) {
-                completion(error);
+    int limit = self.pageSize ?: 20;
+    @weakify(self);
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        [[BIMClient sharedInstance] getLiveGroupHistoryMessageList:self.conversation.conversationID cursor:self.liveGroupNextCursor limit:limit completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, long long nextCursor, BIMError * _Nullable error) {
+            @strongify(self);
+            if (!error) {
+                self.liveGroupNextCursor = nextCursor;
+                [self.lock lock];
+                [self.p_messageList addObjectsFromArray:messages];
+                [messages enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    self.messageDict[obj.uuid] = obj;
+                }];
+                [self.lock unlock];
+                self.hasMore = hasMore;
             }
-        });
-    }];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.messageList = [self.p_messageList copy];
+                if (completion) {
+                    completion(error);
+                }
+            });
+        }];
+    } else {
+        BIMGetMessageOption *option = [[BIMGetMessageOption alloc] init];
+        option.limit = limit;
+        option.earliestMessage = self.earliestMessage;
+        [[BIMClient sharedInstance] getHistoryMessageList:self.conversation.conversationID option:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable earliestMessage, BIMError * _Nullable error) {
+            @strongify(self);
+            if (!error) {
+                self.earliestMessage = earliestMessage;
+                [self.lock lock];
+                [self.p_messageList addObjectsFromArray:messages];
+                [messages enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    self.messageDict[obj.uuid] = obj;
+                }];
+                [self.lock unlock];
+                self.hasMore = hasMore;
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.messageList = [self.p_messageList copy];
+                if (completion) {
+                    completion(error);
+                }
+            });
+        }];
+    }
 }
 
 #pragma mark - BIMMessageListener
@@ -153,6 +185,9 @@
 - (void)p_insertMessage:(BIMMessage *)message
 {
     [self.lock lock];
+    if (self.p_messageList.count == 0) {
+        self.earliestMessage = message;
+    }
     if (self.messageDict[message.uuid]) { // update
         [self.messageList enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj.uuid isEqualToString:message.uuid]) {

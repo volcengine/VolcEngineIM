@@ -11,6 +11,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol VEIMDemoAccountProtocol <NSObject>
+@property (nonatomic, copy) void(^agreeUserPirvacyAgreementCompletion)(void);
+
+- (BOOL)isAgreeUserPirvacyAgreement;
+- (void)agreeUserPirvacyAgreement;
 - (void)showLoginVC;
 - (void)checkUserExist:(long long)uid completion:(void (^)(BOOL exist, NSError *error))completion;
 @end

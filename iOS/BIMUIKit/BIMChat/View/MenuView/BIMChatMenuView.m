@@ -450,7 +450,7 @@ static NSInteger const menuItemMaxCount = 8;
         return nil;
     }
 
-    return [UIImage imageNamed:[@"TIMOEmoji.bundle" stringByAppendingPathComponent:name]];
+    return [UIImage imageNamed:[@"TIMOEmojiNew.bundle" stringByAppendingPathComponent:name]];
 }
 
 @end

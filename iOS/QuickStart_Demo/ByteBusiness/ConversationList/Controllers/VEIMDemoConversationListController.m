@@ -23,6 +23,15 @@
 
 @implementation VEIMDemoConversationListController
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        [self registerNotification];
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -35,6 +44,36 @@
     conListController.delegate = self;
     [self addChildViewController:conListController];
     [self.view addSubview:conListController.view];
+}
+
+- (void)registerNotification
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:kVEIMDemoUserDidLoginNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:kVEIMDemoUserDidLogoutNotification object:nil];
+}
+
+- (void)didReceiveNoti:(NSNotification *)noti
+{
+    if ([noti.name isEqualToString:kVEIMDemoUserDidLoginNotification]) {
+        [self userDidLogin];
+    }else if ([noti.name isEqualToString:kVEIMDemoUserDidLogoutNotification]){
+        [self userDidLogout];
+    }
+}
+
+- (void)userDidLogin
+{
+    [[BIMClient sharedInstance] getTotalUnreadMessageCount:^(long long unreadCount, BIMError * _Nullable error) {
+        if (error) {
+            return;
+        }
+        [self updateTabUnreadCount:unreadCount];
+    }];
+}
+
+- (void)userDidLogout
+{
+    [self updateTabUnreadCount:0];
 }
 
 - (void)rightBarItemClicked: (UIBarButtonItem *)item{
@@ -79,6 +118,11 @@
 }
 
 - (void)conversationListController:(BIMConversationListController *)controllerr onTotalUnreadMessageCountChanged:(NSUInteger)totalUnreadCount
+{
+    [self updateTabUnreadCount:totalUnreadCount];
+}
+
+- (void)updateTabUnreadCount:(NSUInteger)totalUnreadCount
 {
     NSInteger total = totalUnreadCount;
     BOOL exceed = NO;

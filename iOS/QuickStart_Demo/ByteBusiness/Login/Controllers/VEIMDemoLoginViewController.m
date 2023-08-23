@@ -11,6 +11,7 @@
 #import "VEIMDemoTestUserCell.h"
 #import "VEIMDemoDefine.h"
 #import "BIMToastView.h"
+#import "VEIMDemoDefine.h"
 
 #import <Masonry/Masonry.h>
 
@@ -88,10 +89,10 @@
     self.loginPromptLabel.scrollEnabled = NO;
     self.loginPromptLabel.editable = NO;
     NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:@"已阅读并同意"];
-    NSAttributedString *user = [[NSAttributedString alloc] initWithString:@"用户协议" attributes:@{NSLinkAttributeName:[NSURL URLWithString:@"https://www.volcengine.com/docs/6348/975891"]}];
+    NSAttributedString *user = [[NSAttributedString alloc] initWithString:@"用户协议" attributes:@{NSLinkAttributeName:[NSURL URLWithString:kVEIMDemoUserAgreement]}];
     [str appendAttributedString:user];
     [str appendAttributedString:[[NSAttributedString alloc] initWithString:@" 和 "]];
-    NSAttributedString *privacy = [[NSAttributedString alloc] initWithString:@"隐私政策" attributes:@{NSLinkAttributeName:[NSURL URLWithString:@"https://www.volcengine.com/docs/6348/975890"]}];
+    NSAttributedString *privacy = [[NSAttributedString alloc] initWithString:@"隐私政策" attributes:@{NSLinkAttributeName:[NSURL URLWithString:kVEIMDemoPrivacyAgreement]}];
     [str appendAttributedString:privacy];
     
     self.loginPromptLabel.attributedText = str;

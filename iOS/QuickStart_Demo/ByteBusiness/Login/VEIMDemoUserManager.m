@@ -63,13 +63,7 @@
         if (user && !error) {
             self.currentUser = user;
         }
-        
-        // IMSDK
-        [self initSDK];
-        
-        
-        [[BIMClient sharedInstance] addConnectListener:self];
-        
+
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:BDIMDebugNetworkChangeNotification object:nil];
         
     }
@@ -98,6 +92,8 @@
 //        user.url = xxx;
         return user;
     }];
+    
+    [[BIMClient sharedInstance] addConnectListener:self];
 }
 
 - (BOOL)isLogedIn{
@@ -165,12 +161,16 @@
         [[BIMUIClient sharedInstance] login:@(self.currentUser.userID).stringValue token:self.currentUser.userToken completion:^(BIMError * _Nullable error) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.progressHUD hideAnimated:YES];
+                if (error) {
+                    [self logout];
+                }
                 if (completion){
                     completion(error);
                 }
             });
+            [[NSNotificationCenter defaultCenter] postNotificationName:kVEIMDemoUserDidLoginNotification object:nil];
         }];
-        [[NSNotificationCenter defaultCenter] postNotificationName:kVEIMDemoUserDidLoginNotification object:nil];
+        
     } else {
         NSString *tokenUrl = [[BDIMDebugNetworkManager sharedManager] tokenUrl];
         NSString *URL = [NSString stringWithFormat:@"%@/get_token?appID=%@&userID=%lld",tokenUrl, kVEIMDemoAppID, user.userID];
@@ -187,12 +187,16 @@
                 [[BIMUIClient sharedInstance] login:@(self.currentUser.userID).stringValue token:self.currentUser.userToken completion:^(BIMError * _Nullable error) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [self.progressHUD hideAnimated:YES];
+                        if (error) {
+                            [self logout];
+                        }
                         if (completion){
                             completion(error);
                         }
                     });
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kVEIMDemoUserDidLoginNotification object:nil];
                 }];
-                [[NSNotificationCenter defaultCenter] postNotificationName:kVEIMDemoUserDidLoginNotification object:nil];
+                
             }else{
                 [self.progressHUD hideAnimated:YES];
                 if (completion) {
@@ -222,7 +226,7 @@
 
 - (NSString *)nicknameForTestUser:(long long)userID{
     VEIMDemoUser *user = [self.userDict objectForKey:@(userID)];
-    if (user) {
+    if (user.name.length) {
         return user.name;
     } else {
         return [NSString stringWithFormat:@"用户%lld",userID];
@@ -263,6 +267,10 @@
 }
 
 #pragma mark - BIMConnectListener
+- (void)onConnectStatusChanged:(BIMConnectStauts)status
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"LongConnectStatusChanged" object:nil];
+}
 
 - (void)onTokenInvalid {
     UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"账号已过期，请重新登录" message:nil preferredStyle:UIAlertControllerStyleAlert];

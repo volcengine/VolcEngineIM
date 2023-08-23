@@ -610,7 +610,7 @@ static CGFloat textHei = 0;
             NSDictionary *content = @{
                 @"type" : @1,
                 @"link" : @"https://www.volcengine.com/",
-                @"text" : @"欢迎体验即时通讯IM demo"
+                @"text" : @"欢迎体验火山引擎即时通IM Demo" 
             };
             BIMMessage *sendMsg = [[BIMClient sharedInstance] createCustomMessage:content];
             if (self.delegate && [self.delegate respondsToSelector:@selector(inputToolViewSendMessage:)]) {
@@ -725,7 +725,7 @@ static CGFloat textHei = 0;
         return;
     }
 
-    UIImage *emojiImage = [UIImage imageNamed:[@"TIMOEmoji.bundle" stringByAppendingPathComponent:emoji.imageName]];
+    UIImage *emojiImage = [UIImage imageNamed:[@"TIMOEmojiNew.bundle" stringByAppendingPathComponent:emoji.imageName]];
     if (!emojiImage) {
         return;
     }

@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface VEIMDemoAccountManager : NSObject <VEIMDemoAccountProtocol>
 + (instancetype)sharedManager;
+@property (nonatomic, copy) void(^agreeUserPirvacyAgreementCompletion)(void);
 @end
 
 NS_ASSUME_NONNULL_END

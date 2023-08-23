@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) id <BIMChatMenuViewNewDelegate> delegate;
 
-- (void)showItems:(NSMutableArray<BIMChatMenuItemModel *> *)items onView:(nonnull UIView *)view message: (BIMMessage *)message;
+- (void)showItems:(NSMutableArray<BIMChatMenuItemModel *> *)items onView:(nonnull UIView *)view referView:(UIView *)referView message: (BIMMessage *)message;
 
 - (void)refreshMessage: (BIMMessage *)message;
 

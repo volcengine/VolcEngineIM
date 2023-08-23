@@ -228,7 +228,7 @@ static CGFloat const TIMStickerPageViewEmojiButtonVerticalMargin = 16.0;
         return nil;
     }
 
-    UIImage *image = [UIImage imageNamed:[@"TIMOEmoji.bundle" stringByAppendingPathComponent:name]];
+    UIImage *image = [UIImage imageNamed:[@"TIMOEmojiNew.bundle" stringByAppendingPathComponent:name]];
     return image;
 }
 

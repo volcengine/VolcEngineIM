@@ -7,12 +7,13 @@
 //
 
 #import "VEIMDemoInputController.h"
+#import <OneKit/NSString+BTDAdditions.h>
 
 @interface VEIMDemoInputController () <UITextViewDelegate>
 @property (nonatomic, strong) NSString *inputText;
 @property (nonatomic, strong) UITextView *textview;
 @property (nonatomic, assign) BOOL editable;
-@property (nonatomic, assign) int maxWordCount;
+@property (nonatomic, assign) NSInteger maxWordCount;
 @property (nonatomic, strong) void(^handler)(NSString *text);
 @end
 
@@ -49,6 +50,10 @@
     if (self.editable) {
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(rightClicked:)];
     }
+    
+    if (self.isNumberPad) {
+        self.textview.keyboardType = UIKeyboardTypeNumberPad;
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated{
@@ -63,29 +68,48 @@
     [self dismiss];
 }
 
-- (void)textViewDidChange:(UITextView *)textView{
-    int length = self.maxWordCount;
-    NSString *toBeString = textView.text;
+#pragma mark - UITextFieldDelegate
 
-    NSString *lang = [[textView textInputMode] primaryLanguage];; // 键盘输入模式
+//- (void)textViewDidChange:(UITextView *)textView{
+//    int length = self.maxWordCount;
+//    NSString *toBeString = textView.text;
+//
+//    NSString *lang = [[textView textInputMode] primaryLanguage];; // 键盘输入模式
+//
+//    if ([lang isEqualToString:@"zh-Hans"]) { // 简体中文输入，包括简体拼音，健体五笔，简体手写
+//        UITextRange *selectedRange = [textView markedTextRange];
+//        //获取高亮部分
+//        UITextPosition *position = [textView positionFromPosition:selectedRange.start offset:0];
+//        // 没有高亮选择的字，则对已输入的文字进行字数统计和限制
+//        if (!position){
+//            if (toBeString.length > length){
+//                textView.text = [toBeString substringToIndex:length];
+//            }
+//        }else{
+//
+//        }
+//    }else{
+//        if (toBeString.length > length) {
+//            textView.text = [toBeString substringToIndex:length];
+//        }
+//    }
+//}
 
-    if ([lang isEqualToString:@"zh-Hans"]) { // 简体中文输入，包括简体拼音，健体五笔，简体手写
-        UITextRange *selectedRange = [textView markedTextRange];
-        //获取高亮部分
-        UITextPosition *position = [textView positionFromPosition:selectedRange.start offset:0];
-        // 没有高亮选择的字，则对已输入的文字进行字数统计和限制
-        if (!position){
-            if (toBeString.length > length){
-                textView.text = [toBeString substringToIndex:length];
-            }
-        }else{
-
-        }
-    }else{
-        if (toBeString.length > length) {
-            textView.text = [toBeString substringToIndex:length];
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)string
+{
+    if (self.isNumberPad) {
+        if (![string btd_containsNumberOnly]) {
+            return NO;
         }
     }
+    
+    if(range.length + range.location > textView.text.length) {
+        return NO;
+    }
+
+    NSUInteger newLength = [textView.text length] + [string length] - range.length;
+
+    return newLength <= self.maxWordCount;
 }
 
 /*

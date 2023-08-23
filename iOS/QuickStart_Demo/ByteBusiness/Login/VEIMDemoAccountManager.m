@@ -10,6 +10,10 @@
 #import "VEIMDemoLoginViewController.h"
 #import "VEIMDemoRouter.h"
 
+@interface VEIMDemoAccountManager ()
+
+@end
+
 @implementation VEIMDemoAccountManager
 
 + (instancetype)sharedManager{
@@ -21,6 +25,16 @@
         }
     });
     return _sharedInstance;
+}
+
+- (BOOL)isAgreeUserPirvacyAgreement
+{
+    return YES;
+}
+
+- (void)agreeUserPirvacyAgreement
+{
+    
 }
 
 - (void)showLoginVC
