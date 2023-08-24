@@ -11,7 +11,7 @@ import { getMessageComponent } from '../../../../components/MessageCards';
 import { useInView } from '../../../../hooks';
 import MessageWrap from './Styles';
 import { BytedIMInstance, CurrentConversation, UserId } from '../../../../store';
-import { getMsgStatusIcon } from '../../../../utils';
+import { getMessageTimeFormat, getMsgStatusIcon } from '../../../../utils';
 import { ACCOUNTS_INFO } from '../../../../constant';
 import { IconArrowDown, IconArrowUp, IconMinus } from '@arco-design/web-react/icon';
 
@@ -149,7 +149,9 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
   const renderMessageOwnerInfo = () => {
     return (
       <div className="message-info">
+        {isFromMe && <span className="message-timestamp noselect">{getMessageTimeFormat(createdAt)}&nbsp;</span>}
         <span>{ext['a:live_group_nick_name'] ?? ACCOUNTS_INFO[sender]?.name}</span>
+        {!isFromMe && <span className="message-timestamp noselect">&nbsp;{getMessageTimeFormat(createdAt)}</span>}
       </div>
     );
   };

@@ -1,7 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { IMOption, im_proto, MultimediaPlugin, BytedIM, IMEvent, LivePlugin } from '@volcengine/im-web-sdk';
-import { Modal, Message } from '@arco-design/web-react';
+import {
+  IMOption,
+  im_proto,
+  MultimediaPlugin,
+  BytedIM,
+  IMEvent,
+  LivePlugin,
+  ContactPlugin,
+  Message,
+} from '@volcengine/im-web-sdk';
+import { Modal, Message as ArcoMessage } from '@arco-design/web-react';
 import lang from 'lodash/lang';
 import { useDebounceFn } from 'ahooks';
 
@@ -19,7 +28,7 @@ import {
   LiveConversationMemberCount,
   LiveConversationOwner,
 } from '../store';
-import { APP_ID, USER_ID_KEY, IM_TOKEN_KEY, SDK_OPTION } from '../constant';
+import { APP_ID, USER_ID_KEY, IM_TOKEN_KEY, SDK_OPTION, ACCOUNTS_INFO } from '../constant';
 import { fetchToken } from '../apis/app';
 import { Storage, computedVisibleTime } from '../utils';
 import { useLive } from './useLive';
@@ -43,7 +52,7 @@ const init = ({ userId, deviceId }) => {
       }),
   };
 
-  const plugins = [LivePlugin, MultimediaPlugin];
+  const plugins = [LivePlugin, MultimediaPlugin, ContactPlugin];
 
   return new BytedIM(params, plugins);
 };
@@ -63,7 +72,14 @@ const useInit = () => {
   const setUnReadTotal = useSetRecoilState(UnReadTotal);
   const [currentConversation, setCurrentConversation] = useRecoilState(CurrentConversation);
   const setCurrentConversationUnreadCount = useSetRecoilState(CurrentConversationUnreadCount);
-  const setMessages = useSetRecoilState(Messages);
+  const _setMessages = useSetRecoilState(Messages);
+  const setMessages = (list: Message[]) => {
+    const newList = computedVisibleTime(list);
+    if (currentConversation.type === ConversationType.MASS_CHAT)
+      newList.sort((a, b) => Number(a.createdAt) - Number(b.createdAt));
+    _setMessages(newList);
+  };
+
   const setParticipants = useSetRecoilState(Participants);
   const [liveConversations, setLiveConversations] = useRecoilState(LiveConversations);
   const setIsMuted = useSetRecoilState(IsMuted);
@@ -79,8 +95,7 @@ const useInit = () => {
     () => {
       if (currentConversation) {
         const list = currentConversation.getMessageList() ?? [];
-        const newList = computedVisibleTime(list) as any;
-        setMessages(newList);
+        setMessages(list);
       }
     },
     {
@@ -266,7 +281,7 @@ const useInit = () => {
     const ownerChangeHandle = bytedIMInstance?.event?.subscribe?.(
       IMEvent.ConversationOwnerChange,
       ({ oldOwnerId, newOwnerId }) => {
-        Message.info(`群主由${oldOwnerId}变成${newOwnerId}`);
+        ArcoMessage.info(`群主由${oldOwnerId}变成${newOwnerId}`);
         setLiveConversationOwner(String(newOwnerId));
       }
     );
@@ -277,8 +292,7 @@ const useInit = () => {
       }
       if (msg.conversationType === ConversationType.MASS_CHAT) {
         liveMessagesMap.set(msg.clientId, msg);
-        const newList = computedVisibleTime([...liveMessagesMap.values()]) as any;
-        setMessages(newList);
+        setMessages([...liveMessagesMap.values()]);
       } else {
         getMessageList();
       }
@@ -291,11 +305,34 @@ const useInit = () => {
       if (msg.conversationType === ConversationType.MASS_CHAT) {
         if (liveMessagesMap.has(msg.clientId)) {
           liveMessagesMap.delete(msg.clientId);
-          const newList = computedVisibleTime([...liveMessagesMap.values()]) as any;
-          setMessages(newList);
+          setMessages([...liveMessagesMap.values()]);
         }
       }
     });
+
+    const friendApplyHandler = bytedIMInstance?.event?.subscribe?.(IMEvent.FriendApply, msg => {
+      // Message.info(`收到来自 ${ACCOUNTS_INFO[msg.from_user_id].name} 的好友申请`);
+    });
+    const friendApplyRefuseHandler = bytedIMInstance?.event?.subscribe?.(IMEvent.FriendApplyRefuse, msg => {
+      // Message.info(
+      //   `${ACCOUNTS_INFO[msg.from_user_id].name} 发给 ${ACCOUNTS_INFO[msg.to_user_id].name} 的好友申请被拒绝`
+      // );
+    });
+    const friendAddHandler = bytedIMInstance?.event?.subscribe?.(IMEvent.FriendAdd, msg => {
+      // Message.info(`${ACCOUNTS_INFO[msg.from_user_id].name} 添加好友 ${ACCOUNTS_INFO[msg.to_user_id].name}`);
+    });
+    const friendDeleteHandler = bytedIMInstance?.event?.subscribe?.(IMEvent.FriendDelete, msg => {
+      // Message.info(`${ACCOUNTS_INFO[msg.from_user_id].name} 将好友 ${ACCOUNTS_INFO[msg.to_user_id].name} 删除`);
+    });
+
+    let loadLiveHistoryListener = async event => {
+      for (let msg of event.detail.messages) {
+        liveMessagesMap.set(msg.clientId, msg);
+      }
+      setMessages([...liveMessagesMap.values()]);
+    };
+
+    window.addEventListener('loadLiveHistory', loadLiveHistoryListener);
 
     return () => {
       bytedIMInstance?.event.unsubscribe(IMEvent.ConversationUpsert, conversationUpsertHandler);
@@ -309,6 +346,12 @@ const useInit = () => {
       bytedIMInstance?.event.unsubscribe(IMEvent.ParticipantJoin, participantJoinHandle);
       bytedIMInstance?.event.unsubscribe(IMEvent.ParticipantLeave, participantLeaveHandle);
       bytedIMInstance?.event.unsubscribe(IMEvent.ConversationOwnerChange, ownerChangeHandle);
+
+      bytedIMInstance?.event.unsubscribe(IMEvent.FriendApply, friendApplyHandler);
+      bytedIMInstance?.event.unsubscribe(IMEvent.FriendApplyRefuse, friendApplyRefuseHandler);
+      bytedIMInstance?.event.unsubscribe(IMEvent.FriendAdd, friendAddHandler);
+      bytedIMInstance?.event.unsubscribe(IMEvent.FriendDelete, friendDeleteHandler);
+      window.removeEventListener('loadLiveHistory', loadLiveHistoryListener);
     };
   }, [bytedIMInstance, currentConversation?.id]);
 

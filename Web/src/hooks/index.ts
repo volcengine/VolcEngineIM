@@ -10,3 +10,4 @@ export { default as useImSdK } from './useImSdk';
 export * from './useParticipant';
 export * from './useLive';
 export * from './useLiveConversation';
+export { useUnreadFriendApplyCount } from './useUnreadFriendApplyCount';
