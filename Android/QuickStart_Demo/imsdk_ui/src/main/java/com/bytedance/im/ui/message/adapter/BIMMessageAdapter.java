@@ -73,11 +73,10 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
     }
 
     /**
-     * 添加到尾部
-     *
+     * 批量添加消息
      * @param messageList
      */
-    public void appendMessageList(List<BIMMessage> messageList) {
+    public void addAllMessageList(List<BIMMessage> messageList) {
         if (messageList == null || messageList.isEmpty()) {
             return;
         }
@@ -95,7 +94,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
         }
     }
 
-    private int findIndex(BIMMessage message) {
+    public int findIndex(BIMMessage message) {
         if (message != null && data != null && !data.isEmpty()) {
             for (int i = 0; i < data.size(); i++) {
                 BIMMessageWrapper wrapper = data.get(i);

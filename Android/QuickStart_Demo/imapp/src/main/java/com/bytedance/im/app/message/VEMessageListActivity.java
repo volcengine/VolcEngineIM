@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,9 +32,29 @@ public class VEMessageListActivity extends Activity {
     private String conversationId;
     private int REQUEST_CODE_CONVERSATION_DETAIL = 5;
 
+    /**
+     * 跳转到最新消息
+     *
+     * @param context
+     * @param cid
+     */
     public static void start(Context context, String cid) {
         Intent intent = new Intent(context, VEMessageListActivity.class);
         intent.putExtra(BIMMessageListFragment.TARGET_CID, cid);
+        context.startActivity(intent);
+    }
+
+    /**
+     * 跳转到某条消息
+     *
+     * @param context
+     * @param cid
+     * @param msgId   // 跳转的消息Id
+     */
+    public static void start(Context context, String cid, String msgId) {
+        Intent intent = new Intent(context, VEMessageListActivity.class);
+        intent.putExtra(BIMMessageListFragment.TARGET_CID, cid);
+        intent.putExtra(BIMMessageListFragment.TARGET_MSG_ID, msgId);
         context.startActivity(intent);
     }
 
@@ -48,33 +67,41 @@ public class VEMessageListActivity extends Activity {
         back = findViewById(R.id.iv_back);
         tvTitle = findViewById(R.id.message_list_title);
         more = findViewById(R.id.message_list_more);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        back.setOnClickListener(v -> onBackPressed());
         refreshConversation();
-        more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (bimConversation != null) {
-                    if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
-                        VEDetailSingleConversationActivity.start(VEMessageListActivity.this, conversationId);
-                    } else if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT) {
-                        VEDetailGroupConversationActivity.startForResult(VEMessageListActivity.this, conversationId, REQUEST_CODE_CONVERSATION_DETAIL);
-                    }
-                } else {
-                    Toast.makeText(VEMessageListActivity.this, "操作过快", Toast.LENGTH_SHORT).show();
+        more.setOnClickListener(v -> {
+            if (bimConversation != null) {
+                if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
+                    VEDetailSingleConversationActivity.start(VEMessageListActivity.this, conversationId);
+                } else if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT) {
+                    VEDetailGroupConversationActivity.startForResult(VEMessageListActivity.this, conversationId, REQUEST_CODE_CONVERSATION_DETAIL);
                 }
+            } else {
+                Toast.makeText(VEMessageListActivity.this, "操作过快", Toast.LENGTH_SHORT).show();
             }
         });
+        refreshFragment();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         refreshConversation();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String refreshCid = intent.getStringExtra(BIMMessageListFragment.TARGET_CID);
+        String refreshMsgId = intent.getStringExtra(BIMMessageListFragment.TARGET_MSG_ID);
+        getIntent().putExtra(BIMMessageListFragment.TARGET_CID, refreshCid);
+        getIntent().putExtra(BIMMessageListFragment.TARGET_MSG_ID, refreshMsgId);
+        refreshFragment();
+    }
+
+    private void refreshFragment() {
+        BIMMessageListFragment messageListFragment = new BIMMessageListFragment();
+        getFragmentManager().beginTransaction().replace(R.id.message_list_container, messageListFragment).commit();
     }
 
     private void refreshConversation() {

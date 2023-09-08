@@ -11,17 +11,12 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bytedance.im.app.BuildConfig;
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.contact.mainList.VEContactListFragment;
-import com.bytedance.im.app.user.VEDefaultAccountProvider;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
 import com.bytedance.im.core.api.model.BIMConversation;
-import com.bytedance.im.core.proto.Config;
 import com.bytedance.im.ui.BIMUIClient;
 
 import java.util.List;
@@ -107,12 +102,6 @@ public class VEIMMainActivity extends Activity implements View.OnClickListener {
                 }
             }
         });
-        if (!BuildConfig.DEBUG || VEIMApplication.accountProvider instanceof VEDefaultAccountProvider) { //隐藏了直播群，删掉 if 可体验
-            View liveTab = findViewById(R.id.rl_live_group);
-            LinearLayout tabLayout = findViewById(R.id.cl_menu);
-            liveTab.setVisibility(View.GONE);
-            tabLayout.setWeightSum(3);
-        }
     }
 
     @Override

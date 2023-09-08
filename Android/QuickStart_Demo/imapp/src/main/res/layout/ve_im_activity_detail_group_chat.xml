@@ -239,6 +239,23 @@
     </FrameLayout>
 
     <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@color/business_base_white"
+        android:id="@+id/fl_search_msg"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="搜索消息记录"
+            android:textColor="@color/business_im_222"
+            android:textSize="16sp" />
+    </FrameLayout>
+
+    <FrameLayout
         android:id="@+id/fl_dissolve_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

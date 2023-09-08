@@ -92,6 +92,31 @@
                 android:textColor="@color/business_im_999"
                 android:textSize="14sp" />
         </FrameLayout>
+        <FrameLayout
+            android:id="@+id/fl_sdk_did"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/business_base_white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:text="Did"
+                android:textColor="@color/business_im_222"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_sdk_did"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:textColor="@color/business_im_999"
+                android:textSize="14sp" />
+        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/fl_connect"
