@@ -7,6 +7,7 @@ import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
 import com.bytedance.im.app.sysbug.PreventProcessKill;
 import com.bytedance.im.app.user.VEDefaultAccountProvider;
+import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.interfaces.BIMAccountProvider;
 
@@ -21,5 +22,7 @@ public class VEIMApplication extends Application {
     public void onCreate() {
         super.onCreate();
         SpUtils.getInstance().init(this);   //初始化sp
+        Log.i(TAG, "uikit version: " + BIMUIClient.getInstance().getVersion());
+        Log.i(TAG, "imSdk version: " + BIMClient.getInstance().getVersion());
     }
 }

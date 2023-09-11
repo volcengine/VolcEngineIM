@@ -38,6 +38,7 @@ import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.user.UserManager;
 
 
@@ -77,6 +78,8 @@ public class VEMineFragment extends Fragment {
         flPolicy = view.findViewById(R.id.fl_privacy_policy);
         flPermission = view.findViewById(R.id.fl_permission);
         flDId = view.findViewById(R.id.fl_sdk_did);
+        Log.i(TAG, "uikit version: " + BIMUIClient.getInstance().getVersion());
+        Log.i(TAG, " imSdk version: " + BIMClient.getInstance().getVersion());
         BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(BIMUIClient.getInstance().getCurUserId());
         if (user == null) {
             ivPortrait.setImageResource(R.drawable.icon_recommend_user_default);
