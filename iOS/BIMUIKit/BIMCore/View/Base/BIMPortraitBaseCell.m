@@ -32,6 +32,11 @@
 //        make.top.equalTo(self.nameLabel.mas_bottom).with.offset(8);
 //        make.right.mas_equalTo(-60);
 //    }];
+    
+    self.detailLabel = [UILabel new];
+    self.detailLabel.font = [UIFont systemFontOfSize:12];
+    self.detailLabel.textColor = kIM_Sub_Color;
+    [self.contentView addSubview:self.detailLabel];
 }
 
 - (void)setupConstraints{
@@ -47,7 +52,7 @@
         make.bottom.mas_equalTo(-12);
     }];
     
-    if (self.subTitleLabel.text.length) {
+    if (self.subTitleLabel.text.length || self.subTitleLabel.attributedText.length) {
         [self.nameLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.portrait.mas_right).with.offset(12);
             make.top.mas_equalTo(12);
@@ -64,6 +69,10 @@
         }];
     }
     
+    [self.detailLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(-12);
+        make.centerY.equalTo(self.nameLabel);
+    }];
 }
 
 @end

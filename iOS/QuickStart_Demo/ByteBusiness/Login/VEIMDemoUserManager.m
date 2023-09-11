@@ -18,6 +18,7 @@
 #import "BIMUIClient.h"
 #import "VEIMDemoIMManager.h"
 
+
 @interface VEIMDemoUserManager ()<BIMConnectListener>
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
 @property (nonatomic, strong) NSMutableDictionary *userDict;
@@ -94,6 +95,10 @@
     }];
     
     [[BIMClient sharedInstance] addConnectListener:self];
+    
+    [[BIMClient sharedInstance] getDid:^(NSString * _Nullable did) {
+        NSLog(@"TIM--did:%@", did);
+    }];
 }
 
 - (BOOL)isLogedIn{

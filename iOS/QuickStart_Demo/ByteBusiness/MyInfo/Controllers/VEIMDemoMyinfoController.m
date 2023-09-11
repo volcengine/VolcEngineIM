@@ -27,6 +27,7 @@ typedef enum : NSUInteger {
 static NSString *const VEIMMyInfoAppid = @"AppId";
 static NSString *const VEIMMyInfoAppVersionName = @"App Version Name";
 static NSString *const VEIMMyInfoIMSDKVersion = @"IMSDK Version Name";
+static NSString *const VEIMMyInfoIMSDKDid = @"Did";
 static NSString *const VEIMMyInfoLongConnectStauts = @"长连接状态";
 static NSString *const VEIMMyInfoPrivacy = @"隐私政策";
 static NSString *const VEIMMyInfoPermissionList = @"权限申请列表";
@@ -35,6 +36,7 @@ static NSString *const VEIMMyInfoPermissionList = @"权限申请列表";
 
 @property (nonatomic, copy) NSArray *appInfoArr;
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
+@property (nonatomic, copy) NSString *did;
 
 @end
 
@@ -68,6 +70,15 @@ static NSString *const VEIMMyInfoPermissionList = @"权限申请列表";
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:kVEIMDemoUserDidLoginNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:@"LongConnectStatusChanged" object:nil];
+    
+    @weakify(self);
+    [[BIMClient sharedInstance] getDid:^(NSString * _Nullable did) {
+        @strongify(self);
+        self.did = did;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableview reloadData];
+        });
+    }];
 }
 
 - (void)didReceiveNoti: (NSNotification *)noti{
@@ -84,6 +95,7 @@ static NSString *const VEIMMyInfoPermissionList = @"权限申请列表";
     self.appInfoArr = @[VEIMMyInfoAppid,
                         VEIMMyInfoAppVersionName,
                         VEIMMyInfoIMSDKVersion,
+                        VEIMMyInfoIMSDKDid,
                         VEIMMyInfoLongConnectStauts,
                         VEIMMyInfoPrivacy,
                         VEIMMyInfoPermissionList];
@@ -117,6 +129,8 @@ static NSString *const VEIMMyInfoPermissionList = @"权限申请列表";
                 info = UIApplication.btd_bundleVersion;
             } else if ([title isEqualToString:VEIMMyInfoIMSDKVersion]) {
                 info = [[BIMClient sharedInstance] getVersion];
+            } else if ([title isEqualToString:VEIMMyInfoIMSDKDid]) {
+                info = self.did;
             } else if ([title isEqualToString:VEIMMyInfoLongConnectStauts]) {
                 info = [[BIMClient sharedInstance] getConnectStatus] == BIM_CONNECT_STATUS_CONNECTED ? @"[已连接]" : @"[未连接]";
             } else if ([title isEqualToString:VEIMMyInfoPrivacy]) {
@@ -199,6 +213,11 @@ static NSString *const VEIMMyInfoPermissionList = @"权限申请列表";
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kVEIMDemoPrivacyAgreement] options:nil completionHandler:nil];
         } else if ([title isEqualToString:VEIMMyInfoPermissionList]) {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kVEIMDemoPermissionList] options:nil completionHandler:nil];
+        } else if ([title isEqualToString:VEIMMyInfoIMSDKDid]) {
+            if (!self.did.length) return;
+            UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+            pasteboard.string = self.did;
+            [BIMToastView toast:[NSString stringWithFormat:@"已复制Did:%@", self.did] withDuration:0.5];
         }
     }
 }

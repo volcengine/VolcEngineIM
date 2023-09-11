@@ -76,30 +76,47 @@
     return self;
 }
 
-- (BOOL)headerRefreshEnable{
+- (BOOL)headerRefreshEnable {
     return YES;
 }
 
-- (void)headerRefreshed{
+- (void)headerRefreshed {
     NSInteger oldCount = self.messageDataSource.numberOfItems;
     
-    kWeakSelf(self);
-    if (!self.messageDataSource.hasMore) {
+    @weakify(self);
+    if (!self.messageDataSource.hasOlderMessages) {
         [self.tableview.mj_header endRefreshing];
         [BIMToastView toast:@"没有更多历史消息了"];
         return;
     }
     [self.messageDataSource loadOlderMessagesWithCompletionBlock:^(BIMError *_Nullable error) {
-        [weakself.tableview.mj_header endRefreshing];
+        @strongify(self);
+        [self.tableview.mj_header endRefreshing];
         
         if (error) {
             [BIMToastView toast:[NSString stringWithFormat:@"%@", error.localizedDescription]];
         } else {
-            [weakself.tableview reloadData];
+            [self.tableview reloadData];
             
-            NSInteger newCount = weakself.messageDataSource.numberOfItems;
+            NSInteger newCount = self.messageDataSource.numberOfItems;
             if (newCount - oldCount < newCount) {
-                [weakself.tableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:(newCount - oldCount) inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+                [self.tableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:(newCount - oldCount) inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+            }
+        }
+    }];
+}
+
+- (void)footerPulled {
+    @weakify(self);
+    [self.messageDataSource loadNewerMessagesWithCompletionBlock:^(BIMError * _Nullable error) {
+        @strongify(self);
+        [self.tableview.mj_footer endRefreshing];
+        if (error) {
+            [BIMToastView toast:[NSString stringWithFormat:@"%@", error.localizedDescription]];
+        } else {
+            [self.tableview reloadData];
+            if (!self.messageDataSource.hasNewerMessages) {
+                self.tableview.mj_footer.hidden = YES;
             }
         }
     }];
@@ -149,19 +166,35 @@
 - (void)setupMsgs{
     [[BIMClient sharedInstance] markConversationRead:self.conversation.conversationID completion:nil];
     
-    self.messageDataSource = [[BIMChatViewDataSource alloc] initWithConversation:self.conversation joinMessageCursor:self.joinMessageCursor];
+    self.messageDataSource = [[BIMChatViewDataSource alloc] initWithConversation:self.conversation joinMessageCursor:self.joinMessageCursor anchorMessage:self.anchorMessage];
     self.messageDataSource.delegate = self;
     
     @weakify(self);
-    [self.messageDataSource loadOlderMessagesWithCompletionBlock:^(BIMError * _Nullable error) {
-        @strongify(self);
-        [CATransaction begin];
-        [self.tableview reloadData];
-        if (self.messageDataSource.numberOfItems > 1) {
-            [self.tableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.messageDataSource.numberOfItems - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
-        }
-        [CATransaction commit];
-    }];
+    if (self.anchorMessage) {
+        [self.messageDataSource loadMessagesWithSearchMsg:self.anchorMessage completionBlock:^(NSIndexPath * _Nonnull searchIndexPath, BIMError * _Nullable error) {
+            @strongify(self);
+            [CATransaction begin];
+            [self.tableview reloadData];
+            if (self.messageDataSource.numberOfItems > 1) {
+                [self.tableview scrollToRowAtIndexPath:searchIndexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+            }
+            [CATransaction commit];
+            
+            if (self.messageDataSource.hasNewerMessages) {
+                self.tableview.mj_footer = [MJRefreshBackStateFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerPulled)];
+            }
+        }];
+    } else {
+        [self.messageDataSource loadOlderMessagesWithCompletionBlock:^(BIMError * _Nullable error) {
+            @strongify(self);
+            [CATransaction begin];
+            [self.tableview reloadData];
+            if (self.messageDataSource.numberOfItems > 1) {
+                [self.tableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.messageDataSource.numberOfItems - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+            }
+            [CATransaction commit];
+        }];
+    }
     
     [self conversationStatusUpdateProcess];
     

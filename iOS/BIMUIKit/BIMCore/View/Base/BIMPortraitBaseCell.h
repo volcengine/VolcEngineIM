@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIImageView *portrait;
 @property (nonatomic, strong) UILabel *nameLabel;
 @property (nonatomic, strong) UILabel *subTitleLabel;
+@property (nonatomic, strong) UILabel *detailLabel;
 @end
 
 NS_ASSUME_NONNULL_END

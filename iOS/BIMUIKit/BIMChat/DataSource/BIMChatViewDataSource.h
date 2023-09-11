@@ -22,7 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BIMChatViewDataSource : NSObject
 
 - (instancetype)initWithConversation:(BIMConversation *)conversation;
-
+- (instancetype)initWithConversation:(BIMConversation *)conversation joinMessageCursor:(long long)joinMessageCursor anchorMessage:(BIMMessage *)anchorMessage;
+/// 直播群
 - (instancetype)initWithConversation:(BIMConversation *)conversation joinMessageCursor:(long long)joinMessageCursor;
 
 
@@ -31,8 +32,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// 分页大小，默认20
 @property (nonatomic, assign) int pageSize;
 
-/// 是否有下一页
-@property (nonatomic, assign, readonly) BOOL hasMore;
+/// 是否有更老的消息
+@property (nonatomic, assign, readonly) BOOL hasOlderMessages;
+
+/**
+ 是否还有更新的消息供显示
+ */
+@property (nonatomic, assign, readonly) BOOL hasNewerMessages;
 
 /**
  数据源目前所包含消息个数
@@ -45,6 +51,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSUInteger)indexOfItem:(nonnull BIMMessage *)item;
 
 - (void)loadOlderMessagesWithCompletionBlock:(void (^)(BIMError *_Nullable error))completion;
+
+- (void)loadNewerMessagesWithCompletionBlock:(void (^)(BIMError *_Nullable error))completion;
+
+- (void)loadMessagesWithSearchMsg:(BIMMessage *)searchMessage completionBlock:(void (^)(NSIndexPath *searchIndexPath, BIMError *_Nullable error))completion;
 
 @end
 

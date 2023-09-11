@@ -482,12 +482,18 @@ static CGFloat textHei = 0;
 
 - (void)keyboardWillShow:(NSNotification *)notify
 {
+    if (!self.window || !self.tempTextView.isFirstResponder) {
+        return;
+    }
     self.taType = IMTextAudioTypeText;
 //    [self textAudioBtnChangeAction:nil];
 }
 
 - (void)keyboardWillHide:(NSNotification *)notify
 {
+    if (!self.window || !self.tempTextView.isFirstResponder) {
+        return;
+    }
     CGRect textViewFrame = self.tempTextView.frame;
     CGSize textSize = [self.tempTextView sizeThatFits:CGSizeMake(CGRectGetWidth(textViewFrame), CGFLOAT_MAX)];
     textHei = MAX(kMinHei, MIN(kMaxHei, textSize.height));
@@ -498,6 +504,9 @@ static CGFloat textHei = 0;
 
 - (void)keyboardWillChangeFrame:(NSNotification *)notify
 {
+    if (!self.window || !self.tempTextView.isFirstResponder) {
+        return;
+    }
     self.itType = IMInputToolTypeTextAudio;
 
     self.moreMenuView.hidden = YES;
@@ -926,12 +935,13 @@ static CGFloat textHei = 0;
             fileModel.type = BIMInputMenuTypeFile;
             [_menuMAry btd_addObject:fileModel];
         }
-        // UIKit不保留，后续可以抽到Demo层实现
-//        BIMInputMenuModel *customCoverModel = [[BIMInputMenuModel alloc] init];
-//        customCoverModel.titleStr = @"自定义消息";
-//        customCoverModel.iconStr = @"icon_photo";
-//        customCoverModel.type = BIMInputMenuTypeCustomMessage;
-//        [_menuMAry btd_addObject:customCoverModel];
+#ifdef UI_INTERNAL
+        BIMInputMenuModel *customCoverModel = [[BIMInputMenuModel alloc] init];
+        customCoverModel.titleStr = @"自定义消息";
+        customCoverModel.iconStr = @"icon_photo";
+        customCoverModel.type = BIMInputMenuTypeCustomMessage;
+        [_menuMAry btd_addObject:customCoverModel];
+#endif
     }
 
     return _menuMAry;

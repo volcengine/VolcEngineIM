@@ -27,6 +27,7 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_back"] style:UIBarButtonItemStylePlain target:self action:@selector(backItemClicked:)];
     
     BIMChatViewController *chatVC = [BIMChatViewController chatVCWithConversation:self.conversation];
+    chatVC.anchorMessage = self.anchorMessage; // 搜索时指定目标message
     [self addChildViewController:chatVC];
     [self.view addSubview:chatVC.view];
 }

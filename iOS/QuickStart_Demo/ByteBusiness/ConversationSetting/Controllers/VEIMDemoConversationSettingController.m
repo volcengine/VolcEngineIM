@@ -18,6 +18,7 @@
 #import "VEIMDemoIMManager+Message.h"
 #import "VEIMDemoIMManager+Conversation.h"
 #import "VEIMDemoSelectUserViewController.h"
+#import "VEIMDemoFTSViewController.h"
 
 typedef enum : NSUInteger {
     VEIMDemoConversationActionTypeDefault = 0,
@@ -159,6 +160,15 @@ typedef enum : NSUInteger {
         }];
     };
     [self.settings addObject:mute];
+    
+    //搜索消息记录
+    VEIMDemoSettingModel *searchMessage = [VEIMDemoSettingModel settingWithTitle:@"搜索消息记录" detail:@"" isNeedSwitch:NO switchOn:NO];
+    searchMessage.clickHandler = ^{
+        VEIMDemoFTSViewController *vc = [VEIMDemoFTSViewController new];
+        vc.conversationID = weakself.conversation.conversationID;
+        [weakself.navigationController pushViewController:vc animated:YES];
+    };
+    [self.settings addObject:searchMessage];
 
     
     //解散群聊

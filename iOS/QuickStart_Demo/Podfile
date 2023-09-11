@@ -19,6 +19,7 @@ target 'ByteBusiness' do
   pod 'JSONModel'
   pod 'MBProgressHUD'
   pod 'TTNetworkManager', '5.0.29.26'
+  pod 'RangersAppLog', '6.13.2'
 
 #    debug tools
   pod 'FLEX', '3.1.2'

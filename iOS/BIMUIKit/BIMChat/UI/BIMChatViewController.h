@@ -6,13 +6,16 @@
 
 #import "BIMBaseTableViewController.h"
 
-@class BIMConversation;
+@class BIMConversation, BIMMessage;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface BIMChatViewController : BIMBaseTableViewController
 
 + (instancetype)chatVCWithConversation:(BIMConversation *)conversation;
+
+@property (nonatomic, strong) BIMMessage *anchorMessage;
+
 
 @end
 

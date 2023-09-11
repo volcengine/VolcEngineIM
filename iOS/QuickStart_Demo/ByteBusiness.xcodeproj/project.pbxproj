@@ -74,6 +74,7 @@
 		2BA90DCC2921EB9D00154F35 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BA90DCB2921EB9D00154F35 /* Assets.xcassets */; };
 		2BC3D4872A4974F400457512 /* VEIMDemoAppInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC3D4862A4974F400457512 /* VEIMDemoAppInfoCell.m */; };
 		2BC3D48E2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC3D48D2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.m */; };
+		2BD3F9D42AA08EEC001A9427 /* VEIMDemoFTSViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD3F9D32AA08EEC001A9427 /* VEIMDemoFTSViewController.m */; };
 		2BD4DC902A4B02F400A08AA7 /* VEIMDemoAccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD4DC8F2A4B02F400A08AA7 /* VEIMDemoAccountManager.m */; };
 		2BDC4CC72A737107007F47B6 /* VEIMDemoFriendApplyListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDC4CC62A737107007F47B6 /* VEIMDemoFriendApplyListDataSource.m */; };
 		2BF1BA0B29A5E7B6007145D0 /* VEIMDemoConversationListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BF1BA0A29A5E7B6007145D0 /* VEIMDemoConversationListController.m */; };
@@ -238,6 +239,8 @@
 		2BC3D4862A4974F400457512 /* VEIMDemoAppInfoCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoAppInfoCell.m; sourceTree = "<group>"; };
 		2BC3D48C2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAccountCancellationManager.h; sourceTree = "<group>"; };
 		2BC3D48D2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoAccountCancellationManager.m; sourceTree = "<group>"; };
+		2BD3F9D22AA08EEC001A9427 /* VEIMDemoFTSViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoFTSViewController.h; sourceTree = "<group>"; };
+		2BD3F9D32AA08EEC001A9427 /* VEIMDemoFTSViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoFTSViewController.m; sourceTree = "<group>"; };
 		2BD4DC8D2A4AE81E00A08AA7 /* VEIMDemoAccountProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAccountProtocol.h; sourceTree = "<group>"; };
 		2BD4DC8E2A4B02F400A08AA7 /* VEIMDemoAccountManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAccountManager.h; sourceTree = "<group>"; };
 		2BD4DC8F2A4B02F400A08AA7 /* VEIMDemoAccountManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoAccountManager.m; sourceTree = "<group>"; };
@@ -324,6 +327,7 @@
 		25EE372E2433166D00AB5267 /* ByteBusiness */ = {
 			isa = PBXGroup;
 			children = (
+				2BD3F9D12AA08D40001A9427 /* FTS */,
 				2B817F882A5D58F40004C404 /* FriendList */,
 				2BC3D48B2A4AE83200457512 /* AccountCancellation */,
 				2B0CF803292E44C6007FC3DE /* ConversationSetting */,
@@ -793,6 +797,15 @@
 			path = AccountCancellation;
 			sourceTree = "<group>";
 		};
+		2BD3F9D12AA08D40001A9427 /* FTS */ = {
+			isa = PBXGroup;
+			children = (
+				2BD3F9D22AA08EEC001A9427 /* VEIMDemoFTSViewController.h */,
+				2BD3F9D32AA08EEC001A9427 /* VEIMDemoFTSViewController.m */,
+			);
+			path = FTS;
+			sourceTree = "<group>";
+		};
 		6E67D12A448E561862444F0B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1077,6 +1090,7 @@
 				2B977F2A2A678D9B00568407 /* VEIMDemoFriendBlackListController.m in Sources */,
 				2B548E9C2A5D905500FF7088 /* BIMFriendListHeaderCell.m in Sources */,
 				2B0CF80E292E50DA007FC3DE /* VEIMDemoUserListItem.m in Sources */,
+				2BD3F9D42AA08EEC001A9427 /* VEIMDemoFTSViewController.m in Sources */,
 				2BA90D872921EB2800154F35 /* BDIMDebugNetworkEnvironmentController.m in Sources */,
 				2BA90DC32921EB2800154F35 /* VEIMDemoPaddingLabel.m in Sources */,
 				2B015FA22A1F951D00ECD1EE /* VEIMDemoLoginViewController.m in Sources */,
@@ -1257,7 +1271,7 @@
 				);
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ByteBusiness/PrefixHeader.pch";
 				INFOPLIST_FILE = ByteBusiness/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1453,7 +1467,7 @@
 				);
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ByteBusiness/PrefixHeader.pch";
 				INFOPLIST_FILE = ByteBusiness/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1494,7 +1508,7 @@
 				);
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ByteBusiness/PrefixHeader.pch";
 				INFOPLIST_FILE = ByteBusiness/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
