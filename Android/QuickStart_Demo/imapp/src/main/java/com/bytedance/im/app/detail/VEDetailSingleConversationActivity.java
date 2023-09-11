@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.detail.member.VESingleMemberListActivity;
 import com.bytedance.im.app.detail.member.adapter.VEMemberHozionAdapter;
+import com.bytedance.im.app.search.VESearchResultActivity;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
@@ -20,7 +21,6 @@ import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.BIMUIClient;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class VEDetailSingleConversationActivity extends Activity {
@@ -45,6 +45,7 @@ public class VEDetailSingleConversationActivity extends Activity {
         recyclerView.setAdapter(adapter);
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
         findViewById(R.id.iv_goto_member).setOnClickListener(v -> VESingleMemberListActivity.start(VEDetailSingleConversationActivity.this, conversationId));
+        findViewById(R.id.fl_search_msg).setOnClickListener(v -> VESearchResultActivity.start(VEDetailSingleConversationActivity.this, conversationId));
         BIMUIClient.getInstance().getConversation(conversationId, new BIMResultCallback<BIMConversation>() {
             @Override
             public void onSuccess(BIMConversation conversation) {

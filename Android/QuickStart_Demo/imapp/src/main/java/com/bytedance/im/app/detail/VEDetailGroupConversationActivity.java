@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.detail.manager.VEGroupManagerConfigActivity;
 import com.bytedance.im.app.detail.member.VEMemberAddActivity;
+import com.bytedance.im.app.search.VESearchResultActivity;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
@@ -60,6 +62,7 @@ public class VEDetailGroupConversationActivity extends Activity {
     private BIMMember curMember;//当前用户
     private ProgressDialog waitDialog;
     private BIMConversation bimConversation;
+    private FrameLayout flSearch;
 
     public static void startForResult(Activity activity, String cid, int requestCode) {
         Intent intent = new Intent(activity, VEDetailGroupConversationActivity.class);
@@ -86,6 +89,7 @@ public class VEDetailGroupConversationActivity extends Activity {
         optionQuitGroup = findViewById(R.id.fl_quit_group);
         noticeArrow = findViewById(R.id.iv_conversation_notice);
         nameArrow = findViewById(R.id.iv_conversation_name);
+        flSearch = findViewById(R.id.fl_search_msg);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         adapter = new VEMemberHozionAdapter(this, new VEMemberHozionAdapter.OnClickListener() {
             @Override
@@ -109,6 +113,7 @@ public class VEDetailGroupConversationActivity extends Activity {
         optionNameLayout.setOnClickListener(v -> VEEditGroupNameActivity.start(VEDetailGroupConversationActivity.this, conversationId));
         optionNoticeLayout.setOnClickListener(v -> VEEditGroupNoticeActivity.start(VEDetailGroupConversationActivity.this, conversationId));
         optionManager.setOnClickListener(v -> VEGroupManagerConfigActivity.start(VEDetailGroupConversationActivity.this, conversationId));
+        flSearch.setOnClickListener(v-> VESearchResultActivity.start(VEDetailGroupConversationActivity.this, conversationId));
         optionDissolveGroup.setOnClickListener(v -> dissolveGroup());
         optionQuitGroup.setOnClickListener(v -> quitGroup());
         BIMUIClient.getInstance().addConversationListener(conversationListener);

@@ -352,7 +352,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
     private void sendCustomMessage() {
         BIMShareElement shareVEContent = new BIMShareElement();
         shareVEContent.setLink("https://www.volcengine.com/");
-        shareVEContent.setText("欢迎体验火山引擎即时通讯IM Demo");
+        shareVEContent.setText("欢迎体验即时通信IM demo");
         BIMMessage customMessage = BIMClient.getInstance().createCustomMessage(BIMMessageManager.getInstance().encode(shareVEContent));
         sendMessage(customMessage);
     }

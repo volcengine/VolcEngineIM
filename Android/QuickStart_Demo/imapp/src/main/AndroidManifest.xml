@@ -51,7 +51,8 @@
         <activity
             android:name=".message.VEMessageListActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:launchMode="singleTask">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="com.bytedance.im.page.message_list" />
@@ -153,6 +154,9 @@
         <activity
             android:name=".detail.member.VEMemberAddActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".search.VESearchResultActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

@@ -3,17 +3,20 @@ package com.bytedance.im.ui.message;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.text.Selection;
 import android.text.TextUtils;
@@ -28,6 +31,7 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMMessageListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSendCallback;
+import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMGetMessageOption;
 import com.bytedance.im.core.api.model.BIMMessage;
@@ -57,18 +61,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 public class BIMMessageListFragment extends Fragment {
     private static final String TAG = "VEMessageListFragment";
     public static final String TARGET_CID = "target_cid";
+    public static final String TARGET_MSG_ID = "target_msg_id";
     public static final String ACTION = "com.bytedance.im.page.message_list";
     private String conversationId;
     private BIMConversation bimConversation;
     private RecyclerView recyclerView;
     private BIMMessageAdapter adapter;
     private BIMMessage earliestMessage = null;
-    private boolean hasMore = false;
-    private boolean isSyncing = false;
+    private BIMMessage lastMessage = null;
+    private boolean olderHasMore = false;
+    private boolean newerHasMore = false;
+    private boolean isSyncingOlder = false;
+    private boolean isSyncingNewer = false;
     private VEInPutView inPutView;
     private VoiceRecordManager voiceRecordManager;
     private int REQUEST_CODE_SELECT_MEDIA = 0;
@@ -78,18 +87,24 @@ public class BIMMessageListFragment extends Fragment {
     private static String takePhotoPath = "";
     private Set<Long> mentionIds = new HashSet<Long>();
     private BIMMessageOptionPopupWindow msgOptionMenu;
+    private String startMsgId;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getActivity().getIntent();
         conversationId = intent.getStringExtra(TARGET_CID);
-        BIMLog.i(TAG, "onCreate() conversationId: " + conversationId);
+        startMsgId = intent.getStringExtra(BIMMessageListFragment.TARGET_MSG_ID);
+        BIMLog.i(TAG, "onCreate() conversationId: " + conversationId + " startMsgId: " + startMsgId);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        conversationId = getActivity().getIntent().getStringExtra(TARGET_CID);
+        startMsgId = getActivity().getIntent().getStringExtra(BIMMessageListFragment.TARGET_MSG_ID);
+        BIMLog.i(TAG, "onCreateView() conversationId: " + conversationId + " startMsgId: " + startMsgId);
         View v = inflater.inflate(R.layout.bim_im_fragment_message_list, container, false);
         recyclerView = v.findViewById(R.id.message_list);
         inPutView = v.findViewById(R.id.inputView);
@@ -130,18 +145,48 @@ public class BIMMessageListFragment extends Fragment {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                boolean isSlideToBottom = isSlideToBottom(recyclerView);
-                if (isSlideToBottom && hasMore) {
-                    if (hasMore) {
-                        loadData();
+                if (dy == 0) return;
+                boolean isSlideToBottom = isSlideToTop(recyclerView);
+                if (isSlideToBottom) {
+                    if (olderHasMore) {
+                        loadOlderData(null);
                     } else {
-                        Toast.makeText(getActivity(), "没有更多了", Toast.LENGTH_SHORT).show();
+                        if (dy < 0) {
+                            Toast.makeText(getActivity(), "历史没有更多了", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
+                boolean isSideTop = isSlideToBottom(recyclerView);
+                if (isSideTop) {
+                    if (newerHasMore) {
+                        loadNewerData(null);
+                    } else {
+                        Toast.makeText(getActivity(), "最新没有更多了", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
             }
         });
+
         BIMClient.getInstance().addMessageListener(receiveMessageListener);
-        loadData();
+        if (!TextUtils.isEmpty(startMsgId)) {
+            newerHasMore = true;
+            BIMClient.getInstance().getMessage(startMsgId, new BIMResultCallback<BIMMessage>() {
+                @Override
+                public void onSuccess(BIMMessage bimMessage) {
+                    earliestMessage = bimMessage;
+                    lastMessage = bimMessage;
+                    initBothDirectData(bimMessage);
+                }
+
+                @Override
+                public void onFailed(BIMErrorCode code) {
+
+                }
+            });
+        } else {
+            initOlderDirection();
+        }
         initInputView();
         return v;
     }
@@ -173,7 +218,7 @@ public class BIMMessageListFragment extends Fragment {
             @Override
             public void onAtClick() {
                 BIMLog.i(TAG, "onAtClick()");
-                BIMGroupMemberListActivity.startForResult(BIMMessageListFragment.this,conversationId, REQUEST_CODE_SELECT_USER_FOR_AT);
+                BIMGroupMemberListActivity.startForResult(BIMMessageListFragment.this, conversationId, REQUEST_CODE_SELECT_USER_FOR_AT);
             }
 
             @Override
@@ -257,7 +302,7 @@ public class BIMMessageListFragment extends Fragment {
         startActivityForResult(intent, REQUEST_CODE_SELECT_FILE);
     }
 
-    private void refreshConversation(){
+    private void refreshConversation() {
         BIMClient.getInstance().getConversation(conversationId, new BIMResultCallback<BIMConversation>() {
             @Override
             public void onSuccess(BIMConversation conversation) {
@@ -280,13 +325,13 @@ public class BIMMessageListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         refreshConversation();
-        BIMClient.getInstance().markConversationRead(conversationId,null);
+        BIMClient.getInstance().markConversationRead(conversationId, null);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        BIMClient.getInstance().markConversationRead(conversationId,null);
+        BIMClient.getInstance().markConversationRead(conversationId, null);
         String draft = inPutView.getEditDraft();
         BIMClient.getInstance().setConversationDraft(draft, conversationId);
     }
@@ -309,6 +354,7 @@ public class BIMMessageListFragment extends Fragment {
         captureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         startActivityForResult(captureIntent, REQUEST_CODE_TAKE_PHOTO);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -351,10 +397,9 @@ public class BIMMessageListFragment extends Fragment {
                 StringBuffer stringBuffer = new StringBuffer(inPutView.getmInputEt().getText());
                 stringBuffer.deleteCharAt(inPutView.getmInputEt().getText().length() - 1);
                 stringBuffer.append(mentionStr);
-
                 inPutView.getmInputEt().setText(stringBuffer.toString());
                 Selection.setSelection(inPutView.getmInputEt().getText(), inPutView.getmInputEt().getText().length()); //移动光标到尾部
-            }  else {
+            } else {
                 if (msgOptionMenu != null) {
                     //长按弹窗处理
                     msgOptionMenu.onActivityResult(requestCode, resultCode, data);
@@ -363,37 +408,162 @@ public class BIMMessageListFragment extends Fragment {
         }
     }
 
-    private void loadData() {
-        BIMLog.i(TAG, "loadData()");
-        if (isSyncing) {
-            return;
-        }
-        isSyncing = true;
-//        Toast.makeText(getActivity(), "加载更多历史消息中...", Toast.LENGTH_SHORT).show();
-        BIMGetMessageOption option = new BIMGetMessageOption.Builder().isNeedServer(true).limit(20).earliestMessage(earliestMessage).build();
-        BIMClient.getInstance().getHistoryMessageList(conversationId, option, new BIMResultCallback<BIMMessageListResult>() {
+    /**
+     * 从最新消息初始化
+     */
+    private void initOlderDirection() {
+        BIMLog.i(TAG,"initOlderDirection()");
+        loadOlderData(new BIMSimpleCallback() {
             @Override
-            public void onSuccess(BIMMessageListResult bimMessageListResult) {
-                BIMLog.i(TAG, "loadData bimMessageListResult: " + bimMessageListResult + " thread:" + Thread.currentThread());
-                adapter.appendMessageList(bimMessageListResult.getMessageList());
-                earliestMessage = bimMessageListResult.getEarliestMessage();
-                hasMore = bimMessageListResult.isHasMore();
-                isSyncing = false;
+            public void onSuccess() {
+
             }
 
             @Override
             public void onFailed(BIMErrorCode code) {
-                BIMLog.i(TAG, "onFailed() code: " + code);
-//                Toast.makeText(getActivity(), "出错了 code：" + code, Toast.LENGTH_SHORT).show();
-                isSyncing = false;
+
+            }
+        }); // 仅使用历史方向拉取
+    }
+
+    /**
+     * 根据中间消息，两个方向拉取消息
+     *
+     * @param startMessage
+     */
+    private void initBothDirectData(BIMMessage startMessage) {
+        BIMLog.i(TAG,"initBothDirectData()");
+        adapter.insertOrUpdateMessage(startMessage); //先插入第一条锚点消息
+        CountDownLatch countDownLatch = new CountDownLatch(2);
+        loadOlderData(new BIMSimpleCallback() {
+            @Override
+            public void onSuccess() {
+                checkInitAndScroll(countDownLatch, startMessage);
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+                checkInitAndScroll(countDownLatch, startMessage);
+            }
+        });
+        loadNewerData(new BIMSimpleCallback() {
+            @Override
+            public void onSuccess() {
+                checkInitAndScroll(countDownLatch, startMessage);
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+                checkInitAndScroll(countDownLatch, startMessage);
             }
         });
     }
 
+    private void checkInitAndScroll(CountDownLatch countDownLatch, BIMMessage startMessage) {
+        countDownLatch.countDown();
+        if (countDownLatch.getCount() == 0) {
+            int index = adapter.findIndex(startMessage);
+            BIMLog.i(TAG, "checkInitAndScroll index:" + index);
+            if (index > 0) {
+                recyclerView.post(() -> {
+                    RecyclerView.SmoothScroller smoothScroller = new CenterSmoothScroller(recyclerView.getContext());
+                    smoothScroller.setTargetPosition(index);
+                    recyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
+                });
+            }
+        }
+    }
 
-    private boolean isSlideToBottom(RecyclerView recyclerView) {
+    private void loadOlderData(BIMSimpleCallback loadOldCallback) {
+        BIMLog.i(TAG, "loadOlderData()");
+        if (isSyncingOlder) {
+            return;
+        }
+        isSyncingOlder = true;
+//        Toast.makeText(getActivity(), "加载更多历史消息中...", Toast.LENGTH_SHORT).show();
+        BIMGetMessageOption option = new BIMGetMessageOption.Builder().isNeedServer(true).limit(20).anchorMessage(earliestMessage).build();
+        if (earliestMessage != null) {
+            BIMLog.i(TAG, "loadOlderData() earliestMessage:" + earliestMessage.getContentData());
+        }
+        BIMClient.getInstance().getHistoryMessageList(conversationId, option, new BIMResultCallback<BIMMessageListResult>() {
+            @Override
+            public void onSuccess(BIMMessageListResult bimMessageListResult) {
+                BIMLog.i(TAG, "loadOlderData bimMessageListResult: " + bimMessageListResult + " thread:" + Thread.currentThread());
+                adapter.addAllMessageList(bimMessageListResult.getMessageList());
+                earliestMessage = bimMessageListResult.getAnchorMessage();
+                olderHasMore = bimMessageListResult.isHasMore();
+                isSyncingOlder = false;
+                if (loadOldCallback != null) {
+                    loadOldCallback.onSuccess();
+                }
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+                BIMLog.i(TAG, "getHistoryMessageList onFailed() code: " + code);
+//                Toast.makeText(getActivity(), "出错了 code：" + code, Toast.LENGTH_SHORT).show();
+                isSyncingOlder = false;
+                if (loadOldCallback != null) {
+                    loadOldCallback.onFailed(code);
+                }
+            }
+        });
+    }
+
+    private void loadNewerData(BIMSimpleCallback loadNewCallback) {
+        BIMLog.i(TAG, "loadNewerData()");
+        if (isSyncingNewer) {
+            return;
+        }
+        isSyncingNewer = true;
+        BIMGetMessageOption option = new BIMGetMessageOption.Builder().isNeedServer(true).limit(20).anchorMessage(lastMessage).build();
+        if (lastMessage != null) {
+            BIMLog.i(TAG, "loadNewerData() lastMessage: " + lastMessage.getContentData());
+        }
+        BIMClient.getInstance().getNewerMessageList(conversationId, option, new BIMResultCallback<BIMMessageListResult>() {
+            @Override
+            public void onSuccess(BIMMessageListResult bimMessageListResult) {
+                BIMLog.i(TAG, "loadNewerData bimMessageListResult: " + bimMessageListResult + " thread:" + Thread.currentThread());
+                adapter.addAllMessageList(bimMessageListResult.getMessageList());
+                lastMessage = bimMessageListResult.getAnchorMessage();
+                newerHasMore = bimMessageListResult.isHasMore();
+                isSyncingNewer = false;
+                if (loadNewCallback != null) {
+                    loadNewCallback.onSuccess();
+                }
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+                BIMLog.i(TAG, "getNewerMessageList onFailed() code: " + code);
+                isSyncingNewer = false;
+                if (loadNewCallback != null) {
+                    loadNewCallback.onFailed(code);
+                }
+            }
+        });
+    }
+
+    /**
+     * 滑动到顶部
+     *
+     * @param recyclerView
+     * @return
+     */
+    private boolean isSlideToTop(RecyclerView recyclerView) {
         if (recyclerView == null) return false;
         return recyclerView.computeVerticalScrollOffset() == 0;
+    }
+
+    /**
+     * 滑动到底部
+     *
+     * @param recyclerView
+     * @return
+     */
+    private boolean isSlideToBottom(RecyclerView recyclerView) {
+        if (recyclerView == null) return false;
+        return !recyclerView.canScrollVertically(1);
     }
 
     private void sendTextMessage(String text) {
@@ -586,6 +756,28 @@ public class BIMMessageListFragment extends Fragment {
     }
 
     private void scrollBottom() {
+        BIMLog.i(TAG,"scrollBottom()");
         recyclerView.scrollToPosition(0);
+    }
+
+    public static class CenterSmoothScroller extends LinearSmoothScroller {
+        @Override
+        protected void onStart() {
+            super.onStart();
+        }
+
+        public CenterSmoothScroller(Context context) {
+            super(context);
+        }
+
+        @Override
+        public int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int snapPreference) {
+            return (boxStart + (boxEnd - boxStart) / 2) - (viewStart + (viewEnd - viewStart) / 2);
+        }
+
+        @Override
+        protected int calculateTimeForScrolling(int dx) {
+            return 1;
+        }
     }
 }

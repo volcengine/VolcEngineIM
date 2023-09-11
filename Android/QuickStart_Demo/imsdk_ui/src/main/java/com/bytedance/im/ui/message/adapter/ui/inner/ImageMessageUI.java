@@ -87,21 +87,18 @@ public class ImageMessageUI extends BaseCustomElementUI {
     @Override
     public void onClick(View v, BIMMessageWrapper messageWrapper) {
         BIMImageElement imageElement = (BIMImageElement) messageWrapper.getBimMessage().getElement();
-        if (imageElement.isExpired()) {
-            BIMClient.getInstance().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
-                @Override
-                public void onSuccess(BIMMessage bimMessage) {
-                    PicturePreviewActivity.start(v.getContext(), imageElement.getOriginImg().getURL());
-                }
+        BIMClient.getInstance().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
+            @Override
+            public void onSuccess(BIMMessage bimMessage) {
+                PicturePreviewActivity.start(v.getContext(), imageElement.getOriginImg().getURL());
+            }
 
-                @Override
-                public void onFailed(BIMErrorCode code) {
+            @Override
+            public void onFailed(BIMErrorCode code) {
 
-                }
-            });
-        } else {
-            PicturePreviewActivity.start(v.getContext(), imageElement.getOriginImg().getURL());
-        }
+            }
+        });
+
     }
 
 

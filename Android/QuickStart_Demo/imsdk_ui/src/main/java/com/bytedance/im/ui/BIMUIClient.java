@@ -2,6 +2,7 @@ package com.bytedance.im.ui;
 
 import android.app.Application;
 
+
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMConnectStatus;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
@@ -275,7 +276,7 @@ public class BIMUIClient {
      * @hidden
      */
     public String getVersion() {
-        return BIMClient.getInstance().getVersion();
+        return BuildConfig.VERSION_NAME;
     }
 
     /**

@@ -40,9 +40,8 @@
             android:src="@drawable/icon_im_more" />
     </FrameLayout>
 
-    <fragment
-        android:id="@+id/message_fragment"
-        android:name="com.bytedance.im.ui.message.BIMMessageListFragment"
+    <FrameLayout
+        android:id="@+id/message_list_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

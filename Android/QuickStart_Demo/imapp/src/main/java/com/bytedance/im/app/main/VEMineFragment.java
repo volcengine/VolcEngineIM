@@ -3,6 +3,7 @@ package com.bytedance.im.app.main;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -33,8 +34,11 @@ import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMConnectStatus;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMConnectListener;
+import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.user.UserManager;
 
 
@@ -47,11 +51,14 @@ public class VEMineFragment extends Fragment {
     private TextView tvAppVersionName;
     private TextView tvSDKVersionName;
     private TextView tvConnect;
+    private TextView tvDid;
     private View flProto;
     private View flPolicy;
     private View flLogout;
     private View flPermission;
     private View topPanel;
+    private View flDId;
+
     private FrameLayout flDeleteAccount;
 
     @Override
@@ -61,6 +68,7 @@ public class VEMineFragment extends Fragment {
         tvName = view.findViewById(R.id.tv_mine_name);
         tvUid = view.findViewById(R.id.tv_mine_uuid);
         tvAppId = view.findViewById(R.id.tv_appid);
+        tvDid = view.findViewById(R.id.tv_sdk_did);
         topPanel = view.findViewById(R.id.cl_user_info);
         tvAppVersionName = view.findViewById(R.id.tv_app_version_name);
         tvSDKVersionName = view.findViewById(R.id.tv_sdk_version_name);
@@ -69,6 +77,9 @@ public class VEMineFragment extends Fragment {
         flProto = view.findViewById(R.id.fl_proto);
         flPolicy = view.findViewById(R.id.fl_privacy_policy);
         flPermission = view.findViewById(R.id.fl_permission);
+        flDId = view.findViewById(R.id.fl_sdk_did);
+        Log.i(TAG, "uikit version: " + BIMUIClient.getInstance().getVersion());
+        Log.i(TAG, " imSdk version: " + BIMClient.getInstance().getVersion());
         BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(BIMUIClient.getInstance().getCurUserId());
         if (user == null) {
             ivPortrait.setImageResource(R.drawable.icon_recommend_user_default);
@@ -82,12 +93,25 @@ public class VEMineFragment extends Fragment {
         tvSDKVersionName.setText(BIMUIClient.getInstance().getVersion());
         flLogout.setOnClickListener(v -> doLogout());
         topPanel.setOnClickListener(v -> copyUidToBoard(v.getContext()));
+        flDId.setOnClickListener(v-> copyDidToBoard(v.getContext()));
         initCancelItem(view, this::doLogout);
         updateConnectStatus(BIMUIClient.getInstance().getConnectStatus());
         BIMUIClient.getInstance().addConnectListenerListener(connectListener);
         flProto.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975891"));
         flPolicy.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975890"));
         flPermission.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975909"));
+
+        BIMClient.getInstance().getSDKDid(new BIMResultCallback<String>() {
+            @Override
+            public void onSuccess(String s) {
+                tvDid.setText(s);
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        });
         initTag(view);
         return view;
     }
@@ -145,6 +169,13 @@ public class VEMineFragment extends Fragment {
         ClipData mClipData = ClipData.newPlainText("UID", mineUid);
         ((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(mClipData);
         Toast.makeText(getActivity(), "已复制 uid: " + mineUid, Toast.LENGTH_SHORT).show();
+    }
+
+    private void copyDidToBoard(Context context){
+        String did = tvDid.getText().toString();
+        ClipData mClipData = ClipData.newPlainText("DID", did);
+        ((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(mClipData);
+        Toast.makeText(getActivity(), "已复制 did: " + did, Toast.LENGTH_SHORT).show();
     }
 
     private void initCancelItem(View view, VECancelUtils.CancelAccountCallback callback) {

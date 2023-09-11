@@ -21,7 +21,6 @@ import com.bytedance.im.app.contact.mainList.VEContactListFragment;
 import com.bytedance.im.app.user.VEDefaultAccountProvider;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
 import com.bytedance.im.core.api.model.BIMConversation;
-import com.bytedance.im.core.proto.Config;
 import com.bytedance.im.ui.BIMUIClient;
 
 import java.util.List;

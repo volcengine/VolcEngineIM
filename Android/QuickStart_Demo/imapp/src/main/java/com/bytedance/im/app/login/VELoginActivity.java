@@ -130,8 +130,6 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
     public void init(Application application) {
         Log.i(TAG,"initSDK()");
         //imsdk
-        BIMSDKConfig config = new BIMSDKConfig();
-        config.setLogListener((logLevel, content) -> Log.i("imsdk", content));
         int env = SpUtils.getInstance().getEnv();
         String swimLean = "";
         if (env == Constants.ENV_BOE) {
@@ -139,7 +137,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         } else if (env == Constants.ENV_PPE) {
             swimLean = SpUtils.getInstance().getPpeSwimLane();
         }
-        BIMUIClient.getInstance().init(application, Constants.APP_ID, env, swimLean, config);
+        BIMUIClient.getInstance().init(application, Constants.APP_ID, env, swimLean, null);
         VEIMApplication.accountProvider.init(application, Constants.APP_ID, SpUtils.getInstance().getEnv());
         BIMUIClient.getInstance().setUserProvider(VEIMApplication.accountProvider.getUserProvider());
     }
