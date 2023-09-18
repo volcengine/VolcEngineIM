@@ -27,7 +27,7 @@ export interface MessageListItem extends Message {
 
 export const ChatPanel: React.FC<ChatPanelPropsType> = memo(props => {
   const currentConversation = useRecoilValue(CurrentConversation);
-  const { messages } = useMessage();
+  const { messages, resendMessage } = useMessage();
   const accountsInfo = useRecoilValue(AccountsInfo);
   const scrollRef = useRecoilValue(ScrollRef);
   const listRef = useRef<any>(null);
@@ -49,7 +49,7 @@ export const ChatPanel: React.FC<ChatPanelPropsType> = memo(props => {
 
           <div className="chat-content">
             <div className="message-container">
-              <MessageList ref={listRef} dataSource={messages} />
+              <MessageList ref={listRef} dataSource={messages} resendMessage={resendMessage} />
             </div>
           </div>
 

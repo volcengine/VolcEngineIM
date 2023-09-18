@@ -27,11 +27,14 @@ export const ContactHeader: FC<ConversationHeaderProps> = props => {
         >
           添加好友
         </Button>
-        {/*<Button type="primary" icon={<IconMessageBanned/>} onClick={() => {*/}
-        {/*    setShowAddBlackModal(true);*/}
-        {/*}}>*/}
-        {/*    添加黑名单*/}
-        {/*</Button>*/}
+        <Button
+          icon={<IconMessageBanned />}
+          onClick={() => {
+            setShowAddBlackModal(true);
+          }}
+        >
+          添加黑名单
+        </Button>
       </Button.Group>
       {showAddFriendModal && (
         <CreateConversationModel
@@ -84,12 +87,44 @@ export const ContactHeader: FC<ConversationHeaderProps> = props => {
           title={'添加黑名单'}
           hint={'请输入 UID'}
           onClose={() => setShowAddBlackModal(false)}
-          onCreate={async () => {
-            Message.error('未实现');
-            return false;
+          onCreate={async inputUserId => {
+            try {
+              const resp = await bytedIMInstance.addUserToBlack({
+                userIds: [inputUserId],
+                ext: { demo_from_web: 'addUserToBlack' },
+              });
+              if (resp) {
+                if (resp.failedInfos.length) {
+                  Message.error(getErrorMessage(resp.failedInfos[0].failedCode));
+                  return false;
+                }
+                Message.success('操作成功');
+                return true;
+              } else {
+                Message.error('添加黑名单失败，请稍后重试');
+                return false;
+              }
+            } catch (e) {
+              Message.error(getErrorMessage(e.type));
+
+              return false;
+            }
           }}
         ></CreateConversationModel>
       )}
     </HeaderBox>
   );
 };
+
+function getErrorMessage(type: number) {
+  switch (type) {
+    case im_proto.StatusCode.AlREADY_IN_BLACK:
+      return 'TA 已经被你拉黑，请重新输入';
+    case im_proto.StatusCode.BLACK_MORE_THAN_LIMIT:
+      return '已超出黑名单数量上限';
+    case im_proto.StatusCode.ADD_SELF_BLACK_NOT_ALLOW:
+      return '不能自己拉黑自己';
+    default:
+      return `添加黑名单失败`;
+  }
+}

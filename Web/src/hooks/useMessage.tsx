@@ -24,6 +24,9 @@ function sendMessageCheckCode(result) {
     case im_proto.StatusCode.NOT_FRIEND:
       ArcoMessage.error('对方不是你的好友，无法发送消息');
       break;
+    case im_proto.StatusCode.AlREADY_IN_BLACK:
+      ArcoMessage.error('对方已拒收你的消息');
+      break;
     case 3:
       if (result.checkCode.eq(100)) {
         ArcoMessage.error(`该用户已注销，不存在`);
@@ -50,7 +53,7 @@ const useMessage = () => {
    * @param message
    */
   const resendMessage = async (message: Message) => {
-    await bytedIMInstance.sendMessage({ message });
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message }));
   };
 
   /**

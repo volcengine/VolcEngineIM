@@ -32,4 +32,11 @@ export const contactSublist = [
       return '我的好友';
     },
   },
+  {
+    key: 'black',
+    title: '黑名单',
+    menuRender: () => {
+      return '黑名单';
+    },
+  },
 ] as const;

@@ -9,10 +9,19 @@ import { Button, List, Message, Modal } from '@arco-design/web-react';
 import { useRequest } from 'ahooks';
 import { useRecoilValue } from 'recoil';
 import { BytedIMInstance } from '../../../../store';
-import { Friend, FriendApply, FriendApplyStatus, IMEvent, im_proto, ReplyFriendAttitude } from '@volcengine/im-web-sdk';
+import {
+  Friend,
+  FriendApply,
+  FriendApplyStatus,
+  IMEvent,
+  im_proto,
+  ReplyFriendAttitude,
+  BlackUserInfo,
+} from '@volcengine/im-web-sdk';
 import { sortBy } from 'lodash';
 import { useConversation } from '../../../../hooks';
 import { useNavigate } from '@modern-js/runtime/router';
+import { sleep } from '../../../../utils/sleep';
 
 interface ChatPanelPropsType {
   selectedPanel: string;
@@ -136,6 +145,7 @@ function ApplyList() {
     loading,
     refresh,
   } = useRequest(async () => {
+    await sleep(200);
     const resp = await bytedIMInstance.getFriendReceiveApplyListOnline({
       direction: im_proto.MessageDirection.NEWER,
       limit: 500,
@@ -245,6 +255,7 @@ function FriendList() {
     loading,
     refresh,
   } = useRequest(async () => {
+    await sleep(200);
     const resp = await bytedIMInstance.getFriendListOnline({
       limit: 500,
     });
@@ -283,6 +294,86 @@ function FriendList() {
   );
 }
 
+function BlacklistItem({ i, refresh }: { i: BlackUserInfo; refresh: () => void }) {
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
+
+  const { loading, run } = useRequest(
+    async () => {
+      const resp = await bytedIMInstance.removeUserFromBlack({ userIds: [i.userId] });
+      Message.success('操作成功');
+      await refresh();
+    },
+    { manual: true }
+  );
+
+  return (
+    <ContactItem
+      userId={i.userId}
+      operation={
+        <>
+          <Button
+            type="text"
+            status="danger"
+            loading={loading}
+            onClick={() => {
+              run();
+            }}
+          >
+            解除拉黑
+          </Button>
+        </>
+      }
+    ></ContactItem>
+  );
+}
+
+function BlackList() {
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
+
+  const {
+    data = [],
+    loading,
+    refresh,
+  } = useRequest(async () => {
+    await sleep(200);
+    const resp = await bytedIMInstance.getBlacklistOnline({
+      limit: 500,
+    });
+    console.log(resp.list);
+    return sortBy(resp.list, ['userId']);
+  }, {});
+
+  useEffect(() => {
+    const sub1 = bytedIMInstance.event.subscribe(IMEvent.BlacklistAdd, () => {
+      refresh();
+    });
+    const sub2 = bytedIMInstance.event.subscribe(IMEvent.BlacklistRemove, () => {
+      refresh();
+    });
+    const sub3 = bytedIMInstance.event.subscribe(IMEvent.BlacklistUpdate, () => {
+      refresh();
+    });
+
+    return () => {
+      bytedIMInstance.event.unsubscribe(IMEvent.BlacklistAdd, sub1);
+      bytedIMInstance.event.unsubscribe(IMEvent.BlacklistRemove, sub2);
+      bytedIMInstance.event.unsubscribe(IMEvent.BlacklistUpdate, sub3);
+    };
+  }, []);
+
+  return (
+    <List
+      size="small"
+      dataSource={data}
+      loading={loading}
+      style={{ border: 'none' }}
+      render={i => {
+        return <BlacklistItem key={i.userId} i={i} refresh={refresh} />;
+      }}
+    />
+  );
+}
+
 export const ContactPanel: React.FC<ChatPanelPropsType> = memo(({ selectedPanel }) => {
   /** 无消息 */
   const renderNoMessage = useMemo(() => {
@@ -298,6 +389,7 @@ export const ContactPanel: React.FC<ChatPanelPropsType> = memo(({ selectedPanel 
             <div className={'contact-list'}>
               {selectedPanel === 'apply' && <ApplyList></ApplyList>}
               {selectedPanel === 'my' && <FriendList></FriendList>}
+              {selectedPanel === 'black' && <BlackList></BlackList>}
             </div>
           </div>
         </>
