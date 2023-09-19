@@ -24,6 +24,7 @@ import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.BIMFriendListener;
 import com.bytedance.im.user.api.enums.BIMFriendReplyType;
+import com.bytedance.im.user.api.model.BIMBlackListFriendInfo;
 import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
 import com.bytedance.im.user.api.model.BIMFriendInfo;
 import com.bytedance.im.user.api.model.BIMReplyInfo;
@@ -216,6 +217,21 @@ public class VEContactInviteActivity extends Activity {
 
         @Override
         public void onFriendApplyUnreadCountChanged(int count) {
+        }
+
+        @Override
+        public void onBlackListAdd(BIMBlackListFriendInfo blackListInfo) {
+
+        }
+
+        @Override
+        public void onBlackListDelete(BIMBlackListFriendInfo blackListInfo) {
+
+        }
+
+        @Override
+        public void onBlackListUpdate(BIMBlackListFriendInfo blackListInfo) {
+
         }
     };
 }

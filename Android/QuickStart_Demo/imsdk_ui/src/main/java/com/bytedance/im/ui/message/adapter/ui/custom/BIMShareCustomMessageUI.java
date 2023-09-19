@@ -52,7 +52,7 @@ public class BIMShareCustomMessageUI extends BaseCustomElementUI {
 
     @Override
     public boolean isEnableRecall(BIMMessage bimMessage) {
-        return bimMessage.getServerMsgId() > 0;
+        return bimMessage.getServerMsgId() > 0 && bimMessage.isSelf();
     }
 
     @Override
