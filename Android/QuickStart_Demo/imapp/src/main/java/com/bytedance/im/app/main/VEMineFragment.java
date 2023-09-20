@@ -36,6 +36,7 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMConnectListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
+import com.bytedance.im.core.net.ws.WSMessageManager;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUser;
 import com.bytedance.im.ui.log.BIMLog;
@@ -113,6 +114,7 @@ public class VEMineFragment extends Fragment {
             }
         });
         initTag(view);
+        WSMessageManager.getInstance().setOnErrorListener(message -> new AlertDialog.Builder(getActivity()).setMessage(message).setNegativeButton("确定", (dialog, which) -> dialog.dismiss()).show());
         return view;
     }
 
