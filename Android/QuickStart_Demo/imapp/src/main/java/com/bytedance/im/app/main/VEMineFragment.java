@@ -114,7 +114,6 @@ public class VEMineFragment extends Fragment {
             }
         });
         initTag(view);
-        BIMClient.getInstance().setWSErrorListener(message -> new AlertDialog.Builder(getActivity()).setMessage(message).setNegativeButton("确定", (dialog, which) -> dialog.dismiss()).show());
         return view;
     }
 
