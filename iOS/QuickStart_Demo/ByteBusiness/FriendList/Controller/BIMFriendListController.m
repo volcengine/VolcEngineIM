@@ -271,7 +271,7 @@
     }];
     
     [alertVC addAction:delete];
-    [alertVC addAction:modifyRemark];
+//    [alertVC addAction:modifyRemark];
     [alertVC addAction:cancel];
     
     [self presentViewController:alertVC animated:YES completion:nil];
