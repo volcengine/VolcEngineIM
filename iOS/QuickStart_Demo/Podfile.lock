@@ -3,14 +3,13 @@ PODS:
   - FLEX (3.1.2)
   - Godzippa (2.1.1)
   - IGListDiffKit (4.0.0)
-  - im-uikit-tob (1.3.0):
-    - imsdk-tob (= 1.3.0)
+  - im-uikit-tob (1.4.0):
     - Masonry
     - MJRefresh
     - SDWebImage
-  - imsdk-tob (1.3.0):
-    - imsdk-tob/BIMSDK (= 1.3.0)
-  - imsdk-tob/BIMSDK (1.3.0):
+  - imsdk-tob (1.3.1-alpha.0):
+    - imsdk-tob/BIMSDK (= 1.3.1-alpha.0)
+  - imsdk-tob/BIMSDK (1.3.1-alpha.0):
     - Bolts/Tasks
     - IGListDiffKit
     - imsdk-tob/Feature_EssentialPB
@@ -30,7 +29,7 @@ PODS:
     - TTSDK/Uploader
     - WCDB (~> 1.0.6)
     - YYCache
-  - imsdk-tob/Feature_EssentialPB (1.3.0):
+  - imsdk-tob/Feature_EssentialPB (1.3.1-alpha.0):
     - Protobuf
   - JSONModel (1.8.0)
   - libextobjc (0.6):
@@ -101,28 +100,28 @@ PODS:
     - OneKit/Section
     - OneKit/Service
   - Protobuf (3.21.12)
-  - RangersAPM/Above (3.6.3)
-  - RangersAPM/APMLog (3.6.3):
+  - RangersAPM/Above (3.6.4)
+  - RangersAPM/APMLog (3.6.4):
     - RangersAPM/CloudCommand
     - RangersAPM/Core
     - RangersAPM/HMD
     - RangersAPM/Zip
-  - RangersAPM/CloudCommand (3.6.3):
+  - RangersAPM/CloudCommand (3.6.4):
     - RangersAPM/Core
     - RangersAPM/HMD
-  - RangersAPM/CN (3.6.3):
+  - RangersAPM/CN (3.6.4):
     - RangersAPM/Core
     - RangersAPM/Public
-  - RangersAPM/Core (3.6.3)
-  - RangersAPM/HMD (3.6.3):
+  - RangersAPM/Core (3.6.4)
+  - RangersAPM/HMD (3.6.4):
     - RangersAPM/Core
     - RangersAPM/Public
-  - RangersAPM/Public (3.6.3):
+  - RangersAPM/Public (3.6.4):
     - RangersAPM/Above
     - RangersAPM/Core
     - RangersAPM/Zyone
-  - RangersAPM/Zip (3.6.3)
-  - RangersAPM/Zyone (3.6.3)
+  - RangersAPM/Zip (3.6.4)
+  - RangersAPM/Zyone (3.6.4)
   - RangersAppLog (6.13.2):
     - RangersAppLog/Core (= 6.13.2)
     - RangersAppLog/Host (= 6.13.2)
@@ -145,9 +144,9 @@ PODS:
   - RangersAppLog/Log (6.13.2):
     - RangersAppLog/Core
   - RSSwizzle (0.1.0)
-  - SDWebImage (5.18.0):
-    - SDWebImage/Core (= 5.18.0)
-  - SDWebImage/Core (5.18.0)
+  - SDWebImage (5.18.1):
+    - SDWebImage/Core (= 5.18.1)
+  - SDWebImage/Core (5.18.1)
   - SQLiteRepairKit (1.2.2):
     - WCDBOptimizedSQLCipher (~> 1.2.0)
   - TTNetworkManager (5.0.29.26):
@@ -172,7 +171,8 @@ PODS:
 
 DEPENDENCIES:
   - FLEX (= 3.1.2)
-  - im-uikit-tob (= 1.3.0)
+  - im-uikit-tob (from `../`)
+  - imsdk-tob (= 1.3.1-alpha.0)
   - JSONModel
   - Masonry
   - MBProgressHUD
@@ -203,7 +203,6 @@ SPEC REPOS:
     - WCDBOptimizedSQLCipher
     - YYCache
   https://github.com/volcengine/volcengine-specs.git:
-    - im-uikit-tob
     - imsdk-tob
     - OneKit
     - RangersAPM
@@ -211,13 +210,17 @@ SPEC REPOS:
     - TTNetworkManager
     - TTSDK
 
+EXTERNAL SOURCES:
+  im-uikit-tob:
+    :path: "../"
+
 SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   FLEX: e13e805fc3eec8732cc227d1f7508770d46e9587
   Godzippa: f438af100364a775ef0707d29ab152c356375fbf
   IGListDiffKit: 665d6cf43ce726e676013db9c7d6c4294259b6b2
-  im-uikit-tob: f303dd6c7dabbdb80a39cf99e9a324ecbce31f68
-  imsdk-tob: c8e45ea85d13889423508b5cf7e1756ee432e867
+  im-uikit-tob: 6483d8608cbd052e6083031e3a8546c0154b2208
+  imsdk-tob: 89813b465a65fd1007eb81216753fe7b2f1dee05
   JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
@@ -228,10 +231,10 @@ SPEC CHECKSUMS:
   MMKVCore: 9cfef4c48c6c46f66226fc2e4634d78490206a48
   OneKit: 05d59eb122e247640c35ceb28b300ae27e89cb88
   Protobuf: 120350fc38646e2dedc26f49ecba778184ea1de2
-  RangersAPM: 1dea886d14492101814cdf7a8fc355322e37f7ee
+  RangersAPM: c414efebe2833723e06ac2f818bdb8232d3af9be
   RangersAppLog: aca2ba1dd540ae001120f5fe1e391aafc82aa1c7
   RSSwizzle: d561958f595028bfcef98c7d55c318b3878a61c6
-  SDWebImage: 182830bcddc30cde95fbc60dfe4badc3553d94ba
+  SDWebImage: ebdbcebc7933a45226d9313bd0118bc052ad458b
   SQLiteRepairKit: 35aaae5a8838adb85f5b1eb4d796055be6060a4b
   TTNetworkManager: 499c35f6a64acc78b417c415a05ed7289443e4fa
   TTSDK: 52ee1a9675e1f313fa9102475c7331268dca7524
@@ -239,6 +242,6 @@ SPEC CHECKSUMS:
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: 5083a33c6795ded6ac3bab9a0f31bb8ced6a8c1f
+PODFILE CHECKSUM: c1fc829461a22bffb266d4e58ac59f4479cf5f6e
 
 COCOAPODS: 1.12.1

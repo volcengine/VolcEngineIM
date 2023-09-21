@@ -7,17 +7,24 @@
 //
 
 #import "VEIMDemoFriendBlackListController.h"
-#import "BIMFriendListUserCell.h"
+#import "VEIMDemoBlackListUserCell.h"
+#import "VEIMDemoFriendBlackListDataSource.h"
+#import "UIAlertController+Dismiss.h"
+#import "VEIMDemoIMManager.h"
 
 #import <im-uikit-tob/BIMUser.h>
 #import <OneKit/BTDMacros.h>
 #import <im-uikit-tob/BIMToastView.h>
+#import <imsdk-tob/BIMClient+Friend.h>
 
-@interface VEIMDemoFriendBlackListController () <BIMFriendListUserCellDelegate, UITextFieldDelegate>
+@interface VEIMDemoFriendBlackListController () <UITextFieldDelegate, VEIMDemoBlackListDataSourceDelegate, VEIMDemoBlackListUserCellDelegate>
 
-@property (nonatomic, copy) NSArray *blacklist;
+@property (nonatomic, copy) NSArray<BIMBlackListFriendInfo *>*blacklist;
 @property (nonatomic, copy) NSArray<NSArray *> *sectionData;
 @property (nonatomic, copy) NSArray *sectionTitles;
+
+@property (nonatomic, strong) VEIMDemoFriendBlackListDataSource *dataSource;
+@property (nonatomic, strong) dispatch_queue_t blackListUpdateQueue;
 
 @end
 
@@ -26,7 +33,10 @@
 - (instancetype)init
 {
     if (self = [super init]) {
-        
+        _blacklist = [NSArray array];
+        _blackListUpdateQueue = dispatch_queue_create("blackList.ui.update.queue", DISPATCH_QUEUE_SERIAL);
+        _dataSource = [[VEIMDemoFriendBlackListDataSource alloc] init];
+        _dataSource.delegate = self;
     }
     return self;
 }
@@ -36,9 +46,8 @@
     [super setupUIElements];
     
     self.tableview.sectionHeaderTopPadding = YES;
-    [self.tableview registerClass:[BIMFriendListUserCell class] forCellReuseIdentifier:@"VEIMDemoFriendBlacklistUserCell"];
-    
-    
+    [self.tableview setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+    [self.tableview registerClass:[VEIMDemoBlackListUserCell class] forCellReuseIdentifier:@"VEIMDemoFriendBlackListUserCell"];
 }
 
 - (void)viewDidLoad
@@ -46,19 +55,22 @@
     [super viewDidLoad];
     
     self.navigationItem.title = @"黑名单";
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"拉黑" style:UIBarButtonItemStylePlain target:self action:@selector(addToBlacklist:)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"拉黑" style:UIBarButtonItemStylePlain target:self action:@selector(addToBlackList:)];
     [self.navigationItem.rightBarButtonItem setTintColor:[UIColor blackColor]];
+    
+    // 数据库获取加载全量黑名单列表
+    [self.dataSource loadBlackListWithCompletion:nil];
     
 }
 
-- (void)prepareBlacklistDataWithBlacklist:(NSArray<BIMUser *> *)blacklist
+- (void)prepareBlackListDataWithBlackList:(NSArray<BIMBlackListFriendInfo *> *)blacklist
 {
     if (!self.blacklist) {
         self.blacklist = blacklist;
     }
     
     @weakify(self);
-    dispatch_async(DISPATCH_QUEUE_PRIORITY_DEFAULT, ^{
+    dispatch_async(self.blackListUpdateQueue, ^{
         @strongify(self);
         NSMutableArray<NSString *> *sectionTitles = [@[] mutableCopy];
         NSMutableArray<NSArray *> *sectionData = [@[] mutableCopy];
@@ -73,8 +85,8 @@
         }];
         
         // 分组
-        [blacklist enumerateObjectsUsingBlock:^(BIMUser *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            NSString *firstLetter = [self getFirstPinyinLetterWithString:obj.nickName];
+        [blacklist enumerateObjectsUsingBlock:^(BIMBlackListFriendInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            NSString *firstLetter = [self getFirstPinyinLetterWithString:[NSString stringWithFormat:@"用户%@", @(obj.uid)]];   // MARK: 暂时先用用户+UID （等备注功能上线再修改）
             if ([localizedSectionsTitles containsObject:firstLetter]) {
                 [indexedData[[localizedSectionsTitles indexOfObject:firstLetter]] addObject:obj];
             } else {
@@ -85,8 +97,8 @@
         // 组内排序
         NSMutableArray<NSArray *> *indexedAndSortedData = [NSMutableArray arrayWithCapacity:indexedData.count];
         for (NSInteger i = 0; i < indexedData.count; i++) {
-            indexedAndSortedData[i] = [indexedData[i] sortedArrayUsingComparator:^NSComparisonResult(BIMUser *  _Nonnull obj1, BIMUser *  _Nonnull obj2) {
-                return [obj1.nickName localizedStandardCompare:obj2.nickName];
+            indexedAndSortedData[i] = [indexedData[i] sortedArrayUsingComparator:^NSComparisonResult(BIMBlackListFriendInfo *  _Nonnull obj1, BIMBlackListFriendInfo *  _Nonnull obj2) {
+                return [@(obj1.uid).stringValue localizedStandardCompare:@(obj2.uid).stringValue];
             }];
         }
         
@@ -104,8 +116,8 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             @strongify(self);
             if (!self) { return; }
-            self.sectionData = sectionData;
-            self.sectionTitles = sectionTitles;
+            self.sectionData = [sectionData copy];
+            self.sectionTitles = [sectionTitles copy];
             [self.tableview reloadData];
         });
     });
@@ -128,10 +140,11 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    BIMFriendListUserCell *cell = [self.tableview dequeueReusableCellWithIdentifier:@"VEIMDemoFriendBlacklistUserCell"];
-    cell.friendInfo = self.sectionData[indexPath.section][indexPath.row];
+    VEIMDemoBlackListUserCell *cell = [self.tableview dequeueReusableCellWithIdentifier:@"VEIMDemoFriendBlackListUserCell"];
+    cell.blackInfo = self.sectionData[indexPath.section][indexPath.row];
     cell.delegate = self;
-    return self;;
+    
+    return cell;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -154,14 +167,25 @@
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
-#pragma mark - BIMFriendListUserCellDelegate
+#pragma mark - VEIMDemoBlackListUserCellDelegate
 
-- (void)cellDidLongPress:(BIMFriendListUserCell *)cell
+- (void)cellDidLongPress:(VEIMDemoBlackListUserCell *)cell
 {
     UIAlertController *alertVC = [[UIAlertController alloc] init];
     
     UIAlertAction *unmask = [UIAlertAction actionWithTitle:@"解除拉黑" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         // 解除拉黑operation
+        [[BIMClient sharedInstance] deleteFromBlackList:cell.blackInfo.uid completion:^(BIMError * _Nullable error) {
+            if (error) {
+                NSString *toastStr = error.localizedDescription;
+                if (error.code == BIM_SERVER_ALREADY_BEEN_REMOVED) {
+                    toastStr = @"用户已被移出黑名单";
+                }
+                [BIMToastView toast:toastStr];
+            } else {
+                [BIMToastView toast:@"操作成功"];
+            }
+        }];
     }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
@@ -174,7 +198,7 @@
     [self presentViewController:alertVC animated:YES completion:nil];
 }
 
-- (void)addToBlacklist:(id)sender
+- (void)addToBlackList:(id)sender
 {
     UIAlertController *vc = [UIAlertController alertControllerWithTitle:@"添加黑名单" message:nil preferredStyle:UIAlertControllerStyleAlert];
     
@@ -185,20 +209,43 @@
         [textField addTarget:self action:@selector(addFriendTextFieldTextChanged:) forControlEvents:UIControlEventEditingChanged];
     }];
     
+    vc.wontDismiss = YES;
     UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         // ⚠️输入框为空，toast提示：请输入uid（输入框不关闭）
-        // ⚠️好友数量超过限制，toast提示：已超出好友数量上限。（输入框不关闭）
-        // ⚠️uid不存在。toast提示：uid不存在，请重新输入。（输入框不关闭）
-        // ⚠️该uid已经是该用户好友，toast提示：TA已经是你的好友，请重新输入（输入框不关闭）
-        if (!vc.textFields[0].text || vc.textFields[0].text.length == 0) {
+        NSString *input = vc.textFields[0].text;
+        if (!input || input.length == 0) {
             [BIMToastView toast:@"请输入uid"];
             return;
         }
-        
-        // 请求成功关闭Toast
-        [self dismissViewControllerAnimated:YES completion:nil];
-        
-        
+        // ⚠️黑名单数量超过限制，toast提示：已超出黑名单数量上限。（输入框不关闭）
+        // ⚠️uid不存在。toast提示：uid不存在，请重新输入。（输入框不关闭）
+        // ⚠️该uid已在黑名单，toast提示：TA已经被你拉黑，请重新输入（输入框不关闭）
+        [self checkUserExist:input.longLongValue completion:^(BOOL exist) {
+            if (!exist) {
+                [BIMToastView toast:@"uid不存在，请重新输入"];
+            } else {
+                // 存在就发送拉黑请求
+                BIMBlackListFriendInfo *blackInfo = [[BIMBlackListFriendInfo alloc] init];
+                blackInfo.uid = input.longLongValue;
+                [[BIMClient sharedInstance] addToBlackList:blackInfo completion:^(BIMError * _Nullable error) {
+                    if (error) {
+                        NSString *toastStr = error.localizedDescription;
+                        if (error.code == BIM_SERVER_ALREADY_IN_BLACK) {
+                            toastStr = @"TA已经被你拉黑，请重新输入";
+                        } else if (error.code == BIM_SERVER_BLACK_MORE_THAN_LIMIT) {
+                            toastStr = @"已超出黑名单数量上限";
+                        } else if (error.code == BIM_SERVER_ADD_SELF_BLACK_NOT_ALLOW) {
+                            toastStr = @"自己不能拉黑自己";
+                        }
+                        [BIMToastView toast:[NSString stringWithFormat:@"%@", toastStr]];
+                    } else {
+                        // 请求成功关闭alert
+                        [BIMToastView toast:@"操作成功"];
+                        [self dismissViewControllerAnimated:YES completion:nil];
+                    }
+                }];
+            }
+        }];
     }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
         
@@ -208,6 +255,31 @@
     [vc addAction:cancelAction];
     
     [self presentViewController:vc animated:YES completion:nil];
+}
+
+#pragma mark - Check
+
+- (void)checkUserExist:(long long)uid completion:(void (^)(BOOL exist))completion
+{
+    if (!completion) {
+        return;
+    }
+    
+    [[VEIMDemoIMManager sharedManager].accountProvider checkUserExist:uid completion:^(BOOL exist, NSError * _Nonnull error) {
+        if (error) {
+            [BIMToastView toast:error.localizedDescription];
+            completion(NO);
+            return;
+        }
+        if (!exist) {
+            [BIMToastView toast:@"该用户不存在"];
+            completion(NO);
+            return;
+        }
+        
+        completion(YES);
+    }];
+    
 }
 
 #pragma mark - 拉黑textField限制输入数字
@@ -238,6 +310,14 @@
         }
     }
     return digitsString;
+}
+
+#pragma mark - VEIMDemoFriendBlackListDataSource
+
+- (void)blackListDataSourceDidReloadBlackList:(VEIMDemoFriendBlackListDataSource *)dataSource
+{
+    self.blacklist = [dataSource.blackList copy];
+    [self prepareBlackListDataWithBlackList:[self.blacklist copy]];
 }
 
 @end

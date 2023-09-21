@@ -10,7 +10,7 @@
 #import "BDIMDebugDragButton.h"
 #import "BDIMDebugMenuController.h"
 #import "BDIMDebugNetworkEnvironmentController.h"
-#import <FLEX/FLEX.h>
+//#import <FLEX/FLEX.h>
 #import "BDIMDebugNetworkManager.h"
 #import "BDIMDebugDatabaseController.h"
 #import <imsdk-tob/BIMSDK.h>
@@ -82,9 +82,9 @@
             [self.menu.navigationController pushViewController:dbVC animated:YES];
         }]];
         
-        [self.itemModels addObject:[BDIMDebugMenuIconModel modelWithTitle:@"Flex" icon:@"flex" description:@"打开flex调试" enable:YES click:^{
-            [[FLEXManager sharedManager] showExplorer];
-        }]];
+//        [self.itemModels addObject:[BDIMDebugMenuIconModel modelWithTitle:@"Flex" icon:@"flex" description:@"打开flex调试" enable:YES click:^{
+//            [[FLEXManager sharedManager] showExplorer];
+//        }]];
     }
 }
 

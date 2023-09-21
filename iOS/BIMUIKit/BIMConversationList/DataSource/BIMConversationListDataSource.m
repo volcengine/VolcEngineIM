@@ -8,6 +8,7 @@
 
 #import "BIMConversationListDataSource.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <OneKit/BTDMacros.h>
 
 @interface BIMConversationListDataSource () <BIMConversationListListener>
 
@@ -47,10 +48,11 @@
 
 #pragma mark - BIMConversationListListener
 
-//TODO: block 循环引用
 - (void)loadNexPageConversationsWithCompletion:(void (^)(NSError * _Nullable))completion
 {
+    @weakify(self);
     [[BIMClient sharedInstance] getConversationList:self.currentCursor count:self.pageSize completion:^(NSArray<BIMConversation *> * _Nonnull conversations, BOOL hasMore, long long nextCursor, BIMError * _Nullable error) {
+        @strongify(self);
         if (conversations.count) {
             self.currentCursor = nextCursor;
         }

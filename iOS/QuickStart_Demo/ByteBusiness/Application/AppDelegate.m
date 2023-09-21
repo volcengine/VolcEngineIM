@@ -72,6 +72,7 @@
 - (void)agreeUserPirvacyAgreement {
     [OneKitApp startWithLaunchOptions:nil];
     [[VEIMDemoUserManager sharedManager] initSDK];
+    [[VEIMDemoIMManager sharedManager].accountProvider registerAccountSDK];
 }
 
 @end

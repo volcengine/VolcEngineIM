@@ -56,7 +56,9 @@
     [self.tableview registerClass:[BIMFriendListHeaderCell class] forCellReuseIdentifier:@"BIMFriendListHeaderCell"];
     [self.tableview setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     // 去除section之间的空白间隙
-    self.tableview.sectionHeaderTopPadding = YES;
+    if (@available(iOS 15.0, *)) {
+        self.tableview.sectionHeaderTopPadding = YES;
+    }
 }
 
 - (void)registerNotification
@@ -221,8 +223,6 @@
     if (indexPath.section == 0) {
         BIMFriendListHeaderCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         if (cell.type == BIMFriendListHeaderApply) {
-            // TODO: 点击进去，清空好友申请未读
-            
             VEIMDemoFriendApplyListController *vc = [[VEIMDemoFriendApplyListController alloc] init];
             [self.navigationController pushViewController:vc
                                                  animated:YES];

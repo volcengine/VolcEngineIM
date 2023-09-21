@@ -129,7 +129,7 @@
                     } else {
                         // 请求成功关闭alert
                         [BIMToastView toast:@"操作成功"];
-                        [self dismissViewControllerAnimated:addFriendAlert completion:nil];
+                        [self dismissViewControllerAnimated:YES completion:nil];
                     }
                 }];
             } else {

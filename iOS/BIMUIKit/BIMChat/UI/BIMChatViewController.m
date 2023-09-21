@@ -415,6 +415,8 @@
             toast = error.localizedDescription;
         } else if (error.code == BIM_SERVER_NOT_FRIEND) {
             toast = @"对方不是你的好友，无法发送消息";
+        } else if (error.code == BIM_SERVER_ALREADY_IN_BLACK) {
+            toast = @"对方已拒收你的消息";
         }
     }
     [BIMToastView toast:toast];

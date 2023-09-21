@@ -30,7 +30,7 @@ static NSString *const VEIMMyInfoIMSDKVersion = @"IMSDK Version Name";
 static NSString *const VEIMMyInfoIMSDKDid = @"Did";
 static NSString *const VEIMMyInfoLongConnectStauts = @"长连接状态";
 static NSString *const VEIMMyInfoPrivacy = @"隐私政策";
-static NSString *const VEIMMyInfoPermissionList = @"权限申请列表";
+static NSString *const VEIMMyInfoPermissionList = @"权限清单";
 
 @interface VEIMDemoMyinfoController ()
 
@@ -126,7 +126,7 @@ static NSString *const VEIMMyInfoPermissionList = @"权限申请列表";
             if ([title isEqualToString:VEIMMyInfoAppid]) {
                 info = kVEIMDemoAppID;
             } else if ([title isEqualToString:VEIMMyInfoAppVersionName]) {
-                info = UIApplication.btd_bundleVersion;
+                info = UIApplication.btd_versionName;
             } else if ([title isEqualToString:VEIMMyInfoIMSDKVersion]) {
                 info = [[BIMClient sharedInstance] getVersion];
             } else if ([title isEqualToString:VEIMMyInfoIMSDKDid]) {
@@ -162,7 +162,7 @@ static NSString *const VEIMMyInfoPermissionList = @"权限申请列表";
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == VEIMDemoMyinfoSectionTypeCancelAccountAndLogout) {
         if (indexPath.row == 0) {
-            NSString *msg = @"注销后，当前账户的所有数据将会被删除且无法找回。\n注销后，当前账户所创建的群聊将直接解散。\n注销一经开始将无法撤回。";
+            NSString *msg = @"注销后，当前账户的所有数据将会被删除且无法找回。\n注销后，当前账户所创建的群聊将自动转让群主后退出。\n注销一经开始将无法撤回。";
             NSMutableAttributedString *attMsg = [[NSMutableAttributedString alloc] initWithString:msg];
             NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
             [paragraph setLineSpacing:3];

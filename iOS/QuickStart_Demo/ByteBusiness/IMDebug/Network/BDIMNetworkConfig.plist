@@ -7,7 +7,7 @@
 		<key>PPE</key>
 		<dict>
 			<key>tokenUrl</key>
-			<string>https://imapi.sinf.net/imcloud</string>
+			<string>https://imapi.volcvideo.com/imcloud</string>
 			<key>apiUrl</key>
 			<string>https://imapi.volcvideo.com</string>
 		</dict>
