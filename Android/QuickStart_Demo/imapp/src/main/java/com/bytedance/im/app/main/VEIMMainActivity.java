@@ -19,6 +19,7 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.contact.mainList.VEContactListFragment;
 import com.bytedance.im.app.user.VEDefaultAccountProvider;
+import com.bytedance.im.app.utils.VEUtils;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.BIMUIClient;
@@ -106,7 +107,7 @@ public class VEIMMainActivity extends Activity implements View.OnClickListener {
                 }
             }
         });
-        if (!BuildConfig.DEBUG || VEIMApplication.accountProvider instanceof VEDefaultAccountProvider) { //隐藏了直播群，删掉 if 可体验
+        if (VEUtils.isShield()) { //隐藏了直播群，删掉 if 可体验
             View liveTab = findViewById(R.id.rl_live_group);
             LinearLayout tabLayout = findViewById(R.id.cl_menu);
             liveTab.setVisibility(View.GONE);

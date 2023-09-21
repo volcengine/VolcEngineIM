@@ -686,6 +686,9 @@ public class BIMMessageListFragment extends Fragment {
                 } else if (code == BIMErrorCode.BIM_SERVER_NOT_FRIEND) {
                     Toast.makeText(getActivity(), "对方不是你的好友，无法发送消息", Toast.LENGTH_SHORT).show();
                     return;
+                } else if (code == BIMErrorCode.BIM_SERVER_AlREADY_IN_BLACK) {
+                    Toast.makeText(getActivity(), "对方已拒收你的消息", Toast.LENGTH_SHORT).show();
+                    return;
                 } else {
                     Toast.makeText(getActivity(), "发送失败 code: " + code, Toast.LENGTH_SHORT).show();
                 }

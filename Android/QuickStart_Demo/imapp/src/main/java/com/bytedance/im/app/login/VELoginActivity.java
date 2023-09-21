@@ -19,6 +19,7 @@ import com.bytedance.im.app.constants.SpUtils;
 import com.bytedance.im.app.debug.VEEnvSettingActivity;
 import com.bytedance.im.app.main.VEIMMainActivity;
 import com.bytedance.im.app.sysbug.PreventProcessKill;
+import com.bytedance.im.app.utils.VEUtils;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.interfaces.BIMAuthProvider;
@@ -90,8 +91,10 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
     @Override
     public void onDebugClick() {
         toDebugCount++;
-        if (toDebugCount == 3) {
-            VEEnvSettingActivity.start(this);
+        if (toDebugCount == 3 ) {
+            if (!VEUtils.isShield()) {    //屏蔽掉 debug 入口
+                VEEnvSettingActivity.start(this);
+            }
             toDebugCount = 0;
         }
     }

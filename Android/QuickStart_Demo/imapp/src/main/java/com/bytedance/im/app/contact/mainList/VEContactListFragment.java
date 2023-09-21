@@ -2,7 +2,6 @@ package com.bytedance.im.app.contact.mainList;
 
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_ADD_SELF_FRIEND_NOT_ALLOW;
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_DUPLICATE_APPLY;
-import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_FROM_USER_FRIEND_MORE_THAN_LIMIT;
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_IS_FRIEND;
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_FRIEND_MORE_THAN_LIMIT;
 
@@ -41,6 +40,7 @@ import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.BIMFriendListener;
 import com.bytedance.im.user.api.model.BIMApplyInfo;
+import com.bytedance.im.user.api.model.BIMBlackListFriendInfo;
 import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
 import com.bytedance.im.user.api.model.BIMFriendInfo;
 
@@ -341,6 +341,21 @@ public class VEContactListFragment extends Fragment {
             ContactListDataInfo<ContactListActionItem> item = ContactListDataInfo.create(ContactListItemType.TYPE_INVITE_LIST);
             item.getData().setUnreadCount(count);
             adapter.updateStickTopData(item);
+        }
+
+        @Override
+        public void onBlackListAdd(BIMBlackListFriendInfo blackListInfo) {
+
+        }
+
+        @Override
+        public void onBlackListDelete(BIMBlackListFriendInfo blackListInfo) {
+
+        }
+
+        @Override
+        public void onBlackListUpdate(BIMBlackListFriendInfo blackListInfo) {
+
         }
     };
 

@@ -7,15 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class VEContactBlockListAdapter extends RecyclerView.Adapter<VEContactBlockListViewHolder> {
-    private BlockListClickListener listener;
-    private final List<BIMFriendApplyInfo> data = new ArrayList<>();
+    private BlackListClickListener listener;
+    private final List<VEContactBlackListData> data = new ArrayList<>();
 
     @NonNull
     @Override
@@ -26,7 +25,12 @@ public class VEContactBlockListAdapter extends RecyclerView.Adapter<VEContactBlo
 
     @Override
     public void onBindViewHolder(@NonNull VEContactBlockListViewHolder veContactInviteViewHolder, int i) {
-        veContactInviteViewHolder.onBind(data.get(i), this.listener);
+        VEContactBlackListData preData = null;
+        if (i > 0) {
+            preData = data.get(i - 1);
+        }
+        VEContactBlackListData itemData = data.get(i);
+        veContactInviteViewHolder.onBind(itemData, preData, this.listener);
     }
 
     @Override
@@ -34,7 +38,7 @@ public class VEContactBlockListAdapter extends RecyclerView.Adapter<VEContactBlo
         return data.size();
     }
 
-    public void appendData(List<BIMFriendApplyInfo> appendData, boolean needClear) {
+    public void appendData(List<VEContactBlackListData> appendData, boolean needClear) {
         if (needClear) {
             data.clear();
         }
@@ -48,42 +52,38 @@ public class VEContactBlockListAdapter extends RecyclerView.Adapter<VEContactBlo
         }
     }
 
-    public int insertOrUpdateData(BIMFriendApplyInfo newData, boolean canAppend) {
-        int index = Collections.binarySearch(this.data, newData, (o1, o2) -> o1.getIndex() - o2.getIndex() > 0 ? -1 : (o1.getIndex() - o2.getIndex() < 0 ? 1 : 0));
-        if (index < 0) { // not same，index change
-            index = -index - 1;
-
-            int oldIndex = -1;
-            for (int i = index; i < this.data.size(); i++) {
-                if (this.data.get(i).getFromUid() == newData.getFromUid()) {
-                    oldIndex = i;
-                    this.data.remove(i);
-                    break;
-                }
+    public void insertOrUpdateData(VEContactBlackListData newData) {
+        for (int i = 0; i < this.data.size(); i++) {
+            if (this.data.get(i).getId() == newData.getId()) {
+                this.data.remove(i);
+                break;
             }
-
-            // insert
-            if (index < data.size() || canAppend) {
-                this.data.add(index, newData);
-
-                if (oldIndex >= 0) {
-                    this.notifyItemMoved(oldIndex, index);
-                    this.notifyItemChanged(index);
-                } else {
-                    this.notifyItemInserted(index);
-                }
-            }
-
-        } else {
-            // find same index
-            this.data.set(index, newData);
-            this.notifyItemChanged(index);
         }
 
-        return index;
+        this.data.add(newData);
+        Collections.sort(this.data, VEContactBlackListData::compare);
+        notifyDataSetChanged();
     }
 
-    public void setListener(BlockListClickListener listener) {
+    public void removeData(VEContactBlackListData deleteData) {
+        int index = -1;
+        for (int i = 0; i < getItemCount(); i++) {
+            if (data.get(i).getId() == deleteData.getId()) {
+                index = i;
+                break;
+            }
+        }
+        if (index >= 0) {
+            boolean needNotifyNext = index != data.size() - 1;
+            data.remove(index);
+            notifyItemRemoved(index);
+            if (needNotifyNext) {
+                notifyItemChanged(index);
+            }
+        }
+    }
+
+    public void setListener(BlackListClickListener listener) {
         this.listener = listener;
     }
 }

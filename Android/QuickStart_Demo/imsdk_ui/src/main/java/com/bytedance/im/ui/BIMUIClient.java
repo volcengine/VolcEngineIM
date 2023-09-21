@@ -17,6 +17,7 @@ import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.core.api.model.BIMUnReadInfo;
+import com.bytedance.im.core.internal.utils.IMLog;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareCustomMessageUI;
@@ -36,6 +37,7 @@ import java.util.List;
  * @brief BIMUI 对外接口类, 通过此类提供所有 UI 能力接口。
  */
 public class BIMUIClient {
+    private static final String TAG = "BIMUIClient";
     /**
      * @hidden
      */
@@ -83,6 +85,7 @@ public class BIMUIClient {
             BIMMessageManager.getInstance().register("1", BIMShareElement.class);
             BIMMessageManager.getInstance().register("2", BIMGroupNotifyElement.class);
         }
+        IMLog.i(TAG, "initUISDK end initVersion: " + getVersion() + " imSDK initVersion: "+BIMClient.getInstance().getVersion());
     }
     /**
      * @param BIMUserProvider 用户信息 provider,参看 UserProvider{@link #UserProvider}。
