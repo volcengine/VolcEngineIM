@@ -250,15 +250,12 @@ public class VEContactListFragment extends Fragment {
 
     private void showItemOptionMenu(ContactListDataInfo<?> data) {
         if (data.getType() == ContactListItemType.TYPE_CONTACT) {
-            String[] items = new String[] { "删除好友", "修改好友备注"};
+            String[] items = new String[] { "删除好友" };
             long uid = ((BIMFriendInfo) data.getData()).getUid();
             new AlertDialog.Builder(getActivity()).setItems(items, (selectDialog, which) -> {
                 if (which == 0) {
                     selectDialog.dismiss();
                     showDeleteFriendDialog(uid);
-                } else if (which == 1) {
-                    selectDialog.dismiss();
-                    showChangeContactNickNameDialog(data);
                 }
             }).show();
         }

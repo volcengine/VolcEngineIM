@@ -250,8 +250,10 @@ public class BIMMessageListFragment extends Fragment {
             @Override
             public void onAudioCancel() {
                 BIMLog.i(TAG, "onAudioCancel()");
-                voiceRecordManager.stop();
-                voiceRecordManager.release();
+                if (voiceRecordManager != null) {
+                    voiceRecordManager.stop();
+                    voiceRecordManager.release();
+                }
             }
 
             @Override
