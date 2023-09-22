@@ -3,7 +3,6 @@ package com.bytedance.im.app.main;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -27,19 +26,16 @@ import com.bytedance.im.app.BuildConfig;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
+import com.bytedance.im.app.login.VELoginActivity;
 import com.bytedance.im.app.login.model.UserToken;
 import com.bytedance.im.app.utils.VECancelUtils;
-import com.bytedance.im.app.login.VELoginActivity;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMConnectStatus;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMConnectListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
-import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
-import com.bytedance.im.core.net.ws.WSMessageManager;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUser;
-import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.user.UserManager;
 
 
