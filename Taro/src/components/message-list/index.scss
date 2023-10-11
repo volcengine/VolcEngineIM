@@ -1,0 +1,28 @@
+.message-list-wrapper {
+  position: relative;
+  flex: 1;
+  padding: 10px;
+  overflow-y: scroll;
+  background-color: #ececec;
+  box-sizing: border-box;
+
+  #msg-scroll-view {
+    height: 100%;
+  }
+
+  .unread-count-wrapper {
+    position: absolute;
+    right: 20px;
+    bottom: 100px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    color: #4285f4;
+    font-size: 24px;
+    background-color: #fff;
+    border: 1px solid #eee;
+
+    .text {
+      margin-left: 10px;
+    }
+  }
+}

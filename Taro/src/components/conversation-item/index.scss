@@ -1,0 +1,62 @@
+.conversation-item-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100vw;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  box-sizing: border-box;
+
+  .conversation-icon-wrapper {
+    width: 100px;
+    height: 80px;
+
+    .image {
+      width: 80px;
+      height: 80px;
+    }
+  }
+
+  .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    overflow: hidden;
+
+    .name-wrapper {
+      display: flex;
+      align-items: center;
+
+      .name {
+        flex: 1;
+        color: #000;
+        font-size: 28px;
+      }
+
+      .pin-icon {
+        width: 28px;
+        height: 28px;
+        margin-left: 10px;
+      }
+
+      .time {
+        margin-left: 10px;
+        font-size: 24px;
+        color: #bbbbbb;
+      }
+    }
+
+    .content {
+      margin-top: 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #bbbbbb;
+      font-size: 24px;
+    }
+  }
+}
