@@ -115,12 +115,6 @@ const LiveConversations = atom<Array<Conversation>>({
   dangerouslyAllowMutability: true,
 });
 
-const LiveConversationNickName = atom<string | undefined>({
-  key: 'LiveConversationNickName',
-  default: undefined,
-  dangerouslyAllowMutability: true,
-});
-
 const IsMuted = atom<boolean | undefined>({
   key: 'IsMuted',
   default: undefined,
@@ -164,7 +158,6 @@ export {
   UserName,
   CurrentConversationUnreadCount,
   LiveConversations,
-  LiveConversationNickName,
   IsMuted,
   LiveConversationMemberCount,
   LiveConversationOwner,

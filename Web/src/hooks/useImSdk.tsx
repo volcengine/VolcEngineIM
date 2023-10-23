@@ -28,11 +28,12 @@ import {
   LiveConversationMemberCount,
   LiveConversationOwner,
 } from '../store';
-import { APP_ID, USER_ID_KEY, IM_TOKEN_KEY, SDK_OPTION, ACCOUNTS_INFO } from '../constant';
+import { APP_ID, USER_ID_KEY, IM_TOKEN_KEY, SDK_OPTION, FRIEND_ALIAS } from '../constant';
 import { fetchToken } from '../apis/app';
 import { Storage, computedVisibleTime } from '../utils';
 import { useLive } from './useLive';
 import { useNavigate } from '@modern-js/runtime/router';
+import { sleep } from '../utils/sleep';
 
 const { ConversationType } = im_proto;
 
@@ -108,11 +109,22 @@ const useInit = () => {
    * 获取群成员列表
    */
   const getParticipantList = () => {
-    if (currentConversation) {
+    if (!currentConversation) return;
+    if (currentConversation.type !== ConversationType.MASS_CHAT) {
       const newList = bytedIMInstance.getParticipants({
         conversation: currentConversation,
       });
       setParticipants(newList);
+    } else {
+      sleep(1000)
+        .then(() =>
+          bytedIMInstance.getLiveParticipantsOnline({
+            conversation: currentConversation,
+          })
+        )
+        .then(r => {
+          setParticipants(r.participants);
+        });
     }
   };
 
@@ -333,6 +345,37 @@ const useInit = () => {
     };
 
     window.addEventListener('loadLiveHistory', loadLiveHistoryListener);
+    const handleFriendRefresh = v => {
+      bytedIMInstance
+        .getFriendListOnline({
+          limit: 500,
+        })
+        .then(friendList => {
+          const result = {};
+          friendList.list.map(i => {
+            result[i.userId] = i.alias;
+          });
+          FRIEND_ALIAS.value = result;
+          window.dispatchEvent(new CustomEvent('friendRefresh'));
+        });
+    };
+
+    const handleFriendRefreshForInitFinishHandler = bytedIMInstance?.event.subscribe(
+      IMEvent.InitFinish,
+      handleFriendRefresh
+    );
+    const handleFriendRefreshForFriendAddHandler = bytedIMInstance?.event.subscribe(
+      IMEvent.FriendAdd,
+      handleFriendRefresh
+    );
+    const handleFriendRefreshForFriendDeleteHandler = bytedIMInstance?.event.subscribe(
+      IMEvent.FriendDelete,
+      handleFriendRefresh
+    );
+    const handleFriendRefreshForFriendUpdateHandler = bytedIMInstance?.event.subscribe(
+      IMEvent.FriendUpdate,
+      handleFriendRefresh
+    );
 
     return () => {
       bytedIMInstance?.event.unsubscribe(IMEvent.ConversationUpsert, conversationUpsertHandler);
@@ -351,6 +394,11 @@ const useInit = () => {
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendApplyRefuse, friendApplyRefuseHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendAdd, friendAddHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendDelete, friendDeleteHandler);
+
+      bytedIMInstance?.event.unsubscribe(IMEvent.InitFinish, handleFriendRefreshForInitFinishHandler);
+      bytedIMInstance?.event.unsubscribe(IMEvent.FriendAdd, handleFriendRefreshForFriendAddHandler);
+      bytedIMInstance?.event.unsubscribe(IMEvent.FriendDelete, handleFriendRefreshForFriendDeleteHandler);
+      bytedIMInstance?.event.unsubscribe(IMEvent.FriendUpdate, handleFriendRefreshForFriendUpdateHandler);
       window.removeEventListener('loadLiveHistory', loadLiveHistoryListener);
     };
   }, [bytedIMInstance, currentConversation?.id]);
@@ -367,6 +415,7 @@ const useInit = () => {
     if (currentConversation?.type === ConversationType.MASS_CHAT) {
       setMessages([]);
       setLiveMessagesMap(new Map());
+      getParticipantList();
     } else {
       getMessageList();
       getParticipantList();

@@ -7,7 +7,7 @@ import { useDebounceFn, useRequest, useThrottleFn } from 'ahooks';
 
 import { BytedIMInstance, CurrentConversation, ScrollRef } from '../../../../store';
 import { useScroll, useUpdate } from '../../../../hooks';
-import { ACCOUNTS_INFO } from '../../../../constant';
+import { ACCOUNTS_INFO, EXT_AVATAR_URL } from '../../../../constant';
 import { isSystemMsgType } from '../../../../utils';
 
 import { IconLoading } from '../../../../components/Icon';
@@ -303,7 +303,6 @@ const MessageList = (props: MessageListProps<any>, ref: any) => {
                 index={index}
                 isLast={dataSource.length - 1 === index}
                 sender={sender}
-                avatarUrl={ACCOUNTS_INFO[sender]?.url}
                 deleteMessage={deleteMessage}
                 recallMessage={recallMessage}
                 resendMessage={resendMessage}

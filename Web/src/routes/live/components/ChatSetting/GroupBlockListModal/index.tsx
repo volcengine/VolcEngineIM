@@ -12,6 +12,7 @@ import { IconDelete } from '@arco-design/web-react/icon';
 
 import { useParticipant } from '../../../../../hooks';
 import { useRequest } from 'ahooks';
+import { MemberNameDisplay } from '../GroupMemberListModal';
 
 interface GroupSearchModalProps {}
 
@@ -38,7 +39,6 @@ function useBlockList() {
         list = list.concat(result.participants);
       }
       setParticipants(list);
-      setParticipants(participants);
     },
     {
       refreshOnWindowFocus: true,
@@ -227,22 +227,7 @@ const GroupSubListModalHoc =
               return (
                 <div className="member-item-wrapper" key={item.userId.toString()}>
                   <div className="group-auth-item">
-                    <div className="group-auth-avatar">
-                      {ACCOUNTS_INFO[item.userId]?.url ? (
-                        <Avatar size={32} url={ACCOUNTS_INFO[item.userId]?.url} />
-                      ) : (
-                        <span>{item.userId}</span>
-                      )}
-                    </div>
-
-                    <div className="group-auth-item-info">
-                      <div className="group-auth-username">{ACCOUNTS_INFO[item.userId]?.name}</div>
-                      {item.userId.toString() === userId && <div className="group-title-tag group-my-title">我</div>}
-                      {item.role === ROLE.Owner && <div className="group-title-tag group-owner-title">群主</div>}
-                      {item.role === ROLE.Manager && (
-                        <div className="group-title-tag group-manager-title">群管理员</div>
-                      )}
-                    </div>
+                    <MemberNameDisplay participant={item} offlineParticipant={false}></MemberNameDisplay>
                   </div>
 
                   {isManageable && (

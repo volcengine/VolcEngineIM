@@ -13,6 +13,7 @@ import { GroupTransferModal } from './GroupTransferModal';
 
 import { useParticipant } from '../../../../hooks';
 import {
+  BytedIMInstance,
   CurrentConversation,
   IsMuted,
   LiveConversationMemberCount,
@@ -26,6 +27,9 @@ import { useLive } from '../../../../hooks/useLive';
 import { useLiveConversation } from '../../../../hooks/useLiveConversation';
 import { ROLE } from '../../../../constant';
 import GroupQueryUserInfoModal from './GroupQueryUserInfoModal';
+import LiveParticipantInfoModel from '../../../../components/ConversationModal/LiveParticipantInfo';
+import { Participant } from '@volcengine/im-web-sdk';
+import { useRequest } from 'ahooks';
 
 enum ModalType {
   Info = 1,
@@ -45,7 +49,7 @@ const ModalMap = {
   },
   [ModalType.MemberList]: {
     title: '群成员',
-    width: 420,
+    width: 500,
     wrapClassName: 'group-search-modal',
     footer: null,
   },
@@ -98,7 +102,23 @@ export const ChatSetting: FC<ChatSettingProps> = props => {
 
   const { updateGroupParticipant, removeLiveGroupParticipants } = useParticipant();
   const { configLiveConversationCoreInfo, dissolveLiveGroupConversation, setConversationMute } = useLiveConversation();
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
 
+  const {
+    data: editInfo,
+    run: onEditInfo,
+    loading: selfInfoLoading,
+    mutate: mutateEditInfo,
+  } = useRequest(
+    async () => {
+      const resp = await bytedIMInstance.getLiveParticipantDetailOnline({
+        conversation: currentConversation,
+        participantIds: [userId],
+      });
+      return resp[0];
+    },
+    { manual: true, loadingDelay: 300 }
+  );
   const selectItemList = [
     {
       key: 'muteWhite',
@@ -255,6 +275,18 @@ export const ChatSetting: FC<ChatSettingProps> = props => {
           <div
             className="select-item-wrapper"
             onClick={() => {
+              onEditInfo();
+            }}
+          >
+            <div className="item-name-wrapper">{selfInfoLoading ? '加载中' : '修改我的直播群资料'}</div>
+
+            <div className="item-icon-wrapper">
+              <IconRight />
+            </div>
+          </div>
+          <div
+            className="select-item-wrapper"
+            onClick={() => {
               showTypeModel(ModalType.QueryUserStatus);
             }}
           >
@@ -325,6 +357,21 @@ export const ChatSetting: FC<ChatSettingProps> = props => {
       >
         {modalVisible && renderTypeModal()}
       </Modal>
+
+      {editInfo && (
+        <LiveParticipantInfoModel
+          userId={userId}
+          initAvatarUrl={editInfo.avatarUrl}
+          initAlias={editInfo.alias}
+          onClose={() => mutateEditInfo(null)}
+          onSubmit={async value => {
+            await updateGroupParticipant(currentConversation.id, userId, {
+              ...value,
+            });
+            return true;
+          }}
+        ></LiveParticipantInfoModel>
+      )}
     </ChatSettingBox>
   );
 };

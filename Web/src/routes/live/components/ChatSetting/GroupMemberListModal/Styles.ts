@@ -94,6 +94,11 @@ export default styled.div`
     background-color: #daf7a6;
   }
 
+  .group-with-alias {
+    color: #1a9898;
+    background-color: #a6f7eb;
+  }
+
   .group-title-tag {
     text-align: center;
     height: 20px;

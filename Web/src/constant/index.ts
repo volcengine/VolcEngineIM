@@ -92,21 +92,31 @@ const AVATAR_MAP = {
   10: User_10,
 };
 
-export const ACCOUNTS_INFO = new Proxy({} as { [id: string]: { id: string; name: string; url: string } }, {
-  get: function (target, id: string) {
-    if (!target[id]) {
-      let last = Number(id[id.length - 1]) % 10;
-      if (last === 0) last = 10;
-      return {
-        id: id,
-        name: `用户${id}`,
-        url: AVATAR_MAP[last],
-      };
-    }
-    return target[id];
-  },
-});
+export const FRIEND_ALIAS: { value: { [k: string]: string } } = { value: {} };
+
+export const ACCOUNTS_INFO = new Proxy(
+  {} as { [id: string]: { id: string; name: string; url: string; realName: string; hasFriendAlias: boolean } },
+  {
+    get: function (target, id: string) {
+      if (!target[id]) {
+        let last = Number(id[id.length - 1]) % 10;
+        if (last === 0) last = 10;
+        return {
+          id: id,
+          name: FRIEND_ALIAS.value[id] ? FRIEND_ALIAS.value[id] : `用户${id}`,
+          hasFriendAlias: Boolean(FRIEND_ALIAS.value[id]),
+          realName: `用户${id}`,
+          url: AVATAR_MAP[last],
+        };
+      }
+      return target[id];
+    },
+  }
+);
 
 export enum CheckCode {
   SENSITIVE_WORDS = 500,
 }
+
+export const EXT_ALIAS_NAME = 'a:live_group_member_alias_name';
+export const EXT_AVATAR_URL = 'a:live_group_member_avatar_url';

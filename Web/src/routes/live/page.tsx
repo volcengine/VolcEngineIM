@@ -7,11 +7,12 @@ import classNames from 'classnames';
 import { CurrentConversation, UserId, LiveConversations } from '../../store';
 import { useParticipant, useLiveConversation, useLive } from '../../hooks';
 
-import { SideBarMenu } from '../../components';
+import { Portal, SideBarMenu } from '../../components';
 import { ConversationHeader, ConversationList, ChatSetting, ChatPanel, GroupNotice } from './components';
 import { IconNotice, IconSetting } from '../../components/Icon';
 
 import MainContainer from '../Style';
+import LiveParticipantInfoModel from '../../components/ConversationModal/LiveParticipantInfo';
 
 enum SidebarKey {
   notice = 1,
@@ -59,6 +60,11 @@ const Live = () => {
   const { createLiveConversation, getLiveConversationList, selectLiveConversation } = useLiveConversation();
   const { addLiveGroupParticipants, removeLiveGroupParticipants } = useParticipant();
   const { clearCurrentLiveConversationStatus } = useLive();
+  const [joinModalVisisble, setJoinModalVisisble] = useState(false);
+
+  const handleJoinModalVisibleChange = useCallback(() => {
+    setJoinModalVisisble(pre => !pre);
+  }, []);
 
   const handleCloseMenuSidebar = useCallback((key?: string) => {
     setSelectedKey('');
@@ -82,7 +88,7 @@ const Live = () => {
     setSelectedKey(key);
   }, []);
 
-  const handleConversationItemClick = async (item: Conversation) => {
+  const handleConversationItemClick = async (item: Conversation, value) => {
     handleCloseMenuSidebar();
 
     if (currentConversation) {
@@ -91,12 +97,15 @@ const Live = () => {
 
     try {
       await selectLiveConversation(item);
-      const result = await addLiveGroupParticipants(item, [userId]);
+      const result = await addLiveGroupParticipants({ conversation: item, participants: [userId], ...value });
       if (!result) {
         clearCurrentLiveConversationStatus();
+        return false;
       }
+      return true;
     } catch (err) {
       MessageToast.error('进入直播群失败');
+      return false;
     }
   };
 
@@ -114,6 +123,7 @@ const Live = () => {
     setLiveConversations(filterConvList);
   };
 
+  const clickedRef = useRef<Conversation>(null);
   const handleCreateLiveGroup = async params => {
     const { name } = params;
     const conv = await createLiveConversation({ name });
@@ -122,7 +132,7 @@ const Live = () => {
     }
     try {
       await selectLiveConversation(conv);
-      const result = await addLiveGroupParticipants(conv, [userId]);
+      const result = await addLiveGroupParticipants({ conversation: conv, participants: [userId] });
       if (!result) {
         clearCurrentLiveConversationStatus();
         return;
@@ -142,9 +152,10 @@ const Live = () => {
       const result = await getLiveConversationList({
         policy,
         cursor,
+        limit: 100,
       });
       cursor = result.cursor;
-      hasMore = result.hasMore ?? false;
+      hasMore = false;
       list = list.concat(result.conversation);
     }
 
@@ -169,7 +180,10 @@ const Live = () => {
         <ConversationList
           curConversationId={currentConversation?.id}
           list={liveConversations}
-          onItemClick={handleConversationItemClick}
+          onItemClick={conv => {
+            clickedRef.current = conv;
+            setJoinModalVisisble(true);
+          }}
         />
       </div>
 
@@ -193,6 +207,19 @@ const Live = () => {
             closeSidebar={handleCloseMenuSidebar}
           />
         </div>
+      )}
+
+      {joinModalVisisble && (
+        <Portal>
+          <LiveParticipantInfoModel
+            title={'加入直播群'}
+            userId={userId}
+            onClose={handleJoinModalVisibleChange}
+            onSubmit={async v => {
+              return await handleConversationItemClick(clickedRef.current, v);
+            }}
+          ></LiveParticipantInfoModel>
+        </Portal>
       )}
     </MainContainer>
   );

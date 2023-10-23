@@ -8,11 +8,11 @@ import { MessageItemType } from '../../../../types';
 import { MessageAvatar, MessageStatusCmp, MessageTime, Toolbar, MessageProperty } from './components';
 import { IconRevocation } from '../../../../components/Icon';
 import { getMessageComponent } from '../../../../components/MessageCards';
-import { useInView } from '../../../../hooks';
+import { useFriendAlias, useInView } from '../../../../hooks';
 import MessageWrap from './Styles';
-import { BytedIMInstance, CurrentConversation, UserId } from '../../../../store';
+import { BytedIMInstance, CurrentConversation, Participants, UserId } from '../../../../store';
 import { getMessageTimeFormat, getMsgStatusIcon } from '../../../../utils';
-import { ACCOUNTS_INFO } from '../../../../constant';
+import { ACCOUNTS_INFO, EXT_ALIAS_NAME, EXT_AVATAR_URL } from '../../../../constant';
 import { IconArrowDown, IconArrowUp, IconMinus } from '@arco-design/web-react/icon';
 
 interface MessageLayoutProps {
@@ -46,7 +46,6 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
   const {
     className,
     message,
-    avatarUrl,
     index,
     sender,
     isLast,
@@ -77,6 +76,7 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
   const [isHover, setIsHover] = useState<boolean>(false);
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
   const currentConversation = useRecoilValue(CurrentConversation);
+  const participants = useRecoilValue(Participants);
   const userId = useRecoilValue(UserId);
 
   const [messageItemRef, isInview] = useInView(null, { threshold: 0.7, disabled: isFromMe }, [
@@ -134,6 +134,8 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
   );
 
   const renderAvatar = () => {
+    const avatarUrl =
+      participants.find(i => i.userId === sender)?.avatarUrl || ext[EXT_AVATAR_URL] || ACCOUNTS_INFO[sender]?.url;
     return <MessageAvatar onClick={handleAvatarClick} source={avatarUrl} desc={sender} />;
   };
 
@@ -146,11 +148,20 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
   };
 
   /** 每个消息的时间 */
+  useFriendAlias();
   const renderMessageOwnerInfo = () => {
     return (
       <div className="message-info">
         {isFromMe && <span className="message-timestamp noselect">{getMessageTimeFormat(createdAt)}&nbsp;</span>}
-        <span>{ext['a:live_group_nick_name'] ?? ACCOUNTS_INFO[sender]?.name}</span>
+        <Tooltip content={ACCOUNTS_INFO[sender]?.realName}>
+          <span>
+            {ACCOUNTS_INFO[sender]?.hasFriendAlias
+              ? ACCOUNTS_INFO[sender]?.name
+              : participants.find(i => i.userId === sender)?.alias ||
+                ext[EXT_ALIAS_NAME] ||
+                ACCOUNTS_INFO[sender]?.name}
+          </span>
+        </Tooltip>
         {!isFromMe && <span className="message-timestamp noselect">&nbsp;{getMessageTimeFormat(createdAt)}</span>}
       </div>
     );
