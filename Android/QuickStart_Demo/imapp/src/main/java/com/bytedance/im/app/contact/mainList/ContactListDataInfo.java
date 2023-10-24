@@ -8,7 +8,10 @@ import static com.bytedance.im.app.contact.mainList.item.ContactListActionItem.I
 import android.text.TextUtils;
 
 import com.bytedance.im.app.contact.mainList.item.ContactListActionItem;
+import com.bytedance.im.app.utils.SimplePinyinHelper;
 import com.bytedance.im.user.api.model.BIMFriendInfo;
+
+import java.util.Locale;
 
 public class ContactListDataInfo<T> {
     public static final char SPECIAL_NAME = '#';
@@ -20,8 +23,19 @@ public class ContactListDataInfo<T> {
     private String sortKey;
 
     public static ContactListDataInfo<BIMFriendInfo> create(BIMFriendInfo friendInfo) {
+        String alias = friendInfo.getAlias();
+
         String name = "用户" + friendInfo.getUid();
         String sortKey = "YH" + friendInfo.getUid();
+        if (!TextUtils.isEmpty(alias))  {
+            name = friendInfo.getAlias();
+
+            if (SimplePinyinHelper.ifValid(name)) {
+                sortKey = SimplePinyinHelper.getFirstPinyinChar(name);
+            } else {
+                sortKey = name;
+            }
+        }
         return new ContactListDataInfo<>(friendInfo, ContactListItemType.TYPE_CONTACT, sortKey, friendInfo.getUid(), name);
     }
 
@@ -36,13 +50,13 @@ public class ContactListDataInfo<T> {
 
     public static int compare(ContactListDataInfo<?> o1, ContactListDataInfo<?> o2) {
         if (o1.getFirstChar() == o2.getFirstChar()) {
-            return o1.getSortKey().compareTo(o2.getSortKey());
+            return o1.getSortKey().toUpperCase(Locale.ROOT).compareTo(o2.getSortKey().toUpperCase(Locale.ROOT));
         } else if (o1.getFirstChar() == SPECIAL_NAME) {
             return 1;
         } else if (o2.getFirstChar() == SPECIAL_NAME) {
             return -1;
         } else {
-            return o1.getSortKey().compareTo(o2.getSortKey());
+            return o1.getSortKey().toUpperCase(Locale.ROOT).compareTo(o2.getSortKey().toUpperCase(Locale.ROOT));
         }
     }
 
@@ -70,8 +84,9 @@ public class ContactListDataInfo<T> {
     }
 
     public char getFirstChar() {
-        if (Character.isLetter(this.sortKey.charAt(0))) {
-            return this.sortKey.charAt(0);
+        char c = this.sortKey.charAt(0);
+        if (Character.isLetter(c)) {
+            return Character.toUpperCase(c);
         } else {
             return SPECIAL_NAME;
         }

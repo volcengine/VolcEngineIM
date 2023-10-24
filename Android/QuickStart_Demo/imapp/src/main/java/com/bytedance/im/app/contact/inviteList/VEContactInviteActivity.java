@@ -197,6 +197,11 @@ public class VEContactInviteActivity extends Activity {
         }
 
         @Override
+        public void onFriendUpdate(BIMFriendInfo friendInfo) {
+
+        }
+
+        @Override
         public void onFriendAdd(BIMFriendInfo friendInfo) {
 
         }

@@ -23,7 +23,7 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.interfaces.BIMAuthProvider;
 import com.bytedance.im.interfaces.BIMLoginListener;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 public class VELoginFragment extends Fragment implements BIMAuthProvider {
     private static final String TAG = "VELoginFragment";
@@ -89,7 +89,7 @@ public class VELoginFragment extends Fragment implements BIMAuthProvider {
                     return;
                 }
                 if (null != loginListener) {
-                    loginListener.doLogin(new BIMUser(R.drawable.icon_recommend_user_default, "" + Constants.uid, Constants.uid), Constants.token);
+                    loginListener.doLogin(new BIMUIUser(R.drawable.icon_recommend_user_default, "" + Constants.uid, Constants.uid), Constants.token);
                 }
             }
         });

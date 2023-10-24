@@ -15,12 +15,10 @@ import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.message.VEMessageListActivity;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
-import com.bytedance.im.core.api.interfaces.BIMSendCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
-import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.interfaces.BIMUserExistChecker;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +48,7 @@ public class VECreateSingleActivity extends Activity {
                     return;
                 }
                 long uid = Long.parseLong(editText.getText().toString());
-                BIMUser user = new BIMUser(R.drawable.icon_recommend_user_default, "" + uid, uid);
+                BIMUIUser user = new BIMUIUser(R.drawable.icon_recommend_user_default, "" + uid, uid);
                 BIMUserExistChecker checker = VEIMApplication.accountProvider.createUserExistChecker();
                 List<Long> uidList = new ArrayList<>();
                 uidList.add(user.getUserID());
@@ -75,7 +73,7 @@ public class VECreateSingleActivity extends Activity {
         });
     }
 
-    private void createSingleConversationAndStart(BIMUser user) {
+    private void createSingleConversationAndStart(BIMUIUser user) {
         BIMUIClient.getInstance().createSingleConversation(user.getUserID(), new BIMResultCallback<BIMConversation>() {
             @Override
             public void onSuccess(BIMConversation bimConversation) {

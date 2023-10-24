@@ -1,6 +1,8 @@
 package com.bytedance.im.app.contact.mainList;
 
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_ADD_SELF_FRIEND_NOT_ALLOW;
+import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_ALIAS_ILLEGAL;
+import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_ALIAS_TOO_LONG;
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_DUPLICATE_APPLY;
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_IS_FRIEND;
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_FRIEND_MORE_THAN_LIMIT;
@@ -15,6 +17,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +57,7 @@ import java.util.Map;
 public class VEContactListFragment extends Fragment {
     public static String TAG = "VEContactListFragment";
     private static final int PAGE_SIZE = 20;
+    private static final int MAX_NICKNAME_BYTE_SIZE = 96;
 
     private long mCursor = 0;
     private TextView addContact;
@@ -97,7 +103,7 @@ public class VEContactListFragment extends Fragment {
             showItemOptionMenu(data);
         }
     };
-    private BIMContactExpandService service = BIMClient.getInstance().getService(BIMContactExpandService.class);
+    private final BIMContactExpandService service = BIMClient.getInstance().getService(BIMContactExpandService.class);
 
     @Nullable
     @Override
@@ -250,12 +256,14 @@ public class VEContactListFragment extends Fragment {
 
     private void showItemOptionMenu(ContactListDataInfo<?> data) {
         if (data.getType() == ContactListItemType.TYPE_CONTACT) {
-            String[] items = new String[] { "删除好友" };
+            String[] items = new String[] { "删除好友", "修改好友备注" };
             long uid = ((BIMFriendInfo) data.getData()).getUid();
             new AlertDialog.Builder(getActivity()).setItems(items, (selectDialog, which) -> {
                 if (which == 0) {
                     selectDialog.dismiss();
                     showDeleteFriendDialog(uid);
+                } else if (which == 1) {
+                    showChangeContactNickNameDialog(data);
                 }
             }).show();
         }
@@ -284,8 +292,9 @@ public class VEContactListFragment extends Fragment {
 
     private void showChangeContactNickNameDialog(ContactListDataInfo<?> data) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        AlertDialog dialog = builder.setCancelable(false).show();
+        builder.setCancelable(true);
 
+        AlertDialog dialog = builder.show();
         if (dialog.getWindow() != null) {
             Window window = dialog.getWindow();
             window.setContentView(R.layout.ve_item_dialog_add_contact);
@@ -296,12 +305,53 @@ public class VEContactListFragment extends Fragment {
             TextView tvReject = window.findViewById(R.id.tv_reject);
             TextView tvConfirm = window.findViewById(R.id.tv_confirm);
 
-            //TODO 后续适配
             tvMain.setText("修改好友备注");
-            et.setHint("备注");
+            et.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+
+            BIMFriendInfo info = (BIMFriendInfo) data.getData();
+            et.setHint("输入备注");
+            String preAlias = info.getAlias();
+            et.setText(preAlias == null ? "" : preAlias);
 
             tvReject.setOnClickListener(v -> {
                 dialog.dismiss();
+            });
+
+            et.setFilters(new InputFilter[] { new InputFilter() {
+                @Override
+                public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                    String s1 = source.toString() + dest.toString();
+                    if (s1.getBytes().length > MAX_NICKNAME_BYTE_SIZE) {
+                        Toast.makeText(getActivity(), "不能超过96字节", Toast.LENGTH_SHORT).show();
+                        return "";
+                    } else {
+                        return source;
+                    }
+                }
+            }});
+
+            tvConfirm.setOnClickListener(v -> {
+                if (null != service) {
+                    service.updateFriendAlias(info.getUid(), et.getText().toString().trim(), new BIMSimpleCallback() {
+                        @Override
+                        public void onSuccess() {
+                            dialog.dismiss();
+                            Toast.makeText(getActivity(), "操作成功", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailed(BIMErrorCode code) {
+                            if (code == BIM_SERVER_ALIAS_TOO_LONG) {
+                                Toast.makeText(getActivity(), "不能超过96字节", Toast.LENGTH_SHORT).show();
+                            } else if (code == BIM_SERVER_ALIAS_ILLEGAL) {
+                                Toast.makeText(getActivity(), "文本中可能包含敏感词，请修改后重试", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            } else {
+                                Toast.makeText(getActivity(), "操作失败：" + code, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
             });
         }
     }
@@ -314,6 +364,11 @@ public class VEContactListFragment extends Fragment {
         @Override
         public void onFriendDelete(BIMFriendInfo friendInfo) {
             adapter.removeData(ContactListDataInfo.create(friendInfo));
+        }
+
+        @Override
+        public void onFriendUpdate(BIMFriendInfo friendInfo) {
+            adapter.insertOrUpdate(ContactListDataInfo.create(friendInfo), !mHasMore);
         }
 
         @Override

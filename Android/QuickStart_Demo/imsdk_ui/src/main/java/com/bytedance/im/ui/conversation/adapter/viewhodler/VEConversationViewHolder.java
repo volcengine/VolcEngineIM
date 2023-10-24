@@ -15,11 +15,11 @@ import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.model.inner.msg.BIMCustomElement;
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.conversation.adapter.VEViewHolder;
 import com.bytedance.im.ui.conversation.model.VEConvBaseWrapper;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
-import com.bytedance.im.ui.api.BIMUser;
 import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.ui.utils.BIMUtils;
 import com.bytedance.im.core.api.model.BIMConversation;
@@ -55,21 +55,22 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
 
     @Override
     public void bind(VEConvBaseWrapper<BIMConversation> conversationVEConversationWrapper) {
+        super.bind(conversationVEConversationWrapper);
         BIMConversation bimConversation = conversationVEConversationWrapper.getInfo();
         String name = "";
         int img = R.drawable.icon_recommend_user_default;
         if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
-            BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(bimConversation.getOppositeUserID());
+            BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(bimConversation.getOppositeUserID());
             if (user == null) {
                 name = String.valueOf(bimConversation.getOppositeUserID());
                 userHeadImg.setImageResource(R.drawable.icon_recommend_user_default);
             } else {
                 img = user.getHeadImg();
                 name = user.getNickName();
-                if (TextUtils.isEmpty(user.getUrl())) {
+                if (TextUtils.isEmpty(user.getHeadUrl())) {
                     userHeadImg.setImageResource(img);
                 } else {
-                    Glide.with(userHeadImg.getContext()).load(user.getUrl())
+                    Glide.with(userHeadImg.getContext()).load(user.getHeadUrl())
                             .placeholder(R.drawable.icon_recommend_user_default)
                             .error(R.drawable.icon_recommend_user_default)
                             .into(userHeadImg);
@@ -154,7 +155,7 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
                     content = lastMessage.getElement();
                 }
                 String userName = "";
-                BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(lastMessage.getSenderUID());
+                BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(lastMessage.getSenderUID());
                 if (user == null) {
                     userName = lastMessage.getSenderUID()+"";
                 }else {

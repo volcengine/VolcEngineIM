@@ -1,16 +1,16 @@
 package com.bytedance.im.app.user.adapter;
 
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 public class VEUserSelectWrapper {
-    private BIMUser user;
+    private BIMUIUser user;
     protected boolean isSelect;
 
-    public VEUserSelectWrapper(BIMUser user) {
+    public VEUserSelectWrapper(BIMUIUser user) {
         this.user = user;
     }
 
-    public BIMUser getUser() {
+    public BIMUIUser getUser() {
         return user;
     }
 }

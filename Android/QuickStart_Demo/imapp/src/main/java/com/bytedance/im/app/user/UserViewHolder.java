@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 
 public class UserViewHolder extends RecyclerView.ViewHolder {
@@ -21,7 +21,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    public void bind(BIMUser user) {
+    public void bind(BIMUIUser user) {
         userHeadImg.setImageResource(user.getHeadImg());
         nickName.setText(user.getNickName());
     }

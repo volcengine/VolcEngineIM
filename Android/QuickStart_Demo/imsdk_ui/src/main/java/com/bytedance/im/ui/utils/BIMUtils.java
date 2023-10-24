@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.bytedance.im.core.api.enums.BIMConversationType;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.model.BIMMessage;
@@ -66,7 +66,7 @@ public class BIMUtils {
         } else if (bimMessage.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
             r = "对方 撤回了一条消息";
         } else {
-            BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(bimMessage.getSenderUID());
+            BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(bimMessage.getSenderUID());
             if(user !=null){
                 r = user.getNickName() + " 撤回了一条消息";
             }else {

@@ -13,10 +13,9 @@ import android.widget.TextView;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.VEIMApplication;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class BIMUserSelectActivity extends Activity implements View.OnClickListener {
@@ -49,7 +48,7 @@ public class BIMUserSelectActivity extends Activity implements View.OnClickListe
         back = findViewById(R.id.back);
         back.setOnClickListener(this);
         confirm.setOnClickListener(this);
-        List<BIMUser> data = new ArrayList<>();
+        List<BIMUIUser> data = new ArrayList<>();
         if (allArray != null) {
             for (long id : allArray) {
                 data.add(VEIMApplication.accountProvider.getUserProvider().getUserInfo(id));
@@ -68,10 +67,10 @@ public class BIMUserSelectActivity extends Activity implements View.OnClickListe
             setResult(RESULT_CANCELED);
             finish();
         } else if (id == R.id.tv_confirm) {
-            List<BIMUser> result = adapter.getSelectUser();
+            List<BIMUIUser> result = adapter.getSelectUser();
             ArrayList<Long> uidList = new ArrayList<>();
             ArrayList<Long> confirmList = new ArrayList<>();
-            for (BIMUser user : result) {
+            for (BIMUIUser user : result) {
                 confirmList.add(user.getUserID());
                 uidList.add(user.getUserID());
             }

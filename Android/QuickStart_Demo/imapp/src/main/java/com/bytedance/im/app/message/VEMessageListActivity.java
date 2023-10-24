@@ -19,7 +19,7 @@ import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.message.BIMMessageListFragment;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.user.UserManager;
 
 
@@ -111,11 +111,11 @@ public class VEMessageListActivity extends Activity {
                 bimConversation = conversation;
                 String name = "";
                 if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
-                    BIMUser BIMUser = UserManager.geInstance().getUserProvider().getUserInfo(conversation.getOppositeUserID());
-                    if (BIMUser == null) {
+                    BIMUIUser BIMUIUser = UserManager.geInstance().getUserProvider().getUserInfo(conversation.getOppositeUserID());
+                    if (BIMUIUser == null) {
                         name = String.valueOf(conversation.getOppositeUserID());
                     } else {
-                        name = BIMUser.getNickName();
+                        name = BIMUIUser.getNickName();
                     }
                 } else if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT) {
                     name = VEDetailController.getGroupName(conversation);

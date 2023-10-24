@@ -247,7 +247,18 @@ public class VEContactBlockListActivity extends Activity {
 
         @Override
         public void onFriendDelete(BIMFriendInfo friendInfo) {
+            VEContactBlackListData data = adapter.getData(friendInfo.getUid());
+            if (data != null) {
+                adapter.insertOrUpdateData(VEContactBlackListData.create(data.getBlackListFriendInfo()));
+            }
+        }
 
+        @Override
+        public void onFriendUpdate(BIMFriendInfo friendInfo) {
+            VEContactBlackListData data = adapter.getData(friendInfo.getUid());
+            if (data != null) {
+                adapter.insertOrUpdateData(VEContactBlackListData.create(data.getBlackListFriendInfo()));
+            }
         }
 
         @Override

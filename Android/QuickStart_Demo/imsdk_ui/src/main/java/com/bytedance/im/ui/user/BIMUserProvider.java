@@ -1,6 +1,6 @@
 package com.bytedance.im.ui.user;
 
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 /**
  * @type callback
@@ -13,5 +13,5 @@ public interface BIMUserProvider {
      * @type callback
      * @brief 获取用户信息。
      */
-    BIMUser getUserInfo(long uid);
+    BIMUIUser getUserInfo(long uid);
 }

@@ -157,6 +157,12 @@
         <activity android:name=".search.VESearchResultActivity"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"/>
+        <activity android:name=".live.create.VECreateJoinLiveGroupActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".live.edit.VEEditLiveMemberPortraitActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".live.edit.VEEditLiveMemberNameActivity"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

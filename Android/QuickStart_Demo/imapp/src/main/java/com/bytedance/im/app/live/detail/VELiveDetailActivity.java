@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -23,10 +24,12 @@ import com.bytedance.im.app.detail.VEDetailController;
 import com.bytedance.im.app.detail.member.adapter.VEMemberHozionAdapter;
 import com.bytedance.im.app.live.create.VEEditCommonActivity;
 import com.bytedance.im.app.live.edit.VEEditLiveDesActivity;
+import com.bytedance.im.app.live.edit.VEEditLiveMemberNameActivity;
 import com.bytedance.im.app.live.edit.VEEditLiveNameActivity;
 import com.bytedance.im.app.live.edit.VEEditLiveNoticeActivity;
 import com.bytedance.im.app.live.edit.VEEditLiveOwnerActivity;
 import com.bytedance.im.app.live.edit.VEEditLivePortraitActivity;
+import com.bytedance.im.app.live.edit.VEEditLiveMemberPortraitActivity;
 import com.bytedance.im.app.live.member.VELiveMemberBlockListActivity;
 import com.bytedance.im.app.live.member.VELiveMemberListActivity;
 import com.bytedance.im.app.live.member.VELiveMemberMasterListActivity;
@@ -57,7 +60,6 @@ public class VELiveDetailActivity extends Activity {
     private static final String TAG = "VEDetailLive";
     public static final String CONVERSATION_SHORT_ID = "conversation_id";
     public static final String IS_DELETE_LOCAL = "is_delete_local";
-    private static final int REQUEST_CODE_NICKNAME = 0;
     private long conversationShortId;
     private RecyclerView recyclerView;
     private VEMemberHozionAdapter adapter;
@@ -65,6 +67,7 @@ public class VELiveDetailActivity extends Activity {
     private View optionIconLayout;
     private View optionDesLayout;
     private View optionNoticeLayout;
+    private View optionMyPortraitLayout;
     private View optionMyNickNamLayout;
     private View optionSilentLayout;
     private View optionOwnerManagerLayout;
@@ -80,9 +83,10 @@ public class VELiveDetailActivity extends Activity {
 
     private TextView tvOnlineCount;
     private TextView tvGroupName;
-    private ImageView tvIcon;
+    private ImageView ivIcon;
     private TextView tvNotice;
     private TextView tvDes;
+    private ImageView ivMyAvatar;
     private TextView tvNickName;
     private BIMMember curMember;//当前用户
     private ProgressDialog waitDialog;
@@ -112,11 +116,13 @@ public class VELiveDetailActivity extends Activity {
         optionIconLayout = findViewById(R.id.cl_conversation_icon);
         optionNoticeLayout = findViewById(R.id.cl_conversation_notice);
         optionDesLayout = findViewById(R.id.cl_conversation_desc);
+        optionMyPortraitLayout = findViewById(R.id.cl_mine_portrait);
+        ivMyAvatar = findViewById(R.id.tv_mine_portrait_icon);
         optionMyNickNamLayout = findViewById(R.id.cl_conversation_my_nick_name);
         recyclerView = findViewById(R.id.recycler_view_member);
         tvOnlineCount = findViewById(R.id.online_count);
         tvGroupName = findViewById(R.id.tv_conversation_group_name);
-        tvIcon = findViewById(R.id.tv_conversation_group_icon);
+        ivIcon = findViewById(R.id.tv_conversation_group_icon);
         tvNotice = findViewById(R.id.tv_conversation_group_notice);
         tvDes = findViewById(R.id.tv_conversation_group_desc);
         tvNickName = findViewById(R.id.tv_conversation_my_nick_name);
@@ -136,7 +142,8 @@ public class VELiveDetailActivity extends Activity {
         optionIconLayout.setOnClickListener(v -> VEEditLivePortraitActivity.start(this, conversationShortId));
         optionDesLayout.setOnClickListener(v -> VEEditLiveDesActivity.start(this, conversationShortId));
         optionNoticeLayout.setOnClickListener(v -> VEEditLiveNoticeActivity.start(this, conversationShortId));
-        optionMyNickNamLayout.setOnClickListener(v -> VEEditCommonActivity.startForResult(this, "我的群昵称", tvNickName.getText().toString(), 10, REQUEST_CODE_NICKNAME));
+        optionMyPortraitLayout.setOnClickListener(v -> VEEditLiveMemberPortraitActivity.start(this, conversationShortId));
+        optionMyNickNamLayout.setOnClickListener(v -> VEEditLiveMemberNameActivity.start(this, conversationShortId));
         silentSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> switchSilent(buttonView, isChecked));
         optionSilentBlockLayout.setOnClickListener(v -> VELiveMemberSilentListActivity.start(this, conversationShortId));
         optionSilentWhiteLayout.setOnClickListener(v -> VELiveMemberSilentWhiteListActivity.start(this, conversationShortId));
@@ -144,7 +151,6 @@ public class VELiveDetailActivity extends Activity {
         optionOwnerManagerLayout.setOnClickListener(v -> VEEditLiveOwnerActivity.start(this, conversationShortId));
         optionMasterManagerLayout.setOnClickListener(v -> {
             VELiveMemberMasterListActivity.start(this, conversationShortId);
-
         });
         optionDissolveGroup.setOnClickListener(v -> dissolveGroup());
         optionQuitGroup.setOnClickListener(v -> quitGroup());
@@ -184,6 +190,7 @@ public class VELiveDetailActivity extends Activity {
     }
 
     private void refreshDetailView() {
+
         BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroup(conversationShortId, new BIMResultCallback<BIMConversation>() {
             @Override
             public void onSuccess(BIMConversation conversation) {
@@ -197,10 +204,12 @@ public class VELiveDetailActivity extends Activity {
                 tvGroupName.setText(name);
                 tvNotice.setText(notice);
                 tvDes.setText(des);
-                Glide.with(tvIcon.getContext()).load(url).into(tvIcon);
+                Glide.with(ivIcon.getContext()).load(url).into(ivIcon);
                 ownerId = bimConversation.getOwnerId();
                 tvOnlineCount.setText(bimConversation.getOnLineMemberCount() + " 人");
                 silentSwitch.setChecked(isConvSilent);
+                Glide.with(ivMyAvatar.getContext()).load(curMember.getAvatarUrl()).into(ivMyAvatar);
+                tvNickName.setText(VEDetailController.getMemberName(curMember));
                 updateConvSilentWLUI(isConvSilent);
                 if (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_NORMAL || curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_VISITOR) {
                     optionSilentBlockLayout.setVisibility(View.GONE);
@@ -317,14 +326,5 @@ public class VELiveDetailActivity extends Activity {
         Intent data = new Intent();
         data.putExtra(IS_DELETE_LOCAL, true);
         setResult(RESULT_OK, data);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_NICKNAME) {
-            String myNickName = data.getStringExtra(VEEditCommonActivity.RESULT_TEXT);
-            tvNickName.setText(myNickName);
-        }
     }
 }

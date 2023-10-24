@@ -1,11 +1,11 @@
 package com.bytedance.im.app.user;
 
 
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
-public class UserSelectWrapper extends BaseSelectWrapper<BIMUser>{
+public class UserSelectWrapper extends BaseSelectWrapper<BIMUIUser>{
     private boolean isShowUid;
-    public UserSelectWrapper(BIMUser user, int layoutId, boolean isShowUid) {
+    public UserSelectWrapper(BIMUIUser user, int layoutId, boolean isShowUid) {
         this.t = user;
         this.layoutId = layoutId;
         this.isShowUid = isShowUid;

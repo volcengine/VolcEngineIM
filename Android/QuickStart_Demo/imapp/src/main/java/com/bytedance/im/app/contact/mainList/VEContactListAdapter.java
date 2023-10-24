@@ -124,7 +124,6 @@ public class VEContactListAdapter extends RecyclerView.Adapter<VEContactListBase
     }
 
     public void insertOrUpdate(ContactListDataInfo<?> newData, boolean canAppend) {
-        //TODO 排序修复
         int index = Collections.binarySearch(this.data.subList(this.stickTopData.size(), this.data.size()), newData, ContactListDataInfo::compare);
 
         if (index < 0) {

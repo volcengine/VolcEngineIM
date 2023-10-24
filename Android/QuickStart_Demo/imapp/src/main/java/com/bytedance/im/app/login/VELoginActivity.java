@@ -16,16 +16,15 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
+import com.bytedance.im.app.contact.VEFriendInfoManager;
 import com.bytedance.im.app.debug.VEEnvSettingActivity;
 import com.bytedance.im.app.main.VEIMMainActivity;
-import com.bytedance.im.app.sysbug.PreventProcessKill;
 import com.bytedance.im.app.utils.VEUtils;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
-import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.interfaces.BIMAuthProvider;
 import com.bytedance.im.interfaces.BIMLoginListener;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.app.login.model.UserToken;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 
@@ -57,8 +56,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
                 provider.setLoginListener(this);
             }
         }
-        ft.add(R.id.fl_content, loginFragment);
-        ft.show(loginFragment);
+        ft.replace(R.id.fl_content,loginFragment);
         ft.commitAllowingStateLoss();
     }
 
@@ -83,7 +81,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
      * @param token
      */
     @Override
-    public void doLogin(BIMUser user, String token) {
+    public void doLogin(BIMUIUser user, String token) {
         Log.i(TAG, "doLogin() uid: " + user.getUserID() + " token:" + token);
         loginIM(user.getUserID(), user.getNickName(), token);
     }
@@ -142,6 +140,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         }
         BIMUIClient.getInstance().init(application, Constants.APP_ID, env, swimLean, null);
         VEIMApplication.accountProvider.init(application, Constants.APP_ID, SpUtils.getInstance().getEnv());
-        BIMUIClient.getInstance().setUserProvider(VEIMApplication.accountProvider.getUserProvider());
+        VEFriendInfoManager.getInstance().init();
+        BIMUIClient.getInstance().setUserProvider(VEFriendInfoManager.getInstance());
     }
 }

@@ -17,13 +17,11 @@ import android.widget.Toast;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.user.adapter.VEUserHorizonAdapter;
-import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
-import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.interfaces.BIMUserExistChecker;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +33,7 @@ public class VEUserAddActivity extends Activity {
     private RecyclerView recyclerView;
     private EditText editText;
     private TextView tvAdd;
-    private List<BIMUser> data = new ArrayList<>();
+    private List<BIMUIUser> data = new ArrayList<>();
     private VEUserHorizonAdapter adapter;
     private View horizonLayout;
     private TextView tvUserCount;
@@ -85,7 +83,7 @@ public class VEUserAddActivity extends Activity {
         tvAdd.setOnClickListener(v -> {
             try {
                 long uid = Long.parseLong(editText.getText().toString());
-                BIMUser user = VEIMApplication.accountProvider.getUserProvider().getUserInfo(uid);
+                BIMUIUser user = VEIMApplication.accountProvider.getUserProvider().getUserInfo(uid);
                 //用户已经在群组
                 if (checkMemberExist(user)) {
                     return;
@@ -135,7 +133,7 @@ public class VEUserAddActivity extends Activity {
         updateHorizonView();
     }
 
-    private void insertUser(BIMUser user) {
+    private void insertUser(BIMUIUser user) {
         if (adapter.getUserIDList().contains(user.getUserID())) {
             return;
         }
@@ -145,7 +143,7 @@ public class VEUserAddActivity extends Activity {
     }
 
     private void updateHorizonView() {
-        List<BIMUser> userList = adapter.getUserList();
+        List<BIMUIUser> userList = adapter.getUserList();
         tvUserCount.setText(userList.size() + " 人");
         if (userList.isEmpty()) {
             horizonLayout.setVisibility(View.GONE);
@@ -158,7 +156,7 @@ public class VEUserAddActivity extends Activity {
 
     }
 
-    protected boolean checkMemberExist(BIMUser user) {
+    protected boolean checkMemberExist(BIMUIUser user) {
         return false;
     }
 

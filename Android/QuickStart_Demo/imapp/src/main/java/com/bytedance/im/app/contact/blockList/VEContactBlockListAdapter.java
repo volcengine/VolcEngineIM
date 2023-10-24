@@ -83,6 +83,15 @@ public class VEContactBlockListAdapter extends RecyclerView.Adapter<VEContactBlo
         }
     }
 
+    public VEContactBlackListData getData(long uid) {
+        for (VEContactBlackListData d: data) {
+            if (d.getId() == uid) {
+                return d;
+            }
+        }
+        return null;
+    }
+
     public void setListener(BlackListClickListener listener) {
         this.listener = listener;
     }

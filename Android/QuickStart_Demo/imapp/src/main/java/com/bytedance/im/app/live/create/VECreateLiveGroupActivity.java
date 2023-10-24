@@ -112,7 +112,7 @@ public class VECreateLiveGroupActivity extends Activity {
             @Override
             public void onSuccess(BIMConversation conversation) {
                 Toast.makeText(VECreateLiveGroupActivity.this, "创建直播群成功", Toast.LENGTH_SHORT).show();
-                VELiveGroupChatRoomActivity.startChat(VECreateLiveGroupActivity.this, conversation.getConversationShortID());
+                VECreateJoinLiveGroupActivity.start(VECreateLiveGroupActivity.this, conversation.getConversationShortID());
                 finish();
             }
 

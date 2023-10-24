@@ -6,21 +6,29 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.live.detail.VELiveDetailActivity;
 
 public class VELiveGroupChatRoomActivity extends Activity {
-    private static String TAG = "VELiveGroupChatRoomActivity";
-    private static String CONVERSATION_SHORT_ID = "conversation_short_id";
+    private static final String TAG = "VELiveGroupChatRoomActivity";
+
 
     private Fragment msgFragment;
     private String TAG_MSG = "tag_msg";
-    private long conversationShortId = -1;
 
+    public static void startChat(Activity activity, long conversationShortId, String alias, String avatarUrl) {
+        startChat(activity, conversationShortId, alias, avatarUrl, VELiveGroupMessageListFragment.TYPE_UPDATE_MY_MEMBER_INFO);
+    }
 
     public static void startChat(Activity activity, long conversationShortId) {
+        startChat(activity, conversationShortId, null, null, VELiveGroupMessageListFragment.TYPE_SKIP_UPDATE_MY_MEMBER_INFO);
+    }
+    public static void startChat(Activity activity, long conversationShortId, String alias, String avatarUrl, int startType) {
         Intent intent = new Intent(activity, VELiveGroupChatRoomActivity.class);
-        intent.putExtra(CONVERSATION_SHORT_ID, conversationShortId);
+        intent.putExtra(VELiveGroupMessageListFragment.CONVERSATION_SHORT_ID, conversationShortId);
+        intent.putExtra(VELiveGroupMessageListFragment.ALIAS, alias);
+        intent.putExtra(VELiveGroupMessageListFragment.AVATAR_URL, avatarUrl);
+        intent.putExtra(VELiveGroupMessageListFragment.START_TYPE, startType);
         activity.startActivity(intent);
     }
 
@@ -28,7 +36,6 @@ public class VELiveGroupChatRoomActivity extends Activity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ve_im_activity_msg_list);
-        conversationShortId = getIntent().getLongExtra(CONVERSATION_SHORT_ID, -1L);
     }
 
     @Override

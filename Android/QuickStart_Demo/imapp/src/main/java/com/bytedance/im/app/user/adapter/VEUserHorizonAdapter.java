@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,8 +18,8 @@ import java.util.List;
 
 
 public class VEUserHorizonAdapter extends RecyclerView.Adapter<VEUserHorizonAdapter.UserHorizonViewHolder> {
-    private List<BIMUser> data = new ArrayList<>();
-    private List<BIMUser> subData = new ArrayList<>();
+    private List<BIMUIUser> data = new ArrayList<>();
+    private List<BIMUIUser> subData = new ArrayList<>();
     private Context mContext;
 
     public VEUserHorizonAdapter(Context context) {
@@ -35,7 +35,7 @@ public class VEUserHorizonAdapter extends RecyclerView.Adapter<VEUserHorizonAdap
 
     @Override
     public void onBindViewHolder(@NonNull UserHorizonViewHolder userHorizonViewHolder, int i) {
-        BIMUser user = subData.get(i);
+        BIMUIUser user = subData.get(i);
         userHorizonViewHolder.headImg.setImageResource(user.getHeadImg());
         userHorizonViewHolder.userName.setText(user.getNickName());
     }
@@ -45,19 +45,19 @@ public class VEUserHorizonAdapter extends RecyclerView.Adapter<VEUserHorizonAdap
         return subData.size();
     }
 
-    public void insertData(BIMUser bimUser) {
+    public void insertData(BIMUIUser BIMUIUser) {
         if (data.isEmpty()) {
-            data.add(bimUser);
+            data.add(BIMUIUser);
         } else {
-            data.add(0, bimUser);
+            data.add(0, BIMUIUser);
         }
         notifyDataSetWithSubChanged();
     }
 
     public void removeData(List<Long> removed) {
-        Iterator<BIMUser> iterator = data.iterator();
+        Iterator<BIMUIUser> iterator = data.iterator();
         while (iterator.hasNext()) {
-            BIMUser user = iterator.next();
+            BIMUIUser user = iterator.next();
             if (removed.contains(user.getUserID())) {
                 iterator.remove();
             }
@@ -65,13 +65,13 @@ public class VEUserHorizonAdapter extends RecyclerView.Adapter<VEUserHorizonAdap
         notifyDataSetWithSubChanged();
     }
 
-    public List<BIMUser> getUserList() {
+    public List<BIMUIUser> getUserList() {
         return data;
     }
 
     public ArrayList<Long> getUserIDList() {
         ArrayList<Long> uidList = new ArrayList<>();
-        for (BIMUser user : data) {
+        for (BIMUIUser user : data) {
             uidList.add(user.getUserID());
         }
         return uidList;

@@ -1,6 +1,8 @@
 package com.bytedance.im.ui.conversation.adapter;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,6 +29,7 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
     private ConversationInsertListener conversationInsertListener;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
     public VEConversationListAdapter(Context context) {
         mContext = context;
         data = new ArrayList<>();
@@ -60,6 +63,7 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
             @Override
             public void onClick(View v) {
                 if (onItemClickListener != null) {
+                    mHandler.post(() -> veViewHolder.bind(veViewHolder.getWrapperInfo()));
                     onItemClickListener.onItemClick(data.get(i), veViewHolder.getAdapterPosition());
                 }
             }

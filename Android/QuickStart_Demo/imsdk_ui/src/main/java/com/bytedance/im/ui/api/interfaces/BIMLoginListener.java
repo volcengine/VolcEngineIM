@@ -1,7 +1,7 @@
 package com.bytedance.im.ui.api.interfaces;
 
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 public interface BIMLoginListener {
-    void doLogin(BIMUser user, String token);
+    void doLogin(BIMUIUser user, String token);
 }

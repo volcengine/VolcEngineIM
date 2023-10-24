@@ -20,6 +20,7 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.live.chatRoom.VELiveGroupChatRoomActivity;
 import com.bytedance.im.app.live.conversation.VELiveGroupListActivity;
 import com.bytedance.im.app.live.conversation.VELiveGroupListAdapter;
+import com.bytedance.im.app.live.create.VECreateJoinLiveGroupActivity;
 import com.bytedance.im.app.live.create.VECreateLiveGroupActivity;
 import com.bytedance.im.app.live.utils.VELiveUtils;
 import com.bytedance.im.core.api.BIMClient;
@@ -70,7 +71,7 @@ public class VELiveGroupFragment extends Fragment {
         adapter.setOnItemClickListener((wrapper, position) -> {
             if (wrapper.getInfo() != null && wrapper.getInfo() instanceof BIMConversation) {
                 BIMConversation bimConversation = (BIMConversation) wrapper.getInfo();
-                VELiveGroupChatRoomActivity.startChat(getActivity(), bimConversation.getConversationShortID());
+                VECreateJoinLiveGroupActivity.start(getActivity(), bimConversation.getConversationShortID());
             }
         });
         ivCreate.setOnClickListener(v -> showPopUpWindow(v));

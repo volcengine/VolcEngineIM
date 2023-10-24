@@ -2,11 +2,14 @@ package com.bytedance.im.app.contact.inviteList;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.ui.api.BIMUIUser;
+import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
 
 public class VEContactInviteViewHolder extends RecyclerView.ViewHolder {
@@ -29,9 +32,14 @@ public class VEContactInviteViewHolder extends RecyclerView.ViewHolder {
     public void onBind(BIMFriendApplyInfo data, InviteContactClickListener listener) {
         this.data = data;
         this.listener = listener;
-//        tvUid.setText(String.valueOf(data.getFromUid()));
         tvUid.setVisibility(View.GONE);
-        tvNickName.setText("用户" + data.getFromUid());
+
+        BIMUIUser uiUser = UserManager.geInstance().getUserProvider().getUserInfo(data.getFromUid());
+        if (uiUser == null || TextUtils.isEmpty(uiUser.getNickName())) {
+            tvNickName.setText("用户" + data.getFromUid());
+        } else {
+            tvNickName.setText(uiUser.getNickName());
+        }
         ivHead.setImageResource(R.drawable.icon_recommend_user_default);
 
         tvAgree.setOnClickListener(v -> {

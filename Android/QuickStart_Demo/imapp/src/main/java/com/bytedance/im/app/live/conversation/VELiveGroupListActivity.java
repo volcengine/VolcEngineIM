@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.live.chatRoom.VELiveGroupChatRoomActivity;
+import com.bytedance.im.app.live.create.VECreateJoinLiveGroupActivity;
 import com.bytedance.im.app.live.utils.VELiveUtils;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -117,11 +118,9 @@ public class VELiveGroupListActivity extends Activity {
         adapter.setOnItemClickListener(new VEConversationListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(VEConvBaseWrapper wrapper, int position) {
-                if (wrapper != null && wrapper.getInfo() != null && wrapper.getInfo() instanceof BIMConversation) {
-                    BIMConversation conv = (BIMConversation) wrapper.getInfo();
-                    Intent intent = new Intent(VELiveGroupListActivity.this, VELiveGroupChatRoomActivity.class);
-                    intent.putExtra(CONVERSATION_SHORT_ID, conv.getConversationShortID());
-                    startActivity(intent);
+                if (wrapper.getInfo() != null && wrapper.getInfo() instanceof BIMConversation) {
+                    BIMConversation bimConversation = (BIMConversation) wrapper.getInfo();
+                    VECreateJoinLiveGroupActivity.start(VELiveGroupListActivity.this, bimConversation.getConversationShortID());
                 }
             }
         });

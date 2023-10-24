@@ -1,6 +1,8 @@
 package com.bytedance.im.app.live.member;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,10 +14,16 @@ import android.widget.Toast;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.detail.member.adapter.VEMemberListAdapter;
 import com.bytedance.im.app.live.utils.VELiveUtils;
+import com.bytedance.im.core.api.BIMClient;
+import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMember;
+import com.bytedance.im.live.BIMLiveExpandService;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class VELiveMemberListActivity extends Activity {
@@ -45,7 +53,7 @@ public class VELiveMemberListActivity extends Activity {
         memberListV = findViewById(R.id.user_list);
         memberListV.setItemAnimator(null);
         memberListV.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new VEMemberListAdapter(VELiveMemberListActivity.this, member -> onMemberClick(member),false,true);
+        adapter = new VEMemberListAdapter(VELiveMemberListActivity.this, member -> onMemberClick(member), false, true);
         memberListV.setAdapter(adapter);
         memberListV.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -56,7 +64,7 @@ public class VELiveMemberListActivity extends Activity {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(VELiveUtils.isScrollToBottom(recyclerView)){
+                if (VELiveUtils.isScrollToBottom(recyclerView)) {
                     allMemberListViewModel.loadMore();
                 }
             }
@@ -72,6 +80,31 @@ public class VELiveMemberListActivity extends Activity {
     }
 
     protected void onMemberClick(BIMMember member) {
-        Toast.makeText(VELiveMemberListActivity.this, "敬请期待", Toast.LENGTH_SHORT).show();
+        testGetMemberInfo(member.getUserID());
+    }
+
+    //测试获取成员信息接口
+    private void testGetMemberInfo(long uid) {
+        BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroupMemberInfo(conversationId, uid, new BIMResultCallback<BIMMember>() {
+            @Override
+            public void onSuccess(BIMMember member) {
+                String logString = new StringBuilder().append("uid:").append(member.getUserID()).append("\n")
+                        .append("alias:").append(member.getAlias()).append("\n")
+                        .append("avatarUrl:").append(member.getAvatarUrl()).append("\n")
+                        .append("ext:").append("\n")
+                        .append(member.getExt()).append("\n").toString();
+                new AlertDialog.Builder(VELiveMemberListActivity.this)
+                        .setTitle("成员信息")
+                        .setMessage(logString)
+                        .setPositiveButton("确定", (dialog, which) -> {
+                            dialog.dismiss();
+                        }).show();
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+                Toast.makeText(VELiveMemberListActivity.this, "获取成员信息失败:" + code, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

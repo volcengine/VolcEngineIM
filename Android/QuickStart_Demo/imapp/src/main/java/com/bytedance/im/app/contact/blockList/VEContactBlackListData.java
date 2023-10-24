@@ -1,6 +1,13 @@
 package com.bytedance.im.app.contact.blockList;
 
+import android.text.TextUtils;
+
+import com.bytedance.im.app.utils.SimplePinyinHelper;
+import com.bytedance.im.ui.api.BIMUIUser;
+import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.user.api.model.BIMBlackListFriendInfo;
+
+import java.util.Locale;
 
 public class VEContactBlackListData {
     private static char SPECIAL = '#';
@@ -14,11 +21,30 @@ public class VEContactBlackListData {
     public static VEContactBlackListData create(BIMBlackListFriendInfo blackListFriendInfo) {
         String name = "用户" + blackListFriendInfo.getUid();
         String sortKey = "YH" + blackListFriendInfo.getUid();
+
+        BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(blackListFriendInfo.getUid());
+        if (user != null && !TextUtils.isEmpty(user.getNickName())) {
+            name = user.getNickName();
+            if (SimplePinyinHelper.ifValid(name)) {
+                sortKey = SimplePinyinHelper.getFirstPinyinChar(name);
+            } else {
+                sortKey = name;
+            }
+        }
+
         return new VEContactBlackListData(blackListFriendInfo.getUid(), name, sortKey, blackListFriendInfo);
     }
 
-    public static int compare(VEContactBlackListData d1, VEContactBlackListData d2) {
-        return Long.compare(d1.getId(), d2.getId());
+    public static int compare(VEContactBlackListData o1, VEContactBlackListData o2) {
+        if (o1.getFirstChar() == o2.getFirstChar()) {
+            return o1.getSortKey().toUpperCase(Locale.ROOT).compareTo(o2.getSortKey().toUpperCase(Locale.ROOT));
+        } else if (o1.getFirstChar() == SPECIAL) {
+            return 1;
+        } else if (o2.getFirstChar() == SPECIAL) {
+            return -1;
+        } else {
+            return o1.getSortKey().toUpperCase(Locale.ROOT).compareTo(o2.getSortKey().toUpperCase(Locale.ROOT));
+        }
     }
 
     public VEContactBlackListData(long id, String name, String sortKey, BIMBlackListFriendInfo bimBlackListFriendInfo) {
@@ -30,7 +56,12 @@ public class VEContactBlackListData {
     }
 
     public char getFirstChar() {
-        return firstChar;
+        char c = this.sortKey.charAt(0);
+        if (Character.isLetter(c)) {
+            return Character.toUpperCase(c);
+        } else {
+            return SPECIAL;
+        }
     }
 
     public void setFirstChar(char firstChar) {

@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +18,14 @@ public class VEUserSelectAdapter extends RecyclerView.Adapter<VEUserSelectViewHo
     private Context context;
     private boolean selectSingle = false; //单选
 
-    public VEUserSelectAdapter(Context context, List<BIMUser> list) {
+    public VEUserSelectAdapter(Context context, List<BIMUIUser> list) {
         this(context, list, true);
     }
 
-    public VEUserSelectAdapter(Context context, List<BIMUser> list, boolean isSelectSingle) {
+    public VEUserSelectAdapter(Context context, List<BIMUIUser> list, boolean isSelectSingle) {
         this.context = context;
         this.selectSingle = isSelectSingle;
-        for (BIMUser user : list) {
+        for (BIMUIUser user : list) {
             data.add(new VEUserSelectWrapper(user));
         }
     }
@@ -77,8 +77,8 @@ public class VEUserSelectAdapter extends RecyclerView.Adapter<VEUserSelectViewHo
         return data.size();
     }
 
-    public List<BIMUser> getSelectUser() {
-        List<BIMUser> result = new ArrayList<>();
+    public List<BIMUIUser> getSelectUser() {
+        List<BIMUIUser> result = new ArrayList<>();
         for (VEUserSelectWrapper wrapper : data) {
             if (wrapper.isSelect) {
                 result.add(wrapper.getUser());

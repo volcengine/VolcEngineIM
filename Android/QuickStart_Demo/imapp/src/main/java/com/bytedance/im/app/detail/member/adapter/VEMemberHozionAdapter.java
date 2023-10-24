@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +19,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.contact.VEFriendInfoManager;
 import com.bytedance.im.core.api.model.BIMMember;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.user.UserManager;
 
 import java.util.ArrayList;
@@ -77,14 +79,30 @@ public class VEMemberHozionAdapter extends RecyclerView.Adapter<VEMemberHozionAd
             BIMMember member = memberWrapper.getMember();
             int resId = R.drawable.icon_recommend_user_default;
             String name = "";
-            BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(member.getUserID());
+            BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(member.getUserID());
             if (user != null) {
                 resId = user.getHeadImg();
                 name = user.getNickName();
             }
+            String friendAlias = VEFriendInfoManager.getInstance().getFriendAlias(member.getUserID());
+            if (!TextUtils.isEmpty(friendAlias)) {
+                name = VEFriendInfoManager.getInstance().getFriendAlias(member.getUserID());
+            } else {
+                String alias = member.getAlias();
+                if (!TextUtils.isEmpty(alias)) {
+                    name = alias;
+                }
+            }
+            String avatarUrl = member.getAvatarUrl();
             Drawable drawable = mContext.getResources().getDrawable(resId);
-            Glide.with(mContext).load(drawable).apply(RequestOptions.placeholderOf(R.drawable.icon_recommend_user_default))
-                    .apply(RequestOptions.bitmapTransform(new CircleCrop())).into(viewHolder.headImg);
+            if (TextUtils.isEmpty(avatarUrl)) {
+                Glide.with(mContext).load(drawable).apply(RequestOptions.placeholderOf(R.drawable.icon_recommend_user_default))
+                        .apply(RequestOptions.bitmapTransform(new CircleCrop())).into(viewHolder.headImg);
+            } else {
+                Glide.with(mContext).load(avatarUrl).apply(RequestOptions.placeholderOf(R.drawable.icon_recommend_user_default))
+                        .apply(RequestOptions.bitmapTransform(new CircleCrop())).error(drawable).into(viewHolder.headImg);
+            }
+
             viewHolder.userName.setText(name);
             viewHolder.userName.setVisibility(View.VISIBLE);
             viewHolder.itemView.setOnClickListener(v -> {

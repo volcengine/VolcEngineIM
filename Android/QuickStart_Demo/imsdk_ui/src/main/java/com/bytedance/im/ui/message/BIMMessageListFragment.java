@@ -10,7 +10,6 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -44,7 +43,7 @@ import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
 import com.bytedance.im.ui.message.adapter.ui.widget.VEInPutView;
 import com.bytedance.im.ui.message.adapter.ui.widget.pop.BIMMessageOptionPopupWindow;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.ui.utils.BIMPermissionController;
 import com.bytedance.im.ui.utils.FileUtils;
@@ -389,10 +388,10 @@ public class BIMMessageListFragment extends Fragment {
                 List<Long> selectUid = (List<Long>) data.getSerializableExtra(BIMGroupMemberListActivity.RESULT_ID_LIST);
                 StringBuffer mentionStr = new StringBuffer();
                 for (long uid : selectUid) {
-                    BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(uid);
+                    BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(uid);
                     mentionStr.append(" ");
                     mentionStr.append("@");
-                    mentionStr.append(user.getNickName());
+                    mentionStr.append("用户").append(uid);
                     mentionStr.append(" "); //用空格区分@的内容
                     mentionIds.add(uid);
                 }

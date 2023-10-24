@@ -6,9 +6,11 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
+import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.BIMUIClient;
 
 public class VEDetailController {
@@ -89,5 +91,13 @@ public class VEDetailController {
             description = "未设定";
         }
         return description;
+    }
+
+    public static String getMemberName(BIMMember member) {
+        String mName = "用户"+ BIMClient.getInstance().getCurrentUserID();
+        if(!TextUtils.isEmpty(member.getAlias())){
+            mName = member.getAlias();
+        }
+        return mName;
     }
 }

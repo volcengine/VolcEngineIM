@@ -1,7 +1,7 @@
 package com.bytedance.im.ui.user;
 
 
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 import java.util.List;
 
@@ -26,10 +26,10 @@ public class UserManager {
     }
 
     public String getUserName(long uid){
-        BIMUser BIMUser = getUserProvider().getUserInfo(uid);
+        BIMUIUser BIMUIUser = getUserProvider().getUserInfo(uid);
         String name = "" + uid;
-        if (BIMUser != null) {
-            name = BIMUser.getNickName();
+        if (BIMUIUser != null) {
+            name = BIMUIUser.getNickName();
         }
         return name;
     }

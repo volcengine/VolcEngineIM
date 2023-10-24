@@ -8,7 +8,7 @@ import com.bytedance.im.app.login.VELoginFragment;
 import com.bytedance.im.interfaces.BIMAccountProvider;
 import com.bytedance.im.interfaces.BIMAuthProvider;
 import com.bytedance.im.interfaces.BIMUserExistChecker;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.api.interfaces.BIMCancelListener;
 import com.bytedance.im.ui.user.BIMUserProvider;
 
@@ -23,7 +23,7 @@ public class VEDefaultAccountProvider implements BIMAccountProvider {
 
     @Override
     public BIMUserProvider getUserProvider() {
-        return uid -> new BIMUser(R.drawable.icon_recommend_user_default, "用户" + uid, uid);
+        return uid -> new BIMUIUser(R.drawable.icon_recommend_user_default, "用户" + uid, uid);
     }
 
     @Override

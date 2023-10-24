@@ -1,15 +1,21 @@
 package com.bytedance.im.ui.api;
 
+import com.bytedance.im.ui.R;
+
 /**
  * @type keytype
  * @brief 用户信息。
  */
-public class BIMUser {
+public class BIMUIUser {
     /**
      * @hidden
      */
-    public BIMUser(int headImg, String url, String nickName, long userID) {
-        this.headImg = headImg;
+    public BIMUIUser(int headImg, String url, String nickName, long userID) {
+        if (headImg == -1) {
+            this.headImg = R.drawable.icon_recommend_user_default;
+        } else {
+            this.headImg = headImg;
+        }
         this.nickName = nickName;
         this.userID = userID;
         this.url = url;
@@ -18,8 +24,15 @@ public class BIMUser {
     /**
      * @hidden
      */
-    public BIMUser(int headImg, String nickName, long userID) {
+    public BIMUIUser(int headImg, String nickName, long userID) {
         this(headImg, "", nickName, userID);
+    }
+
+    /**
+     * @hidden
+     */
+    public BIMUIUser(String url, String nickName, long userID) {
+        this(-1, url, nickName, userID);
     }
 
     /**
@@ -53,7 +66,7 @@ public class BIMUser {
      * @type api
      * @brief 获取用户头像 url
      */
-    public String getUrl() {
+    public String getHeadUrl() {
         return url;
     }
 

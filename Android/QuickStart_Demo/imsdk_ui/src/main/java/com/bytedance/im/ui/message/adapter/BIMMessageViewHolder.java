@@ -16,7 +16,7 @@ import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.ui.utils.BIMUtils;
 import com.bytedance.im.core.api.model.BIMMessage;
@@ -60,14 +60,14 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
 
     public void update(BIMMessageWrapper wrapper, BIMMessageWrapper preWrapper) {
         BIMMessage bimMessage = wrapper.getBimMessage();
-        BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(bimMessage.getSenderUID());
+        BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(bimMessage.getSenderUID());
         int portraitRes = R.drawable.icon_recommend_user_default;
         String portraitUrl = "";
         String userName = "" + wrapper.getBimMessage().getSenderUID();
         if (user != null) {
             portraitRes = user.getHeadImg();
             userName = user.getNickName();
-            portraitUrl = user.getUrl();
+            portraitUrl = user.getHeadUrl();
         }
 
         //撤回

@@ -8,8 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +18,14 @@ public class BIMUserSelectAdapter extends RecyclerView.Adapter<BaseSelectViewHol
     private Context context;
     private boolean selectSingle = false; //单选
 
-    public BIMUserSelectAdapter(Context context, List<BIMUser> list) {
+    public BIMUserSelectAdapter(Context context, List<BIMUIUser> list) {
         this(context, list, false,false);
     }
 
-    public BIMUserSelectAdapter(Context context, List<BIMUser> list, boolean isSelectSingle, boolean isShowUid) {
+    public BIMUserSelectAdapter(Context context, List<BIMUIUser> list, boolean isSelectSingle, boolean isShowUid) {
         this.context = context;
         this.selectSingle = isSelectSingle;
-        for (BIMUser user : list) {
+        for (BIMUIUser user : list) {
             data.add(new UserSelectWrapper(user, R.layout.ve_im_recycler_view_item_user_select_notid, isShowUid));
         }
     }
@@ -82,8 +81,8 @@ public class BIMUserSelectAdapter extends RecyclerView.Adapter<BaseSelectViewHol
         return data.size();
     }
 
-    public List<BIMUser> getSelectUser() {
-        List<BIMUser> result = new ArrayList<>();
+    public List<BIMUIUser> getSelectUser() {
+        List<BIMUIUser> result = new ArrayList<>();
         for (UserSelectWrapper wrapper : data) {
             if (wrapper.isSelect) {
                 result.add(wrapper.getInfo());

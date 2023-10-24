@@ -9,17 +9,17 @@ import android.view.ViewGroup;
 
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 import java.util.List;
 
 public class BIMUserListAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     private Context mContext;
-    private List<BIMUser> data;
+    private List<BIMUIUser> data;
     private OnUserLoginClickListener listener;
 
-    public BIMUserListAdapter(Context mContext, List<BIMUser> data, OnUserLoginClickListener listener) {
+    public BIMUserListAdapter(Context mContext, List<BIMUIUser> data, OnUserLoginClickListener listener) {
         this.mContext = mContext;
         this.data = data;
         this.listener = listener;
@@ -34,7 +34,7 @@ public class BIMUserListAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder loginUserViewHolder, int i) {
-        BIMUser user = data.get(i);
+        BIMUIUser user = data.get(i);
         loginUserViewHolder.bind(user);
         loginUserViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +50,6 @@ public class BIMUserListAdapter extends RecyclerView.Adapter<UserViewHolder> {
     }
 
     public interface OnUserLoginClickListener {
-        void onUserClick(BIMUser user);
+        void onUserClick(BIMUIUser user);
     }
 }

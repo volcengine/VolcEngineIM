@@ -8,10 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.R;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.user.UserManager;
 
 public class BIMMemberViewHolder extends RecyclerView.ViewHolder {
@@ -28,17 +27,17 @@ public class BIMMemberViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(BIMMemberWrapper memberWrapper) {
         BIMMember member = memberWrapper.getMember();
-        BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(member.getUserID());
+        BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(member.getUserID());
         String name = "" + member.getUserID();
         int res = R.drawable.icon_recommend_user_default;
         userHeadImg.setImageResource(res);
         if (user != null) {
             res = user.getHeadImg();
             name = user.getNickName();
-            if (TextUtils.isEmpty(user.getUrl())) {
+            if (TextUtils.isEmpty(user.getHeadUrl())) {
                 userHeadImg.setImageResource(res);
             } else {
-                Glide.with(userHeadImg.getContext()).load(user.getUrl())
+                Glide.with(userHeadImg.getContext()).load(user.getHeadUrl())
                         .placeholder(R.drawable.icon_recommend_user_default)
                         .error(R.drawable.icon_recommend_user_default)
                         .into(userHeadImg);

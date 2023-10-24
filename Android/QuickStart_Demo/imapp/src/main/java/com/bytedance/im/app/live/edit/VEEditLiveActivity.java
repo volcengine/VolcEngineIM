@@ -36,14 +36,13 @@ public class VEEditLiveActivity extends Activity {
         findViewById(R.id.back).setOnClickListener(v -> finish());
         confirm.setOnClickListener(v -> onConfirmClick(editText.getText().toString()));
         title.setText(initTitle(false));
-        editText.setEnabled(false);
         confirm.setVisibility(View.GONE);
+        editText.setEnabled(false);
         BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroup(conversationId, new BIMResultCallback<BIMConversation>() {
             @Override
             public void onSuccess(BIMConversation conversation) {
                 editText.setText(onUpdateEditText(conversation));
-                BIMMember member = conversation.getCurrentMember();
-                if (member != null && (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN || member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER)) {
+                if (checkEditable(conversation)) {
                     editText.setEnabled(true);
                     confirm.setVisibility(View.VISIBLE);
                 }
@@ -54,6 +53,11 @@ public class VEEditLiveActivity extends Activity {
 
             }
         });
+    }
+
+    protected boolean checkEditable(BIMConversation conversation) {
+        BIMMember member = conversation.getCurrentMember();
+        return member != null && (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN || member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER);
     }
 
     protected String initTitle(boolean isOwner) {

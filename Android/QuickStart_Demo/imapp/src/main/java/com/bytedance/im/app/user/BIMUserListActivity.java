@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,32 +33,32 @@ public class BIMUserListActivity extends Activity {
         setContentView(R.layout.ve_im_activity_user_list_layout);
         findViewById(R.id.back).setOnClickListener(v -> finish());
         userListV = findViewById(R.id.user_list);
-        List<BIMUser> all = new ArrayList<>();//todo 用户系统
+        List<BIMUIUser> all = new ArrayList<>();//todo 用户系统
         //以下不会同时传
         List<Integer> excludeList = getIntent().getIntegerArrayListExtra(EXCLUDE_ID_LIST);  //排除的id
         List<Integer> includeList = getIntent().getIntegerArrayListExtra(INCLUDE_ID_LIST);  //包含的id
-        List<BIMUser> date = filter(all, excludeList, includeList);
+        List<BIMUIUser> date = filter(all, excludeList, includeList);
         adapter = new BIMUserListAdapter(this, date, user -> onUserClick(user));
         userListV.setLayoutManager(new LinearLayoutManager(this));
         userListV.setAdapter(adapter);
     }
 
-    protected void onUserClick(BIMUser user) {
+    protected void onUserClick(BIMUIUser user) {
         Toast.makeText(BIMUserListActivity.this, "敬请期待", Toast.LENGTH_SHORT).show();
     }
-    private List<BIMUser> filter(List<BIMUser> all, List<Integer> excludeList, List<Integer> includeList) {
+    private List<BIMUIUser> filter(List<BIMUIUser> all, List<Integer> excludeList, List<Integer> includeList) {
         if (excludeList != null && includeList == null) {
-            Iterator<BIMUser> iterator = all.iterator();
+            Iterator<BIMUIUser> iterator = all.iterator();
             while (iterator.hasNext()) {
-                BIMUser user = iterator.next();
+                BIMUIUser user = iterator.next();
                 if (excludeList.contains((int) user.getUserID())) {
                     iterator.remove();
                 }
             }
         } else if (excludeList == null && includeList != null) {
-            Iterator<BIMUser> iterator = all.iterator();
+            Iterator<BIMUIUser> iterator = all.iterator();
             while (iterator.hasNext()) {
-                BIMUser user = iterator.next();
+                BIMUIUser user = iterator.next();
                 if (!includeList.contains((int) user.getUserID())) {
                     iterator.remove();
                 }

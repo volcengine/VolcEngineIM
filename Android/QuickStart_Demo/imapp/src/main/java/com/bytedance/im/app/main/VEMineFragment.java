@@ -26,6 +26,7 @@ import com.bytedance.im.app.BuildConfig;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
+import com.bytedance.im.app.contact.VEFriendInfoManager;
 import com.bytedance.im.app.login.VELoginActivity;
 import com.bytedance.im.app.login.model.UserToken;
 import com.bytedance.im.app.utils.VECancelUtils;
@@ -35,7 +36,7 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMConnectListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.user.UserManager;
 
 
@@ -77,7 +78,7 @@ public class VEMineFragment extends Fragment {
         flDId = view.findViewById(R.id.fl_sdk_did);
         Log.i(TAG, "uikit version: " + BIMUIClient.getInstance().getVersion());
         Log.i(TAG, " imSdk version: " + BIMClient.getInstance().getVersion());
-        BIMUser user = UserManager.geInstance().getUserProvider().getUserInfo(BIMUIClient.getInstance().getCurUserId());
+        BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(BIMUIClient.getInstance().getCurUserId());
         if (user == null) {
             ivPortrait.setImageResource(R.drawable.icon_recommend_user_default);
         } else {
@@ -142,6 +143,7 @@ public class VEMineFragment extends Fragment {
         BIMUIClient.getInstance().logout();
         SpUtils.getInstance().setLoginUserInfo(null);
         VELoginActivity.start(getActivity());
+        VEFriendInfoManager.getInstance().reset();
         getActivity().finish();
     }
 

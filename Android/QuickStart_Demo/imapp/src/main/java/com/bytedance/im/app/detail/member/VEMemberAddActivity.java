@@ -17,7 +17,7 @@ import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.api.BIMUser;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
 import com.bytedance.im.ui.user.UserManager;
 
@@ -90,7 +90,7 @@ public class VEMemberAddActivity extends VEUserAddActivity {
     }
 
     @Override
-    protected boolean checkMemberExist(BIMUser user) {
+    protected boolean checkMemberExist(BIMUIUser user) {
         if (mMemberList != null) {
             for (BIMMember member : mMemberList) {
                 if (member.getUserID() == user.getUserID()) {
