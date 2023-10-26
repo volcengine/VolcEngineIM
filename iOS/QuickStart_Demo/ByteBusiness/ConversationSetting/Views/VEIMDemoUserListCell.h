@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol BIMMember;
 @interface VEIMDemoUserListCell : BIMBaseTableViewCell
 @property (nonatomic, strong) UIScrollView *contentScrollView;
 @property (nonatomic, strong) NSMutableArray *userItems;
@@ -30,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) void(^addHandler)(void);
 @property (nonatomic, strong) void(^minusHandler)(void);
 
-- (void)refreshWithConversationParticipants: (NSArray *)participants;
+- (void)refreshWithConversationParticipants:(NSArray<id<BIMMember>> *)participants;
 
 @end
 

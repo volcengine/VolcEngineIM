@@ -146,6 +146,10 @@
     return @"China";
 }
 
+- (NSString *)currentNetLane{
+    return self.netLane;
+}
+
 - (NSString *)currentCountryDesc{
     return [self countryDesc:self.country];
 }
@@ -179,10 +183,22 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:BDIMDebugNetworkChangeNotification object:nil userInfo:@{kBDIMDebugNetworkCountryIsOverseasSwitch:@(isOverseaSwitch)}];
 }
 
+- (void)setNetLane:(NSString *)netLane
+{
+    if ([_netLane isEqualToString:netLane]) {
+        return;
+    }
+    _netLane = netLane;
+    [[NSUserDefaults standardUserDefaults] setObject:netLane forKey:kBDIMDebugNetworkLane];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    [[NSNotificationCenter defaultCenter] postNotificationName:BDIMDebugNetworkChangeNotification object:nil userInfo:@{kBDIMDebugNetworkCountryIsOverseasSwitch:@(NO)}];
+}
+
 - (void)loadNetworkConfig{
     _config = [[NSDictionary alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"BDIMNetworkConfig" ofType:@"plist"]];
     _country = [[[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkCountry] intValue];
     _env = [[[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkEnv] intValue];
+    _netLane = [[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkLane];
 }
 
 

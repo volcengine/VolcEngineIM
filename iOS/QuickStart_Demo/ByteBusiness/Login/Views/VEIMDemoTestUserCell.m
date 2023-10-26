@@ -7,6 +7,7 @@
 
 #import "VEIMDemoTestUserCell.h"
 #import <Masonry/Masonry.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 
 @interface VEIMDemoTestUserCell ()
 
@@ -56,7 +57,8 @@
 - (void)setUser:(VEIMDemoUser *)user{
     _user = user;
     
-    self.portrait.image = [UIImage imageNamed:user.portrait];
+//    self.portrait.image = [UIImage imageNamed:user.portrait];
+    [self.portrait sd_setImageWithURL:[NSURL URLWithString:user.avatarUrl] placeholderImage:[UIImage imageNamed:user.portrait]];
     if (user.role.length) {
         self.nameLabel.text = [NSString stringWithFormat:@"%@(%@)",user.name, user.role];
     }else{

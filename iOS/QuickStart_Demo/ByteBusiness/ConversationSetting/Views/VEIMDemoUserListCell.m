@@ -172,31 +172,18 @@
     self.subTitleLabel.frame = CGRectMake(arrowBgX - subTitleW, 0, subTitleW, self.contentView.bounds.size.height);
 }
 
-- (void)refreshWithConversationParticipants:(NSArray *)participants{
+- (void)refreshWithConversationParticipants:(NSArray<id<BIMMember>> *)participants{
     for (UIView *sub in self.userItems) {
         [sub removeFromSuperview];
     }
     
     [self.userItems removeAllObjects];
     
-    for (NSNumber *uid in participants) {
+    for (id <BIMMember> participant in participants) {
         VEIMDemoUserListItem *item = [[VEIMDemoUserListItem alloc] init];
-        [item refreshWithParticipant:uid.longLongValue];
+        [item refreshWithParticipant:participant];
         [self.contentScrollView addSubview:item];
         [self.userItems addObject:item];
     }
-    
-    
-    
-    
-//    [self.addBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
-//        make.width.height.mas_equalTo(40);
-//        make.top.equalTo(self.contentScrollView);
-//    }];
-//    [self.minusBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
-//        make.width.height.mas_equalTo(40);
-//        make.top.equalTo(self.contentScrollView);
-//    }];
-    
 }
 @end

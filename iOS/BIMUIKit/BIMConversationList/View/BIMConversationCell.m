@@ -35,6 +35,7 @@
     self.dateLabel = [UILabel new];
     self.dateLabel.font = [UIFont systemFontOfSize:12];
     self.dateLabel.textColor = kIM_Sub_Color;
+    self.dateLabel.textAlignment = NSTextAlignmentRight;
     [self.contentView addSubview:self.dateLabel];
     
     self.unreadNumsLabel = [BIMUnreadLabel new];
@@ -51,6 +52,7 @@
     [self.dateLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.mas_equalTo(-12);
         make.centerY.equalTo(self.nameLabel);
+        make.width.mas_equalTo(72);
     }];
     
     [self.unreadNumsLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -79,16 +81,19 @@
     self.conversation = conversation;
     if (conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
         long long chatUID = conversation.oppositeUserID;
+        BIMUser *user = [BIMUIClient sharedInstance].userProvider(chatUID);
         if (chatUID>0) {
-            self.portrait.image = [BIMUIClient sharedInstance].userProvider(chatUID).headImg;
+            self.portrait.image = user.headImg;
             if (self.portrait.image == nil) {
                 self.portrait.image = [UIImage im_avatarWithUserId:[NSString stringWithFormat:@"%lld",chatUID]];
             }
         }
         if (conversation.name.length) {
             self.nameLabel.text = conversation.name;
-        }else{
-            self.nameLabel.text = [BIMUIClient sharedInstance].userProvider(chatUID).nickName;
+        } else if (user.alias.length) {
+            self.nameLabel.text = user.alias;
+        } else {
+            self.nameLabel.text = user.nickName;
         }
 
     }else if (conversation.conversationType == BIM_CONVERSATION_TYPE_GROUP_CHAT){
@@ -118,6 +123,9 @@
         NSString *displayStr = @"";
         
         self.dateLabel.text = msg.createdTime.im_stringDate;
+        
+        BIMUser *user = [BIMUIClient sharedInstance].userProvider(msg.senderUID);
+        NSString *msgSenderNickname = user.alias && user.alias.length ? user.alias : user.nickName;
         if (msg.isRecalled) {
             if (msg.senderUID == [BIMClient sharedInstance].getCurrentUserID.longLongValue) {
                 displayStr = @"你撤回了一条消息";
@@ -125,12 +133,12 @@
                 if (conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
                     displayStr = [NSString stringWithFormat:@"对方撤回了一条消息"];
                 }else{
-                    displayStr = [NSString stringWithFormat:@"%@撤回了一条消息",[BIMUIClient sharedInstance].userProvider(msg.senderUID).nickName];
+                    displayStr = [NSString stringWithFormat:@"%@撤回了一条消息", msgSenderNickname];
                 }
                 
             }
         } else {
-            NSString *msgSenderNickname = [BIMUIClient sharedInstance].userProvider(msg.senderUID).nickName;
+//            NSString *msgSenderNickname = [BIMUIClient sharedInstance].userProvider(msg.senderUID).alias ?: [BIMUIClient sharedInstance].userProvider(msg.senderUID).nickName;
             switch (msg.msgType) {
                 case BIM_MESSAGE_TYPE_TEXT: {
                     BIMTextElement *element = (BIMTextElement *)msg.element;
@@ -182,6 +190,7 @@
     [self.nameLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.portrait.mas_right).with.offset(12);
         make.top.mas_equalTo(12);
+        make.right.mas_equalTo(self.dateLabel.mas_left).mas_equalTo(-12);
     }];
     [self.subTitleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.nameLabel);

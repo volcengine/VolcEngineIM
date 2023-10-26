@@ -89,7 +89,11 @@
     
     long long userID = message.senderUID;
     NSString *senderName;
-    if (kValidStr(sender.alias)) {
+    NSString *friendAlias = [BIMUIClient sharedInstance].userProvider(userID).alias; // 好友备注
+    // 优先级：备注 > 群备注(群昵称) > 用户昵称
+    if (kValidStr(friendAlias)) {
+        senderName = friendAlias;
+    } else if (kValidStr(sender.alias)) {  // 群昵称
         senderName = sender.alias;
     } else {
         senderName = [BIMUIClient sharedInstance].userProvider(userID).nickName;
@@ -255,6 +259,7 @@
         [self.nameLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.portrait.mas_right).offset(8);
             make.top.equalTo(self.portrait);
+            make.right.mas_equalTo(-40);
         }];
         
         if (!self.replyView.hidden) {

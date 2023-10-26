@@ -81,6 +81,12 @@
     [self p_removeFriendFromWithFriendId:uid];
 }
 
+// 修改好友信息回调
+- (void)onFriendUpdate:(BIMFriendInfo *)friendInfo
+{
+    [self p_updateFriendWithFriendInfo:friendInfo];
+}
+
 #pragma mark - Private
 // 获取全部好友列表
 - (void)p_loadFriendListWithCompletion:(void(^)(NSError *_Nullable))completion
@@ -140,6 +146,24 @@
         
 //        NSArray *list = [self.p_friendList copy];
 
+        self.friendList = [self.p_friendList copy];
+        if ([self.delegate respondsToSelector:@selector(friendListDataSourceDidReloadFriendList:)]) {
+            [self.delegate friendListDataSourceDidReloadFriendList:self];
+        }
+    });
+}
+
+- (void)p_updateFriendWithFriendInfo:(BIMFriendInfo *)friendInfo
+{
+    dispatch_async(self.friendListQueue, ^{
+        if (!self.p_friendDict[@(friendInfo.uid).stringValue]) {
+            return;
+        }
+        BIMFriendInfo *oldFriendInfo = self.p_friendDict[@(friendInfo.uid).stringValue];
+        [self.p_friendDict setObject:friendInfo forKey:@(friendInfo.uid).stringValue];
+        [self.p_friendList removeObject:oldFriendInfo];
+        [self.p_friendList addObject:friendInfo];
+        
         self.friendList = [self.p_friendList copy];
         if ([self.delegate respondsToSelector:@selector(friendListDataSourceDidReloadFriendList:)]) {
             [self.delegate friendListDataSourceDidReloadFriendList:self];

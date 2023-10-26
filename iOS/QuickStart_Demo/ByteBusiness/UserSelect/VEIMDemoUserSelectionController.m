@@ -118,7 +118,7 @@
             if ([self.delegate respondsToSelector:@selector(userSelectVC:didChooseUser:)]) {
                 [self.delegate userSelectVC:self didChooseUser:user];
             }
-            [self dismiss];
+//            [self dismiss];
             break;
         }
         case VEIMDemoUserSelectionStyleSingleSelection:{

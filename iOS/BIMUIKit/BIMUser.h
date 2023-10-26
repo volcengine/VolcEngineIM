@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *nickName;
 @property (nonatomic, copy) NSString *url;
 @property (nonatomic, assign) long long userID;
+@property (nonatomic, copy) NSString *alias;
 @end
 
 NS_ASSUME_NONNULL_END

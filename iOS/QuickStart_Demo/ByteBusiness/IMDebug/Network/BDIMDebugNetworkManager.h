@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define kBDIMDebugNetworkCountry @"BDIM-Debug-NetworkCountry"
 #define kBDIMDebugNetworkEnv @"BDIM-Debug-NetworkEnv"
+#define kBDIMDebugNetworkLane @"BDIM-Debug-NetworkLane"
 #define kBDIMDebugNetworkCountryIsOverseasSwitch @"BDIM-Debug-NetworkCountryOverseas-Switch"
 #define BDIMDebugNetworkChangeNotification @"BDIMDebugNetworkChangeNotification"
 #define BDIMDebugNetworkRequestNotification @"BDIMDebugNetworkRequestNotification"
@@ -38,6 +39,7 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, assign) BDIMDebugNetworkCountryType country;
 @property (nonatomic, assign) BDIMDebugNetworkEnvType env;
+@property (nonatomic, copy) NSString *netLane;
 
 @property (nonatomic, strong) BDIMDebugNetworkRequestMonitor *monitor;
 
@@ -51,6 +53,7 @@ typedef enum : NSUInteger {
 - (NSString *)envDesc: (BDIMDebugNetworkEnvType)env;
 - (NSString *)currentEnvDesc;
 - (NSString *)currentCountryDesc;
+- (NSString *)currentNetLane;
 - (NSString *)networkDescription;
 
 - (NSString *)tokenUrl;

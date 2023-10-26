@@ -23,6 +23,9 @@
 @property (nonatomic, strong) BIMMessage *searchAnchorMessage;
 
 @property (nonatomic, assign) long long liveGroupNextCursor;
+
+@property (nonatomic, strong) NSMutableDictionary *userDict;
+
 @end
 
 @implementation BIMChatViewDataSource
@@ -41,6 +44,9 @@
         _hasNewerMessages = NO;
         if (_conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
             [[BIMClient sharedInstance] addLiveGroupMessageListener:self];
+            _userDict = [NSMutableDictionary dictionary];
+            id<BIMMember> member = self.conversation.currentMember;
+            [self.userDict setObject:@{kAliasName: member.alias?:@"",kAvatarUrl: member.avatarURL ?:@""} forKey:@(member.userID)];
         } else {
             [[BIMClient sharedInstance] addMessageListener:self];
         }
@@ -144,6 +150,15 @@
 }
 
 - (void)addOlderMessages:(NSArray<BIMMessage *> *)messages {
+    
+    for (BIMMessage *message in messages) {
+        NSDictionary *user = self.userDict[@(message.senderUID)];
+        if (!user) {
+            user = @{kAliasName: message.ext[kAliasName]?:@"",kAvatarUrl: message.ext[kAvatarUrl] ?:@""};
+            [self.userDict setObject:user forKey:@(message.senderUID)];
+        }
+    }
+    
     [self.lock lock];
     [self.p_messageList addObjectsFromArray:messages];
     [messages enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -259,6 +274,12 @@
     // 非当前会话过滤
     if (![self isCurrentConversationMessage:message]) {
         return;
+    }
+    
+    NSDictionary *oldUser = self.userDict[@(message.senderUID)];
+    NSDictionary *newUser = @{kAliasName: message.ext[kAliasName]?:@"",kAvatarUrl: message.ext[kAvatarUrl] ?:@""};
+    if (![oldUser isEqualToDictionary:newUser]) {
+        [self.userDict setObject:newUser forKey:@(message.senderUID)];
     }
     
     [self p_insertMessage:message];

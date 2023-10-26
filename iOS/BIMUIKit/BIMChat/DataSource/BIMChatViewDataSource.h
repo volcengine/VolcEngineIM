@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+#define kAliasName  @"a:live_group_member_alias_name"
+#define kAvatarUrl  @"a:live_group_member_avatar_url"
+
 @class BIMChatViewDataSource, BIMError;
 
 @protocol BIMChatViewDataSourceDelegate <NSObject>
@@ -39,6 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
  是否还有更新的消息供显示
  */
 @property (nonatomic, assign, readonly) BOOL hasNewerMessages;
+
+@property (nonatomic, strong, readonly) NSMutableDictionary *userDict;
 
 /**
  数据源目前所包含消息个数

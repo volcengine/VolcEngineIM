@@ -11,12 +11,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol BIMMember;
 @interface VEIMDemoUserListItem : VEIMDemoBaseView
 
 @property (nonatomic, strong) UIImageView *userPortrait;
 @property (nonatomic, strong) UILabel *userName;
 
-- (void)refreshWithParticipant: (long long)uid;
+- (void)refreshWithParticipant:(id<BIMMember>)participant;
 
 @end
 

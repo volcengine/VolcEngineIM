@@ -86,7 +86,8 @@
         
         // 分组
         [blacklist enumerateObjectsUsingBlock:^(BIMBlackListFriendInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            NSString *firstLetter = [self getFirstPinyinLetterWithString:[NSString stringWithFormat:@"用户%@", @(obj.uid)]];   // MARK: 暂时先用用户+UID （等备注功能上线再修改）
+            NSString *displayName = (obj.alias && obj.alias.length) ? obj.alias : [NSString stringWithFormat:@"用户%@", @(obj.uid)];
+            NSString *firstLetter = [self getFirstPinyinLetterWithString:displayName];
             if ([localizedSectionsTitles containsObject:firstLetter]) {
                 [indexedData[[localizedSectionsTitles indexOfObject:firstLetter]] addObject:obj];
             } else {

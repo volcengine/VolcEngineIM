@@ -27,7 +27,7 @@
     _friendInfo = friendInfo;
     
     self.portrait.image = [UIImage imageNamed:@"icon_recommend_user_default"];
-    self.nameLabel.text = [NSString stringWithFormat:@"用户%@", @(friendInfo.uid).stringValue];
+    self.nameLabel.text = (friendInfo.alias && friendInfo.alias.length) ? friendInfo.alias: [NSString stringWithFormat:@"用户%@", @(friendInfo.uid).stringValue];
     self.subTitleLabel.text = nil;
     
     [self setupConstraints];
@@ -38,6 +38,15 @@
     if ([self.delegate respondsToSelector:@selector(cellDidLongPress:)]) {
         [self.delegate cellDidLongPress:self];
     }
+}
+
+- (void)setupConstraints
+{
+    [super setupConstraints];
+    [self.nameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(-40);
+    }];
+    
 }
 
 @end

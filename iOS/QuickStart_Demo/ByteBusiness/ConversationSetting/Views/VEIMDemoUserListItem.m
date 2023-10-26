@@ -9,6 +9,8 @@
 #import "VEIMDemoUserListItem.h"
 #import "VEIMDemoDefine.h"
 #import <imsdk-tob/BIMSDK.h>
+#import "BIMUIClient.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
 @implementation VEIMDemoUserListItem
 
@@ -41,9 +43,13 @@
     }];
 }
 
-- (void)refreshWithParticipant:(long long)uid {
-    self.userName.text = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:uid];
-    self.userPortrait.image = [UIImage imageNamed:[[VEIMDemoUserManager sharedManager] portraitForTestUser:uid]];
+- (void)refreshWithParticipant:(id<BIMMember>)participant {
+    NSString *alias = [BIMUIClient sharedInstance].userProvider(participant.userID).alias;
+    alias = alias.length ? alias : participant.alias;
+    self.userName.text = alias.length ? alias : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:participant.userID];
+//    self.userPortrait.image = [UIImage imageNamed:[[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID]];
+    [self.userPortrait sd_setImageWithURL:participant.avatarURL placeholderImage:[UIImage imageNamed:[[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID]]];
+    
 }
 
 @end

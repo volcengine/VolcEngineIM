@@ -28,11 +28,12 @@
 #import <AVKit/AVPlayerViewController.h>
 #import <SDWebImage/SDWebImageError.h>
 #import <OneKit/BTDMacros.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 
 #import <imsdk-tob/BIMSDK.h>
 
 
-@interface BIMChatViewController () <BIMInputToolViewDelegate, BIMBaseChatCellDelegate, BIMCustomChatCellDelegate, BIMChatViewDataSourceDelegate, BIMUserSelectionControllerDelegate, BIMConversationListListener, BIMMessageListener>
+@interface BIMChatViewController () <BIMInputToolViewDelegate, BIMBaseChatCellDelegate, BIMCustomChatCellDelegate, BIMChatViewDataSourceDelegate, BIMUserSelectionControllerDelegate, BIMConversationListListener, BIMMessageListener, BIMLiveGroupMemberEventListener>
 
 
 //UI related
@@ -205,6 +206,7 @@
     [super setupUIElements];
     
     [[BIMClient sharedInstance] addConversationListener:self];
+    [[BIMClient sharedInstance] addLiveGroupMemberListener:self];
     
     self.tableview.rowHeight = UITableViewAutomaticDimension;
     self.tableview.estimatedRowHeight = 100;
@@ -429,16 +431,7 @@
 }
 - (void)inputToolViewSendMessage:(BIMMessage *)sendMessage{
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
-        long long currentUID = [BIMClient sharedInstance].getCurrentUserID.longLongValue;
-    
-        BIMUser *user = [BIMUIClient sharedInstance].userProvider(currentUID);
-        NSString *nickName = user.nickName;
-        if (nickName) {
-            NSMutableDictionary *ext = [NSMutableDictionary dictionary];
-            [ext addEntriesFromDictionary:sendMessage.ext];
-            [ext setObject:nickName forKey:@"a:live_group_nick_name"];
-            sendMessage.ext = ext.copy;
-        }
+        [self setExtWithSendMessage:sendMessage];
         
         @weakify(self);
         [[BIMClient sharedInstance] sendLiveGroupMessage:sendMessage                       conversation:self.conversation.conversationID priority:self.inputTool.priority completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
@@ -533,7 +526,9 @@
     }else{
         long long conversationParticipant = self.conversation.oppositeUserID;
         if (conversationParticipant>0) {
-            self.title = [BIMUIClient sharedInstance].userProvider(conversationParticipant).nickName;
+            BIMUser *user = [BIMUIClient sharedInstance].userProvider(conversationParticipant);
+            self.title = user.alias && user.alias.length ? user.alias : user.nickName;
+//            self.title = [BIMUIClient sharedInstance].userProvider(conversationParticipant).nickName;
         }else{
             self.title = @"私聊";
         }
@@ -557,6 +552,18 @@
     BIMBaseChatCell *cell = [self dequestCellForMessage:msg tableView:tableView];
     
     [cell refreshWithMessage:msg inConversation:self.conversation sender:sender];
+    
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        NSDictionary *user = self.messageDataSource.userDict[@(msg.senderUID)];
+        NSString *alias = [BIMUIClient sharedInstance].userProvider(msg.senderUID).alias;
+        alias = alias.length ? alias : user[kAliasName];
+        NSString *avatarUrl = user[kAvatarUrl];
+        if (alias.length) {
+            cell.nameLabel.text = alias;
+        }
+        UIImage *portrait = [BIMUIClient sharedInstance].userProvider(msg.senderUID).headImg;
+        [cell.portrait sd_setImageWithURL:[NSURL URLWithString:avatarUrl] placeholderImage:portrait];
+    }
     if (!cell) {
         UITableViewCell *cell = [UITableViewCell new];
         cell.textLabel.text = [NSString stringWithFormat:@"Type: %zd",msg.msgType];
@@ -646,16 +653,7 @@
 #pragma mark - Cell delegate
 - (void)chatCell:(BIMBaseChatCell *)cell didClickRetryBtnWithMessage:(BIMMessage *)sendMessage{
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
-        long long currentUID = [BIMClient sharedInstance].getCurrentUserID.longLongValue;
-    
-        BIMUser *user = [BIMUIClient sharedInstance].userProvider(currentUID);
-        NSString *nickName = user.nickName;
-        if (nickName) {
-            NSMutableDictionary *ext = [NSMutableDictionary dictionary];
-            [ext addEntriesFromDictionary:sendMessage.ext];
-            [ext setObject:nickName forKey:@"a:live_group_nick_name"];
-            sendMessage.ext = ext.copy;
-        }
+        [self setExtWithSendMessage:sendMessage];
         
         @weakify(self);
         [[BIMClient sharedInstance] sendLiveGroupMessage:sendMessage                       conversation:self.conversation.conversationID priority:self.inputTool.priority completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
@@ -840,5 +838,40 @@
     [self presentViewController:alertVC animated:YES completion:nil];
 }
 
+#pragma mark - BIMLiveGroupMemberEventListener
+
+- (void)onMemberInfoChanged:(BIMConversation *)conversation member:(id<BIMMember>)member
+{
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.messageDataSource.userDict setObject:@{kAliasName: member.alias?:@"",kAvatarUrl: member.avatarURL ?:@""} forKey:@(member.userID)];
+            [self.tableview reloadData];
+        });
+    }
+}
+
+#pragma mark -
+
+- (void)setExtWithSendMessage:(BIMMessage *)sendMessage
+{
+    NSMutableDictionary *ext = [NSMutableDictionary dictionary];
+    long long currentUID = [BIMClient sharedInstance].getCurrentUserID.longLongValue;
+    BIMUser *user = [BIMUIClient sharedInstance].userProvider(currentUID);
+    NSString *alias = self.conversation.currentMember.alias;
+    NSString *nickName = alias.length ? alias : user.nickName;
+    if (nickName) {
+        [ext setObject:nickName forKey:kAliasName];
+    }
+    
+    NSString *avatarUrl = self.conversation.currentMember.avatarURL ?: user.url;
+    if (avatarUrl) {
+        [ext setObject:avatarUrl forKey:kAvatarUrl];
+    }
+    
+    [self.messageDataSource.userDict setObject:ext forKey:@(currentUID)];
+    [ext addEntriesFromDictionary:sendMessage.ext];
+    sendMessage.ext = ext.copy;
+    
+}
 
 @end

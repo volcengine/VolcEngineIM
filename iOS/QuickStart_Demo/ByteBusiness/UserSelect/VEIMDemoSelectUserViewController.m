@@ -15,6 +15,8 @@
 #import "VEIMDemoUserSelectionController.h"
 #import "VEIMDemoIMManager+Conversation.h"
 #import <Onekit/NSString+BTDAdditions.h>
+#import "VEIMDemoMemberModel.h"
+#import "BIMUIClient.h"
 
 static NSInteger const kMaxCount = 5;
 
@@ -239,7 +241,8 @@ static NSInteger const kMaxCount = 5;
         VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
         user.userID = userID.longLongValue;
         user.isNeedSelection = YES;
-        user.name = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:userID.longLongValue];
+        NSString *alias = [BIMUIClient sharedInstance].userProvider(user.userID).alias;
+        user.name = alias.length ? alias : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:userID.longLongValue];
         user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:userID.longLongValue];
         [users addObject:user];
     }
@@ -277,16 +280,24 @@ static NSInteger const kMaxCount = 5;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    kWeakSelf(self);
+    @weakify(self);
     VEIMDemoUserListCell *cell = [tableView dequeueReusableCellWithIdentifier:@"VEIMDemoUserListCell"];
     NSArray *participants = [self.users copy];
     if (participants.count > kMaxCount) {
         participants = [participants subarrayWithRange:NSMakeRange(0, kMaxCount)];
     }
-    [cell refreshWithConversationParticipants:participants];
+    
+    NSMutableArray *members = [NSMutableArray array];
+    for (NSNumber *u in participants) {
+        VEIMDemoMemberModel *m = [VEIMDemoMemberModel new];
+        m.userID = u.longLongValue;
+        [members addObject:m];
+    }
+    [cell refreshWithConversationParticipants:members];
     cell.subTitleLabel.text = [NSString stringWithFormat:@"%lu人", (unsigned long)self.users.count];
     cell.clickHandler = ^{
-        [weakself jumpToUserSelectionPage];
+        @strongify(self);
+        [self jumpToUserSelectionPage];
     };
     
     return cell;

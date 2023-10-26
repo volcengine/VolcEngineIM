@@ -15,6 +15,8 @@
 @property (nonatomic, strong) UIButton *countryBtn;
 @property (nonatomic, strong) UILabel *envLabel;
 @property (nonatomic, strong) UIButton *envBtn;
+@property (nonatomic, strong) UILabel *netLaneLabel;
+@property (nonatomic, strong) UIButton *netLaneBtn;
 @property (nonatomic, strong) UILabel *tokenUrlLabel;
 @property (nonatomic, strong) UILabel *apiUrlLabel;
 @property (nonatomic, strong) UILabel *frontierUrlLabel;
@@ -90,6 +92,26 @@
         make.width.mas_greaterThanOrEqualTo(100);
     }];
     
+    self.netLaneLabel = [UILabel new];
+    self.netLaneLabel.font = [UIFont boldSystemFontOfSize:15];
+    [self.view addSubview:self.netLaneLabel];
+    [self.netLaneLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(24);
+        make.top.equalTo(self.envLabel.mas_bottom).with.offset(24);
+    }];
+    
+    self.netLaneBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.view addSubview:self.netLaneBtn];
+    self.netLaneBtn.layer.cornerRadius = 8;
+    self.netLaneBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+    [self.netLaneBtn addTarget:self action:@selector(netLaneBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    self.netLaneBtn.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0.9 alpha:0.5];
+    [self.netLaneBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.netLaneLabel.mas_right).with.offset(12);
+        make.centerY.equalTo(self.netLaneLabel);
+        make.width.mas_greaterThanOrEqualTo(100);
+    }];
+    
     
     self.tokenUrlLabel = [UILabel new];
     self.tokenUrlLabel.font = [UIFont systemFontOfSize:14];
@@ -97,7 +119,7 @@
     [self.view addSubview:self.tokenUrlLabel];
     [self.tokenUrlLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(24);
-        make.top.equalTo(self.envLabel.mas_bottom).with.offset(24);
+        make.top.equalTo(self.netLaneLabel.mas_bottom).with.offset(24);
     }];
     self.apiUrlLabel = [UILabel new];
     self.apiUrlLabel.font = [UIFont systemFontOfSize:14];
@@ -164,6 +186,30 @@
         make.centerY.equalTo(self.showNetworkMonitorLabel);
     }];
 }
+
+-(void)netLaneBtnClick:(id)sender{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"netLane" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        [textField setPlaceholder:@"请输入泳道名"];
+    }];
+    
+    UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        if (!alertController.textFields[0].text) {
+            return;
+        }
+        NSString *laneStr = alertController.textFields[0].text;
+        [[BDIMDebugNetworkManager sharedManager] setNetLane:laneStr];
+    }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+    
+    [alertController addAction:confirm];
+    [alertController addAction:cancel];
+    
+    [self presentViewController:alertController animated:YES completion:nil];
+}
+
 - (void)envBtnClick: (id)sender{
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Choose env" message:@"choose env to switch" preferredStyle:UIAlertControllerStyleActionSheet];
     UIAlertAction *ppeAc = [UIAlertAction actionWithTitle:@"PPE" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -220,6 +266,7 @@
 - (void)refresh{
     self.countryLabel.text = @"Country: ";
     self.envLabel.text = @"Env: ";
+    self.netLaneLabel.text = @"NetLane: ";
     self.tokenUrlLabel.text = [NSString stringWithFormat:@"TokenUrl: \n%@",[[BDIMDebugNetworkManager sharedManager] tokenUrl]];
     self.apiUrlLabel.text = [NSString stringWithFormat:@"ApiUrl: \n%@",[[BDIMDebugNetworkManager sharedManager] apiUrl]];
     self.frontierUrlLabel.text = [NSString stringWithFormat:@"FrontierUrl: \n%@",[[BDIMDebugNetworkManager sharedManager] frontierUrl]];
@@ -229,6 +276,7 @@
 //    self.onlyHttpSwitch.on = kIMShareInstance.httpOnly;
     [self.countryBtn setTitle:[[BDIMDebugNetworkManager sharedManager] currentCountryDesc] forState:UIControlStateNormal];
     [self.envBtn setTitle:[[BDIMDebugNetworkManager sharedManager] currentEnvDesc] forState:UIControlStateNormal];
+    [self.netLaneBtn setTitle:[[BDIMDebugNetworkManager sharedManager] currentNetLane] forState:UIControlStateNormal];
     
     self.showNetworkMonitorLabel.text = @"show network monitor: ";
     BOOL isShowing = NO;

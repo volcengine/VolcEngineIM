@@ -14,6 +14,7 @@
 #import "VEIMDemoFriendBlackListController.h"
 #import "VEIMDemoChatViewController.h"
 #import "VEIMDemoDefine.h"
+#import "UIAlertController+Dismiss.h"
 
 //#import <im-uikit-tob/BIMUserCell.h>
 #import <im-uikit-tob/BIMUser.h>
@@ -23,7 +24,7 @@
 #import <im-uikit-tob/BIMToastView.h>
 
 
-@interface BIMFriendListController () <UITableViewDelegate, UITableViewDataSource, BIMFriendListUserCellDelegate, BIMFriendListDataSourceDelegate>
+@interface BIMFriendListController () <UITableViewDelegate, UITableViewDataSource, BIMFriendListUserCellDelegate, BIMFriendListDataSourceDelegate, UITextFieldDelegate>
 
 @property (nonatomic, strong) BIMFriendListDataSource *dataSource;
 @property (nonatomic, copy) NSArray<BIMFriendInfo *> *allFriends;
@@ -32,6 +33,8 @@
 @property (nonatomic, strong) dispatch_queue_t updateQueue;
 //@property (nonatomic, strong) NSMutableArray *mutArr;
 //@property (nonatomic, strong) UIView *emptyView;
+@property (nonatomic, copy) NSString *preAliasText;
+@property (nonatomic, strong) UITextRange *preAliasTextRange;
 
 @end
 
@@ -130,7 +133,8 @@
         
         // 分组
         [allFriends enumerateObjectsUsingBlock:^(BIMFriendInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            NSString *firstLetter = [self getFirstPinyinLetterWithString:[NSString stringWithFormat:@"用户%@",@(obj.uid).stringValue]];  // TODO: 一期暂时没有昵称，先用uid
+            NSString *displayName = (obj.alias && obj.alias.length) ? obj.alias : [NSString stringWithFormat:@"用户%@",@(obj.uid).stringValue];
+            NSString *firstLetter = [self getFirstPinyinLetterWithString:displayName];  
             if ([localizedSectionsTitles containsObject:firstLetter]) {
                 [indexedData[[localizedSectionsTitles indexOfObject:firstLetter]] addObject:obj];
             } else {
@@ -260,18 +264,16 @@
         
     }];
     
-    UIAlertAction *modifyRemark = [UIAlertAction actionWithTitle:@"修改好友备注" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *modifyAlias = [UIAlertAction actionWithTitle:@"修改好友备注" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self dismissViewControllerAnimated:NO completion:^{
-            [self modifyFriendRemark];
+            [self modifyFriendAlias:cell.friendInfo.uid oldAlias:cell.friendInfo.alias];
         }];
     }];
     
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        
-    }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
     
     [alertVC addAction:delete];
-//    [alertVC addAction:modifyRemark];
+    [alertVC addAction:modifyAlias];
     [alertVC addAction:cancel];
     
     [self presentViewController:alertVC animated:YES completion:nil];
@@ -308,18 +310,37 @@
     [self presentViewController:alertAgainVC animated:YES completion:nil];
 }
 
-- (void)modifyFriendRemark
+- (void)modifyFriendAlias:(long long)friendUid oldAlias:(NSString *)oldAlias
 {
     UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"修改好友备注" message:nil preferredStyle:UIAlertControllerStyleAlert];
     
     [alertVC addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-        // TODO: 输入框应该填充当前的备注名
+        textField.delegate = self;
+        [textField addTarget:self action:@selector(aliasTextChanged:) forControlEvents:UIControlEventEditingChanged];
         textField.placeholder = @"输入备注" ;
+        textField.text = oldAlias;
     }];
     
+    alertVC.wontDismiss = YES;
     UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        // TODO: 备注长度如果超出限制。toast提示：不能超过X字符。弹窗不关闭
-        // 此处要接风控
+        NSString *inputAlias = alertVC.textFields[0].text;
+        // 去除首尾空格
+        inputAlias = [inputAlias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        // 如果输入空白，表示删除备注，展示原昵称
+        [[BIMClient sharedInstance] updateFriend:friendUid alias:inputAlias completion:^(BIMError * _Nullable error) {
+            if (error) {
+                NSString *toastStr = error.localizedDescription;
+                if (error.code == BIM_SERVER_ALIAS_TOO_LONG) {
+                    toastStr = @"不能超过96字节";
+                } else if (error.code == BIM_SERVER_ALIAS_ILLEGAL) {
+                    toastStr = @"文本中可能包含敏感词，请修改后重试";
+                }
+                [BIMToastView toast:toastStr];
+            } else {
+                [BIMToastView toast:@"操作成功"];
+                [self dismissViewControllerAnimated:YES completion:nil];
+            }
+        }];
         
     }];
     
@@ -332,6 +353,26 @@
     
     [self presentViewController:alertVC animated:YES completion:nil];
 }
+
+#pragma mark - UITextFieldDelegate
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    self.preAliasText = textField.text;
+    self.preAliasTextRange = textField.selectedTextRange;
+    return YES;
+}
+
+- (void)aliasTextChanged:(UITextField *)textField
+{
+    if ([textField.text lengthOfBytesUsingEncoding:NSUTF8StringEncoding] > 96) {
+        [textField setText:self.preAliasText];
+        textField.selectedTextRange = self.preAliasTextRange;
+        [BIMToastView toast:@"不能超过96字节"];
+        return;
+    }
+}
+
 
 #pragma mark - BIMFriendListDataSource
 
@@ -346,6 +387,4 @@
     // TODO: 可优化
     [self.tableview reloadData];
 }
-
-
 @end

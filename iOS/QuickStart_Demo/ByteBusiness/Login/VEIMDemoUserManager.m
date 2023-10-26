@@ -17,6 +17,7 @@
 //#import <imsdk-tob/BIMDebugManager.h>
 #import "BIMUIClient.h"
 #import "VEIMDemoIMManager.h"
+#import <imsdk-tob/BIMClient+Friend.h>
 
 
 @interface VEIMDemoUserManager ()<BIMConnectListener>
@@ -75,6 +76,10 @@
 {
     // debug
 //    [BIMDebugManager sharedInstance].imServerBaseURL = [[BDIMDebugNetworkManager sharedManager] apiUrl];
+//    [BIMDebugManager sharedInstance].env = [BDIMDebugNetworkManager sharedManager].env == BDIMDebugNetworkEnvTypePPE ? @"ppe" : @"boe";
+//    [BIMDebugManager sharedInstance].netLane = [BDIMDebugNetworkManager sharedManager].netLane;
+//    [[BIMDebugManager sharedInstance] configNetwork];
+    
     BIMSDKConfig *config = [[BIMSDKConfig alloc] init];
     [config setLogListener:^(BIMLogLevel logLevel, NSString * _Nonnull logContent) {
             // 日志 输出
@@ -90,6 +95,7 @@
         user.nickName = [self nicknameForTestUser:userID];
         user.headImg = [UIImage imageNamed:[self portraitForTestUser:userID]];
         user.userID = userID;
+        user.alias = [[BIMClient sharedInstance] getFriend:userID].alias;
 //        user.url = xxx;
         return user;
     }];

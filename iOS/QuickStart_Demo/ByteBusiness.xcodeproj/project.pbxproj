@@ -72,6 +72,7 @@
 		2BA90DC92921EB2800154F35 /* VEIMDemoMyinfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA90D7D2921EB2800154F35 /* VEIMDemoMyinfoController.m */; };
 		2BA90DCA2921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA90D802921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m */; };
 		2BA90DCC2921EB9D00154F35 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BA90DCB2921EB9D00154F35 /* Assets.xcassets */; };
+		2BB511ED2AC3446A00A4A34E /* VEIMDemoMemberModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BB511EC2AC3446A00A4A34E /* VEIMDemoMemberModel.m */; };
 		2BC3D4872A4974F400457512 /* VEIMDemoAppInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC3D4862A4974F400457512 /* VEIMDemoAppInfoCell.m */; };
 		2BC3D48E2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC3D48D2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.m */; };
 		2BCB539F2A9F436700EFE6FB /* VEIMDemoFriendBlackListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BCB539E2A9F436700EFE6FB /* VEIMDemoFriendBlackListDataSource.m */; };
@@ -237,6 +238,8 @@
 		2BA90D802921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoMyinfoHeaderCell.m; sourceTree = "<group>"; };
 		2BA90D812921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VEIMDemoMyinfoHeaderCell.h; sourceTree = "<group>"; };
 		2BA90DCB2921EB9D00154F35 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2BB511EB2AC3446A00A4A34E /* VEIMDemoMemberModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoMemberModel.h; sourceTree = "<group>"; };
+		2BB511EC2AC3446A00A4A34E /* VEIMDemoMemberModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoMemberModel.m; sourceTree = "<group>"; };
 		2BC3D4852A4974F400457512 /* VEIMDemoAppInfoCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAppInfoCell.h; sourceTree = "<group>"; };
 		2BC3D4862A4974F400457512 /* VEIMDemoAppInfoCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoAppInfoCell.m; sourceTree = "<group>"; };
 		2BC3D48C2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAccountCancellationManager.h; sourceTree = "<group>"; };
@@ -533,6 +536,8 @@
 			children = (
 				2B8E543C292E748D00A2A416 /* VEIMDemoSettingModel.h */,
 				2B8E543D292E748D00A2A416 /* VEIMDemoSettingModel.m */,
+				2BB511EB2AC3446A00A4A34E /* VEIMDemoMemberModel.h */,
+				2BB511EC2AC3446A00A4A34E /* VEIMDemoMemberModel.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1094,6 +1099,7 @@
 				2B977F272A66B8F700568407 /* BIMFriendListUserCell.m in Sources */,
 				2BA90DC12921EB2800154F35 /* VEIMDemoBaseView.m in Sources */,
 				2BA90DBB2921EB2800154F35 /* AppDelegate.m in Sources */,
+				2BB511ED2AC3446A00A4A34E /* VEIMDemoMemberModel.m in Sources */,
 				2BA90D8D2921EB2800154F35 /* BDIMDebugWeakProxy.m in Sources */,
 				2BA90D932921EB2800154F35 /* BDIMDebugBaseModel.m in Sources */,
 				2BA90DBD2921EB2800154F35 /* VEIMDemoNavigationViewController.m in Sources */,
@@ -1268,7 +1274,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusinessRelease_inhouse.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CURRENT_PROJECT_VERSION = 14000;
+				CURRENT_PROJECT_VERSION = 15000;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XXHND5J98K;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -1294,7 +1300,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.4.0;
+				MARKETING_VERSION = 1.5.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse;
 				PRODUCT_NAME = ByteBusiness_inhouse;
@@ -1467,10 +1473,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusiness.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 14000;
+				CURRENT_PROJECT_VERSION = 15000;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XXHND5J98K;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1496,12 +1504,13 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.4.0;
+				MARKETING_VERSION = 1.5.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = comssiphoneucentercninhouse;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1518,7 +1527,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 14000;
+				CURRENT_PROJECT_VERSION = 15000;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3XMD9D6A65;
 				ENABLE_BITCODE = NO;
@@ -1545,7 +1554,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.4.0;
+				MARKETING_VERSION = 1.5.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.appstore;
 				PRODUCT_NAME = "$(TARGET_NAME)";

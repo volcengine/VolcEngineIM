@@ -30,8 +30,7 @@
 - (void)setBlackInfo:(BIMBlackListFriendInfo *)blackInfo
 {
     _blackInfo = blackInfo;
-    
-    self.nameLabel.text = [NSString stringWithFormat:@"用户%@", @(self.blackInfo.uid)];
+    self.nameLabel.text = (blackInfo.alias && blackInfo.alias.length) ? blackInfo.alias : [NSString stringWithFormat:@"用户%@", @(self.blackInfo.uid)];;
     self.portrait.image = [UIImage imageNamed:@"icon_recommend_user_default"];
     self.subTitleLabel.text = nil;
     
@@ -43,6 +42,15 @@
     if ([self.delegate respondsToSelector:@selector(cellDidLongPress:)]) {
         [self.delegate cellDidLongPress:self];
     }
+}
+
+- (void)setupConstraints
+{
+    [super setupConstraints];
+    
+    [self.nameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(-40);
+    }];
 }
 
 @end

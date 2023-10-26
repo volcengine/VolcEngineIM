@@ -21,10 +21,14 @@
     _user = user;
     
     self.portrait.image = user.headImg;
-    self.nameLabel.text = user.nickName;
+    self.nameLabel.text = (user.alias && user.alias.length) ? user.alias : user.nickName;
     self.subTitleLabel.text = nil;
     
     [self setupConstraints];
+    
+    [self.nameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(-40);
+    }];
 }
 
 @end

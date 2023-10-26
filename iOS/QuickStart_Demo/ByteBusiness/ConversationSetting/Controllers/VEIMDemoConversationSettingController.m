@@ -19,6 +19,7 @@
 #import "VEIMDemoIMManager+Conversation.h"
 #import "VEIMDemoSelectUserViewController.h"
 #import "VEIMDemoFTSViewController.h"
+#import "BIMUIClient.h"
 
 typedef enum : NSUInteger {
     VEIMDemoConversationActionTypeDefault = 0,
@@ -109,7 +110,9 @@ typedef enum : NSUInteger {
                 NSArray *participants = [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID];
                 for (id <BIMMember> participant in participants) {
                     VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
-                    user.name = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:participant.userID];
+                    NSString *alias = [BIMUIClient sharedInstance].userProvider(participant.userID).alias;
+                    alias = alias.length ? alias : participant.alias;
+                    user.name = alias.length ? alias : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:participant.userID];
                     user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
                     user.userID = participant.userID;
                     user.isNeedSelection = YES;
@@ -261,7 +264,7 @@ typedef enum : NSUInteger {
     if (indexPath.section == 0) {
         VEIMDemoUserListCell *userListCell = [tableView dequeueReusableCellWithIdentifier:@"VEIMDemoUserListCell"];
         NSArray *participants = [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID];
-        [userListCell refreshWithConversationParticipants:[participants valueForKey:@"userID"]];
+        [userListCell refreshWithConversationParticipants:participants];
         BOOL canAdd = self.currentParticant.role == BIM_MEMBER_ROLE_OWNER;
         BOOL canRemove = self.currentParticant.role == BIM_MEMBER_ROLE_OWNER || self.currentParticant.role == BIM_MEMBER_ROLE_ADMIN;
         userListCell.canAdd = canAdd;
@@ -297,7 +300,9 @@ typedef enum : NSUInteger {
                     }
                     VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
                     user.userID = participant.userID;
-                    user.name = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:participant.userID];
+                    NSString *alias = [BIMUIClient sharedInstance].userProvider(participant.userID).alias;
+                    alias = alias.length ? alias : participant.alias;
+                    user.name = alias.length ? alias : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:participant.userID];
                     user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
                     user.isNeedSelection = YES;
                     if (participant.role == BIM_MEMBER_ROLE_ADMIN) {
@@ -330,7 +335,9 @@ typedef enum : NSUInteger {
             NSArray *participants = [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID];
             for (id <BIMMember> participant in participants) {
                 VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
-                user.name = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:participant.userID];
+                NSString *alias = [BIMUIClient sharedInstance].userProvider(participant.userID).alias;
+                alias = alias.length ? alias : participant.alias;
+                user.name = alias.length ? alias : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:participant.userID];
                 user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
                 user.userID = participant.userID;
                 user.isNeedSelection = NO;

@@ -28,8 +28,15 @@
     [self setupConstraints];
     
     self.portrait.image = [UIImage imageNamed:@"icon_recommend_user_default"];
-    // 一期没有昵称，展示 用户+‘uid’
-    self.nameLabel.text = [NSString stringWithFormat:@"用户%@", @(self.applyInfo.fromUid).stringValue];
+    
+    NSString *displayName;
+    if (self.applyInfo.status == 1) {
+        displayName = [[BIMClient sharedInstance] getFriend:self.applyInfo.fromUid].alias;
+        displayName = (displayName && displayName.length) ? displayName : [NSString stringWithFormat:@"用户%@", @(self.applyInfo.fromUid).stringValue];
+    } else {
+        displayName = [NSString stringWithFormat:@"用户%@", @(self.applyInfo.fromUid).stringValue];
+    }
+    self.nameLabel.text = displayName;
 //    self.subTitleLabel.text = [NSString stringWithFormat:@"uid:%lld",self.applyInfo.fromUid];
     
     // 防止cell复用导致控件重叠

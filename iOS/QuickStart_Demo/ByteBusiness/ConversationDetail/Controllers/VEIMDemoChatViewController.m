@@ -11,6 +11,7 @@
 #import "VEIMDemoDefine.h"
 #import "VEIMDemoConversationSettingController.h"
 #import "VEIMDemoUserManager.h"
+#import "BIMUIClient.h"
 
 @interface VEIMDemoChatViewController ()
 @property (nonatomic, strong) BIMConversation *conversation;
@@ -37,7 +38,9 @@
     [super viewWillAppear:animated];
     
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
-        self.title = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:self.conversation.oppositeUserID];
+//        self.title = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:self.conversation.oppositeUserID];
+        NSString *userAlias = [BIMUIClient sharedInstance].userProvider(self.conversation.oppositeUserID).alias;
+        self.title = userAlias && userAlias.length ? userAlias : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:self.conversation.oppositeUserID];  // TODO: 待优化，后续建立user缓存 VEIMDemoUserManager
     } else {
         self.title = [NSString stringWithFormat:@"%@", kValidStr(self.conversation.name) ? self.conversation.name : @"未命名群聊"];
     }
