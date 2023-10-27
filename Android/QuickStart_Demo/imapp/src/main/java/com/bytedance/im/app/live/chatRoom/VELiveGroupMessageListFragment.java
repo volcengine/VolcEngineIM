@@ -577,9 +577,9 @@ public class VELiveGroupMessageListFragment extends Fragment {
             if (cachedMemberUser == null || (TextUtils.isEmpty(cachedMemberUser.getNickName()) && TextUtils.isEmpty(cachedMemberUser.getHeadUrl()))) {
                 cachedMemberUser = VEIMApplication.accountProvider.getUserProvider().getUserInfo(uid);
             }
-            BIMUIUser userInfo = VEFriendInfoManager.getInstance().getUserInfo(uid);
-            if (userInfo != null && !TextUtils.isEmpty(userInfo.getNickName())) {
-                cachedMemberUser.setNickName(userInfo.getNickName());
+            String friendAlias = VEFriendInfoManager.getInstance().getFriendAlias(uid);
+            if (friendAlias != null && !TextUtils.isEmpty(friendAlias)) {
+                cachedMemberUser.setNickName(friendAlias);
             }
             return cachedMemberUser;
         };
