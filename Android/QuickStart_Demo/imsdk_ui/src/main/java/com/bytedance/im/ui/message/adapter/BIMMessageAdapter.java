@@ -1,14 +1,15 @@
 package com.bytedance.im.ui.message.adapter;
 
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.bytedance.im.core.api.enums.BIMMessageType;
+import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.model.inner.msg.BIMCustomElement;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
@@ -34,10 +35,16 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
     private List<BIMMessageWrapper> data = new ArrayList<>();
     private OnMessageItemClickListener onMessageItemClickListener;
     private OnMessageItemLongClickListener onMessageItemLongClickListener;
+    private OnRefreshListener onRefreshListener;
 
-    public BIMMessageAdapter(OnMessageItemClickListener listener, OnMessageItemLongClickListener longClickListener) {
+    public interface OnRefreshListener {
+        void refreshMediaMessage(BIMMessage bimMessage, BIMResultCallback<BIMMessage> callback);
+    }
+
+    public BIMMessageAdapter(OnMessageItemClickListener listener, OnMessageItemLongClickListener longClickListener, OnRefreshListener onRefreshListener) {
         onMessageItemClickListener = listener;
         onMessageItemLongClickListener = longClickListener;
+        this.onRefreshListener = onRefreshListener;
     }
 
     @NonNull
@@ -46,8 +53,9 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View root = layoutInflater.inflate(R.layout.bim_im_item_base_message, parent, false);
         FrameLayout messageContainer = root.findViewById(R.id.container);
+//        messageContainer.setBackground(new DynamicGradientDrawable((RecyclerView) parent, root, messageContainer));
         layoutInflater.inflate(viewType, messageContainer, true);
-        return new BIMMessageViewHolder(root, onMessageItemClickListener, onMessageItemLongClickListener);
+        return new BIMMessageViewHolder(root, onMessageItemClickListener, onMessageItemLongClickListener, onRefreshListener);
     }
 
     @Override
@@ -58,7 +66,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
             preWrapper = data.get(position + 1);
         }
         holder.update(wrapper, preWrapper);
-        BIMMessageUIManager.getInstance().getMessageUI(wrapper.getContentClass()).onBindView(holder.itemView, wrapper, preWrapper);
+        BIMMessageUIManager.getInstance().getMessageUI(wrapper.getContentClass()).onBindView(holder, holder.itemView, wrapper, preWrapper);
     }
 
     @Override

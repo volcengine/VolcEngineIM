@@ -12,6 +12,7 @@ import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.model.inner.msg.BIMFileElement;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
+import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.ui.message.adapter.ui.widget.custom.CircleProgressView;
 import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
@@ -30,7 +31,7 @@ public class FileMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public void onBindView(View itemView, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
+    public void onBindView(BIMMessageViewHolder holder, View itemView, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
         View mFileContent = itemView.findViewById(R.id.cl_file_content);
         TextView mTvFileName = itemView.findViewById(R.id.tv_file_content);
         TextView mTvFileLength = itemView.findViewById(R.id.tv_file_size);
@@ -66,15 +67,15 @@ public class FileMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public boolean onLongClickListener(View v, BIMMessageWrapper messageWrapper) {
+    public boolean onLongClickListener(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         return false;
     }
 
     @Override
-    public void onClick(View v, BIMMessageWrapper messageWrapper) {
+    public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         BIMFileElement fileElement = (BIMFileElement) messageWrapper.getBimMessage().getElement();
         if (fileElement.isExpired()) {
-            BIMClient.getInstance().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
+            holder.getOnOutListener().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
                 @Override
                 public void onSuccess(BIMMessage bimMessage) {
                     //todo download

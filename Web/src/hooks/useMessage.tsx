@@ -1,19 +1,18 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { FileType, Message, im_proto, IMEvent } from '@volcengine/im-web-sdk';
+import { FileType, im_proto, IMEvent, Message } from '@volcengine/im-web-sdk';
 
 import {
-  Messages,
-  CurrentConversation,
   BytedIMInstance,
-  ReferenceMessage,
+  CurrentConversation,
   FileUploadProcessStore,
-  UserId,
-  LiveConversationNickName,
+  Messages,
+  ReferenceMessage,
   SendMessagePriority,
+  UserId,
 } from '../store';
 import { CalcVideo, getImageSize, getMessagePreview } from '../utils';
 import { Message as ArcoMessage } from '@arco-design/web-react';
-import { SEND_MESSAGE_STATUS_STR } from '../utils/code';
+import { EXT_ALIAS_NAME, EXT_AVATAR_URL } from '../constant';
 
 let markReadTimer: any = null;
 let toMarkReadList: Array<{ key: number; value: Message }> = [];
@@ -42,7 +41,6 @@ const useMessage = () => {
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
   const currentConversation = useRecoilValue(CurrentConversation);
   const [messages, setMessages] = useRecoilState(Messages);
-  const liveConversationNickName = useRecoilValue(LiveConversationNickName);
   const [referenceMessage, setReferenceMessage] = useRecoilState(ReferenceMessage);
   const setFileUploadProcess = useSetRecoilState(FileUploadProcessStore);
   const userId = useRecoilValue(UserId);
@@ -56,6 +54,20 @@ const useMessage = () => {
     sendMessageCheckCode(await bytedIMInstance.sendMessage({ message }));
   };
 
+  async function insertAliasExtForMassChat(ext: {}) {
+    if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
+      try {
+        const resp = await bytedIMInstance.getLiveParticipantDetailOnline({
+          conversation: currentConversation,
+          participantIds: [userId],
+        });
+        const { avatarUrl, alias } = resp[0];
+        ext[EXT_ALIAS_NAME] = alias;
+        ext[EXT_AVATAR_URL] = avatarUrl;
+      } catch (e) {}
+    }
+  }
+
   /**
    * 发送普通文本消息
    * @param msg
@@ -68,9 +80,7 @@ const useMessage = () => {
       referenceHint: getMessagePreview(referenceMessage),
       ext: {},
     };
-    if (liveConversationNickName !== undefined && currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
-      params.ext['a:live_group_nick_name'] = liveConversationNickName;
-    }
+    await insertAliasExtForMassChat(params.ext);
 
     const message = await bytedIMInstance.createTextMessage(params);
     if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
@@ -194,6 +204,8 @@ const useMessage = () => {
    * 发送自定义消息
    */
   const sendVolcMessage = async () => {
+    const ext = {};
+    await insertAliasExtForMassChat(ext);
     const message = await bytedIMInstance.createCustomMessage({
       conversation: currentConversation,
       content: JSON.stringify({
@@ -201,6 +213,7 @@ const useMessage = () => {
         link: 'https://www.volcengine.com/',
         text: '欢迎体验即时通讯IM demo',
       }),
+      ext: ext,
     });
     if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
       bytedIMInstance?.event?.emit?.(IMEvent.MessageUpsert, null, message);

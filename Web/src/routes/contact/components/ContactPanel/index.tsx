@@ -4,8 +4,8 @@ import Styles from './Styles';
 import { Avatar, NoMessage } from '../../../../components';
 import { ContactPanelHeader } from '../ContactPanelHeader';
 import { getConversationAvatar } from '../../../../utils';
-import { ACCOUNTS_INFO } from '../../../../constant';
-import { Button, List, Message, Modal } from '@arco-design/web-react';
+import { ACCOUNTS_INFO, CheckCode } from '../../../../constant';
+import { Button, Form, Input, List, Message, Modal, Tooltip } from '@arco-design/web-react';
 import { useRequest } from 'ahooks';
 import { useRecoilValue } from 'recoil';
 import { BytedIMInstance } from '../../../../store';
@@ -31,18 +31,26 @@ function ContactItem({
   userId,
   operation,
   onClick,
+  alias,
 }: {
   userId: string;
   operation: React.ReactNode;
   onClick?: () => void;
+  alias?: string;
 }) {
   return (
     <div key={userId} className={'contact-item'}>
-      <div className={'contact-item-avatar'} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'unset' }}>
-        <Avatar url={ACCOUNTS_INFO[userId]?.url} size={36} />
-      </div>
-      <div className={'contact-item-name'} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'unset' }}>
-        {ACCOUNTS_INFO[userId]?.name}
+      <Tooltip content={ACCOUNTS_INFO[userId]?.realName}>
+        <div className={'contact-item-avatar'} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'unset' }}>
+          <Avatar url={ACCOUNTS_INFO[userId]?.url} size={36} />
+        </div>
+      </Tooltip>
+      <div
+        className={'contact-item-name'}
+        onClick={onClick}
+        style={{ cursor: onClick ? 'pointer' : 'unset', overflowWrap: 'anywhere' }}
+      >
+        {alias || ACCOUNTS_INFO[userId]?.name}
       </div>
       <div className={'contact-item-operation'}>{operation}</div>
     </div>
@@ -193,6 +201,54 @@ function ApplyList() {
   );
 }
 
+function FriendAliasModal({ visible, value, loading, setVisible, onSubmit }) {
+  const [form] = Form.useForm();
+
+  function onOk() {
+    form
+      .validate()
+      .then(res => {
+        onSubmit(res.alias);
+      })
+      .catch();
+  }
+
+  useEffect(() => {
+    form.setFieldsValue({ alias: value });
+  }, [visible]);
+  return (
+    <Modal
+      title="修改好友备注"
+      visible={visible}
+      onOk={onOk}
+      confirmLoading={loading}
+      onCancel={() => setVisible(false)}
+      mountOnEnter={true}
+    >
+      <Form
+        form={form}
+        initialValues={{ alias: value }}
+        labelCol={{
+          style: { flexBasis: 90 },
+        }}
+        wrapperCol={{
+          style: { flexBasis: 'calc(100% - 90px)' },
+        }}
+      >
+        <Form.Item label="备注" field="alias">
+          <Input
+            placeholder="输入备注"
+            maxLength={96}
+            showWordLimit={true}
+            normalizeTrigger={['onBlur']}
+            normalize={v => (v ? v.trim() : v)}
+          />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+}
+
 function FriendItem({ i, refresh }: { i: Friend; refresh: () => void }) {
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
 
@@ -212,14 +268,46 @@ function FriendItem({ i, refresh }: { i: Friend; refresh: () => void }) {
     },
     { manual: true }
   );
+
+  const { loading: changeLoading, run: changeRun } = useRequest(
+    async v => {
+      try {
+        const resp = await bytedIMInstance.updateFriend({
+          userId: i.userId,
+          alias: v,
+          ext: { ...i.ext, demo_from_web: 'updateFriend' },
+        });
+        Message.success('操作成功');
+        setAliasEditVisible(false);
+        await refresh();
+      } catch (e) {
+        if (e.type === im_proto.StatusCode.ALIAS_TOO_LONG) Message.error('好友备注过长');
+        else if (e.type === im_proto.StatusCode.ALIAS_ILLEGAL) Message.error('文本中可能包含敏感词，请修改后重试');
+        else Message.error(e.msg);
+      }
+    },
+    { manual: true }
+  );
+
   const { createOneOneConversation } = useConversation();
   const navigate = useNavigate();
+  const [aliasEditVisible, setAliasEditVisible] = useState(false);
 
   return (
     <ContactItem
       userId={i.userId}
+      alias={i.alias}
       operation={
         <>
+          <Button
+            type="text"
+            onClick={() => {
+              setAliasEditVisible(true);
+            }}
+            loading={loading}
+          >
+            修改好友备注
+          </Button>
           <Button
             type="text"
             status="danger"
@@ -237,6 +325,15 @@ function FriendItem({ i, refresh }: { i: Friend; refresh: () => void }) {
           >
             删除
           </Button>
+          <FriendAliasModal
+            loading={changeLoading}
+            onSubmit={v => {
+              changeRun(v);
+            }}
+            value={i.alias}
+            visible={aliasEditVisible}
+            setVisible={v => setAliasEditVisible(v)}
+          ></FriendAliasModal>
         </>
       }
       onClick={() => {
@@ -260,7 +357,7 @@ function FriendList() {
       limit: 500,
     });
     console.log(resp.list);
-    return sortBy(resp.list, ['userId']);
+    return sortBy(resp.list, [o => ACCOUNTS_INFO[o.userId].name]);
   }, {});
 
   useEffect(() => {

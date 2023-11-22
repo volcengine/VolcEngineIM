@@ -26,7 +26,10 @@ public class BIMGroupMemberListActivity extends Activity {
     private RecyclerView memberListV;
     private BIMGroupMemberListAdapter adapter;
 
-    public static void startForResult(Fragment fragment, String conversationId,int requestCode) {
+    public static void startForResult(Fragment fragment, String conversationId, int requestCode) {
+        if (fragment == null || fragment.getActivity() == null) {
+            return;
+        }
         Intent intent = new Intent(fragment.getActivity(), BIMGroupMemberListActivity.class);
         intent.putExtra(CONVERSATION_ID, conversationId);
         fragment.startActivityForResult(intent, requestCode);

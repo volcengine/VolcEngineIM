@@ -4,6 +4,9 @@ import static android.app.Activity.RESULT_OK;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -11,9 +14,13 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,11 +49,21 @@ import com.bytedance.im.live.api.model.MemberUpdateInfo;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.log.BIMLog;
+import com.bytedance.im.ui.message.BIMMessageRecyclerView;
 import com.bytedance.im.ui.message.adapter.BIMMessageAdapter;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.VEInPutView;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.BaseToolBtn;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.CustomToolBtn;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.FileToolBtn;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.ImageToolBtn;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.PhotoTooBtn;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
 import com.bytedance.im.ui.user.BIMUserProvider;
+import com.bytedance.im.ui.utils.media.MediaInfo;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,10 +84,10 @@ public class VELiveGroupMessageListFragment extends Fragment {
     private TextView tvTitle;
     private TextView tvOnlineNum;
     private BIMConversation bimConversation;
-    private RecyclerView recyclerView;
+    private BIMMessageRecyclerView recyclerView;
     private BIMMessageAdapter adapter;
 
-    private VELiveGroupInputView inPutView;
+    private VEInPutView inPutView;
     private long conversationShortId = -1L;
     private BIMLiveExpandService service;
     private BIMMessagePriority messagePriority = BIMMessagePriority.NORMAL;
@@ -108,13 +125,6 @@ public class VELiveGroupMessageListFragment extends Fragment {
             BIMLog.i(TAG, "onDeleteMessage() uuid: " + message.getUuid() + " thread:" + Thread.currentThread());
             if (bimConversation != null && message.getConversationShortID() == bimConversation.getConversationShortID()) {
                 adapter.deleteMessage(message);
-            }
-        }
-
-        public void onRecallMessage(BIMMessage message) {
-            BIMLog.i(TAG, "onRecallMessage() uuid: " + message.getUuid() + " thread:" + Thread.currentThread());
-            if (message.getConversationShortID() == bimConversation.getConversationShortID()) {
-                adapter.appendOrUpdate(message);
             }
         }
 
@@ -283,21 +293,13 @@ public class VELiveGroupMessageListFragment extends Fragment {
 
         recyclerView = v.findViewById(R.id.message_list);
         inPutView = v.findViewById(R.id.inputView);
-        inPutView.setLiveInputListener(new VELiveGroupInputView.OnLiveInputListener() {
-            @Override
-            public void onSendClick(String text) {
-                sendTextMessage(text);
-            }
-
-            @Override
-            public void onCustomClick() {
-                sendCustomMessage();
-            }
-
-            @Override
-            public void onPriorityChanged(BIMMessagePriority priority) {
-                messagePriority = priority;
-            }
+        inPutView.initFragment(this, "" + conversationShortId, true, initToolbtns(), path -> {
+            sendVoiceMessage(path);
+        }, (text, refMessage, mentionIdList) -> {
+            sendTextMessage(text);
+        });
+        inPutView.getTvPriority().setOnClickListener(v1 -> {
+            showPriorityWindow();
         });
         adapter = new BIMMessageAdapter(new BIMMessageAdapter.OnMessageItemClickListener() {
             public void onPortraitClick(BIMMessage message) {
@@ -316,6 +318,11 @@ public class VELiveGroupMessageListFragment extends Fragment {
                     showMessageOperationDialog(msgContainer, message);
                 }
                 return true;
+            }
+        }, new BIMMessageAdapter.OnRefreshListener() {
+            @Override
+            public void refreshMediaMessage(BIMMessage bimMessage, BIMResultCallback<BIMMessage> callback) {
+                BIMClient.getInstance().getService(BIMLiveExpandService.class).refreshLiveGroupMediaMessage(bimMessage, callback);
             }
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, true));
@@ -342,13 +349,107 @@ public class VELiveGroupMessageListFragment extends Fragment {
                 }
             }
         });
-        initInputView();
+        recyclerView.setOnDispatchListener(new BIMMessageRecyclerView.OnDispatchListener() {
+            @Override
+            public boolean dispatchTouchEvent(MotionEvent ev) {
+                inPutView.reset();
+                return false;
+            }
+        });
         startGetOnlineCount();
         return v;
     }
 
-    private void initInputView() {
+
+    private List<BaseToolBtn> initToolbtns() {
+        List<BaseToolBtn> toolBtnList = new ArrayList<>();
+        toolBtnList.add(new ImageToolBtn(new BIMResultCallback<MediaInfo>() {
+            @Override
+            public void onSuccess(MediaInfo mediaInfo) {
+                if (mediaInfo.getFileType() == MediaInfo.MEDIA_TYPE_IMAGE) {
+                    sendImageMessage(mediaInfo.getFilePath());
+                } else {
+                    sendVideoMessage(mediaInfo.getFilePath());
+                }
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        }));
+        toolBtnList.add(new PhotoTooBtn(new BIMResultCallback<String>() {
+            @Override
+            public void onSuccess(String path) {
+                sendImageMessage(path);
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        }));
+        toolBtnList.add(new FileToolBtn(new BIMResultCallback<FileToolBtn.SelectFileInfo>() {
+            @Override
+            public void onSuccess(FileToolBtn.SelectFileInfo info) {
+                sendFileMessage(info.getUri(), info.getPath(), info.getName(), info.getLength());
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        }));
+        toolBtnList.add(new CustomToolBtn(new BIMResultCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean aBoolean) {
+                sendCustomMessage();
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        }));
+        return toolBtnList;
     }
+
+    private void sendFileMessage(Uri uri, String path, String name, long length) {
+        BIMMessage bimMessage = BIMClient.getInstance().createFileMessage(uri,path,name,length);
+        sendMessage(bimMessage);
+    }
+
+    private void sendVoiceMessage(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            return;
+        }
+        BIMLog.i(TAG, "sendVoiceMessage() length: " + file.length() + " path: " + path);
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(path);
+        long duration = 0;
+        try {
+            duration = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / 1000;
+        } catch (Exception e) {
+            BIMLog.i(TAG, "e: " + Log.getStackTraceString(e));
+        }
+        if (duration < 1) {
+            Toast.makeText(getActivity(), "录制时间太短，录音失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        BIMMessage message = BIMClient.getInstance().createAudioMessage(path);
+        sendMessage(message);
+    }
+
+    private void sendImageMessage(String filePath) {
+        BIMMessage bimMessage = BIMClient.getInstance().createImageMessage(filePath);
+        sendMessage(bimMessage);
+    }
+    private void sendVideoMessage(String filePath){
+        BIMMessage bimMessage = BIMClient.getInstance().createVideoMessage(filePath);
+        sendMessage(bimMessage);
+    }
+    
 
     @Override
     public void onDestroy() {
@@ -421,7 +522,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
     private void sendCustomMessage() {
         BIMShareElement shareVEContent = new BIMShareElement();
         shareVEContent.setLink("https://www.volcengine.com/");
-        shareVEContent.setText("欢迎体验即时通信IM demo");
+        shareVEContent.setText("欢迎体验火山引擎即时通信IM Demo");
         BIMMessage customMessage = BIMClient.getInstance().createCustomMessage(BIMMessageManager.getInstance().encode(shareVEContent));
         sendMessage(customMessage);
     }
@@ -448,6 +549,12 @@ public class VELiveGroupMessageListFragment extends Fragment {
         }
         msg.setExtra(ext);
         BIMClient.getInstance().getService(BIMLiveExpandService.class).sendLiveGroupMessage(msg, bimConversation, messagePriority, new BIMSendCallback() {
+            @Override
+            public void onSaved(BIMMessage bimMessage) {
+                if (adapter.appendOrUpdate(bimMessage) == BIMMessageAdapter.APPEND) {
+                    scrollBottom();
+                }
+            }
 
             @Override
             public void onSuccess(BIMMessage bimMessage) {
@@ -458,8 +565,19 @@ public class VELiveGroupMessageListFragment extends Fragment {
             }
 
             @Override
+            public void onProgress(BIMMessage message, int progress) {
+                BIMLog.i(TAG, "sendMessage onProgress() uuid: " + message.getUuid() + " progress: " + progress + " thread:" + Thread.currentThread());
+                if (adapter.appendOrUpdate(message) == BIMMessageAdapter.APPEND) {
+                    scrollBottom();
+                }
+            }
+            @Override
             public void onError(BIMMessage bimMessage, BIMErrorCode code) {
                 BIMLog.i(TAG, "sendMessage onError() uuid: " + bimMessage.getUuid() + " code: " + code + " thread:" + Thread.currentThread());
+                if (code == BIMErrorCode.BIM_UPLOAD_FILE_SIZE_OUT_LIMIT) {
+                    Toast.makeText(getActivity(), "消息发送失败：文件大小超过限制", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (adapter.appendOrUpdate(bimMessage) == BIMMessageAdapter.APPEND) {
                     scrollBottom();
                 }
@@ -494,6 +612,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        inPutView.onActivityResult(requestCode,resultCode,data);
         if (requestCode == REQUEST_EDIT_DETAIL && resultCode == RESULT_OK) {
             boolean isDelete = data.getBooleanExtra(VELiveDetailActivity.IS_DELETE_LOCAL, false);
             if (isDelete) {
@@ -577,11 +696,46 @@ public class VELiveGroupMessageListFragment extends Fragment {
             if (cachedMemberUser == null || (TextUtils.isEmpty(cachedMemberUser.getNickName()) && TextUtils.isEmpty(cachedMemberUser.getHeadUrl()))) {
                 cachedMemberUser = VEIMApplication.accountProvider.getUserProvider().getUserInfo(uid);
             }
-            BIMUIUser userInfo = VEFriendInfoManager.getInstance().getUserInfo(uid);
-            if (userInfo != null && !TextUtils.isEmpty(userInfo.getNickName())) {
-                cachedMemberUser.setNickName(userInfo.getNickName());
+            String friendAlias = VEFriendInfoManager.getInstance().getFriendAlias(uid);
+            if (friendAlias != null && !TextUtils.isEmpty(friendAlias)) {
+                cachedMemberUser.setNickName(friendAlias);
             }
             return cachedMemberUser;
         };
+    }
+
+    private void showPriorityWindow() {
+        PopupWindow popupWindow = new PopupWindow(getActivity());
+        View v = LayoutInflater.from(getActivity()).inflate(R.layout.ve_im_live_input_priority_window_layout, null,false);
+        View.OnClickListener listener = v1 -> {
+            switch (v1.getId()) {
+                case R.id.high:
+                    messagePriority = BIMMessagePriority.HIGH;
+                    inPutView.getTvPriority().setText("高");
+                    break;
+                case R.id.normal:
+                    messagePriority = BIMMessagePriority.NORMAL;
+                    inPutView.getTvPriority().setText("普通");
+                    break;
+                case R.id.low:
+                    messagePriority = BIMMessagePriority.LOW;
+                    inPutView.getTvPriority().setText("低");
+                    break;
+                default:
+                    break;
+            }
+            popupWindow.dismiss();
+        };
+        v.findViewById(R.id.high).setOnClickListener(listener);
+        v.findViewById(R.id.normal).setOnClickListener(listener);
+        v.findViewById(R.id.low).setOnClickListener(listener);
+        popupWindow.setContentView(v);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(0));
+        int width = getActivity().getResources().getDimensionPixelSize(R.dimen.ve_input_pop_priority_width);
+        int height = getActivity().getResources().getDimensionPixelSize(R.dimen.ve_input_pop_priority_height);
+        popupWindow.setHeight(height);
+        popupWindow.setWidth(width);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.showAsDropDown(inPutView.getTvPriority(), 0, -1 * (height + inPutView.getTvPriority().getHeight() + 20), Gravity.BOTTOM);
     }
 }

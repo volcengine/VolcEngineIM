@@ -5,6 +5,7 @@ import { getMessagePreview } from '../../../../utils/message';
 import { ACCOUNTS_INFO } from '../../../../constant';
 
 import MessageReplyBox from './Styles';
+import { useFriendAlias } from '../../../../hooks';
 
 interface MessageReplyProps {
   isBurned?: boolean;
@@ -16,6 +17,7 @@ const MessageReply: FC<MessageReplyProps> = props => {
   const { message, messageStatus } = props;
   const { sender } = message || {};
 
+  useFriendAlias();
   const getReplyHeaderText = () => {
     return `回复${ACCOUNTS_INFO[sender]?.name}:`;
   };

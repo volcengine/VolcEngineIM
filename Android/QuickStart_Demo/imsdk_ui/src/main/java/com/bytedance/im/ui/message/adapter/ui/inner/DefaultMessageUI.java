@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
 import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
@@ -19,19 +20,19 @@ public class DefaultMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public void onBindView(View v, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
+    public void onBindView(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
         TextView tvDefault = v.findViewById(R.id.tv_default);
         BIMMessage bimMessage = messageWrapper.getBimMessage();
         tvDefault.setText("暂不支持此消息: " + bimMessage.getMsgType() +"\n content: "+bimMessage.getContentData());
     }
 
     @Override
-    public boolean onLongClickListener(View v, BIMMessageWrapper messageWrapper) {
+    public boolean onLongClickListener(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         return false;
     }
 
     @Override
-    public void onClick(View v, BIMMessageWrapper messageWrapper) {
+    public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
 
     }
 }

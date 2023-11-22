@@ -23,7 +23,6 @@ export const ConversationHeader: FC<ConversationHeaderProps> = props => {
   const handleCreateModalVisibleChange = useCallback(() => {
     setCreateModalVisible(pre => !pre);
   }, []);
-
   const handleInputChange = value => {
     onSearchChange?.(value);
   };

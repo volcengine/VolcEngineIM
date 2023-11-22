@@ -124,18 +124,28 @@ export const useParticipant = () => {
    * @param participants 添加成员userId数组
    * @param bizExt
    */
-  const addLiveGroupParticipants = async (
+  const addLiveGroupParticipants = async ({
     conversation,
-    participants: string[],
+    participants,
+    bizExt,
+    avatarUrl,
+    alias,
+  }: {
+    conversation;
+    participants: string[];
     bizExt?: {
       [key: string]: string;
-    }
-  ) => {
+    };
+    avatarUrl?: string;
+    alias?: string;
+  }) => {
     const { statusCode, statusMsg } =
       participants.length === 1 && participants[0] === userId
         ? await bytedIMInstance.joinLiveGroup({
             conversation,
             bizExt,
+            avatarUrl,
+            alias,
           })
         : await bytedIMInstance.addParticipants({
             conversation,
@@ -174,6 +184,7 @@ export const useParticipant = () => {
       bizExt?: {
         [key: string]: string;
       };
+      avatarUrl?: string;
     }
   ) => {
     try {

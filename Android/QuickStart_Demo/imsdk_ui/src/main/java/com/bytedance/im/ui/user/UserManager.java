@@ -38,7 +38,7 @@ public class UserManager {
         if (uidList == null || uidList.isEmpty()) return "";
         StringBuilder builder = new StringBuilder();
         for (long uid : uidList) {
-            builder.append(getUserName(uid));
+            builder.append("用户" + uid);
             builder.append(",");
         }
         return builder.substring(0, builder.length() - 1);

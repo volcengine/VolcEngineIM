@@ -66,11 +66,11 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/iv_input_type_emoji"
+            app:layout_constraintEnd_toStartOf="@id/msg_priority"
             app:layout_constraintStart_toEndOf="@id/iv_voice_input"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <com.bytedance.im.ui.message.adapter.ui.widget.input.audio.VoiceInputButton
             android:id="@+id/tv_voice_input_button"
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -83,10 +83,22 @@
             android:textSize="15sp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/iv_input_type_emoji"
+            app:layout_constraintEnd_toStartOf="@id/msg_priority"
             app:layout_constraintStart_toEndOf="@id/iv_voice_input"
             app:layout_constraintTop_toTopOf="parent" />
-
+        <TextView
+            android:id="@+id/msg_priority"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="普通"
+            android:textSize="25sp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginRight="13dp"
+            app:layout_constraintEnd_toStartOf="@+id/iv_input_type_emoji"/>
         <ImageView
             android:id="@+id/iv_input_type_emoji"
             android:layout_width="30dp"
@@ -138,117 +150,20 @@
         android:textSize="16dp"
         android:visibility="gone"
         tools:visibility="visible" />
-
-    <com.bytedance.im.ui.message.adapter.ui.widget.EmojiGroupView
-        android:id="@+id/v_emoji_group"
-        android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:visibility="gone" />
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/cl_input_more"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="24dp"
-        android:paddingTop="20dp"
-        android:paddingRight="24dp"
-        android:paddingBottom="31dp"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-
-        <ImageView
-            android:id="@+id/iv_input_optional_img"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:background="@drawable/shape_im_login_input_bg"
-            android:padding="17dp"
-            android:src="@drawable/icon_im_input_optional_img"
-            app:layout_constraintEnd_toStartOf="@+id/iv_input_optional_photo"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_input_optional_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="照片"
-            android:textColor="@color/business_im_555"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="@id/iv_input_optional_img"
-            app:layout_constraintStart_toStartOf="@id/iv_input_optional_img"
-            app:layout_constraintTop_toBottomOf="@id/iv_input_optional_img" />
-
-        <ImageView
-            android:id="@+id/iv_input_optional_photo"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:background="@drawable/shape_im_login_input_bg"
-            android:padding="17dp"
-            android:src="@drawable/icon_im_input_optional_photo"
-            app:layout_constraintEnd_toStartOf="@id/iv_input_optional_file"
-            app:layout_constraintStart_toEndOf="@id/iv_input_optional_img"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_input_optional_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="拍摄"
-            android:textColor="@color/business_im_555"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="@id/iv_input_optional_photo"
-            app:layout_constraintStart_toStartOf="@id/iv_input_optional_photo"
-            app:layout_constraintTop_toBottomOf="@id/iv_input_optional_photo" />
-
-        <ImageView
-            android:id="@+id/iv_input_optional_file"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:background="@drawable/shape_im_login_input_bg"
-            android:padding="17dp"
-            android:src="@drawable/icon_im_input_optional_file"
-            app:layout_constraintEnd_toStartOf="@+id/iv_input_optional_custom_message"
-            app:layout_constraintStart_toEndOf="@+id/iv_input_optional_photo"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_input_optional_file"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="文件"
-            android:textColor="@color/business_im_555"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="@id/iv_input_optional_file"
-            app:layout_constraintStart_toStartOf="@id/iv_input_optional_file"
-            app:layout_constraintTop_toBottomOf="@id/iv_input_optional_file" />
-
-
-        <ImageView
-            android:id="@+id/iv_input_optional_custom_message"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:background="@drawable/shape_im_login_input_bg"
-            android:padding="17dp"
-            android:src="@drawable/icon_im_input_optional_img"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/iv_input_optional_file"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_input_optional_custom_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="自定义"
-            android:textColor="@color/business_im_555"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="@+id/iv_input_optional_custom_message"
-            app:layout_constraintStart_toStartOf="@+id/iv_input_optional_custom_message"
-            app:layout_constraintTop_toBottomOf="@+id/iv_input_optional_custom_message" />
-    </android.support.constraint.ConstraintLayout>
+    <FrameLayout
+        android:id="@+id/function_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="240dp">
+        <com.bytedance.im.ui.message.adapter.ui.widget.EmojiGroupView
+            android:id="@+id/v_emoji_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+        <android.support.v4.view.ViewPager
+            android:id="@+id/cl_input_more_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+        </android.support.v4.view.ViewPager>
+    </FrameLayout>
 </LinearLayout>

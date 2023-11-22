@@ -17,10 +17,11 @@ export const useLiveConversation = () => {
    * 获取直播群列表
    */
   const getLiveConversationList = async params => {
-    const { cursor = undefined, policy } = params;
+    const { limit, cursor = undefined, policy } = params;
     const result = await bytedIMInstance?.getLiveConversationListOnline?.({
       cursor,
       policy,
+      limit,
     });
     return result;
   };

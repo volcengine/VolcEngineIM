@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
 import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
@@ -19,18 +20,18 @@ public class PoiMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public void onBindView(View v, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
+    public void onBindView(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
         TextView showPoi = v.findViewById(R.id.show_poi);
         showPoi.setText(messageWrapper.getBimMessage().getContentData());
     }
 
     @Override
-    public boolean onLongClickListener(View v, BIMMessageWrapper messageWrapper) {
+    public boolean onLongClickListener(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         return false;
     }
 
     @Override
-    public void onClick(View v, BIMMessageWrapper messageWrapper) {
+    public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
 
     }
 

@@ -11,6 +11,7 @@ import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
 import com.bytedance.im.ui.utils.media.AudioHelper;
 import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
@@ -28,7 +29,7 @@ public class VoiceMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public void onBindView(View itemView, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
+    public void onBindView(BIMMessageViewHolder holder, View itemView, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
         TextView asrTextTv = itemView.findViewById(R.id.tv_msg_asr_text_content);
 
         BIMMessage bimMessage = messageWrapper.getBimMessage();
@@ -62,29 +63,17 @@ public class VoiceMessageUI extends BaseCustomElementUI {
         asrTextTv.setVisibility(View.GONE);
     }
 
-    private void updateDuration(TextView textView, BIMAudioElement audioElement) {
-        try {
-            int duration = audioElement.getDuration();
-            textView.setText(duration + "\"");
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) textView.getLayoutParams();
-            params.width = getAudioDisplayWidth(textView.getContext(), duration);
-            textView.setLayoutParams(params);
-        } catch (Exception e) {
-
-        }
-    }
-
     @Override
-    public boolean onLongClickListener(View v, BIMMessageWrapper messageWrapper) {
+    public boolean onLongClickListener(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         return false;
     }
 
     @Override
-    public void onClick(View v, BIMMessageWrapper messageWrapper) {
+    public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         BIMAudioElement audioElement = (BIMAudioElement) messageWrapper.getBimMessage().getElement();
         if (audioElement != null) {
             if (audioElement.isExpired()) {
-                BIMClient.getInstance().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
+                holder.getOnOutListener().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
                     @Override
                     public void onSuccess(BIMMessage bimMessage) {
                         AudioHelper.getInstance().play(audioElement.getURL());
@@ -103,6 +92,18 @@ public class VoiceMessageUI extends BaseCustomElementUI {
                 }
                 AudioHelper.getInstance().play(url);
             }
+        }
+    }
+
+    private void updateDuration(TextView textView, BIMAudioElement audioElement) {
+        try {
+            int duration = audioElement.getDuration();
+            textView.setText(duration + "\"");
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) textView.getLayoutParams();
+            params.width = getAudioDisplayWidth(textView.getContext(), duration);
+            textView.setLayoutParams(params);
+        } catch (Exception e) {
+
         }
     }
 

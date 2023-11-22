@@ -1,7 +1,5 @@
 package com.bytedance.im.ui.message;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -9,18 +7,15 @@ import android.content.res.Configuration;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
-import android.text.Selection;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -37,29 +32,21 @@ import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.api.model.BIMMessageListResult;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
-import com.bytedance.im.ui.member.BIMGroupMemberListActivity;
 import com.bytedance.im.ui.message.adapter.BIMMessageAdapter;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
-import com.bytedance.im.ui.message.adapter.ui.widget.VEInPutView;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.VEInPutView;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.BaseToolBtn;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.CustomToolBtn;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.FileToolBtn;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.ImageToolBtn;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.PhotoTooBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.pop.BIMMessageOptionPopupWindow;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
-import com.bytedance.im.ui.api.BIMUIUser;
-import com.bytedance.im.ui.user.UserManager;
-import com.bytedance.im.ui.utils.BIMPermissionController;
-import com.bytedance.im.ui.utils.FileUtils;
-import com.bytedance.im.ui.utils.FilePathUtils;
-import com.bytedance.im.ui.utils.audio.VoiceRecordManager;
-import com.bytedance.im.ui.utils.media.BIMMediaListActivity;
 import com.bytedance.im.ui.utils.media.MediaInfo;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 public class BIMMessageListFragment extends Fragment {
@@ -69,7 +56,7 @@ public class BIMMessageListFragment extends Fragment {
     public static final String ACTION = "com.bytedance.im.page.message_list";
     private String conversationId;
     private BIMConversation bimConversation;
-    private RecyclerView recyclerView;
+    private BIMMessageRecyclerView recyclerView;
     private BIMMessageAdapter adapter;
     private BIMMessage earliestMessage = null;
     private BIMMessage lastMessage = null;
@@ -78,13 +65,7 @@ public class BIMMessageListFragment extends Fragment {
     private boolean isSyncingOlder = false;
     private boolean isSyncingNewer = false;
     private VEInPutView inPutView;
-    private VoiceRecordManager voiceRecordManager;
-    private int REQUEST_CODE_SELECT_MEDIA = 0;
-    private int REQUEST_CODE_TAKE_PHOTO = 2;
-    private int REQUEST_CODE_SELECT_FILE = 3;
-    private int REQUEST_CODE_SELECT_USER_FOR_AT = 4;
-    private static String takePhotoPath = "";
-    private Set<Long> mentionIds = new HashSet<Long>();
+
     private BIMMessageOptionPopupWindow msgOptionMenu;
     private String startMsgId;
 
@@ -130,6 +111,11 @@ public class BIMMessageListFragment extends Fragment {
                 showMessageOperationDialog(msgContainer, message);
                 return true;
             }
+        }, new BIMMessageAdapter.OnRefreshListener() {
+            @Override
+            public void refreshMediaMessage(BIMMessage bimMessage, BIMResultCallback<BIMMessage> callback) {
+                BIMClient.getInstance().refreshMediaMessage(bimMessage,callback);
+            }
         });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, true));
@@ -166,6 +152,13 @@ public class BIMMessageListFragment extends Fragment {
 
             }
         });
+        recyclerView.setOnDispatchListener(new BIMMessageRecyclerView.OnDispatchListener() {
+            @Override
+            public boolean dispatchTouchEvent(MotionEvent ev) {
+                inPutView.reset();
+                return false;
+            }
+        });
 
         BIMClient.getInstance().addMessageListener(receiveMessageListener);
         if (!TextUtils.isEmpty(startMsgId)) {
@@ -186,121 +179,78 @@ public class BIMMessageListFragment extends Fragment {
         } else {
             initOlderDirection();
         }
-        initInputView();
+        inPutView.initFragment(this, conversationId, initToolbtns(), path -> sendVoiceMessage(path), (text, refMessage, mentionIdList) -> {
+            if (refMessage != null) {
+                //发送引用消息
+                sendRefMessage(text, refMessage, mentionIdList);
+            } else {
+                if (mentionIdList.isEmpty()) {
+                    sendTextMessage(text);
+                } else {
+                    sendMentionTextMessage(text, mentionIdList);
+                }
+            }
+        });
         return v;
+    }
+
+    private List<BaseToolBtn> initToolbtns() {
+        List<BaseToolBtn> toolBtnList = new ArrayList<>();
+        toolBtnList.add(new ImageToolBtn(new BIMResultCallback<MediaInfo>() {
+            @Override
+            public void onSuccess(MediaInfo mediaInfo) {
+                if (mediaInfo.getFileType() == MediaInfo.MEDIA_TYPE_IMAGE) {
+                    sendImageMessage(mediaInfo.getFilePath());
+                } else {
+                    sendVideoMessage(mediaInfo.getFilePath());
+                }
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        }));
+        toolBtnList.add(new PhotoTooBtn(new BIMResultCallback<String>() {
+            @Override
+            public void onSuccess(String path) {
+                sendImageMessage(path);
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        }));
+        toolBtnList.add(new FileToolBtn(new BIMResultCallback<FileToolBtn.SelectFileInfo>() {
+            @Override
+            public void onSuccess(FileToolBtn.SelectFileInfo info) {
+                sendFileMessage(info.getUri(), info.getPath(), info.getName(), info.getLength());
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        }));
+        toolBtnList.add(new CustomToolBtn(new BIMResultCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean aBoolean) {
+                sendCustomMessage();
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        }));
+        return toolBtnList;
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         BIMLog.i(TAG, "onConfigurationChanged() newConfig: " + newConfig);
-    }
-
-    private void initInputView() {
-        inPutView.setListener(new VEInPutView.OnInputListener() {
-            @Override
-            public void onSendClick(String text) {
-                BIMLog.i(TAG, "onSendClick() text: " + text);
-                if (inPutView.getRefMessage() != null) {
-                    //发送引用消息
-                    sendRefMessage(text, inPutView.getRefMessage(), new ArrayList<>(mentionIds));
-                } else {
-                    if (mentionIds.isEmpty()) {
-                        sendTextMessage(text);
-                    } else {
-                        sendMentionTextMessage(text, new ArrayList<>(mentionIds));
-                    }
-                }
-                mentionIds.clear();
-            }
-
-            @Override
-            public void onAtClick() {
-                BIMLog.i(TAG, "onAtClick()");
-                BIMGroupMemberListActivity.startForResult(BIMMessageListFragment.this, conversationId, REQUEST_CODE_SELECT_USER_FOR_AT);
-            }
-
-            @Override
-            public void onAudioStart() {
-                BIMLog.i(TAG, "onAudioStart()");
-                requestPermission(new String[]{Manifest.permission.RECORD_AUDIO,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE}, (isAllGranted, permissions, grantResults) -> {
-                    if (isAllGranted) {
-                        if (voiceRecordManager == null) {
-                            voiceRecordManager = new VoiceRecordManager();
-                        }
-                        voiceRecordManager.reset(FileUtils.getAudioPath() + File.separator + System.currentTimeMillis() + ".aac");
-                        voiceRecordManager.start();
-                    }
-                });
-            }
-
-            @Override
-            public void onAudioEnd() {
-                BIMLog.i(TAG, "onAudioEnd()");
-                if (voiceRecordManager != null) {
-                    voiceRecordManager.stop();
-                    voiceRecordManager.release();
-                    sendVoiceMessage(voiceRecordManager.getPath());
-                }
-            }
-
-            @Override
-            public void onAudioCancel() {
-                BIMLog.i(TAG, "onAudioCancel()");
-                if (voiceRecordManager != null) {
-                    voiceRecordManager.stop();
-                    voiceRecordManager.release();
-                }
-            }
-
-            @Override
-            public void onSelectImageClick() {
-                requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, (isAllGranted, permissions, grantResults) -> {
-                    if (isAllGranted) {
-                        BIMMediaListActivity.startForResultMedia(BIMMessageListFragment.this, REQUEST_CODE_SELECT_MEDIA);
-                    }
-                });
-            }
-
-            @Override
-            public void onTakePhotoClick() {
-                requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE}, (isAllGranted, permissions, grantResults) -> {
-                    if (isAllGranted) {
-                        startIntentToTakePhoto();
-                    }
-                });
-            }
-
-            @Override
-            public void onFileClick() {
-                requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, (isAllGranted, permissions, grantResults) -> {
-                    if (isAllGranted) {
-                        startIntentToTakeFile();
-                    }
-                });
-            }
-
-            @Override
-            public void onCustomClick() {
-                sendCustomMessage();
-            }
-        });
-    }
-
-
-    private void requestPermission(String[] permission, BIMPermissionController.IPermissionReqListener listener) {
-        BIMPermissionController.checkPermission(getActivity(), permission, listener);
-    }
-
-
-    private void startIntentToTakeFile() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");//设置类型，我这里是任意类型，任意后缀的可以这样写。
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, REQUEST_CODE_SELECT_FILE);
     }
 
     private void refreshConversation() {
@@ -343,69 +293,14 @@ public class BIMMessageListFragment extends Fragment {
         BIMClient.getInstance().removeMessageListener(receiveMessageListener);
     }
 
-    private void startIntentToTakePhoto() {
-        Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String imageFileName = String.format("JPEG_%s.jpg", timeStamp);
-        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File tempFile = new File(storageDir, imageFileName);
-        takePhotoPath = tempFile.getAbsolutePath();
-        Uri uri = FileProvider.getUriForFile(getActivity(), "com.bytedance.im.app.fileprovider", tempFile);
-        captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        captureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        startActivityForResult(captureIntent, REQUEST_CODE_TAKE_PHOTO);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_CODE_SELECT_MEDIA) {
-                //选图片
-                MediaInfo info = (MediaInfo) data.getParcelableExtra(BIMMediaListActivity.RESULT_KEU);
-                if (info.getFileType() == MediaInfo.MEDIA_TYPE_IMAGE) {
-                    sendImageMessage(info.getFilePath());
-                } else {
-                    sendVideoMessage(info.getFilePath());
-                }
-            } else if (requestCode == REQUEST_CODE_TAKE_PHOTO) {
-                //拍照
-                sendImageMessage(takePhotoPath);
-            } else if (requestCode == REQUEST_CODE_SELECT_FILE) {
-                //选文件
-                if (data != null && data.getData() != null) {
-                    Uri uri = data.getData();
-                    //需要给权限，不然关闭页面不会继续上传
-                    getActivity().grantUriPermission(getActivity().getPackageName(), uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    //存在获取不到path的情况，所以直接用uri上传
-                    String path = FilePathUtils.getPath(getActivity(), uri);
-                    long length = FileUtils.getLengthFromUri(getActivity(), uri);
-                    String name = FileUtils.getFileNameFromUri(getActivity(), uri);
-                    sendFileMessage(uri, path, name, length);
-                }
-            } else if (requestCode == REQUEST_CODE_SELECT_USER_FOR_AT) {
-                //选成员
-                List<Long> selectUid = (List<Long>) data.getSerializableExtra(BIMGroupMemberListActivity.RESULT_ID_LIST);
-                StringBuffer mentionStr = new StringBuffer();
-                for (long uid : selectUid) {
-                    BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(uid);
-                    mentionStr.append(" ");
-                    mentionStr.append("@");
-                    mentionStr.append("用户").append(uid);
-                    mentionStr.append(" "); //用空格区分@的内容
-                    mentionIds.add(uid);
-                }
-                StringBuffer stringBuffer = new StringBuffer(inPutView.getmInputEt().getText());
-                stringBuffer.deleteCharAt(inPutView.getmInputEt().getText().length() - 1);
-                stringBuffer.append(mentionStr);
-                inPutView.getmInputEt().setText(stringBuffer.toString());
-                Selection.setSelection(inPutView.getmInputEt().getText(), inPutView.getmInputEt().getText().length()); //移动光标到尾部
-            } else {
-                if (msgOptionMenu != null) {
-                    //长按弹窗处理
-                    msgOptionMenu.onActivityResult(requestCode, resultCode, data);
-                }
-            }
+        inPutView.onActivityResult(requestCode, resultCode, data);
+        if (msgOptionMenu != null) {
+            //长按弹窗处理
+            msgOptionMenu.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -413,7 +308,7 @@ public class BIMMessageListFragment extends Fragment {
      * 从最新消息初始化
      */
     private void initOlderDirection() {
-        BIMLog.i(TAG,"initOlderDirection()");
+        BIMLog.i(TAG, "initOlderDirection()");
         loadOlderData(new BIMSimpleCallback() {
             @Override
             public void onSuccess() {
@@ -433,7 +328,7 @@ public class BIMMessageListFragment extends Fragment {
      * @param startMessage
      */
     private void initBothDirectData(BIMMessage startMessage) {
-        BIMLog.i(TAG,"initBothDirectData()");
+        BIMLog.i(TAG, "initBothDirectData()");
         adapter.insertOrUpdateMessage(startMessage); //先插入第一条锚点消息
         CountDownLatch countDownLatch = new CountDownLatch(2);
         loadOlderData(new BIMSimpleCallback() {
@@ -625,7 +520,7 @@ public class BIMMessageListFragment extends Fragment {
     private void sendCustomMessage() {
         BIMShareElement shareVEContent = new BIMShareElement();
         shareVEContent.setLink("https://www.volcengine.com/");
-        shareVEContent.setText("欢迎体验火山引擎即时通讯IM Demo");
+        shareVEContent.setText("欢迎体验火山引擎即时通信IM Demo");
         BIMMessage customMessage = BIMClient.getInstance().createCustomMessage(BIMMessageManager.getInstance().encode(shareVEContent));
         sendMessage(customMessage);
     }
@@ -760,8 +655,10 @@ public class BIMMessageListFragment extends Fragment {
     }
 
     private void scrollBottom() {
-        BIMLog.i(TAG,"scrollBottom()");
-        recyclerView.scrollToPosition(0);
+        BIMLog.i(TAG, "scrollBottom()");
+        QuickSmoothScroller quickSmoothScroller = new QuickSmoothScroller(recyclerView.getContext());
+        quickSmoothScroller.setTargetPosition(0);
+        recyclerView.getLayoutManager().startSmoothScroll(quickSmoothScroller);
     }
 
     public static class CenterSmoothScroller extends LinearSmoothScroller {
@@ -777,6 +674,18 @@ public class BIMMessageListFragment extends Fragment {
         @Override
         public int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int snapPreference) {
             return (boxStart + (boxEnd - boxStart) / 2) - (viewStart + (viewEnd - viewStart) / 2);
+        }
+
+        @Override
+        protected int calculateTimeForScrolling(int dx) {
+            return 1;
+        }
+    }
+
+    public static class QuickSmoothScroller extends LinearSmoothScroller{
+
+        public QuickSmoothScroller(Context context) {
+            super(context);
         }
 
         @Override

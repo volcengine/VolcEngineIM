@@ -32,7 +32,7 @@
         <activity
             android:name=".live.chatRoom.VELiveGroupChatRoomActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".live.conversation.VELiveGroupListActivity"
             android:screenOrientation="portrait" />
@@ -51,7 +51,7 @@
         <activity
             android:name=".message.VEMessageListActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustNothing"
             android:launchMode="singleTask">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
