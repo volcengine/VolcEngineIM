@@ -48,10 +48,11 @@
     NSMutableString *systemMsg = [@"" mutableCopy];
     for (VEIMDemoUser *user in users) {
         [set addObject:@(user.userID)];
+        NSString *userName = [@"用户" stringByAppendingString:@(user.userID).stringValue];
         if (users.lastObject != user) {
-            [systemMsg appendFormat:@"%@、",user.name];
+            [systemMsg appendFormat:@"%@、", userName];
         }else{
-            [systemMsg appendFormat:@"%@退出群聊",user.name];
+            [systemMsg appendFormat:@"%@退出群聊", userName];
         }
     }
     

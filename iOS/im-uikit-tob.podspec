@@ -9,7 +9,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "im-uikit-tob"
-  spec.version      = "1.5.0"
+  spec.version      = "1.6.0"
   spec.summary      = "IM UIKit"
   spec.description  = <<-DESC
        TODO: Add long description of the pod here.
@@ -20,7 +20,7 @@ Pod::Spec.new do |spec|
   spec.author             = { "yangzhanjiang" => "yangzhanjiang@bytedance.com" }
   spec.ios.deployment_target = '9.0'
   spec.source           = { :git => 'git@github.com:volcengine/VolcEngineIM.git', :tag => spec.version.to_s }
-
+  spec.ios.deployment_target = '11.0'
   spec.source_files  = '**/BIMUIKit/**/*.{h,m,c}'
 
   spec.resource_bundles = {
@@ -34,7 +34,7 @@ Pod::Spec.new do |spec|
   spec.dependency 'Masonry'
   spec.dependency 'MJRefresh'
   spec.dependency 'SDWebImage'
-  spec.dependency 'imsdk-tob', '1.5.0'
+  #spec.dependency 'imsdk-tob', '1.5.0'
 
   spec.requires_arc = true
 

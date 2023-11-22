@@ -17,7 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)agreeUserPirvacyAgreement;
 - (void)showLoginVC;
 - (void)checkUserExist:(long long)uid completion:(void (^)(BOOL exist, NSError *error))completion;
-- (void)registerAccountSDK;
 @end
 
 NS_ASSUME_NONNULL_END

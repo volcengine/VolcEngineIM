@@ -38,6 +38,7 @@ typedef enum : NSUInteger {
     VEIMDemoErrorTypeFormatError = 3200,
     VEIMDemoErrorTypeNetworkError,
     VEIMDemoErrorTypeParamsError,
+    VEIMDemoErrorTypeRequestError,
 } VEIMDemoErrorType;
 
 typedef NS_ENUM(NSInteger, VEIMDemoChatType) {

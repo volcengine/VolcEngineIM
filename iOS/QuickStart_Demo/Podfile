@@ -1,7 +1,7 @@
 source 'https://github.com/volcengine/volcengine-specs.git'
 source 'https://github.com/CocoaPods/Specs.git'
 
- platform :ios, '9.0'
+ platform :ios, '11.0'
 
 target 'ByteBusiness' do
   # Comment the next line if you don't want to use dynamic frameworks
@@ -9,7 +9,7 @@ target 'ByteBusiness' do
 
   # Pods for VEIMDemo
   
-  pod 'im-uikit-tob', '1.5.0'
+  pod 'im-uikit-tob', '1.6.0-alpha.0'
 #  pod 'im-uikit-tob', :path=>'../'
   
 #    三方库

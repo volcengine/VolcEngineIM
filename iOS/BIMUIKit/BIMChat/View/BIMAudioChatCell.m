@@ -182,7 +182,7 @@
             if (item != nil) {
                 if (self.file.isExpired) {
                     kWeakSelf(self);
-                    [[BIMClient sharedInstance] refreshMediaMessage:self.message completion:^(BIMError * _Nullable error) {
+                    [self refreshMediaMessage:self.message completion:^(BIMError * _Nullable error) {
                         kStrongSelf(self);
                         if (error) {
                             [BIMToastView toast:[NSString stringWithFormat:@"无法播放，URL错误:%@",self.file.url]];
@@ -209,6 +209,15 @@
             [self.delegate cell:self didClickImageContent:self.message];
         }
     });
+}
+
+- (void)refreshMediaMessage:(BIMMessage *)message completion:(BIMCompletion)completion
+{
+    if (self.converstaion.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        [[BIMClient sharedInstance] refreshLiveGroupMediaMessage:message completion:completion];
+    } else {
+        [[BIMClient sharedInstance] refreshMediaMessage:message completion:completion];
+    }
 }
 
 - (void)startAnimation{

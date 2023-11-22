@@ -525,6 +525,20 @@ static CGFloat textHei = 0;
 
 - (void)textViewDidChange:(UITextView *)textView
 {
+    // 判断是否存在高亮字符，如果有，则不进行字数统计和字符串截断
+    UITextRange *selectedRange = textView.markedTextRange;
+    UITextPosition *position = [textView positionFromPosition:selectedRange.start offset:0];
+    NSInteger maxWordLimit = self.maxWordLimit;
+    // 判断是否超过最大字数限制，如果超过就截断
+    if (!position && maxWordLimit > 0 && textView.text.length > maxWordLimit) {
+        UITextRange *range = textView.selectedTextRange;
+        textView.text = [textView.text substringToIndex:maxWordLimit];
+        dispatch_async(dispatch_get_main_queue(), ^{ // 原因不明，需要异步才能成功
+            textView.selectedTextRange = range;
+        });
+    }
+    
+    
     CGRect textViewFrame = self.tempTextView.frame;
     CGSize textSize = [self.tempTextView sizeThatFits:CGSizeMake(CGRectGetWidth(textViewFrame), CGFLOAT_MAX)];
 
@@ -619,7 +633,7 @@ static CGFloat textHei = 0;
             NSDictionary *content = @{
                 @"type" : @1,
                 @"link" : @"https://www.volcengine.com/",
-                @"text" : @"欢迎体验火山引擎即时通IM Demo" 
+                @"text" : @"欢迎体验火山引擎即时通信IM Demo"
             };
             BIMMessage *sendMsg = [[BIMClient sharedInstance] createCustomMessage:content];
             if (self.delegate && [self.delegate respondsToSelector:@selector(inputToolViewSendMessage:)]) {
@@ -915,26 +929,23 @@ static CGFloat textHei = 0;
     if (!_menuMAry) {
         _menuMAry = [NSMutableArray array];
         
-        // 直播群只保留“自定义消息”
-        if (self.convType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
-            BIMInputMenuModel *phoneModel = [[BIMInputMenuModel alloc] init];
-            phoneModel.titleStr = @"照片";
-            phoneModel.iconStr = @"icon_photo";
-            phoneModel.type = BIMInputMenuTypeAlbum;
-            [_menuMAry btd_addObject:phoneModel];
-            
-            BIMInputMenuModel *cameraModel = [[BIMInputMenuModel alloc] init];
-            cameraModel.titleStr = @"拍摄";
-            cameraModel.iconStr = @"icon_camera";
-            cameraModel.type = BIMInputMenuTypeCamera;
-            [_menuMAry btd_addObject:cameraModel];
-            
-            BIMInputMenuModel *fileModel = [[BIMInputMenuModel alloc] init];
-            fileModel.titleStr = @"文件";
-            fileModel.iconStr = @"icon_send_file";
-            fileModel.type = BIMInputMenuTypeFile;
-            [_menuMAry btd_addObject:fileModel];
-        }
+        BIMInputMenuModel *phoneModel = [[BIMInputMenuModel alloc] init];
+        phoneModel.titleStr = @"照片";
+        phoneModel.iconStr = @"icon_photo";
+        phoneModel.type = BIMInputMenuTypeAlbum;
+        [_menuMAry btd_addObject:phoneModel];
+        
+        BIMInputMenuModel *cameraModel = [[BIMInputMenuModel alloc] init];
+        cameraModel.titleStr = @"拍摄";
+        cameraModel.iconStr = @"icon_camera";
+        cameraModel.type = BIMInputMenuTypeCamera;
+        [_menuMAry btd_addObject:cameraModel];
+        
+        BIMInputMenuModel *fileModel = [[BIMInputMenuModel alloc] init];
+        fileModel.titleStr = @"文件";
+        fileModel.iconStr = @"icon_send_file";
+        fileModel.type = BIMInputMenuTypeFile;
+        [_menuMAry btd_addObject:fileModel];
 #ifdef UI_INTERNAL
         BIMInputMenuModel *customCoverModel = [[BIMInputMenuModel alloc] init];
         customCoverModel.titleStr = @"自定义消息";
@@ -1089,7 +1100,7 @@ static CGFloat textHei = 0;
 {
     if (!_addBtn) {
         _addBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_addBtn setImage:kIMAGE_IN_BUNDLE_NAMED(self.convType == BIM_CONVERSATION_TYPE_LIVE_GROUP ? @"icon_huoshan" : @"icon_add") forState:UIControlStateNormal];
+        [_addBtn setImage:kIMAGE_IN_BUNDLE_NAMED(@"icon_add") forState:UIControlStateNormal];
         [_addBtn addTarget:self action:@selector(showMoreMenuAction:) forControlEvents:UIControlEventTouchUpInside];
     }
 
@@ -1199,44 +1210,46 @@ static CGFloat textHei = 0;
 
     [self.textAudioBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(13);
-        make.width.height.mas_equalTo(self.convType == BIM_CONVERSATION_TYPE_LIVE_GROUP ? 0 : 24);
+        make.width.height.mas_equalTo(24);
         make.bottom.mas_equalTo(-16);
     }];
 
     if (self.taType == IMTextAudioTypeText) {
         [self.tempTextView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            UIView *rightView = self.convType == BIM_CONVERSATION_TYPE_LIVE_GROUP ? self.priorityBtn : self.emojiBtn;
             make.left.equalTo(self.textAudioBtn.mas_right).offset(12);
             make.bottom.mas_equalTo(-8);
             make.top.mas_equalTo(8);
             make.height.mas_equalTo(textViewHei);
-            UIView *rightView = self.convType == BIM_CONVERSATION_TYPE_LIVE_GROUP ? self.priorityBtn : self.emojiBtn;
             make.right.equalTo(rightView.mas_left).offset(-8);
         }];
     } else if (self.taType == IMTextAudioTypeAudio) {
         [self.recordBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
+            UIView *rightView = self.convType == BIM_CONVERSATION_TYPE_LIVE_GROUP ? self.priorityBtn : self.emojiBtn;
             make.left.equalTo(self.textAudioBtn.mas_right).offset(12);
             make.bottom.mas_equalTo(-8);
             make.top.mas_equalTo(8);
             make.height.mas_equalTo(kMinHei);
-            make.right.equalTo(self.emojiBtn.mas_left).offset(-16);
+            make.right.equalTo(rightView.mas_left).offset(-16);
         }];
     }
     
     if (self.convType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
         [self.priorityBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self.tempTextView.mas_right).offset(12);
-            
+            UIView *leftView = self.taType == IMTextAudioTypeText ? self.tempTextView : self.recordBtn;
+            make.left.equalTo(leftView.mas_right).offset(12);
             make.width.height.mas_equalTo(24);
             make.bottom.mas_equalTo(-16);
         }];
     }
 
     [self.emojiBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
-        UIView *leftView = self.convType == BIM_CONVERSATION_TYPE_LIVE_GROUP ? self.priorityBtn : self.tempTextView;
         if (self.taType == IMTextAudioTypeText) {
+            UIView *leftView = self.convType == BIM_CONVERSATION_TYPE_LIVE_GROUP ? self.priorityBtn : self.tempTextView;
             make.left.equalTo(leftView.mas_right).offset(12);
         } else if (self.taType == IMTextAudioTypeAudio) {
-            make.left.equalTo(self.recordBtn.mas_right).offset(12);
+            UIView *leftView = self.convType == BIM_CONVERSATION_TYPE_LIVE_GROUP ? self.priorityBtn : self.recordBtn;
+            make.left.equalTo(leftView.mas_right).offset(12);
         }
 
         make.width.height.mas_equalTo(24);

@@ -217,6 +217,7 @@
     self.inputTool = [[BIMInputToolView alloc] initWithConvType:self.conversation.conversationType];
     self.inputTool.backgroundColor = kWhiteColor;
     self.inputTool.delegate = self;
+    self.inputTool.maxWordLimit = 500;
     [self.view addSubview:self.inputTool];
     
     self.holderView = [[UIView alloc] init];
@@ -288,7 +289,7 @@
     BIMVideoElement *element = message.element;
     if (element.isExpired) {
         @weakify(self);
-        [[BIMClient sharedInstance] refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
+        [self refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
             @strongify(self);
             if (error) {
                 [BIMToastView toast:@"播放链接错误，无法播放"];
@@ -690,9 +691,11 @@
             if (hasLocalImage && cell.imageContent.image) {
                 [BIMScanImage scanBigImageWithImageView:cell.imageContent originImage:cell.imageContent.image];
             } else {
+                @weakify(self);
                 [BIMScanImage scanBigImageWithImageView:cell.imageContent originImage:file.originImg.url secretKey:nil completion:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                    @strongify(self);
                     if (error) {
-                        [[BIMClient sharedInstance] refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
+                        [self refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
                             if (error) {
                                 [BIMToastView toast:[NSString stringWithFormat:@"加载图片失败：%@",error.localizedDescription]];
                             } else {
@@ -707,7 +710,17 @@
                 }];
             }
         }
+        [self.inputTool revertToTheOriginalType];
     });
+}
+
+- (void)refreshMediaMessage:(BIMMessage *)message completion:(BIMCompletion)completion
+{
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        [[BIMClient sharedInstance] refreshLiveGroupMediaMessage:message completion:completion];
+    } else {
+        [[BIMClient sharedInstance] refreshMediaMessage:message completion:completion];
+    }
 }
 
 - (void)cell:(BIMCustomChatCell *)cell didClickLink:(NSString *)link{
@@ -723,7 +736,7 @@
         return;
     }
     if (error.code == SDWebImageErrorInvalidDownloadStatusCode) {
-        [[BIMClient sharedInstance] refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
+        [self refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
             if (error) {
                 [BIMToastView toast:error.localizedDescription];
             }

@@ -38,6 +38,7 @@ typedef NS_ENUM(NSUInteger, BIMInputToolPriority) {
 @property (nonatomic, strong) BIMMessage *referMessage;
 @property (nonatomic, strong) NSString *referMessageHint;
 @property (nonatomic, assign) BIMInputToolPriority priority;
+@property (nonatomic, assign) NSInteger maxWordLimit;
 
 - (instancetype)initWithConvType:(BIMConversationType)type;
 

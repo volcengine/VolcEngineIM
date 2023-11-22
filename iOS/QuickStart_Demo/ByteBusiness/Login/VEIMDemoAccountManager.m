@@ -50,9 +50,4 @@
     }
 }
 
-- (void)registerAccountSDK
-{
-    
-}
-
 @end
