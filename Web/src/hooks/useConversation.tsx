@@ -64,7 +64,9 @@ const useConversation = () => {
       setCurrentConversation(payload);
       await sendSystemMessage(
         payload,
-        `${ACCOUNTS_INFO[bizExt.userId].name} 邀请 ${ids.map(id => ACCOUNTS_INFO[id]?.name).join('、')} 加入群聊`
+        `${ACCOUNTS_INFO[bizExt.userId].realName} 邀请 ${ids
+          .map(id => ACCOUNTS_INFO[id]?.realName)
+          .join('、')} 加入群聊`
       );
       return true;
     } catch (e) {
@@ -123,7 +125,7 @@ const useConversation = () => {
     const conv = getConversation(id);
 
     if (conv?.id) {
-      await sendSystemMessage(conv, `${ACCOUNTS_INFO[userId]?.name} 退出群聊`);
+      await sendSystemMessage(conv, `${ACCOUNTS_INFO[userId]?.realName} 退出群聊`);
       await bytedIMInstance?.leaveConversation({
         conversation: conv,
       });

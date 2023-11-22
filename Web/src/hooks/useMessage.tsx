@@ -51,7 +51,7 @@ const useMessage = () => {
    * @param message
    */
   const resendMessage = async (message: Message) => {
-    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message }));
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
   };
 
   async function insertAliasExtForMassChat(ext: {}) {
@@ -66,6 +66,7 @@ const useMessage = () => {
         ext[EXT_AVATAR_URL] = avatarUrl;
       } catch (e) {}
     }
+    return ext;
   }
 
   /**
@@ -104,9 +105,13 @@ const useMessage = () => {
         displayType: 'media',
         onUploadProcess: res => setFileUploadProcess(cur => ({ ...cur, [message.clientId]: res })),
       },
+      ext: await insertAliasExtForMassChat({}),
     });
+    if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
+      bytedIMInstance?.event?.emit?.(IMEvent.MessageUpsert, null, message);
+    }
 
-    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message }));
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
   };
 
   /**
@@ -126,13 +131,16 @@ const useMessage = () => {
         encrypt: encrypt ? true : undefined,
         onUploadProcess: res => setFileUploadProcess(cur => ({ ...cur, [message.clientId]: res })),
       },
-      ext: {
+      ext: await insertAliasExtForMassChat({
         's:file_ext_key_original_width': width?.toString(),
         's:file_ext_key_original_height': height?.toString(),
-      },
+      }),
     });
+    if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
+      bytedIMInstance?.event?.emit?.(IMEvent.MessageUpsert, null, message);
+    }
 
-    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message }));
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
     setTimeout(() => {
       URL.revokeObjectURL(objectUrl);
     });
@@ -147,7 +155,6 @@ const useMessage = () => {
       calcVideoInstance = new CalcVideo();
     }
     const { width, height, duration, coverURL } = (await calcVideoInstance.loadVideo(file, 2)) || {};
-
     const message = await bytedIMInstance.createVideoMessage({
       conversation: currentConversation,
       fileInfo: {
@@ -156,15 +163,18 @@ const useMessage = () => {
         displayType: 'media',
         onUploadProcess: res => setFileUploadProcess(cur => ({ ...cur, [message.clientId]: res })),
       },
-      ext: {
+      ext: await insertAliasExtForMassChat({
         duration: duration?.toString(),
         // coverURL,
         original_width: width?.toString(),
         original_height: height?.toString(),
-      },
+      }),
     });
+    if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
+      bytedIMInstance?.event?.emit?.(IMEvent.MessageUpsert, null, message);
+    }
 
-    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message }));
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
   };
 
   /**
@@ -180,8 +190,13 @@ const useMessage = () => {
         audioDuration: duration,
         onUploadProcess: res => setFileUploadProcess(cur => ({ ...cur, [message.clientId]: res })),
       },
+      ext: await insertAliasExtForMassChat({}),
     });
-    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message }));
+    if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
+      bytedIMInstance?.event?.emit?.(IMEvent.MessageUpsert, null, message);
+    }
+
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
   };
 
   /**
@@ -197,7 +212,7 @@ const useMessage = () => {
         text,
       }),
     });
-    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message }));
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
   };
 
   /**
@@ -211,7 +226,7 @@ const useMessage = () => {
       content: JSON.stringify({
         type: 1,
         link: 'https://www.volcengine.com/',
-        text: '欢迎体验即时通讯IM demo',
+        text: '欢迎体验火山引擎即时通讯 IM demo',
       }),
       ext: ext,
     });

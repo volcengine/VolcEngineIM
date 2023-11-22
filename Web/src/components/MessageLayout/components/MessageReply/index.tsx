@@ -35,7 +35,7 @@ const MessageReply: FC<MessageReplyProps> = props => {
   return (
     <MessageReplyBox className="message-header reply-header">
       <div className="reply-title">
-        <div className="reply-person">{getReplyHeaderText()}&nbsp;</div>
+        {sender && <div className="reply-person">{getReplyHeaderText()}&nbsp;</div>}
         <div className="reply-content">{getReplyContent(message)}</div>
       </div>
     </MessageReplyBox>

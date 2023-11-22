@@ -17,6 +17,10 @@ const FileButton: FC<FileButtonProps> = props => {
   const handleChange = async e => {
     const { files } = e.target;
     if (files?.[0]) {
+      if (files?.[0].size > 1024 * 1024 * 50) {
+        Message.error({ content: '文件大小超过限制', position: 'bottom' });
+        return;
+      }
       try {
         await sendMessage?.(files?.[0]);
       } catch (err) {
