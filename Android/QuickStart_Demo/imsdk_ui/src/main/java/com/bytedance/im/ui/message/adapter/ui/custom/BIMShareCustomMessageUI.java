@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
@@ -19,7 +20,7 @@ public class BIMShareCustomMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public void onBindView(View v, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
+    public void onBindView(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
         TextView tvTitle = v.findViewById(R.id.tv_title);
         TextView tvLink = v.findViewById(R.id.tv_link);
         BIMMessage bimMessage = messageWrapper.getBimMessage();
@@ -36,12 +37,12 @@ public class BIMShareCustomMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public boolean onLongClickListener(View v, BIMMessageWrapper messageWrapper) {
+    public boolean onLongClickListener(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         return false;
     }
 
     @Override
-    public void onClick(View v, BIMMessageWrapper messageWrapper) {
+    public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         BIMShareElement content = (BIMShareElement) messageWrapper.getBimMessage().getElement();
         Intent intent = new Intent();
         intent.setAction("android.intent.action.VIEW");

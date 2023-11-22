@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
@@ -19,11 +20,21 @@ public class BIMGroupNotifyMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public void onBindView(View v, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
+    public void onBindView(BIMMessageViewHolder holder,View v, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
         TextView mContent = v.findViewById(R.id.tv_msg_system_content);
         BIMMessage bimMessage = messageWrapper.getBimMessage();
         BIMGroupNotifyElement content = (BIMGroupNotifyElement) bimMessage.getElement();
         mContent.setText(content.getText());
+    }
+
+    @Override
+    public boolean onLongClickListener(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
+        return false;
+    }
+
+    @Override
+    public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
+
     }
 
     @Override
@@ -36,15 +47,6 @@ public class BIMGroupNotifyMessageUI extends BaseCustomElementUI {
         return true;
     }
 
-    @Override
-    public boolean onLongClickListener(View v, BIMMessageWrapper messageWrapper) {
-        return false;
-    }
-
-    @Override
-    public void onClick(View v, BIMMessageWrapper messageWrapper) {
-
-    }
 
     @Override
     public boolean isEnableCopy(BIMMessage bimMessage) {

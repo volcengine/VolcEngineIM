@@ -23,6 +23,7 @@ import com.bytedance.im.core.api.enums.BIMMessageStatus;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
+import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
 import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
@@ -42,15 +43,14 @@ public class VideoMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public void onBindView(View itemView, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
+    public void onBindView(BIMMessageViewHolder holder,View itemView, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
         ImageView videoCover = itemView.findViewById(R.id.iv_video_cover);
         ImageView videoPlayIcon = itemView.findViewById(R.id.iv_play);
         TextView tvUploadStatus = itemView.findViewById(R.id.tv_upload_status);
         BIMMessage msg = messageWrapper.getBimMessage();
-        videoCover.setImageResource(R.drawable.icon_im_placehodler);
         BIMVideoElement videoElement = (BIMVideoElement) msg.getElement();
+        CircleProgressView circleProgressView = itemView.findViewById(R.id.pv_circle_view);
         if (msg.isSelf()) {
-            CircleProgressView circleProgressView = itemView.findViewById(R.id.pv_circle_view);
             if (videoElement.getProgress() > 0 && (msg.getMsgStatus() != BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS
                     || msg.getMsgStatus() != BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL)) {
                 circleProgressView.setVisibility(View.VISIBLE);
@@ -62,6 +62,10 @@ public class VideoMessageUI extends BaseCustomElementUI {
                 tvUploadStatus.setVisibility(View.GONE);
                 videoPlayIcon.setVisibility(View.VISIBLE);
             }
+        } else {
+            circleProgressView.setVisibility(View.GONE);
+            tvUploadStatus.setVisibility(View.GONE);
+            videoPlayIcon.setVisibility(View.VISIBLE);
         }
 
         int width = videoElement.getCoverImg().getWidth();
@@ -87,18 +91,18 @@ public class VideoMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public boolean onLongClickListener(View v, BIMMessageWrapper messageWrapper) {
+    public boolean onLongClickListener(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         return false;
     }
 
     @Override
-    public void onClick(View v, BIMMessageWrapper messageWrapper) {
+    public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         BIMVideoElement videoElement = (BIMVideoElement) messageWrapper.getBimMessage().getElement();
         if (messageWrapper.getBimMessage().isSelf() && !TextUtils.isEmpty(videoElement.getLocalPath())) {
             startPlay(v.getContext(), videoElement.getLocalPath());
         } else {
             if (videoElement.isExpired()) {
-                BIMClient.getInstance().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
+                holder.getOnOutListener().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
                     @Override
                     public void onSuccess(BIMMessage bimMessage) {
                         startPlay(v.getContext(),videoElement.getURL());
@@ -130,8 +134,11 @@ public class VideoMessageUI extends BaseCustomElementUI {
 
     private void showRemote(ImageView imageView, BIMMessage msg) {
         BIMVideoElement videoElement = (BIMVideoElement) msg.getElement();
+        Drawable placeDrawable = imageView.getDrawable();
         Glide.with(imageView.getContext())
                 .load(videoElement.getCoverImg().getURL())
+                .dontAnimate()
+                .placeholder(placeDrawable)
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {

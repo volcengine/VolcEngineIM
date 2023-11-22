@@ -6,9 +6,16 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 
 public class BIMMessageRecyclerView extends RecyclerView {
     private static final String TAG = "VEMessageRecyclerView";
+
+    public interface OnDispatchListener {
+        boolean dispatchTouchEvent(MotionEvent ev);
+    }
+
+    private OnDispatchListener onDispatchListener;
 
     public BIMMessageRecyclerView(@NonNull Context context) {
         super(context);
@@ -30,8 +37,21 @@ public class BIMMessageRecyclerView extends RecyclerView {
         int measureHeight = getMeasuredHeight();
         if (range > 0 && range < measureHeight) {
             linearLayoutManager.offsetChildrenVertical(range - measureHeight);
-        }else {
+        } else {
             linearLayoutManager.offsetChildrenVertical(0);
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (onDispatchListener != null) {
+            onDispatchListener.dispatchTouchEvent(ev);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+
+    public void setOnDispatchListener(OnDispatchListener onDispatchListener) {
+        this.onDispatchListener = onDispatchListener;
     }
 }

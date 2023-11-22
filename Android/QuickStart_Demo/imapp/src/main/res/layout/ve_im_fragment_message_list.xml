@@ -19,7 +19,7 @@
             android:padding="10dp"
             android:src="@drawable/icon_im_back_black"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/message_list_title"
@@ -29,30 +29,30 @@
             android:ellipsize="end"
             android:maxEms="10"
             android:maxLines="1"
+            android:text="54145432"
             android:textColor="@color/business_im_222"
             android:textSize="18sp"
-            android:text="54145432"
             android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:paddingLeft="5dp"
-            android:paddingBottom="2dp"
             android:id="@+id/live_group_online_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxEms="10"
             android:maxLines="1"
+            android:paddingLeft="5dp"
+            android:paddingBottom="2dp"
             android:text=""
             android:textColor="@color/business_im_222"
             android:textSize="10sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/message_list_title"
-            app:layout_constraintStart_toEndOf="@+id/message_list_title"/>
+            app:layout_constraintStart_toEndOf="@+id/message_list_title" />
 
         <ImageView
             android:id="@+id/message_list_more"
@@ -62,16 +62,16 @@
             android:layout_marginTop="5dp"
             android:padding="10dp"
             android:src="@drawable/icon_im_more"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.bytedance.im.app.live.chatRoom.VELiveGroupInputView
+        <com.bytedance.im.ui.message.adapter.ui.widget.input.VEInPutView
             android:id="@+id/inputView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

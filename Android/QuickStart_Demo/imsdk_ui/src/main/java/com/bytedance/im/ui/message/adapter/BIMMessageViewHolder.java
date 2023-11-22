@@ -37,15 +37,17 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
     private ImageView senStatus;
     private BIMMessageAdapter.OnMessageItemClickListener listener;
     private BIMMessageAdapter.OnMessageItemLongClickListener onMessageItemLongClickListener;
+    private BIMMessageAdapter.OnRefreshListener onRefreshListener;
     private View msgContainer;
     private TextView recall;
     private View headContainerRight;
     private View headContainerLeft;
 
-    public BIMMessageViewHolder(@NonNull View itemView, BIMMessageAdapter.OnMessageItemClickListener l, BIMMessageAdapter.OnMessageItemLongClickListener longClickListener) {
+    public BIMMessageViewHolder(@NonNull View itemView, BIMMessageAdapter.OnMessageItemClickListener l, BIMMessageAdapter.OnMessageItemLongClickListener longClickListener, BIMMessageAdapter.OnRefreshListener mediaMessageLoadListener) {
         super(itemView);
         listener = l;
         onMessageItemLongClickListener = longClickListener;
+        onRefreshListener = mediaMessageLoadListener;
         portraitLeft = itemView.findViewById(R.id.iv_msg_head_receive);
         portraitRight = itemView.findViewById(R.id.iv_msg_head_send);
         mTime = itemView.findViewById(R.id.tv_common_msg_time);
@@ -126,8 +128,6 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         if (curUserNameView != null) {
             curUserNameView.setText(userName);
         }
-        if (ui.needHorizonCenterParent())
-            ui.onBindView(itemView, wrapper, preWrapper);
         if (preWrapper != null) {
             if (Math.abs(wrapper.getBimMessage().getCreatedTime() - preWrapper.getBimMessage().getCreatedTime()) > MSG_TIME_INTERVAL) {
                 mTime.setVisibility(View.VISIBLE);
@@ -171,7 +171,7 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
                         listener.onResentClick(wrapper.getBimMessage());
                     }
                 } else if (id == R.id.container) {
-                    ui.onClick(itemView, wrapper);
+                    ui.onClick(BIMMessageViewHolder.this,itemView, wrapper);
                 }
             }
         };
@@ -183,7 +183,7 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         msgContainer.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (ui.onLongClickListener(v, wrapper)) {
+                if (ui.onLongClickListener(BIMMessageViewHolder.this,v, wrapper)) {
                     return true;
                 } else if (onMessageItemLongClickListener != null) {
                     return onMessageItemLongClickListener.onLongMessageItemClick(v, msgContainer, wrapper.getBimMessage());
@@ -191,5 +191,9 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
                 return true;
             }
         });
+    }
+
+    public BIMMessageAdapter.OnRefreshListener getOnOutListener() {
+        return onRefreshListener;
     }
 }

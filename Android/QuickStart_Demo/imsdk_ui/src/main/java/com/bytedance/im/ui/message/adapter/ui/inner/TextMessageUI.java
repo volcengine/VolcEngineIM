@@ -1,5 +1,6 @@
 package com.bytedance.im.ui.message.adapter.ui.inner;
 
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.emoji.EmojiManager;
+import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
 import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
@@ -30,7 +32,7 @@ public class TextMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public void onBindView(View v, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
+    public void onBindView(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper) {
         TextView msgContent = v.findViewById(R.id.tv_msg_text_content);
         TextView replayTxt = v.findViewById(R.id.tv_msg_replay_text_content);
         TextView msgReadInfo = v.findViewById(R.id.tv_read_info);
@@ -81,12 +83,12 @@ public class TextMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public boolean onLongClickListener(View v, BIMMessageWrapper message) {
+    public boolean onLongClickListener(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         return false;
     }
 
     @Override
-    public void onClick(View v, BIMMessageWrapper messageWrapper) {
+    public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         List<Long> mentionList = messageWrapper.getBimMessage().getMentionUIDList();
         StringBuilder builder = new StringBuilder("提醒的用户:");
         if (mentionList != null && !mentionList.isEmpty()) {

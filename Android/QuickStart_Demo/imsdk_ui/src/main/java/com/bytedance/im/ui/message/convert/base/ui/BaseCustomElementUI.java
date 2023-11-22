@@ -2,6 +2,7 @@ package com.bytedance.im.ui.message.convert.base.ui;
 
 import android.view.View;
 
+import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.core.api.model.BIMMessage;
 
@@ -18,7 +19,7 @@ public abstract class BaseCustomElementUI {
      * @param messageWrapper
      * @param preMessageWrapper
      */
-    public abstract void onBindView(View v, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper);
+    public abstract void onBindView(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper);
 
     /**
      * 长按监听
@@ -26,14 +27,14 @@ public abstract class BaseCustomElementUI {
      * @param messageWrapper
      * @return
      */
-    public abstract boolean onLongClickListener(View v, BIMMessageWrapper messageWrapper);
+    public abstract boolean onLongClickListener(BIMMessageViewHolder holder,View v, BIMMessageWrapper messageWrapper);
 
     /**
      * 点击监听
      * @param v
      * @param messageWrapper
      */
-    public abstract void onClick(View v, BIMMessageWrapper messageWrapper);
+    public abstract void onClick(BIMMessageViewHolder holder,View v, BIMMessageWrapper messageWrapper);
 
     /**
      * 复制内容

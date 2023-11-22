@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.bytedance.im.ui.message.adapter.ui.widget.VEInPutView
+        <com.bytedance.im.ui.message.adapter.ui.widget.input.VEInPutView
             android:id="@+id/inputView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
