@@ -34,7 +34,7 @@ Pod::Spec.new do |spec|
   spec.dependency 'Masonry'
   spec.dependency 'MJRefresh'
   spec.dependency 'SDWebImage'
-  #spec.dependency 'imsdk-tob', '1.5.0'
+  #spec.dependency 'imsdk-tob', '1.6.0'
 
   spec.requires_arc = true
 
