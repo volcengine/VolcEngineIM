@@ -1,7 +1,7 @@
 #快速使用Demo
 ##添加配置
 - 配置 APPID
-VEIMApplication.java
+  com.bytedance.im.app.constants.Constants.java
 ```java
 //替换自己的 appID
     public static final int APP_ID = 0;
@@ -10,5 +10,5 @@ VEIMApplication.java
 HttpClient.java
 ```java
 //替换自己的获取token url
-    public static final String TOKEN_API = "";
+    public static final String token = "";
 ```
