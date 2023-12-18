@@ -40,9 +40,8 @@ const Home: React.FC = () => {
         // @ts-ignore
         type: conv.type
       });
-      const { statusCode, statusMsg } = await bytedIMInstance.addParticipants({
-        conversation: conv,
-        participant: [user.id]
+      const { statusCode, statusMsg } = await bytedIMInstance.joinLiveGroup({
+        conversation: conv
       });
 
       if (
@@ -79,18 +78,12 @@ const Home: React.FC = () => {
       return;
     }
     const init = async () => {
-      let cursor;
-      let hasMore = true;
       let list = [];
-      while (hasMore) {
-        const result = await bytedIMInstance.getLiveConversationListOnline?.({
-          cursor
-        });
+      const result = await bytedIMInstance.getLiveConversationListOnline?.({
+        limit: 100
+      });
 
-        list = list.concat(result.conversation);
-        hasMore = result.hasMore;
-        cursor = result.cursor;
-      }
+      list = list.concat(result.conversation);
 
       setConversationList(list);
     };

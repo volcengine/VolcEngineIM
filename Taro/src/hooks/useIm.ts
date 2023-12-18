@@ -15,7 +15,7 @@ export const useIm = () => {
   const dispatch = useDispatch();
 
   const init = env => {
-    const option = IMCLOUD_CONFIG;
+    const option =  IMCLOUD_CONFIG;
     const imInstance = new BytedIM(
       {
         ...option,

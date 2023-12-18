@@ -51,7 +51,7 @@
     "@tarojs/runtime": "3.6.3",
     "@tarojs/shared": "3.6.3",
     "@tarojs/taro": "3.6.3",
-    "@volcengine/im-mp-sdk": "1.4.0",
+    "@volcengine/im-mp-sdk": "1.6.1",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.7",
     "ossaui": "^0.5.0",

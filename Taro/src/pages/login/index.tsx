@@ -43,15 +43,15 @@ const Index = () => {
     });
   }, [env, init]);
 
-    useEffect(() => {
-        // @ts-ignore
-        if (APP_ID === 0) {
-            Taro.showModal({
-                title: '未配置 APP_ID',
-                content: '请参考 README.md 步骤，在 src/constants.ts 配置自己的 APP_ID',
-            });
-        }
-    }, []);
+  useEffect(() => {
+    // @ts-ignore
+    if (APP_ID === 0) {
+      Taro.showModal({
+        title: '未配置 APP_ID',
+        content: '请参考 README.md 步骤，在 src/constants.ts 配置自己的 APP_ID'
+      });
+    }
+  }, []);
   return (
     <View className="login-wrapper">
       <View className="label">请选择当前登录账号:</View>
@@ -64,10 +64,10 @@ const Index = () => {
       </OsPicker>
 
       <OsRadio type="row">
-      <OsRadioOption value={env} optionValue="prod" onClick={setEnv} type="row">
+        <OsRadioOption value={env} optionValue="prod" onClick={setEnv} type="row">
           prod
-      </OsRadioOption>
-          {''}
+        </OsRadioOption>
+        { ''}
       </OsRadio>
 
       <View className="btn-wrapper" onClick={onLogin}>
