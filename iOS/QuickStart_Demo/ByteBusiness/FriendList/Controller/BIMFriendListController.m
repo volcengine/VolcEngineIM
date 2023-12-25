@@ -27,7 +27,7 @@
 @interface BIMFriendListController () <UITableViewDelegate, UITableViewDataSource, BIMFriendListUserCellDelegate, BIMFriendListDataSourceDelegate, UITextFieldDelegate>
 
 @property (nonatomic, strong) BIMFriendListDataSource *dataSource;
-@property (nonatomic, copy) NSArray<BIMFriendInfo *> *allFriends;
+@property (nonatomic, copy) NSArray<BIMUserFullInfo *> *allFriends;
 @property (nonatomic, copy) NSArray<NSArray *> *sectionData;
 @property (nonatomic, copy) NSArray *sectionTitles;
 @property (nonatomic, strong) dispatch_queue_t updateQueue;
@@ -105,7 +105,7 @@
 }
 
 // TODO: 后续可优化，增删改。增只对该分组进行排序，删定点删除不重新分组排序，改同增
-- (void)prepareAndDisplayFriendListDataWithAllFriends:(NSArray<BIMFriendInfo *> *)allFriends
+- (void)prepareAndDisplayFriendListDataWithAllFriends:(NSArray<BIMUserFullInfo *> *)allFriends
 {
     if (!self.allFriends) {
         self.allFriends = allFriends;
@@ -132,9 +132,12 @@
         }];
         
         // 分组
-        [allFriends enumerateObjectsUsingBlock:^(BIMFriendInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            NSString *displayName = (obj.alias && obj.alias.length) ? obj.alias : [NSString stringWithFormat:@"用户%@",@(obj.uid).stringValue];
-            NSString *firstLetter = [self getFirstPinyinLetterWithString:displayName];  
+        [allFriends enumerateObjectsUsingBlock:^(BIMUserFullInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            NSString *displayName = (obj.alias && obj.alias.length) ? obj.alias : obj.nickName;
+            if (!displayName.length) {
+                displayName = [NSString stringWithFormat:@"用户%@", @(obj.uid)];
+            }
+            NSString *firstLetter = [self getFirstPinyinLetterWithString:displayName];
             if ([localizedSectionsTitles containsObject:firstLetter]) {
                 [indexedData[[localizedSectionsTitles indexOfObject:firstLetter]] addObject:obj];
             } else {
@@ -145,7 +148,7 @@
         // 组内排序
         NSMutableArray<NSArray *> *indexedAndSortedData = [NSMutableArray arrayWithCapacity:indexedData.count];
         for (NSInteger i = 0; i < indexedData.count; i++) {
-            indexedAndSortedData[i] = [indexedData[i] sortedArrayUsingComparator:^NSComparisonResult(BIMFriendInfo *  _Nonnull obj1, BIMFriendInfo *  _Nonnull obj2) {
+            indexedAndSortedData[i] = [indexedData[i] sortedArrayUsingComparator:^NSComparisonResult(BIMUserFullInfo *  _Nonnull obj1, BIMUserFullInfo *  _Nonnull obj2) {
                 return [@(obj1.uid).stringValue localizedStandardCompare:@(obj2.uid).stringValue];
             }];
         }
@@ -190,6 +193,8 @@
         [headerCell configWithType:cellType];
         if (cellType == BIMFriendListHeaderApply) {
             [headerCell showBadgeWithNum:@(self.dataSource.unreadCount)];  // qfmark 展示好友申请未读数
+        } else {
+            [headerCell showBadgeWithNum:@0];
         }
         return headerCell;
     }

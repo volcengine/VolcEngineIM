@@ -21,9 +21,15 @@
 		2B3ABB872684642600B114E2 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB842684642600B114E2 /* Debug.xcconfig */; };
 		2B3ABB882684642600B114E2 /* Release_inhouse.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB852684642600B114E2 /* Release_inhouse.xcconfig */; };
 		2B3ABB892684642600B114E2 /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB862684642600B114E2 /* Release.xcconfig */; };
+		2B3BE00D2B0B38EE007D3C61 /* VEIMDemoConversationListSelectionCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B3BE00C2B0B38EE007D3C61 /* VEIMDemoConversationListSelectionCollectionView.m */; };
+		2B3BE0102B0B3B4A007D3C61 /* VEIMDemoConversationListSelectionCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B3BE00F2B0B3B4A007D3C61 /* VEIMDemoConversationListSelectionCollectionCell.m */; };
+		2B4927842B0B313200957C27 /* VEIMDemoAvatarSettingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4927832B0B313200957C27 /* VEIMDemoAvatarSettingCell.m */; };
+		2B49278D2B0B327200957C27 /* VEIMDemoAvatarSettingModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B49278C2B0B327200957C27 /* VEIMDemoAvatarSettingModel.m */; };
 		2B548E902A5D79E200FF7088 /* BIMFriendListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B548E8F2A5D79E200FF7088 /* BIMFriendListController.m */; };
 		2B548E952A5D7D9A00FF7088 /* BIMFriendListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B548E942A5D7D9A00FF7088 /* BIMFriendListDataSource.m */; };
 		2B548E9C2A5D905500FF7088 /* BIMFriendListHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B548E9B2A5D905500FF7088 /* BIMFriendListHeaderCell.m */; };
+		2B6CF11C2B065AAC00534D7F /* VEIMDemoSelectAvatarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CF11B2B065AAC00534D7F /* VEIMDemoSelectAvatarViewController.m */; };
+		2B6CF11F2B074C5E00534D7F /* VEIMDemoProfileEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CF11E2B074C5E00534D7F /* VEIMDemoProfileEditViewController.m */; };
 		2B817F8B2A5D59AF0004C404 /* VEIMDemoFriendListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B817F8A2A5D59AF0004C404 /* VEIMDemoFriendListController.m */; };
 		2B8AFFF62A48460600E25AA2 /* VEIMDemoSelectUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8AFFF52A48460600E25AA2 /* VEIMDemoSelectUserViewController.m */; };
 		2B8E543A292E734600A2A416 /* VEIMDemoConversationSettingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8E5439292E734600A2A416 /* VEIMDemoConversationSettingCell.m */; };
@@ -139,12 +145,24 @@
 		2B3ABB842684642600B114E2 /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		2B3ABB852684642600B114E2 /* Release_inhouse.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release_inhouse.xcconfig; sourceTree = "<group>"; };
 		2B3ABB862684642600B114E2 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		2B3BE00B2B0B38EE007D3C61 /* VEIMDemoConversationListSelectionCollectionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoConversationListSelectionCollectionView.h; sourceTree = "<group>"; };
+		2B3BE00C2B0B38EE007D3C61 /* VEIMDemoConversationListSelectionCollectionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoConversationListSelectionCollectionView.m; sourceTree = "<group>"; };
+		2B3BE00E2B0B3B4A007D3C61 /* VEIMDemoConversationListSelectionCollectionCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoConversationListSelectionCollectionCell.h; sourceTree = "<group>"; };
+		2B3BE00F2B0B3B4A007D3C61 /* VEIMDemoConversationListSelectionCollectionCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoConversationListSelectionCollectionCell.m; sourceTree = "<group>"; };
+		2B4927822B0B313200957C27 /* VEIMDemoAvatarSettingCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAvatarSettingCell.h; sourceTree = "<group>"; };
+		2B4927832B0B313200957C27 /* VEIMDemoAvatarSettingCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoAvatarSettingCell.m; sourceTree = "<group>"; };
+		2B49278B2B0B327200957C27 /* VEIMDemoAvatarSettingModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAvatarSettingModel.h; sourceTree = "<group>"; };
+		2B49278C2B0B327200957C27 /* VEIMDemoAvatarSettingModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoAvatarSettingModel.m; sourceTree = "<group>"; };
 		2B548E8E2A5D79E200FF7088 /* BIMFriendListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BIMFriendListController.h; sourceTree = "<group>"; };
 		2B548E8F2A5D79E200FF7088 /* BIMFriendListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BIMFriendListController.m; sourceTree = "<group>"; };
 		2B548E932A5D7D9A00FF7088 /* BIMFriendListDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BIMFriendListDataSource.h; sourceTree = "<group>"; };
 		2B548E942A5D7D9A00FF7088 /* BIMFriendListDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BIMFriendListDataSource.m; sourceTree = "<group>"; };
 		2B548E9A2A5D905500FF7088 /* BIMFriendListHeaderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BIMFriendListHeaderCell.h; sourceTree = "<group>"; };
 		2B548E9B2A5D905500FF7088 /* BIMFriendListHeaderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BIMFriendListHeaderCell.m; sourceTree = "<group>"; };
+		2B6CF11A2B065AAC00534D7F /* VEIMDemoSelectAvatarViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoSelectAvatarViewController.h; sourceTree = "<group>"; };
+		2B6CF11B2B065AAC00534D7F /* VEIMDemoSelectAvatarViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoSelectAvatarViewController.m; sourceTree = "<group>"; };
+		2B6CF11D2B074C5E00534D7F /* VEIMDemoProfileEditViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoProfileEditViewController.h; sourceTree = "<group>"; };
+		2B6CF11E2B074C5E00534D7F /* VEIMDemoProfileEditViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoProfileEditViewController.m; sourceTree = "<group>"; };
 		2B817F892A5D59AF0004C404 /* VEIMDemoFriendListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoFriendListController.h; sourceTree = "<group>"; };
 		2B817F8A2A5D59AF0004C404 /* VEIMDemoFriendListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoFriendListController.m; sourceTree = "<group>"; };
 		2B8AFFF42A48460600E25AA2 /* VEIMDemoSelectUserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoSelectUserViewController.h; sourceTree = "<group>"; };
@@ -454,6 +472,8 @@
 				2B0CF80D292E50DA007FC3DE /* VEIMDemoUserListItem.m */,
 				2B8E5438292E734600A2A416 /* VEIMDemoConversationSettingCell.h */,
 				2B8E5439292E734600A2A416 /* VEIMDemoConversationSettingCell.m */,
+				2B4927822B0B313200957C27 /* VEIMDemoAvatarSettingCell.h */,
+				2B4927832B0B313200957C27 /* VEIMDemoAvatarSettingCell.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -475,6 +495,17 @@
 				2B3ABB862684642600B114E2 /* Release.xcconfig */,
 			);
 			path = xcconfig;
+			sourceTree = "<group>";
+		};
+		2B3BE00A2B0B37E8007D3C61 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2B3BE00B2B0B38EE007D3C61 /* VEIMDemoConversationListSelectionCollectionView.h */,
+				2B3BE00C2B0B38EE007D3C61 /* VEIMDemoConversationListSelectionCollectionView.m */,
+				2B3BE00E2B0B3B4A007D3C61 /* VEIMDemoConversationListSelectionCollectionCell.h */,
+				2B3BE00F2B0B3B4A007D3C61 /* VEIMDemoConversationListSelectionCollectionCell.m */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		2B548E912A5D7D2D00FF7088 /* Controller */ = {
@@ -538,6 +569,8 @@
 				2B8E543D292E748D00A2A416 /* VEIMDemoSettingModel.m */,
 				2BB511EB2AC3446A00A4A34E /* VEIMDemoMemberModel.h */,
 				2BB511EC2AC3446A00A4A34E /* VEIMDemoMemberModel.m */,
+				2B49278B2B0B327200957C27 /* VEIMDemoAvatarSettingModel.h */,
+				2B49278C2B0B327200957C27 /* VEIMDemoAvatarSettingModel.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -569,18 +602,18 @@
 			isa = PBXGroup;
 			children = (
 				2BA90CD02921EB2600154F35 /* BDIMDebugNetworkRequestMonitor.h */,
-				2BA90CD22921EB2600154F35 /* BDIMDebugNetworkManager.m */,
 				2BA90CD32921EB2600154F35 /* BDIMDebugNetworkRequestCell.m */,
 				2BA90CD42921EB2600154F35 /* BDIMDebugNetworkRequestInfoView.h */,
 				2BA90CD52921EB2600154F35 /* BDIMNetworkConfig.plist */,
 				2BA90CD62921EB2600154F35 /* BDIMDebugNetworkEnvironmentController.m */,
 				2BA90CD72921EB2600154F35 /* BDIMDebugNetworkRequest.h */,
-				2BA90CD82921EB2600154F35 /* BDIMDebugNetworkManager.h */,
+				2BA90CDE2921EB2600154F35 /* BDIMDebugNetworkRequest.m */,
 				2BA90CD92921EB2600154F35 /* BDIMDebugNetworkRequestCell.h */,
 				2BA90CDA2921EB2600154F35 /* BDIMDebugNetworkRequestMonitor.m */,
 				2BA90CDC2921EB2600154F35 /* BDIMDebugNetworkRequestInfoView.m */,
 				2BA90CDD2921EB2600154F35 /* BDIMDebugNetworkEnvironmentController.h */,
-				2BA90CDE2921EB2600154F35 /* BDIMDebugNetworkRequest.m */,
+				2BA90CD82921EB2600154F35 /* BDIMDebugNetworkManager.h */,
+				2BA90CD22921EB2600154F35 /* BDIMDebugNetworkManager.m */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -691,6 +724,7 @@
 		2BA90D492921EB2700154F35 /* ConversationList */ = {
 			isa = PBXGroup;
 			children = (
+				2B3BE00A2B0B37E8007D3C61 /* Views */,
 				2BA90D4B2921EB2700154F35 /* Controllers */,
 			);
 			path = ConversationList;
@@ -779,8 +813,12 @@
 		2BA90D7C2921EB2800154F35 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				2BA90D7D2921EB2800154F35 /* VEIMDemoMyinfoController.m */,
 				2BA90D7E2921EB2800154F35 /* VEIMDemoMyinfoController.h */,
+				2BA90D7D2921EB2800154F35 /* VEIMDemoMyinfoController.m */,
+				2B6CF11A2B065AAC00534D7F /* VEIMDemoSelectAvatarViewController.h */,
+				2B6CF11B2B065AAC00534D7F /* VEIMDemoSelectAvatarViewController.m */,
+				2B6CF11D2B074C5E00534D7F /* VEIMDemoProfileEditViewController.h */,
+				2B6CF11E2B074C5E00534D7F /* VEIMDemoProfileEditViewController.m */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -788,8 +826,8 @@
 		2BA90D7F2921EB2800154F35 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				2BA90D802921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m */,
 				2BA90D812921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.h */,
+				2BA90D802921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m */,
 				2BC3D4852A4974F400457512 /* VEIMDemoAppInfoCell.h */,
 				2BC3D4862A4974F400457512 /* VEIMDemoAppInfoCell.m */,
 			);
@@ -864,6 +902,7 @@
 				25EE372A2433166D00AB5267 /* Resources */,
 				22330D1862241CE1AB0F4C2A /* [CP] Copy Pods Resources */,
 				C67D99022CDAAB876274E3D4 /* [CP] Embed Pods Frameworks */,
+				2B469D7E2B2B0E6100844755 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1025,6 +1064,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		2B469D7E2B2B0E6100844755 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh ${PODS_ROOT}/RangersAPM/RangersAPM/Core/APMPlus_DSYMUploader.sh \"520458\"\n";
+		};
 		C67D99022CDAAB876274E3D4 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1102,6 +1158,7 @@
 				2BB511ED2AC3446A00A4A34E /* VEIMDemoMemberModel.m in Sources */,
 				2BA90D8D2921EB2800154F35 /* BDIMDebugWeakProxy.m in Sources */,
 				2BA90D932921EB2800154F35 /* BDIMDebugBaseModel.m in Sources */,
+				2B6CF11C2B065AAC00534D7F /* VEIMDemoSelectAvatarViewController.m in Sources */,
 				2BA90DBD2921EB2800154F35 /* VEIMDemoNavigationViewController.m in Sources */,
 				2B977F2A2A678D9B00568407 /* VEIMDemoFriendBlackListController.m in Sources */,
 				2B548E9C2A5D905500FF7088 /* BIMFriendListHeaderCell.m in Sources */,
@@ -1113,7 +1170,9 @@
 				2B3182D72A7CA6D3006973CD /* UIAlertController+Dismiss.m in Sources */,
 				2BA90D8C2921EB2800154F35 /* UIView+BDIMDebugToast.m in Sources */,
 				2BA90D882921EB2800154F35 /* BDIMDebugNetworkRequestMonitor.m in Sources */,
+				2B49278D2B0B327200957C27 /* VEIMDemoAvatarSettingModel.m in Sources */,
 				2BA90D842921EB2800154F35 /* BDIMDebugNetworkManager.m in Sources */,
+				2B6CF11F2B074C5E00534D7F /* VEIMDemoProfileEditViewController.m in Sources */,
 				2B0CF807292E4E93007FC3DE /* VEIMDemoConversationSettingController.m in Sources */,
 				2B977F212A663D9900568407 /* VEIMDemoFriendApplyListController.m in Sources */,
 				2BA90D892921EB2800154F35 /* BDIMDebugNetworkRequestInfoView.m in Sources */,
@@ -1125,7 +1184,9 @@
 				2BF1BA0B29A5E7B6007145D0 /* VEIMDemoConversationListController.m in Sources */,
 				2BA90DCA2921EB2800154F35 /* VEIMDemoMyinfoHeaderCell.m in Sources */,
 				2BA90D952921EB2800154F35 /* BDIMDebugBaseController.m in Sources */,
+				2B4927842B0B313200957C27 /* VEIMDemoAvatarSettingCell.m in Sources */,
 				2B8AFFF62A48460600E25AA2 /* VEIMDemoSelectUserViewController.m in Sources */,
+				2B3BE00D2B0B38EE007D3C61 /* VEIMDemoConversationListSelectionCollectionView.m in Sources */,
 				2BA90D8F2921EB2800154F35 /* BDIMDebugMenuController.m in Sources */,
 				2B8E544729307C8E00A2A416 /* VEIMDemoIMManager+Conversation.m in Sources */,
 				2B015FA12A1F951D00ECD1EE /* VEIMDemoUser.m in Sources */,
@@ -1158,6 +1219,7 @@
 				2BA90DB52921EB2800154F35 /* VEIMDemoTabbarController.m in Sources */,
 				2B8E5441292E77A500A2A416 /* VEIMDemoInputController.m in Sources */,
 				2BC3D48E2A4AEA5E00457512 /* VEIMDemoAccountCancellationManager.m in Sources */,
+				2B3BE0102B0B3B4A007D3C61 /* VEIMDemoConversationListSelectionCollectionCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1274,7 +1336,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusinessRelease_inhouse.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CURRENT_PROJECT_VERSION = 15000;
+				CURRENT_PROJECT_VERSION = 17000;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XXHND5J98K;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -1300,7 +1362,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.6.0;
+				MARKETING_VERSION = 1.7.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1478,7 +1540,7 @@
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusiness.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15000;
+				CURRENT_PROJECT_VERSION = 17000;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 5HG673Y488;
 				ENABLE_BITCODE = NO;
@@ -1506,7 +1568,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.6.0;
+				MARKETING_VERSION = 1.7.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1531,11 +1593,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusiness.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 15000;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3XMD9D6A65;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 17000;
+				DEVELOPMENT_TEAM = 5HG673Y488;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1560,16 +1620,16 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.6.0;
+				MARKETING_VERSION = 1.7.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
+					"-ld64",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.appstore;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse.zj;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = im_appstore;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

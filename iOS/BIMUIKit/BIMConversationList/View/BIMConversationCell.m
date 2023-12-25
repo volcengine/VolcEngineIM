@@ -14,6 +14,8 @@
 
 #import <Masonry/Masonry.h>
 #import <imsdk-tob/BIMSDK.h>
+#import <SDWebImage/UIImageView+WebCache.h>
+#import <OneKit/BTDMacros.h>
 
 @interface BIMConversationCell ()
 
@@ -82,28 +84,36 @@
     if (conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
         long long chatUID = conversation.oppositeUserID;
         BIMUser *user = [BIMUIClient sharedInstance].userProvider(chatUID);
-        if (chatUID>0) {
-            self.portrait.image = user.headImg;
-            if (self.portrait.image == nil) {
-                self.portrait.image = [UIImage im_avatarWithUserId:[NSString stringWithFormat:@"%lld",chatUID]];
+//        self.portrait.image = user.placeholderImage;
+//        if (self.portrait.image == nil) {
+//            self.portrait.image = [UIImage im_avatarWithUserId:[NSString stringWithFormat:@"%lld",chatUID]];
+//        }
+        [self.portrait sd_setImageWithURL:[NSURL URLWithString:user.portraitUrl] placeholderImage:user.placeholderImage];
+        self.nameLabel.text = [self getShowNameWithUser:user];
+        if (!user) {
+            @weakify(self);
+            // 获取会话信息
+            if ([[BIMUIClient sharedInstance].userInfoDataSource respondsToSelector:@selector(getUserInfoWithUserId:completion:)]) {
+                [[BIMUIClient sharedInstance].userInfoDataSource getUserInfoWithUserId:chatUID completion:^(BIMUser *u) {
+                    @strongify(self);
+                    if (![conversation.conversationID isEqualToString:self.conversation.conversationID]) {
+                        return;
+                    }
+                    // 会话用户信息及hint的刷新后面改成非递归形式
+                    [self refreshWithConversation:conversation];
+                }];
             }
         }
-        if (conversation.name.length) {
-            self.nameLabel.text = conversation.name;
-        } else if (user.alias.length) {
-            self.nameLabel.text = user.alias;
-        } else {
-            self.nameLabel.text = user.nickName;
-        }
 
-    }else if (conversation.conversationType == BIM_CONVERSATION_TYPE_GROUP_CHAT){
+    } else if (conversation.conversationType == BIM_CONVERSATION_TYPE_GROUP_CHAT){
         if (conversation.name.length) {
             self.nameLabel.text = conversation.name;
         }else{
             self.nameLabel.text = [NSString stringWithFormat:@"未命名群聊"];
         }
         
-        self.portrait.image = kIMAGE_IN_BUNDLE_NAMED(@"icon_avatar_group");
+        [self.portrait sd_setImageWithURL:nil placeholderImage:kIMAGE_IN_BUNDLE_NAMED(@"icon_avatar_group")];
+//        self.portrait.image = kIMAGE_IN_BUNDLE_NAMED(@"icon_avatar_group");
     }
     
     [self.unreadNumsLabel refreshWithConversation:conversation];
@@ -125,7 +135,20 @@
         self.dateLabel.text = msg.createdTime.im_stringDate;
         
         BIMUser *user = [BIMUIClient sharedInstance].userProvider(msg.senderUID);
-        NSString *msgSenderNickname = user.alias && user.alias.length ? user.alias : user.nickName;
+        if (!user) {
+            @weakify(self);
+            // 获取hint相关信息
+            if ([[BIMUIClient sharedInstance].userInfoDataSource respondsToSelector:@selector(getUserInfoWithUserId:completion:)]) {
+                [[BIMUIClient sharedInstance].userInfoDataSource getUserInfoWithUserId:msg.senderUID completion:^(BIMUser *u) {
+                    @strongify(self);
+                    if (![conversation.conversationID isEqualToString:self.conversation.conversationID]) {
+                        return;
+                    }
+                    [self refreshWithConversation:conversation];
+                }];
+            }
+        }
+        NSString *msgSenderNickname = [self getShowNameWithUser:user];
         if (msg.isRecalled) {
             if (msg.senderUID == [BIMClient sharedInstance].getCurrentUserID.longLongValue) {
                 displayStr = @"你撤回了一条消息";
@@ -138,7 +161,6 @@
                 
             }
         } else {
-//            NSString *msgSenderNickname = [BIMUIClient sharedInstance].userProvider(msg.senderUID).alias ?: [BIMUIClient sharedInstance].userProvider(msg.senderUID).nickName;
             switch (msg.msgType) {
                 case BIM_MESSAGE_TYPE_TEXT: {
                     BIMTextElement *element = (BIMTextElement *)msg.element;
@@ -181,6 +203,17 @@
     self.muteImgView.hidden = !conversation.isMute;
     
     [self setupConstraints];
+}
+
+- (NSString *)getShowNameWithUser:(BIMUser *)user
+{
+    NSString *name = nil;
+    if (user.alias.length) {
+        name = user.alias;
+    } else {
+        name = user.nickName;
+    }
+    return name;
 }
 
 - (void)setupConstraints{

@@ -18,6 +18,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) VEIMDemoUser *currentUser;
 
+@property (nonatomic, strong) BIMUserFullInfo *currentUserFullInfo;
+
+
 - (void)initSDK;
 
 
@@ -30,7 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)portraitForTestUser: (long long)userID;
 - (NSString *)nicknameForTestUser: (long long)userID;
 
-- (void)setNickName:(NSString *)nickName forUID:(long long)userID;
+- (BIMUserFullInfo *)fullInfoWithUserID:(long long)userID;
+
+- (void)getUserFullInfoList:(NSArray<NSNumber *> *)uidList syncServer:(BOOL)syncServer completion:(BIMMUserFullInfoListCompletion)completion;
 
 @end
 

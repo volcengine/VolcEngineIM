@@ -8,10 +8,10 @@
 
 #import "BIMBaseTableViewController.h"
 
-@class BIMFriendListController, BIMFriendInfo;
+@class BIMFriendListController, BIMUserFullInfo;
 @protocol BIMFriendListControllerDelegate <NSObject>
 
-- (void)friendListController:(BIMFriendListController *)controller didSelectFriend:(BIMFriendInfo *)friendInfo;
+- (void)friendListController:(BIMFriendListController *)controller didSelectFriend:(BIMUserFullInfo *)friendInfo;
 
 @end
 

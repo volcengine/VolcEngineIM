@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class BIMFriendInfo, BIMFriendListDataSource;
+@class BIMUserFullInfo, BIMFriendListDataSource;
 @protocol BIMFriendListDataSourceDelegate <NSObject>
 
 - (void)friendListDataSourceDidReloadFriendList:(BIMFriendListDataSource *_Nullable)dataSource;
@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) id<BIMFriendListDataSourceDelegate> delegate;
 
-@property (nonatomic, copy, readonly) NSArray<BIMFriendInfo *> *friendList;
+@property (nonatomic, copy, readonly) NSArray<BIMUserFullInfo *> *friendList;
 
 @property (nonatomic, assign, readonly) NSInteger unreadCount;
 

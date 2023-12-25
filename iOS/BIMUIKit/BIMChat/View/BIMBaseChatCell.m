@@ -9,12 +9,16 @@
 #import "BIMUIDefine.h"
 #import "UIImage+IMUtils.h"
 #import "BIMUIClient.h"
+#import <SDWebImage/UIImageView+WebCache.h>
+#import <OneKit/BTDMacros.h>
+
 
 @interface BIMBaseChatCell ()
 
 @end
 
 @implementation BIMBaseChatCell
+
 
 - (void)setupUIElemets{
     [super setupUIElemets];
@@ -46,8 +50,11 @@
     self.dateLabel.textColor = kIM_Sub_Color;
     
     self.portrait = [UIImageView new];
+    self.portrait.userInteractionEnabled = YES;
     self.portrait.clipsToBounds = YES;
     [self.contentView addSubview:self.portrait];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(portraitClick:)];
+    [self.portrait addGestureRecognizer:tap];
     
     self.nameLabel = [UILabel new];
     [self.contentView addSubview:self.nameLabel];
@@ -71,6 +78,13 @@
     }
 }
 
+- (void)portraitClick:(UITapGestureRecognizer *)gesture
+{
+    if ([self.delegate respondsToSelector:@selector(chatCell:didClickAvatarWithMessage:)]) {
+        [self.delegate chatCell:self didClickAvatarWithMessage:self.message];
+    }
+}
+
 - (void)retryBtnDidClicked: (id)sender{
     if ([self.delegate respondsToSelector:@selector(chatCell:didClickRetryBtnWithMessage:)]) {
         [self.delegate chatCell:self didClickRetryBtnWithMessage:self.message];
@@ -78,7 +92,7 @@
 }
 
 
-- (void)refreshWithMessage:(BIMMessage *)message inConversation:(BIMConversation *)conversation sender:(id<BIMMember>)sender{
+- (void)refreshWithMessage:(BIMMessage *)message inConversation:(BIMConversation *)conversation sender:(id<BIMMember>)sender {
     self.message = message;
     self.converstaion = conversation;
     self.sender = sender;
@@ -88,15 +102,19 @@
     self.dateLabel.text = [self convertDate:message.createdTime];
     
     long long userID = message.senderUID;
-    NSString *senderName;
-    NSString *friendAlias = [BIMUIClient sharedInstance].userProvider(userID).alias; // 好友备注
-    // 优先级：备注 > 群备注(群昵称) > 用户昵称
-    if (kValidStr(friendAlias)) {
-        senderName = friendAlias;
-    } else if (kValidStr(sender.alias)) {  // 群昵称
-        senderName = sender.alias;
-    } else {
-        senderName = [BIMUIClient sharedInstance].userProvider(userID).nickName;
+    BIMUser *user = [BIMUIClient sharedInstance].userProvider(userID);
+    [self refreshWithUser:user sender:sender];
+    if (!user) {
+        @weakify(self);
+        if ([[BIMUIClient sharedInstance].userInfoDataSource respondsToSelector:@selector(getUserInfoWithUserId:completion:)]) {
+            [[BIMUIClient sharedInstance].userInfoDataSource getUserInfoWithUserId:userID completion:^(BIMUser *user) {
+                @strongify(self);
+                if (![message.uuid isEqualToString:self.message.uuid]) {
+                    return;
+                }
+                [self refreshWithUser:user sender:sender];
+            }];
+        }
     }
     if (self.isSelfMsg) {
         self.chatBg.backgroundColor = kIM_Blue_Color;
@@ -106,12 +124,7 @@
         self.chatBg.backgroundColor = [UIColor whiteColor];
     }
     self.nameLabel.hidden = self.isSelfMsg;
-    self.nameLabel.text = senderName;
-    UIImage *portrait = [BIMUIClient sharedInstance].userProvider(userID).headImg;
-    if (!portrait) {
-        portrait = [UIImage im_avatarWithUserId:@(userID).stringValue];
-    }
-    self.portrait.image = portrait;
+    
     
     if (message.referenceInfo.hint.length) {
         if (message.referenceInfo.status == 3) {
@@ -134,6 +147,28 @@
     
     
     [self setupConstraints];
+}
+
+- (void)refreshWithUser:(BIMUser *)user sender:(id<BIMMember>)sender
+{
+    NSString *senderName;
+    NSString *friendAlias = user.alias; // 好友备注
+    // 优先级：备注 > 群备注(群昵称) > 用户昵称
+    if (kValidStr(friendAlias)) {
+        senderName = friendAlias;
+    } else if (kValidStr(sender.alias)) {  // 群昵称
+        senderName = sender.alias;
+    } else {
+        senderName = user.nickName;
+    }
+    self.nameLabel.text = senderName;
+    UIImage *portrait = user.placeholderImage;
+    if (!portrait) {
+        portrait = [UIImage im_avatarWithUserId:@(user.userID).stringValue];
+    }
+    // 直播群sender为空
+    NSString *avatarURL = sender.avatarURL.length ? sender.avatarURL : user.portraitUrl;
+    [self.portrait sd_setImageWithURL:[NSURL URLWithString:avatarURL] placeholderImage:portrait];
 }
 
 - (void)bgDidClicked: (id)sender{

@@ -19,5 +19,22 @@
 			<string>https://imapi-boe.sinf.net</string>
 		</dict>
 	</dict>
+	<key>Overseas</key>
+	<dict>
+		<key>PPE</key>
+		<dict>
+			<key>tokenUrl</key>
+			<string>https://imapi-my.sinf.net/imcloud</string>
+			<key>apiUrl</key>
+			<string>https://imapi-my.sinf.net</string>
+		</dict>
+		<key>BOE</key>
+		<dict>
+			<key>tokenUrl</key>
+			<string>https://imapi-my.sinf.net/imcloud</string>
+			<key>apiUrl</key>
+			<string>https://imapi-my.sinf.net</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

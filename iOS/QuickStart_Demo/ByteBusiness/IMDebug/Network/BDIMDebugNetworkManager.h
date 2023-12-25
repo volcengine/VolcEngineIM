@@ -28,6 +28,7 @@ typedef enum : NSUInteger {
 
 typedef enum : NSUInteger {
     BDIMDebugNetworkCountryTypeTob,
+    BDIMDebugNetworkCountryTypeOverseas,
     BDIMDebugNetworkCountryTypeChina,
     BDIMDebugNetworkCountryTypeUSGCP,
     BDIMDebugNetworkCountryTypeUSEast,
@@ -40,6 +41,8 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) BDIMDebugNetworkCountryType country;
 @property (nonatomic, assign) BDIMDebugNetworkEnvType env;
 @property (nonatomic, copy) NSString *netLane;
+@property (nonatomic, assign) BOOL disableApplog;
+@property (nonatomic, assign) BOOL disableApm;
 
 @property (nonatomic, strong) BDIMDebugNetworkRequestMonitor *monitor;
 

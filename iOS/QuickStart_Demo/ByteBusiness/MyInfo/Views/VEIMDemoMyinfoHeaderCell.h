@@ -6,13 +6,13 @@
 //
 
 #import "BIMBaseTableViewCell.h"
-#import "VEIMDemoUser.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class BIMUserProfile;
 @interface VEIMDemoMyinfoHeaderCell : BIMBaseTableViewCell
 
-- (void)refreshWithUser: (VEIMDemoUser *)user;
+- (void)refreshWithUser: (BIMUserProfile *)user;
 
 @end
 

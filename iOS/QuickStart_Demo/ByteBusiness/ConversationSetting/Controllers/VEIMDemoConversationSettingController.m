@@ -20,6 +20,7 @@
 #import "VEIMDemoSelectUserViewController.h"
 #import "VEIMDemoFTSViewController.h"
 #import "BIMUIClient.h"
+#import "VEIMDemoProfileEditViewController.h"
 
 typedef enum : NSUInteger {
     VEIMDemoConversationActionTypeDefault = 0,
@@ -48,7 +49,7 @@ typedef enum : NSUInteger {
     if (self) {
         self.conversation = conversation;
         self.currentParticant = conversation.currentMember;
-        [self createSettingModels];
+//        [self createSettingModels];
 
     }
     return self;
@@ -110,10 +111,12 @@ typedef enum : NSUInteger {
                 NSArray *participants = [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID];
                 for (id <BIMMember> participant in participants) {
                     VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
-                    NSString *alias = [BIMUIClient sharedInstance].userProvider(participant.userID).alias;
-                    alias = alias.length ? alias : participant.alias;
-                    user.name = alias.length ? alias : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:participant.userID];
+                    BIMUser *u = [BIMUIClient sharedInstance].userProvider(participant.userID);
+                    NSString *alias = u.alias;
+                    alias = alias.length ? alias : (participant.alias.length ? participant.alias : u.nickName);
+                    user.name = alias;
                     user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
+                    user.avatarUrl = participant.avatarURL.length ? participant.avatarURL : u.portraitUrl;
                     user.userID = participant.userID;
                     user.isNeedSelection = YES;
                     if (participant.role == BIM_MEMBER_ROLE_ADMIN) {
@@ -227,7 +230,17 @@ typedef enum : NSUInteger {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
+    NSArray *members = [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID];
+    NSArray *uidList = [members valueForKey:@"userID"];
+    @weakify(self);
+    [[VEIMDemoUserManager sharedManager] getUserFullInfoList:uidList syncServer:NO completion:^(NSArray<BIMUserFullInfo *> * _Nullable infos, BIMError * _Nullable error) {
+        @strongify(self);
+        if (error) {
+            return;
+        }
+        [self createSettingModels];
+    }];
 }
 
 - (void)setupUIElements{
@@ -269,21 +282,23 @@ typedef enum : NSUInteger {
         BOOL canRemove = self.currentParticant.role == BIM_MEMBER_ROLE_OWNER || self.currentParticant.role == BIM_MEMBER_ROLE_ADMIN;
         userListCell.canAdd = canAdd;
         userListCell.canRemove = canRemove;
-        kWeakSelf(self);
+        @weakify(self);
         userListCell.addHandler = ^{
-            weakself.actionType = VEIMDemoConversationActionTypeAddParticipant;
+            @strongify(self);
+            self.actionType = VEIMDemoConversationActionTypeAddParticipant;
             
             VEIMDemoSelectUserViewController *vc = [[VEIMDemoSelectUserViewController alloc] init];
             vc.conversationType = BIM_CONVERSATION_TYPE_GROUP_CHAT;
-            vc.conversation = weakself.conversation;
+            vc.conversation = self.conversation;
             vc.showType = VEIMDemoSelectUserShowTypeAddParticipants;
             vc.title = @"添加成员";
-            [weakself.navigationController pushViewController:vc animated:YES];
+            [self.navigationController pushViewController:vc animated:YES];
             
         };
         
         userListCell.minusHandler = ^{
-            weakself.actionType = VEIMDemoConversationActionTypeRemoveParticipant;
+            @strongify(self);
+            self.actionType = VEIMDemoConversationActionTypeRemoveParticipant;
             
             NSMutableArray *users = [@[] mutableCopy];
             NSArray *participants = [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID];
@@ -300,10 +315,12 @@ typedef enum : NSUInteger {
                     }
                     VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
                     user.userID = participant.userID;
-                    NSString *alias = [BIMUIClient sharedInstance].userProvider(participant.userID).alias;
-                    alias = alias.length ? alias : participant.alias;
-                    user.name = alias.length ? alias : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:participant.userID];
+                    BIMUser *u = [BIMUIClient sharedInstance].userProvider(participant.userID);
+                    NSString *alias = u.alias;
+                    alias = alias.length ? alias : (participant.alias.length ? participant.alias : u.nickName);
+                    user.name = alias;
                     user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
+                    user.avatarUrl = participant.avatarURL.length ? participant.avatarURL : u.portraitUrl;
                     user.isNeedSelection = YES;
                     if (participant.role == BIM_MEMBER_ROLE_ADMIN) {
                         user.role = @"管理员";
@@ -323,24 +340,27 @@ typedef enum : NSUInteger {
             
             VEIMDemoUserSelectionController *userController = [[VEIMDemoUserSelectionController alloc] initWithUsers:users];
             userController.style = VEIMDemoUserSelectionStyleMultiSelection;
-            userController.delegate = weakself;
+            userController.delegate = self;
             userController.title = @"移出群成员";
-            [weakself.navigationController pushViewController:userController animated:YES];
+            [self.navigationController pushViewController:userController animated:YES];
         };
         
         
         userListCell.clickHandler = ^{
-            weakself.actionType = VEIMDemoConversationActionTypeDefault;
+            @strongify(self);
+            self.actionType = VEIMDemoConversationActionTypeDefault;
             NSMutableArray *users = [NSMutableArray array];
             NSArray *participants = [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID];
             for (id <BIMMember> participant in participants) {
                 VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
-                NSString *alias = [BIMUIClient sharedInstance].userProvider(participant.userID).alias;
-                alias = alias.length ? alias : participant.alias;
-                user.name = alias.length ? alias : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:participant.userID];
+                BIMUser *u = [BIMUIClient sharedInstance].userProvider(participant.userID);
+                NSString *alias = u.alias;
+                alias = alias.length ? alias : (participant.alias.length ? participant.alias : u.nickName);
+                user.name = alias;
                 user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
+                user.avatarUrl = participant.avatarURL.length ? participant.avatarURL : u.portraitUrl;
                 user.userID = participant.userID;
-                user.isNeedSelection = NO;
+                user.isNeedSelection = YES;
                 if (participant.role == BIM_MEMBER_ROLE_ADMIN) {
                     user.role = @"管理员";
                 }else if (participant.role == BIM_MEMBER_ROLE_OWNER){
@@ -351,7 +371,14 @@ typedef enum : NSUInteger {
             users = [self sortUsers:users];
             VEIMDemoUserSelectionController *userController = [[VEIMDemoUserSelectionController alloc] initWithUsers:users];
             userController.title = self.conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT ? @"成员列表" : @"群成员列表";
-            [weakself.navigationController pushViewController:userController animated:YES];
+            userController.delegate = self;
+            [self.navigationController pushViewController:userController animated:YES];
+        };
+        
+        userListCell.itemClickHandler = ^(NSInteger index) {
+            @strongify(self);
+            id<BIMMember> member = participants[index];
+            [self jumpToProfileViewControllerWithUid:member.userID];
         };
         return userListCell;
     }else{
@@ -372,8 +399,12 @@ typedef enum : NSUInteger {
         NSArray *participants = [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID];
         for (id <BIMMember> participant in participants) {
             VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
-            user.name = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:participant.userID];
+            BIMUser *u = [BIMUIClient sharedInstance].userProvider(participant.userID);
+            NSString *alias = u.alias;
+            alias = alias.length ? alias : (participant.alias.length ? participant.alias : u.nickName);
+            user.name = alias;
             user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
+            user.avatarUrl = participant.avatarURL.length ? participant.avatarURL : u.portraitUrl;
             user.userID = participant.userID;
             user.isNeedSelection = NO;
             if (participant.role == BIM_MEMBER_ROLE_ADMIN) {
@@ -448,6 +479,22 @@ typedef enum : NSUInteger {
             break;
     }
 
+}
+
+- (void)userSelectVC:(VEIMDemoUserSelectionController *)vc didChooseUser:(VEIMDemoUser *)user
+{
+    [self jumpToProfileViewControllerWithUid:user.userID];
+}
+
+- (void)jumpToProfileViewControllerWithUid:(long long)uid
+{
+    BIMUserProfile *profile = [[VEIMDemoUserManager sharedManager] fullInfoWithUserID:uid].userProfile;;
+    if (!profile) {
+        profile = [[BIMUserProfile alloc] init];
+        profile.uid = uid;
+    }
+    VEIMDemoProfileEditViewController *vc = [[VEIMDemoProfileEditViewController alloc] initWithUserProfile:profile];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (NSMutableArray *)sortUsers: (NSMutableArray <VEIMDemoUser *> *)users{

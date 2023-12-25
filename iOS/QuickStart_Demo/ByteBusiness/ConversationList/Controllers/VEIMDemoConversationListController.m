@@ -15,10 +15,18 @@
 #import "VEIMDemoChatViewController.h"
 #import "VEIMDemoSelectUserViewController.h"
 #import "BIMToastView.h"
+#import "VEIMDemoConversationListSelectionCollectionView.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <im-uikit-tob/BIMFriendConversationListController.h>
+#import <Masonry/View+MASShorthandAdditions.h>
 
-@interface VEIMDemoConversationListController () <VEIMDemoUserSelectionControllerDelegate, BIMConversationListControllerDelegate>
+@interface VEIMDemoConversationListController () <VEIMDemoUserSelectionControllerDelegate, BIMConversationListControllerDelegate, VEIMDemoConversationListSelectionDelegate>
 @property (nonatomic, strong) VEIMDemoCommonMenu *menu;
+@property (nonatomic, strong) VEIMDemoConversationListSelectionCollectionView *selectionView;
+@property (nonatomic, strong) UIView *curConvListView;
+@property (nonatomic, strong) BIMBaseConversationListController *curConvListController;
+@property (nonatomic, strong) BIMConversationListController *allConvListController;
+@property (nonatomic, strong) BIMFriendConversationListController *friendConListController;
 @end
 
 @implementation VEIMDemoConversationListController
@@ -40,10 +48,49 @@
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_add"] style:UIBarButtonItemStylePlain target:self action:@selector(rightBarItemClicked:)];
     
-    BIMConversationListController *conListController = [[BIMConversationListController alloc] init];
-    conListController.delegate = self;
-    [self addChildViewController:conListController];
-    [self.view addSubview:conListController.view];
+    self.view.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:self.selectionView];
+    [self setupConvListControllers];
+    [self makeSubViewsConstraints];
+}
+
+- (void)setupConvListControllers
+{
+    self.allConvListController = [[BIMConversationListController alloc] init];
+    self.allConvListController.delegate = self;
+    /// 默认选择全部会话列表
+    self.curConvListController = self.allConvListController;
+    [self addChildViewController:self.curConvListController];
+    self.curConvListView = self.curConvListController.view;
+    [self.view addSubview:self.curConvListView];
+
+    self.friendConListController = [[BIMFriendConversationListController alloc] init];
+    self.friendConListController.delegate = self;
+}
+
+- (void)makeSubViewsConstraints
+{
+    UIStatusBarManager *manager = [UIApplication sharedApplication].windows.firstObject.windowScene.statusBarManager;
+    CGFloat statusBarHeight = manager.statusBarFrame.size.height;
+    CGFloat topOffset = self.navigationController.navigationBar.frame.size.height + statusBarHeight;
+    [self.selectionView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view.mas_top).offset(topOffset + 10);
+        make.centerX.equalTo(self.view);
+        make.width.equalTo(self.view).offset(-30);
+        make.height.equalTo(@(34));
+    }];
+
+    [self.curConvListView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.selectionView.mas_bottom).offset(10);
+        make.left.right.equalTo(@(0));
+        make.bottom.equalTo(@(-kDevice_iPhoneTabBarHei));
+    }];
+
+    [self.curConvListController.tableview mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.selectionView.mas_bottom).offset(10);
+        make.left.right.equalTo(@(0));
+        make.bottom.equalTo(self.curConvListView);
+    }];
 }
 
 - (void)registerNotification
@@ -74,6 +121,8 @@
 - (void)userDidLogout
 {
     [self updateTabUnreadCount:0];
+    [self.selectionView setTotalUnreadCount:0 withType:BIMConversationListTypeAllConversation];
+    [self.selectionView setTotalUnreadCount:0 withType:BIMConversationListTypeFriendConversation];
 }
 
 - (void)rightBarItemClicked: (UIBarButtonItem *)item{
@@ -112,14 +161,19 @@
 
 #pragma mark - BIMConversationListControllerDelegate
 
-- (void)conversationListController:(BIMConversationListController *)controller didSelectConversation:(BIMConversation *)conversation {
+- (void)conversationListController:(BIMBaseConversationListController *)controller didSelectConversation:(BIMConversation *)conversation {
     VEIMDemoChatViewController *chatVC = [VEIMDemoChatViewController chatVCWithConversation:conversation];
     [self.navigationController pushViewController:chatVC animated:YES];
 }
 
-- (void)conversationListController:(BIMConversationListController *)controllerr onTotalUnreadMessageCountChanged:(NSUInteger)totalUnreadCount
+- (void)conversationListController:(BIMBaseConversationListController *)controller onTotalUnreadMessageCountChanged:(NSUInteger)totalUnreadCount
 {
-    [self updateTabUnreadCount:totalUnreadCount];
+    BIMConversationListType type = controller.type;
+    [self.selectionView setTotalUnreadCount:totalUnreadCount withType:type];
+    /// 底 tab 只展示全部会话的未读数
+    if (type == BIMConversationListTypeAllConversation) {
+        [self updateTabUnreadCount:totalUnreadCount];
+    }
 }
 
 - (void)updateTabUnreadCount:(NSUInteger)totalUnreadCount
@@ -132,6 +186,51 @@
     }
     
     self.tabBarItem.badgeValue = total>0?[NSString stringWithFormat:@"%zd%@",total,exceed?@"+":@""]:nil;
+}
+
+#pragma mark - VEIMDemoConversationListSelectionCollectionView
+
+- (VEIMDemoConversationListSelectionCollectionView *)selectionView
+{
+    if (!_selectionView) {
+        UICollectionViewFlowLayout *flowlayout = [[UICollectionViewFlowLayout alloc] init];
+        flowlayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+        flowlayout.itemSize = CGSizeMake(80, 30);
+        flowlayout.minimumInteritemSpacing = 12;
+        flowlayout.sectionInset = UIEdgeInsetsMake(1, 1, 1, 1);
+
+        _selectionView = [[VEIMDemoConversationListSelectionCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowlayout];
+        _selectionView.backgroundColor = [UIColor systemGray5Color];
+        _selectionView.layer.cornerRadius = 15.f;
+        _selectionView.scrollEnabled = NO;
+        _selectionView.viewDelegate = self;
+    }
+    return _selectionView;
+}
+
+#pragma mark - VEIMDemoConversationListSelectionDelegate
+
+- (void)didSelectType:(BIMConversationListType)type
+{
+    if (type == self.curConvListController.type) {
+        return;
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        /// 切换会话列表
+        [self.curConvListController removeFromParentViewController];
+        [self.curConvListView removeFromSuperview];
+        if (type == BIMConversationListTypeAllConversation) {
+            self.curConvListController = self.allConvListController;
+        } else if (type == BIMConversationListTypeFriendConversation) {
+            self.curConvListController = self.friendConListController;
+        } else {
+            return;
+        }
+        [self addChildViewController:self.curConvListController];
+        self.curConvListView = self.curConvListController.view;
+        [self.view addSubview:self.curConvListView];
+        [self makeSubViewsConstraints];
+    });
 }
 
 @end

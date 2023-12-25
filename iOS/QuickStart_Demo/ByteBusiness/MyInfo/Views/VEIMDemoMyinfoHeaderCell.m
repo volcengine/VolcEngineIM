@@ -10,6 +10,7 @@
 #import "VEIMDemoDefine.h"
 #import "UIImage+BTDAdditions.h"
 #import "BIMToastView.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
 #import <Masonry/Masonry.h>
 
@@ -17,7 +18,7 @@
 @property (nonatomic, strong) UIImageView *portrait;
 @property (nonatomic, strong) UILabel *name;
 @property (nonatomic, strong) UILabel *uidLabel;
-@property (nonatomic, strong) VEIMDemoUser *user;
+@property (nonatomic, strong) BIMUserProfile *user;
 @end
 
 @implementation VEIMDemoMyinfoHeaderCell
@@ -54,6 +55,7 @@
     [self.name mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(30);
         make.left.equalTo(self.portrait.mas_right).with.offset(18);
+        make.right.equalTo(self.contentView.mas_right).offset(-18);
     }];
     
     [self.uidLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -61,23 +63,23 @@
         make.left.equalTo(self.name);
     }];
 }
-- (void)refreshWithUser:(VEIMDemoUser *)user{
+- (void)refreshWithUser:(BIMUserProfile *)user{
     _user = user;
     if (!user) {
         self.portrait.image = [UIImage btd_imageWithColor:[UIColor lightGrayColor]];
         self.name.text = @"未登录";
         self.uidLabel.text = @"";
     }else{
-        self.portrait.image = [UIImage imageNamed:[[VEIMDemoUserManager sharedManager] portraitForTestUser:user.userID]];
-        self.name.text = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:user.userID];
-        self.uidLabel.text = [NSString stringWithFormat:@"UID: %lld",user.userID];
+        [self.portrait sd_setImageWithURL:[NSURL URLWithString:user.portraitUrl] placeholderImage:[UIImage imageNamed:[[VEIMDemoUserManager sharedManager] portraitForTestUser:user.uid]]];
+        self.name.text = user.nickName.length ? user.nickName : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:user.uid];
+        self.uidLabel.text = [NSString stringWithFormat:@"UID: %lld",user.uid];
     }
 }
 
 - (void)copyUid
 {
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-    pasteboard.string = @(self.user.userID).stringValue;
+    pasteboard.string = @(self.user.uid).stringValue;
     [BIMToastView toast:[NSString stringWithFormat:@"已复制UID:%@", pasteboard.string] withDuration:0.5];
 }
 

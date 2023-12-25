@@ -56,6 +56,7 @@
         [self.nameLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.portrait.mas_right).with.offset(12);
             make.top.mas_equalTo(12);
+            make.right.mas_lessThanOrEqualTo(-40);
         }];
         [self.subTitleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.nameLabel);
@@ -66,6 +67,8 @@
         [self.nameLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.portrait.mas_right).with.offset(12);
             make.centerY.equalTo(self.portrait);
+            make.right.mas_lessThanOrEqualTo(-40);
+//            make.width.mas_equalTo(120); /// 不指定宽度可能导致名字不展示
         }];
     }
     

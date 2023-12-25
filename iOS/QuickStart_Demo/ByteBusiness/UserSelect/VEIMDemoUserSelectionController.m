@@ -51,6 +51,12 @@
     }
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.tableview reloadData];
+}
+
 - (void)rightClicked: (id)sender{
     [self.navigationController popViewControllerAnimated:YES];
     
@@ -90,9 +96,6 @@
     
     kWeakSelf(self)
     [cell setLongPressHandler:^(UILongPressGestureRecognizer * _Nonnull gesture) {
-        if (user.disableLongPress) {
-            return;
-        }
         if ([weakself.delegate respondsToSelector:@selector(userSelectVC:didLongPressUser:indexPath:)]) {
             [weakself.delegate userSelectVC:weakself didLongPressUser:user indexPath:indexPath];
         }
@@ -149,6 +152,13 @@
         default:
             break;
     }
+}
+
+- (void)clearSelectedUsers
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.selectedUsers removeAllObjects];
+    });
 }
 
 @end

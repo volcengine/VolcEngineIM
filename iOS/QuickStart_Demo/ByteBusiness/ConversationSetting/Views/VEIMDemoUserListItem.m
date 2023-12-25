@@ -16,7 +16,7 @@
 
 - (void)setupUIElemets{
     [super setupUIElemets];
-    self.userInteractionEnabled = NO;
+//    self.userInteractionEnabled = NO;
     self.userPortrait = [UIImageView new];
     [self addSubview:self.userPortrait];
     
@@ -44,11 +44,18 @@
 }
 
 - (void)refreshWithParticipant:(id<BIMMember>)participant {
-    NSString *alias = [BIMUIClient sharedInstance].userProvider(participant.userID).alias;
-    alias = alias.length ? alias : participant.alias;
-    self.userName.text = alias.length ? alias : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:participant.userID];
+    BIMUser *user = [BIMUIClient sharedInstance].userProvider(participant.userID);
+    NSString *alias = user.alias.length ? user.alias : participant.alias;
+    if (!alias.length) {
+        alias = user.nickName;
+    }
+    self.userName.text = alias;
 //    self.userPortrait.image = [UIImage imageNamed:[[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID]];
-    [self.userPortrait sd_setImageWithURL:participant.avatarURL placeholderImage:[UIImage imageNamed:[[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID]]];
+    NSString *avatarURL = participant.avatarURL;
+    if (!avatarURL.length) {
+        avatarURL = user.portraitUrl;
+    }
+    [self.userPortrait sd_setImageWithURL:[NSURL URLWithString:avatarURL] placeholderImage:[UIImage imageNamed:[[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID]]];
     
 }
 

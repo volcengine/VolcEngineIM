@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class VEIMDemoFriendBlackListDataSource, BIMBlackListFriendInfo, BIMError;
+@class VEIMDemoFriendBlackListDataSource, BIMUserFullInfo, BIMError;
 @protocol VEIMDemoBlackListDataSourceDelegate <NSObject>
 
 - (void)blackListDataSourceDidReloadBlackList:(VEIMDemoFriendBlackListDataSource *_Nullable)dataSource;
@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) id<VEIMDemoBlackListDataSourceDelegate> delegate;
 
-@property (nonatomic, copy, readonly)NSArray<BIMBlackListFriendInfo *> *blackList;
+@property (nonatomic, copy, readonly)NSArray<BIMUserFullInfo *> *blackList;
 
 - (void)loadBlackListWithCompletion:(void (^_Nullable)(BIMError *_Nullable e))completion;
 

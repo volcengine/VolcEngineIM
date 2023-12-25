@@ -19,6 +19,8 @@ typedef enum : NSUInteger {
 @class VEIMDemoUserSelectionController, VEIMDemoUser;
 @protocol VEIMDemoUserSelectionControllerDelegate <NSObject>
 
+@optional
+
 - (void)userSelectVC: (VEIMDemoUserSelectionController *)vc didSelectUsers: (NSArray <VEIMDemoUser *> *)users;
 - (void)userSelectVC:(VEIMDemoUserSelectionController *)vc didChooseUser: (VEIMDemoUser *)user;
 
@@ -41,6 +43,7 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, strong, readonly) NSMutableArray *users;
 
+- (void)clearSelectedUsers;
 
 @end
 

@@ -10,7 +10,19 @@
 #import <imsdk-tob/BIMSDK.h>
 #import "BIMUser.h"
 
+FOUNDATION_EXPORT NSString * _Nullable const kBIMUserProfileUpdateNotification;
+
 typedef BIMUser *_Nullable(^BIMUserProvider)(long long userID);
+
+@protocol BIMUIClientUserInfoDataSource <NSObject>
+/*
+ * 异步获取用户资料
+ * @param userID 用户id
+ * @param completion 回调
+ */
+- (void)getUserInfoWithUserId:(long long)userID completion:(void (^)(BIMUser *userInfo))completion;
+
+@end
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -60,6 +72,19 @@ NS_ASSUME_NONNULL_BEGIN
  * @brief 用户信息provider。
  */
 @property (nonatomic, copy) BIMUserProvider userProvider;
+
+// 后面统一收敛到userProvider中，使用协议的方式提供
+/**
+ * @brief 用户信息数据源。
+ */
+@property (nonatomic, weak) id<BIMUIClientUserInfoDataSource> userInfoDataSource;
+
+/**
+ * @type api
+ * @brief 重新加载最新用户信息。
+ * @param userID 用户id
+ */
+- (void)reloadUserInfoWithUserId:(long long)userID;
 
 @end
 

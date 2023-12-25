@@ -86,6 +86,14 @@
     }
 }
 
+- (void)itemClick:(UITapGestureRecognizer *)gesture
+{
+    NSInteger index = gesture.view.tag;
+    if (self.itemClickHandler) {
+        self.itemClickHandler(index);
+    }
+}
+
 - (NSMutableArray *)userItems{
     if (!_userItems) {
         _userItems = [NSMutableArray array];
@@ -179,11 +187,17 @@
     
     [self.userItems removeAllObjects];
     
+    NSInteger index = 0;
     for (id <BIMMember> participant in participants) {
         VEIMDemoUserListItem *item = [[VEIMDemoUserListItem alloc] init];
+        item.tag = index;
+        index ++;
         [item refreshWithParticipant:participant];
         [self.contentScrollView addSubview:item];
         [self.userItems addObject:item];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(itemClick:)];
+        [item addGestureRecognizer:tap];
     }
 }
 @end

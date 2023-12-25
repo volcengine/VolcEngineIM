@@ -10,7 +10,9 @@
 #import "BDIMDebugDragButton.h"
 #import "BDIMDebugMenuController.h"
 #import "BDIMDebugNetworkEnvironmentController.h"
-//#import <FLEX/FLEX.h>
+#if __has_include(<FLEX/FLEX.h>)
+#import <FLEX/FLEX.h>
+#endif
 #import "BDIMDebugNetworkManager.h"
 #import "BDIMDebugDatabaseController.h"
 #import <imsdk-tob/BIMSDK.h>
@@ -76,15 +78,12 @@
             [self.menu.navigationController pushViewController:netVC animated:YES];
         }]];
         
-        BOOL isLogin = [BIMClient sharedInstance].getCurrentUserID.length>0;
-        [self.itemModels addObject:[BDIMDebugMenuIconModel modelWithTitle:@"数据库" icon:@"database" description:isLogin?@"打开数据库debug菜单":@"请登录后使用" enable:isLogin click:^{
-            BDIMDebugDatabaseController *dbVC = [[BDIMDebugDatabaseController alloc] init];
-            [self.menu.navigationController pushViewController:dbVC animated:YES];
+#if __has_include(<FLEX/FLEX.h>)
+        [self.itemModels addObject:[BDIMDebugMenuIconModel modelWithTitle:@"Flex" icon:@"flex" description:@"打开flex调试" enable:YES click:^{
+            [[FLEXManager sharedManager] showExplorer];
         }]];
+#endif
         
-//        [self.itemModels addObject:[BDIMDebugMenuIconModel modelWithTitle:@"Flex" icon:@"flex" description:@"打开flex调试" enable:YES click:^{
-//            [[FLEXManager sharedManager] showExplorer];
-//        }]];
     }
 }
 

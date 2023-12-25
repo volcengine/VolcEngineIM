@@ -19,14 +19,17 @@
 @property (nonatomic, strong) UIButton *netLaneBtn;
 @property (nonatomic, strong) UILabel *tokenUrlLabel;
 @property (nonatomic, strong) UILabel *apiUrlLabel;
-@property (nonatomic, strong) UILabel *frontierUrlLabel;
-@property (nonatomic, strong) UILabel *videoDomainLabel;
-@property (nonatomic, strong) UILabel *imageDomainLabel;
 @property (nonatomic, strong) UILabel *onlyHttpLabel;
 @property (nonatomic, strong) UISwitch *onlyHttpSwitch;
 
 @property (nonatomic, strong) UILabel *showNetworkMonitorLabel;
 @property (nonatomic, strong) UISwitch *showNetworkMonitorSwitch;
+
+@property (nonatomic, strong) UILabel *applogLabel;
+@property (nonatomic, strong) UISwitch *applogSwitch;
+
+@property (nonatomic, strong) UILabel *apmLabel;
+@property (nonatomic, strong) UISwitch *apmSwitch;
 
 @end
 
@@ -129,37 +132,13 @@
         make.left.mas_equalTo(24);
         make.top.equalTo(self.tokenUrlLabel.mas_bottom).with.offset(24);
     }];
-    self.frontierUrlLabel = [UILabel new];
-    self.frontierUrlLabel.font = [UIFont systemFontOfSize:14];
-    self.frontierUrlLabel.numberOfLines = 0;
-    [self.view addSubview:self.frontierUrlLabel];
-    [self.frontierUrlLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(24);
-        make.top.equalTo(self.apiUrlLabel.mas_bottom).with.offset(24);
-    }];
-    self.videoDomainLabel = [UILabel new];
-    self.videoDomainLabel.font = [UIFont systemFontOfSize:14];
-    self.videoDomainLabel.numberOfLines = 0;
-    [self.view addSubview:self.videoDomainLabel];
-    [self.videoDomainLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(24);
-        make.top.equalTo(self.frontierUrlLabel.mas_bottom).with.offset(24);
-    }];
-    self.imageDomainLabel = [UILabel new];
-    self.imageDomainLabel.font = [UIFont systemFontOfSize:14];
-    self.imageDomainLabel.numberOfLines = 0;
-    [self.view addSubview:self.imageDomainLabel];
-    [self.imageDomainLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(24);
-        make.top.equalTo(self.videoDomainLabel.mas_bottom).with.offset(24);
-    }];
     
     self.onlyHttpLabel = [UILabel new];
     self.onlyHttpLabel.font = [UIFont boldSystemFontOfSize:15];
     [self.view addSubview:self.onlyHttpLabel];
     [self.onlyHttpLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(24);
-        make.top.equalTo(self.imageDomainLabel.mas_bottom).with.offset(24);
+        make.top.equalTo(self.apiUrlLabel.mas_bottom).with.offset(24);
     }];
     
     self.onlyHttpSwitch = [[UISwitch alloc] init];
@@ -184,6 +163,38 @@
     [self.showNetworkMonitorSwitch mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.showNetworkMonitorLabel.mas_right).with.offset(12);
         make.centerY.equalTo(self.showNetworkMonitorLabel);
+    }];
+    
+    self.applogLabel = [UILabel new];
+    self.applogLabel.font = [UIFont boldSystemFontOfSize:15];
+    [self.view addSubview:self.applogLabel];
+    [self.applogLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(24);
+        make.top.equalTo(self.showNetworkMonitorLabel.mas_bottom).with.offset(24);
+    }];
+    
+    self.applogSwitch = [[UISwitch alloc] init];
+    [self.applogSwitch addTarget:self action:@selector(applogSwitch:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:self.applogSwitch];
+    [self.applogSwitch mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.applogLabel.mas_right).with.offset(12);
+        make.centerY.equalTo(self.applogLabel);
+    }];
+    
+    self.apmLabel = [UILabel new];
+    self.apmLabel.font = [UIFont boldSystemFontOfSize:15];
+    [self.view addSubview:self.apmLabel];
+    [self.apmLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(24);
+        make.top.equalTo(self.applogLabel.mas_bottom).with.offset(24);
+    }];
+    
+    self.apmSwitch = [[UISwitch alloc] init];
+    [self.apmSwitch addTarget:self action:@selector(apmSwitch:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:self.apmSwitch];
+    [self.apmSwitch mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.apmLabel.mas_right).with.offset(12);
+        make.centerY.equalTo(self.apmLabel);
     }];
 }
 
@@ -250,6 +261,11 @@
     }];
     [alertController addAction:tob];
     
+    UIAlertAction *overseas = [UIAlertAction actionWithTitle:@"Overseas" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [[BDIMDebugNetworkManager sharedManager] setCountry:BDIMDebugNetworkCountryTypeOverseas];
+    }];
+    [alertController addAction:overseas];
+    
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
     [alertController addAction:cancel];
     [self presentViewController:alertController animated:YES completion:nil];
@@ -263,15 +279,22 @@
     [[BDIMDebugNetworkManager sharedManager] showMonitor:swit.on];
 }
 
+- (void)applogSwitch:(UISwitch *)s
+{
+    [BDIMDebugNetworkManager sharedManager].disableApplog = s.isOn;
+}
+
+- (void)apmSwitch:(UISwitch *)s
+{
+    [BDIMDebugNetworkManager sharedManager].disableApm = s.isOn;
+}
+
 - (void)refresh{
     self.countryLabel.text = @"Country: ";
     self.envLabel.text = @"Env: ";
     self.netLaneLabel.text = @"NetLane: ";
     self.tokenUrlLabel.text = [NSString stringWithFormat:@"TokenUrl: \n%@",[[BDIMDebugNetworkManager sharedManager] tokenUrl]];
     self.apiUrlLabel.text = [NSString stringWithFormat:@"ApiUrl: \n%@",[[BDIMDebugNetworkManager sharedManager] apiUrl]];
-    self.frontierUrlLabel.text = [NSString stringWithFormat:@"FrontierUrl: \n%@",[[BDIMDebugNetworkManager sharedManager] frontierUrl]];
-    self.videoDomainLabel.text = [NSString stringWithFormat:@"VideoDomain: \n%@",[[BDIMDebugNetworkManager sharedManager] videoDomain]];
-    self.imageDomainLabel.text = [NSString stringWithFormat:@"ImageDomain: \n%@",[[BDIMDebugNetworkManager sharedManager] imageDomain]];
     self.onlyHttpLabel.text = @"Http only: ";
 //    self.onlyHttpSwitch.on = kIMShareInstance.httpOnly;
     [self.countryBtn setTitle:[[BDIMDebugNetworkManager sharedManager] currentCountryDesc] forState:UIControlStateNormal];
@@ -285,6 +308,11 @@
     }
     self.showNetworkMonitorSwitch.on = isShowing;
     
+    self.applogLabel.text = @"关闭埋点上报，冷启生效";
+    self.applogSwitch.on = [BDIMDebugNetworkManager sharedManager].disableApplog;
+    
+    self.apmLabel.text = @"关闭日志回捞，冷启生效";
+    self.apmSwitch.on = [BDIMDebugNetworkManager sharedManager].disableApm;
 }
 
 /*

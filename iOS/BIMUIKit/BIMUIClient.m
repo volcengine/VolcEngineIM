@@ -9,6 +9,8 @@
 #import "BIMUIClient.h"
 #import "BIMUIDefine.h"
 
+NSString *const kBIMUserProfileUpdateNotification = @"kBIMUserProfileUpdateNotification";
+
 @implementation BIMUIClient
 
 + (instancetype)sharedInstance
@@ -68,5 +70,12 @@
         }
         [[NSNotificationCenter defaultCenter] postNotificationName:kUserDidLogoutNotification object:nil];
     }];
+}
+
+- (void)reloadUserInfoWithUserId:(long long)userID
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:kBIMUserProfileUpdateNotification object:@{@"uid":@(userID)}];
+    });
 }
 @end

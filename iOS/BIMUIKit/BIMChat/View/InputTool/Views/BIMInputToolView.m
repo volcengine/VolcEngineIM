@@ -482,18 +482,19 @@ static CGFloat textHei = 0;
 
 - (void)keyboardWillShow:(NSNotification *)notify
 {
-    if (!self.window || !self.tempTextView.isFirstResponder) {
-        return;
-    }
+    // 下面的三处return先去掉，1.弹出键盘 2.长按弹出删除 3点击alert取消后搜狗键盘没有弹出工具条
+//    if (!self.window || !self.tempTextView.isFirstResponder) {
+//        return;
+//    }
     self.taType = IMTextAudioTypeText;
 //    [self textAudioBtnChangeAction:nil];
 }
 
 - (void)keyboardWillHide:(NSNotification *)notify
 {
-    if (!self.window || !self.tempTextView.isFirstResponder) {
-        return;
-    }
+//    if (!self.window || !self.tempTextView.isFirstResponder) {
+//        return;
+//    }
     CGRect textViewFrame = self.tempTextView.frame;
     CGSize textSize = [self.tempTextView sizeThatFits:CGSizeMake(CGRectGetWidth(textViewFrame), CGFLOAT_MAX)];
     textHei = MAX(kMinHei, MIN(kMaxHei, textSize.height));
@@ -504,9 +505,9 @@ static CGFloat textHei = 0;
 
 - (void)keyboardWillChangeFrame:(NSNotification *)notify
 {
-    if (!self.window || !self.tempTextView.isFirstResponder) {
-        return;
-    }
+//    if (!self.window || !self.tempTextView.isFirstResponder) {
+//        return;
+//    }
     self.itType = IMInputToolTypeTextAudio;
 
     self.moreMenuView.hidden = YES;

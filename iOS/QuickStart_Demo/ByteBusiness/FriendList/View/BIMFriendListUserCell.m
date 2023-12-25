@@ -7,6 +7,7 @@
 //
 
 #import "BIMFriendListUserCell.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
 #import <imsdk-tob/BIMClient+Friend.h>
 
@@ -23,13 +24,17 @@
     [self.contentView addGestureRecognizer:longpPressGes];
 }
 
-- (void)setFriendInfo:(BIMFriendInfo *)friendInfo{
+- (void)setFriendInfo:(BIMUserFullInfo *)friendInfo{
     _friendInfo = friendInfo;
     
-    self.portrait.image = [UIImage imageNamed:@"icon_recommend_user_default"];
-    self.nameLabel.text = (friendInfo.alias && friendInfo.alias.length) ? friendInfo.alias: [NSString stringWithFormat:@"用户%@", @(friendInfo.uid).stringValue];
+    [self.portrait sd_setImageWithURL:[NSURL URLWithString:friendInfo.portraitUrl] placeholderImage:[UIImage imageNamed:@"icon_recommend_user_default"]];
+    NSString *nickName = friendInfo.alias.length ? friendInfo.alias : friendInfo.nickName;
+    if (!nickName.length) {
+        nickName = [NSString stringWithFormat:@"用户%@", @(friendInfo.uid).stringValue];
+    }
+    self.nameLabel.text = nickName;
     self.subTitleLabel.text = nil;
-    
+
     [self setupConstraints];
 }
 

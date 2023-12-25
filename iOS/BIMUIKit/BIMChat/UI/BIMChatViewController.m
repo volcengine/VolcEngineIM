@@ -32,8 +32,32 @@
 
 #import <imsdk-tob/BIMSDK.h>
 
+// 兼容直播群
+@interface BIMMember : NSObject<BIMMember>
 
-@interface BIMChatViewController () <BIMInputToolViewDelegate, BIMBaseChatCellDelegate, BIMCustomChatCellDelegate, BIMChatViewDataSourceDelegate, BIMUserSelectionControllerDelegate, BIMConversationListListener, BIMMessageListener, BIMLiveGroupMemberEventListener>
+@property (nonatomic, assign) long long userID;
+
+@property (nonatomic, copy) NSString *conversationID;
+
+@property (nonatomic, assign) long long sortOrder;
+
+@property (nonatomic, assign) BIMMemberRole role;
+
+@property (nonatomic, copy, nullable) NSString *alias;
+
+@property (nonatomic, assign) BOOL isOnline;
+
+@property (nonatomic, copy) NSString *avatarURL;
+
+@property (nonatomic, copy) NSDictionary *ext;
+@end
+
+@implementation BIMMember
+
+@end
+
+
+@interface BIMChatViewController () <BIMInputToolViewDelegate, BIMBaseChatCellDelegate, BIMCustomChatCellDelegate, BIMChatViewDataSourceDelegate, BIMUserSelectionControllerDelegate, BIMConversationListListener, BIMMessageListener, BIMLiveGroupMemberEventListener, BIMFriendListener>
 
 
 //UI related
@@ -72,9 +96,14 @@
 {
     self = [super init];
     if (self) {
-        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userProfileUpdateNotify:) name:kBIMUserProfileUpdateNotification object:nil];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (BOOL)headerRefreshEnable {
@@ -137,6 +166,7 @@
         [self.inputTool setDraft:self.conversation.draftText];
     }
     
+//    [self.tableview reloadData];
 //    [self authorizeIfNeed];
 }
 
@@ -207,6 +237,7 @@
     
     [[BIMClient sharedInstance] addConversationListener:self];
     [[BIMClient sharedInstance] addLiveGroupMemberListener:self];
+    [[BIMClient sharedInstance] addFriendListener:self];
     
     self.tableview.rowHeight = UITableViewAutomaticDimension;
     self.tableview.estimatedRowHeight = 100;
@@ -550,21 +581,20 @@
         }
     }
     
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP && !sender) {
+        NSDictionary *user = self.messageDataSource.userDict[@(msg.senderUID)];
+        BIMMember *member = [[BIMMember alloc] init];
+        member.conversationID = msg.conversationID;
+        member.userID = msg.senderUID;
+        member.alias = user[kAliasName];
+        member.avatarURL = user[kAvatarUrl];
+        sender = member;
+    }
+    
     BIMBaseChatCell *cell = [self dequestCellForMessage:msg tableView:tableView];
     
     [cell refreshWithMessage:msg inConversation:self.conversation sender:sender];
     
-    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
-        NSDictionary *user = self.messageDataSource.userDict[@(msg.senderUID)];
-        NSString *alias = [BIMUIClient sharedInstance].userProvider(msg.senderUID).alias;
-        alias = alias.length ? alias : user[kAliasName];
-        NSString *avatarUrl = user[kAvatarUrl];
-        if (alias.length) {
-            cell.nameLabel.text = alias;
-        }
-        UIImage *portrait = [BIMUIClient sharedInstance].userProvider(msg.senderUID).headImg;
-        [cell.portrait sd_setImageWithURL:[NSURL URLWithString:avatarUrl] placeholderImage:portrait];
-    }
     if (!cell) {
         UITableViewCell *cell = [UITableViewCell new];
         cell.textLabel.text = [NSString stringWithFormat:@"Type: %zd",msg.msgType];
@@ -712,6 +742,13 @@
         }
         [self.inputTool revertToTheOriginalType];
     });
+}
+
+- (void)chatCell:(BIMBaseChatCell *)cell didClickAvatarWithMessage:(BIMMessage *)message
+{
+    if ([self.delegate respondsToSelector:@selector(chatViewController:didClickAvatar:)]) {
+        [self.delegate chatViewController:self didClickAvatar:message];
+    }
 }
 
 - (void)refreshMediaMessage:(BIMMessage *)message completion:(BIMCompletion)completion
@@ -863,20 +900,49 @@
     }
 }
 
+#pragma mark - BIMFriendListener
+
+- (void)onFriendUpdate:(BIMUserFullInfo *)info
+{
+    [self.tableview reloadData];
+}
+
+- (void)onUserProfileUpdate:(BIMUserFullInfo *)info
+{
+    [self.tableview reloadData];
+}
+
+- (void)onBatchMemberInfoChanged:(BIMConversation *)conversation members:(NSArray<id<BIMMember>> *)members
+{
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [members enumerateObjectsUsingBlock:^(id<BIMMember>  _Nonnull member, NSUInteger idx, BOOL * _Nonnull stop) {
+                [self.messageDataSource.userDict setObject:@{kAliasName: member.alias ?: @"", kAvatarUrl : member.avatarURL ?: @""} forKey:@(member.userID)];
+            }];
+            [self.tableview reloadData];
+        });
+    }
+}
+
+#pragma mark - Notification
+
+- (void)userProfileUpdateNotify:(NSNotification *)notify
+{
+    [self.tableview reloadData];
+}
+
 #pragma mark -
 
 - (void)setExtWithSendMessage:(BIMMessage *)sendMessage
 {
     NSMutableDictionary *ext = [NSMutableDictionary dictionary];
     long long currentUID = [BIMClient sharedInstance].getCurrentUserID.longLongValue;
-    BIMUser *user = [BIMUIClient sharedInstance].userProvider(currentUID);
     NSString *alias = self.conversation.currentMember.alias;
-    NSString *nickName = alias.length ? alias : user.nickName;
-    if (nickName) {
-        [ext setObject:nickName forKey:kAliasName];
+    if (alias) {
+        [ext setObject:alias forKey:kAliasName];
     }
     
-    NSString *avatarUrl = self.conversation.currentMember.avatarURL ?: user.url;
+    NSString *avatarUrl = self.conversation.currentMember.avatarURL;
     if (avatarUrl) {
         [ext setObject:avatarUrl forKey:kAvatarUrl];
     }

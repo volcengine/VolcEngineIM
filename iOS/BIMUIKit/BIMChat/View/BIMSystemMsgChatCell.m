@@ -16,7 +16,7 @@
     self.msgLabel = [UILabel new];
     [self.contentView addSubview:self.msgLabel];
     self.msgLabel.font = kFont(12);
-    self.msgLabel.numberOfLines = 2.0;
+    self.msgLabel.numberOfLines = 0;
     self.msgLabel.textAlignment = NSTextAlignmentCenter;
     self.msgLabel.textColor = kIM_Sub_Color;
 }

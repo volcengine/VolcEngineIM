@@ -14,9 +14,9 @@
 
 @interface VEIMDemoFriendBlackListDataSource () <BIMFriendListener>
 
-@property (nonatomic, copy) NSArray<BIMBlackListFriendInfo *> *blackList;
+@property (nonatomic, copy) NSArray<BIMUserFullInfo *> *blackList;
 
-@property (nonatomic, strong) NSMutableArray<BIMBlackListFriendInfo *> *p_blackList;
+@property (nonatomic, strong) NSMutableArray<BIMUserFullInfo *> *p_blackList;
 
 @property (nonatomic, strong) NSMutableDictionary *p_blackListDict;
 
@@ -52,7 +52,7 @@
 
 #pragma mark - BIMFriendListener
 
-- (void)onBlackListAdd:(BIMBlackListFriendInfo *)blacklistFriendInfo
+- (void)onBlackListAdd:(BIMUserFullInfo *)blacklistFriendInfo
 {
     [self p_addToBlackListWithBlackFriendInfo:@[blacklistFriendInfo]];
 }
@@ -73,7 +73,7 @@
 - (void)p_loadFriendBlackListWithCompletion:(void (^)(BIMError *_Nullable error))completion
 {
     @weakify(self);
-    [[BIMClient sharedInstance] getBlackListCompletion:^(NSArray<BIMBlackListFriendInfo *> * _Nullable infos, BIMError * _Nullable error) {
+    [[BIMClient sharedInstance] getBlackListCompletion:^(NSArray<BIMUserFullInfo *> * _Nullable infos, BIMError * _Nullable error) {
         @strongify(self);
         [self p_addToBlackListWithBlackFriendInfo:infos];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -84,10 +84,10 @@
     }];
 }
 
-- (void)p_addToBlackListWithBlackFriendInfo:(NSArray<BIMBlackListFriendInfo *> *)blackFriendInfo
+- (void)p_addToBlackListWithBlackFriendInfo:(NSArray<BIMUserFullInfo *> *)blackFriendInfo
 {
     dispatch_async(self.blackListQueue, ^{
-        for (BIMBlackListFriendInfo *info in blackFriendInfo) {
+        for (BIMUserFullInfo *info in blackFriendInfo) {
             if ([[self.p_blackListDict allKeys] containsObject:@(info.uid)] ){
                 continue;
             }
@@ -108,7 +108,7 @@
 //        if (![[self.p_blackListDict allKeys] containsObject:@(blackFriendId)]) {
 //            return;
 //        }
-        BIMBlackListFriendInfo *blackInfo = self.p_blackListDict[@(blackFriendId)];
+        BIMUserFullInfo *blackInfo = self.p_blackListDict[@(blackFriendId)];
         if (!blackInfo) {
             return;
         }

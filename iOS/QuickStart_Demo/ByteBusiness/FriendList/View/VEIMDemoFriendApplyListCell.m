@@ -9,6 +9,7 @@
 #import "VEIMDemoFriendApplyListCell.h"
 
 #import <imsdk-tob/BIMClient+Friend.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 
 @interface VEIMDemoFriendApplyListCell ()
 
@@ -27,18 +28,19 @@
 {
     [self setupConstraints];
     
-    self.portrait.image = [UIImage imageNamed:@"icon_recommend_user_default"];
-    
-    NSString *displayName;
-    if (self.applyInfo.status == 1) {
-        displayName = [[BIMClient sharedInstance] getFriend:self.applyInfo.fromUid].alias;
-        displayName = (displayName && displayName.length) ? displayName : [NSString stringWithFormat:@"用户%@", @(self.applyInfo.fromUid).stringValue];
-    } else {
-        displayName = [NSString stringWithFormat:@"用户%@", @(self.applyInfo.fromUid).stringValue];
-    }
+    BIMUserFullInfo *info = self.applyInfo.userFullInfo;
+    NSString *displayName = info.alias.length ? info.alias : info.nickName;
+    displayName = (displayName && displayName.length) ? displayName : [NSString stringWithFormat:@"用户%@", @(self.applyInfo.fromUid).stringValue];
+//    if (self.applyInfo.status == 1) {
+//        displayName = [[BIMClient sharedInstance] getFriend:self.applyInfo.fromUid].alias;
+//        displayName = (displayName && displayName.length) ? displayName : [NSString stringWithFormat:@"用户%@", @(self.applyInfo.fromUid).stringValue];
+//    } else {
+//        displayName = [NSString stringWithFormat:@"用户%@", @(self.applyInfo.fromUid).stringValue];
+//    }
     self.nameLabel.text = displayName;
 //    self.subTitleLabel.text = [NSString stringWithFormat:@"uid:%lld",self.applyInfo.fromUid];
     
+    [self.portrait sd_setImageWithURL:[NSURL URLWithString:info.portraitUrl] placeholderImage:[UIImage imageNamed:@"icon_recommend_user_default"]];
     // 防止cell复用导致控件重叠
     if ([self.processContainer superview]) {
         [self.processContainer removeFromSuperview];

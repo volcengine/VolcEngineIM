@@ -6,7 +6,13 @@
 
 #import "BIMBaseTableViewController.h"
 
-@class BIMConversation, BIMMessage;
+@class BIMConversation, BIMMessage, BIMChatViewController;
+
+@protocol BIMChatViewControllerDelegate <NSObject>
+
+- (void)chatViewController:(BIMChatViewController *)controller didClickAvatar:(BIMMessage *)message;
+
+@end
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) BIMMessage *anchorMessage;
 
+@property (nonatomic, weak) id<BIMChatViewControllerDelegate> delegate;
 
 @end
 

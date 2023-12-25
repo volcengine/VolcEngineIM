@@ -8,6 +8,9 @@
 
 #import "BDIMDebugNetworkManager.h"
 
+static NSString *kApplogDisableKey = @"kApplogDisableKey";
+static NSString *kApmDisableKey = @"kApmDisableKey";
+
 @interface BDIMDebugNetworkManager ()
 @property (nonatomic, strong) NSDictionary *config;
 
@@ -142,6 +145,9 @@
         case BDIMDebugNetworkCountryTypeTob:{
             return @"Tob";
         }
+        case BDIMDebugNetworkCountryTypeOverseas: {
+            return @"Overseas";
+        }
     }
     return @"China";
 }
@@ -194,11 +200,29 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:BDIMDebugNetworkChangeNotification object:nil userInfo:@{kBDIMDebugNetworkCountryIsOverseasSwitch:@(NO)}];
 }
 
+#warning 调试代码，后续删除
+- (void)setDisableApplog:(BOOL)disableApplog
+{
+    _disableApplog = disableApplog;
+    [[NSUserDefaults standardUserDefaults] setBool:disableApplog forKey:kApplogDisableKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)setDisableApm:(BOOL)disableApm
+{
+    _disableApm = disableApm;
+    [[NSUserDefaults standardUserDefaults] setBool:disableApm forKey:kApmDisableKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 - (void)loadNetworkConfig{
     _config = [[NSDictionary alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"BDIMNetworkConfig" ofType:@"plist"]];
     _country = [[[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkCountry] intValue];
     _env = [[[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkEnv] intValue];
     _netLane = [[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkLane];
+    
+    _disableApplog = [[NSUserDefaults standardUserDefaults] boolForKey:kApplogDisableKey];
+    _disableApm = [[NSUserDefaults standardUserDefaults] boolForKey:kApmDisableKey];
 }
 
 

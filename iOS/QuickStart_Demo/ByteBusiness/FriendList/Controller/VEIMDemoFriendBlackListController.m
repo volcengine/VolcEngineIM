@@ -19,7 +19,7 @@
 
 @interface VEIMDemoFriendBlackListController () <UITextFieldDelegate, VEIMDemoBlackListDataSourceDelegate, VEIMDemoBlackListUserCellDelegate>
 
-@property (nonatomic, copy) NSArray<BIMBlackListFriendInfo *>*blacklist;
+@property (nonatomic, copy) NSArray<BIMUserFullInfo *>*blacklist;
 @property (nonatomic, copy) NSArray<NSArray *> *sectionData;
 @property (nonatomic, copy) NSArray *sectionTitles;
 
@@ -45,7 +45,9 @@
 {
     [super setupUIElements];
     
-    self.tableview.sectionHeaderTopPadding = YES;
+    if (@available(iOS 15.0, *)) {
+        self.tableview.sectionHeaderTopPadding = YES;
+    }
     [self.tableview setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [self.tableview registerClass:[VEIMDemoBlackListUserCell class] forCellReuseIdentifier:@"VEIMDemoFriendBlackListUserCell"];
 }
@@ -63,7 +65,7 @@
     
 }
 
-- (void)prepareBlackListDataWithBlackList:(NSArray<BIMBlackListFriendInfo *> *)blacklist
+- (void)prepareBlackListDataWithBlackList:(NSArray<BIMUserFullInfo *> *)blacklist
 {
     if (!self.blacklist) {
         self.blacklist = blacklist;
@@ -85,8 +87,11 @@
         }];
         
         // 分组
-        [blacklist enumerateObjectsUsingBlock:^(BIMBlackListFriendInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            NSString *displayName = (obj.alias && obj.alias.length) ? obj.alias : [NSString stringWithFormat:@"用户%@", @(obj.uid)];
+        [blacklist enumerateObjectsUsingBlock:^(BIMUserFullInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            NSString *displayName = (obj.alias && obj.alias.length) ? obj.alias : obj.nickName;
+            if (!displayName.length) {
+                displayName = [NSString stringWithFormat:@"用户%@", @(obj.uid)];
+            }
             NSString *firstLetter = [self getFirstPinyinLetterWithString:displayName];
             if ([localizedSectionsTitles containsObject:firstLetter]) {
                 [indexedData[[localizedSectionsTitles indexOfObject:firstLetter]] addObject:obj];
@@ -98,7 +103,7 @@
         // 组内排序
         NSMutableArray<NSArray *> *indexedAndSortedData = [NSMutableArray arrayWithCapacity:indexedData.count];
         for (NSInteger i = 0; i < indexedData.count; i++) {
-            indexedAndSortedData[i] = [indexedData[i] sortedArrayUsingComparator:^NSComparisonResult(BIMBlackListFriendInfo *  _Nonnull obj1, BIMBlackListFriendInfo *  _Nonnull obj2) {
+            indexedAndSortedData[i] = [indexedData[i] sortedArrayUsingComparator:^NSComparisonResult(BIMUserFullInfo *  _Nonnull obj1, BIMUserFullInfo *  _Nonnull obj2) {
                 return [@(obj1.uid).stringValue localizedStandardCompare:@(obj2.uid).stringValue];
             }];
         }

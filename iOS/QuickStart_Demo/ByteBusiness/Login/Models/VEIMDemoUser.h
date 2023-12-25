@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <imsdk-tob/BIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *portrait;
 @property (nonatomic, copy) NSString *avatarUrl;
+@property (nonatomic, copy, nullable) NSArray<NSString *> *markTypes;
 
 @property (nonatomic, copy) NSString *role;
 
@@ -22,9 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) BOOL isNeedSelection;
 @property (nonatomic, assign) BOOL isSelected;
-@property (nonatomic, assign) BOOL disableLongPress;
 @property (nonatomic, copy) NSString *onlineString;
 
+@property (nonatomic, strong) id<BIMMember> member;
 @end
 
 NS_ASSUME_NONNULL_END

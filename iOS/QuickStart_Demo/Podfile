@@ -9,7 +9,7 @@ target 'ByteBusiness' do
 
   # Pods for VEIMDemo
   
-  pod 'im-uikit-tob', '1.6.0'
+  pod 'im-uikit-tob', '1.7.0-alpha.0'
 #  pod 'im-uikit-tob', :path=>'../'
   
 #    三方库
@@ -19,10 +19,7 @@ target 'ByteBusiness' do
   pod 'JSONModel'
   pod 'MBProgressHUD'
   pod 'TTNetworkManager', '5.0.29.26'
-  pod 'RangersAppLog', '6.13.2'
 
-#    debug tools
-#  pod 'FLEX', '3.1.2'
 
   target 'ByteBusinessTests' do
     inherit! :search_paths

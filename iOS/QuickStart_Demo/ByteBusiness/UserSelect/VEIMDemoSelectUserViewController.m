@@ -63,6 +63,10 @@ static NSInteger const kMaxCount = 5;
     if (!self.textField.text.length) {
         return;
     }
+    if (self.showType == VEIMDemoSelectUserShowTypeMarkUser) {
+        [self addNeedMarkUsers];
+        return;
+    }
     NSNumber *uid = @(self.textField.text.longLongValue);
     if ([self.users containsObject:uid]) {
         [BIMToastView toast:@"群成员已添加"];
@@ -85,15 +89,50 @@ static NSInteger const kMaxCount = 5;
     }
     
     self.addButton.enabled = NO;
+    
+    @weakify(self);
+    [[VEIMDemoUserManager sharedManager] getUserFullInfoList:@[uid] syncServer:NO completion:^(NSArray<BIMUserFullInfo *> * _Nullable infos, BIMError * _Nullable error) {
+        if (error) {
+            [BIMToastView toast:[NSString stringWithFormat:@"查询用户失败:%@", error.localizedDescription]];
+            return;
+        }
+        [self checkUserExist:uid.longLongValue completion:^(BOOL exist) {
+            @strongify(self);
+            self.addButton.enabled = YES;
+            if (!exist) {
+                return;
+            }
+            [self.users insertObject:uid atIndex:0];
+            [self.tableview reloadData];
+            [self clearTextField];
+        }];
+    }];
+}
+
+- (void)addNeedMarkUsers
+{
+    NSNumber *uid = @(self.textField.text.longLongValue);
+    if ([self.users containsObject:uid]) {
+        [BIMToastView toast:@"用户已添加"];
+        return;
+    }
+
+    if (self.users.count >= 20) {
+        [BIMToastView toast:[NSString stringWithFormat:@"已添加%lu个用户", (unsigned long)self.users.count]];
+        return;
+    }
+
+    self.addButton.enabled = NO;
     kWeakSelf(self)
     [self checkUserExist:uid.longLongValue completion:^(BOOL exist) {
+        kStrongSelf(self)
         self.addButton.enabled = YES;
         if (!exist) {
             return;
         }
-        [weakself.users insertObject:uid atIndex:0];
-        [weakself.tableview reloadData];
-        [weakself clearTextField];
+        [self.users insertObject:uid atIndex:0];
+        [self.tableview reloadData];
+        [self clearTextField];
     }];
 }
 
@@ -116,7 +155,16 @@ static NSInteger const kMaxCount = 5;
         case VEIMDemoSelectUserShowTypeAddParticipants:
             [self addParticipant];
             break;
-            
+        case VEIMDemoSelectUserShowTypeMarkUser:
+            if (!BTD_isEmptyArray(self.users)) {
+                if ([self.delegate respondsToSelector:@selector(didSelectUidList:)]) {
+                    [self.delegate didSelectUidList:self.users];
+                }
+                [BIMToastView toast:@"选择用户完成"];
+            }
+            [self dismiss];
+            break;
+
         default:
             break;
     }
@@ -211,11 +259,13 @@ static NSInteger const kMaxCount = 5;
     }
     NSMutableArray *users = [NSMutableArray array];
     for (NSNumber *userID in self.users) {
+        BIMUser *u = [BIMUIClient sharedInstance].userProvider(userID.longLongValue);
         VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
         user.userID = userID.longLongValue;
         user.isNeedSelection = YES;
-        user.name = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:userID.longLongValue];
+        user.name = u.nickName;
         user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:userID.longLongValue];
+        user.avatarUrl = u.portraitUrl;
         [users addObject:user];
     }
     kWeakSelf(self);
@@ -238,12 +288,14 @@ static NSInteger const kMaxCount = 5;
 {
     NSMutableArray *users = [NSMutableArray array];
     for (NSNumber *userID in self.users) {
+        BIMUser *u = [BIMUIClient sharedInstance].userProvider(userID.longLongValue);
         VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
         user.userID = userID.longLongValue;
         user.isNeedSelection = YES;
-        NSString *alias = [BIMUIClient sharedInstance].userProvider(user.userID).alias;
+        NSString *alias = u.alias.length ? u.alias : u.nickName;
         user.name = alias.length ? alias : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:userID.longLongValue];
         user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:userID.longLongValue];
+        user.avatarUrl = u.portraitUrl;
         [users addObject:user];
     }
     VEIMDemoUserSelectionController *userController = [[VEIMDemoUserSelectionController alloc] initWithUsers:users];

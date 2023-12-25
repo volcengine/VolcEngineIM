@@ -11,6 +11,7 @@
 #import "VEIMDemoDefine.h"
 #import "VEIMDemoAppInfoCell.h"
 #import "VEIMDemoAccountCancellationManager.h"
+#import "VEIMDemoProfileEditViewController.h"
 
 #import <OneKit/UIApplication+BTDAdditions.h>
 #import <OneKit/BTDMacros.h>
@@ -32,7 +33,7 @@ static NSString *const VEIMMyInfoLongConnectStauts = @"长连接状态";
 static NSString *const VEIMMyInfoPrivacy = @"隐私政策";
 static NSString *const VEIMMyInfoPermissionList = @"权限清单";
 
-@interface VEIMDemoMyinfoController ()
+@interface VEIMDemoMyinfoController ()<BIMFriendListener>
 
 @property (nonatomic, copy) NSArray *appInfoArr;
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
@@ -60,6 +61,11 @@ static NSString *const VEIMMyInfoPermissionList = @"权限清单";
     }
     return self;
 }
+
+- (void)dealloc
+{
+    [[BIMClient sharedInstance] removeFriendListener:self];
+}
 	
 - (UITableViewStyle)tableviewStyle{
     return UITableViewStyleGrouped;
@@ -79,6 +85,8 @@ static NSString *const VEIMMyInfoPermissionList = @"权限清单";
             [self.tableview reloadData];
         });
     }];
+    
+    [[BIMClient sharedInstance] addFriendListener:self];
 }
 
 - (void)didReceiveNoti: (NSNotification *)noti{
@@ -114,7 +122,7 @@ static NSString *const VEIMMyInfoPermissionList = @"权限清单";
     switch (indexPath.section) {
         case VEIMDemoMyinfoSectionTypeInfo:{
             VEIMDemoMyinfoHeaderCell *cell = [tableView dequeueReusableCellWithIdentifier:@"VEIMDemoMyinfoHeaderCell"];
-            [cell refreshWithUser:[VEIMDemoUserManager sharedManager].currentUser];
+            [cell refreshWithUser:[VEIMDemoUserManager sharedManager].currentUserFullInfo.userProfile];
             return cell;
             break;
         }
@@ -219,7 +227,12 @@ static NSString *const VEIMMyInfoPermissionList = @"权限清单";
             pasteboard.string = self.did;
             [BIMToastView toast:[NSString stringWithFormat:@"已复制Did:%@", self.did] withDuration:0.5];
         }
-    }
+    } else if (indexPath.section == VEIMDemoMyinfoSectionTypeInfo) {
+        BIMUserProfile *profile = [VEIMDemoUserManager sharedManager].currentUserFullInfo.userProfile;
+        VEIMDemoProfileEditViewController *vc = [[VEIMDemoProfileEditViewController alloc] initWithUserProfile:profile];
+        vc.canSelfEdit = YES;
+        [self.navigationController pushViewController:vc animated:YES];
+     }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -259,6 +272,13 @@ static NSString *const VEIMMyInfoPermissionList = @"权限清单";
         _progressHUD = [[MBProgressHUD alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     }
     return _progressHUD;
+}
+
+#pragma mark - BIMFriendListener
+
+- (void)onUserProfileUpdate:(BIMUserFullInfo *)info
+{
+    [self.tableview reloadData];
 }
 
 @end

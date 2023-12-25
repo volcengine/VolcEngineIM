@@ -9,7 +9,7 @@
 #import "BIMPortraitBaseCell.h"
 
 
-@class BIMFriendInfo, BIMFriendListUserCell;
+@class BIMUserFullInfo, BIMFriendListUserCell;
 
 @protocol BIMFriendListUserCellDelegate <NSObject>
 
@@ -20,7 +20,7 @@
 @interface BIMFriendListUserCell : BIMPortraitBaseCell
 
 //@property (nonatomic, strong) BIMUser *user;
-@property (nonatomic, strong) BIMFriendInfo *friendInfo;
+@property (nonatomic, strong) BIMUserFullInfo *friendInfo;
 @property (nonatomic, weak) id<BIMFriendListUserCellDelegate> delegate;
 
 @end

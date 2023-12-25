@@ -13,13 +13,13 @@
 
 @interface BIMFriendListDataSource () <BIMFriendListener>
 
-@property (nonatomic, copy) NSArray<BIMFriendInfo *> *friendList;
+@property (nonatomic, copy) NSArray<BIMUserFullInfo *> *friendList;
 
-@property (nonatomic, strong) NSMutableArray<BIMFriendInfo *> *p_friendList;
+@property (nonatomic, strong) NSMutableArray<BIMUserFullInfo *> *p_friendList;
 
 @property (nonatomic, strong) NSMutableDictionary *p_friendDict;
 
-@property (nonatomic, assign) NSInteger unreadCount;
+@property (atomic, assign) NSInteger unreadCount;
 
 @property (nonatomic, strong) dispatch_queue_t friendListQueue;
 
@@ -58,9 +58,9 @@
 #pragma mark - BIMFriendListener
 
 // 同意好友申请回调
-- (void)onFriendAdd:(BIMFriendInfo *)friendInfo
+- (void)onFriendAdd:(BIMUserFullInfo *)info
 {
-    [self p_addFriendToListWithFriendInfo:@[friendInfo]];
+    [self p_addFriendToListWithFriendInfo:@[info]];
 }
 
 // 好友申请未读变化回调
@@ -82,9 +82,9 @@
 }
 
 // 修改好友信息回调
-- (void)onFriendUpdate:(BIMFriendInfo *)friendInfo
+- (void)onFriendUpdate:(BIMUserFullInfo *)info
 {
-    [self p_updateFriendWithFriendInfo:friendInfo];
+    [self p_updateFriendWithFriendInfo:info];
 }
 
 #pragma mark - Private
@@ -92,7 +92,7 @@
 - (void)p_loadFriendListWithCompletion:(void(^)(NSError *_Nullable))completion
 {
     @weakify(self);
-    [[BIMClient sharedInstance] getFriendListCompletion:^(NSArray<BIMFriendInfo *> * _Nullable infos, BIMError * _Nullable error) {
+    [[BIMClient sharedInstance] getFriendListCompletion:^(NSArray<BIMUserFullInfo *> * _Nullable infos, BIMError * _Nullable error) {
         @strongify(self);
         [self p_addFriendToListWithFriendInfo:infos];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -116,10 +116,10 @@
     }];
 }
 
-- (void)p_addFriendToListWithFriendInfo:(NSArray<BIMFriendInfo *> *)friendInfo
+- (void)p_addFriendToListWithFriendInfo:(NSArray<BIMUserFullInfo *> *)friendInfo
 {
     dispatch_async(self.friendListQueue, ^{
-        for (BIMFriendInfo *info in friendInfo) {
+        for (BIMUserFullInfo *info in friendInfo) {
             if ([[self.p_friendDict allKeys] containsObject:@(info.uid).stringValue]) {
                 continue;
             }
@@ -140,7 +140,7 @@
         if (![[self.p_friendDict allKeys] containsObject:@(friendId).stringValue]) {
             return;
         }
-        BIMFriendInfo *friendInfo = self.p_friendDict[@(friendId).stringValue];
+        BIMUserFullInfo *friendInfo = self.p_friendDict[@(friendId).stringValue];
         [self.p_friendList removeObject:friendInfo];
         [self.p_friendDict removeObjectForKey:@(friendId).stringValue];
         
@@ -153,13 +153,13 @@
     });
 }
 
-- (void)p_updateFriendWithFriendInfo:(BIMFriendInfo *)friendInfo
+- (void)p_updateFriendWithFriendInfo:(BIMUserFullInfo *)friendInfo
 {
     dispatch_async(self.friendListQueue, ^{
         if (!self.p_friendDict[@(friendInfo.uid).stringValue]) {
             return;
         }
-        BIMFriendInfo *oldFriendInfo = self.p_friendDict[@(friendInfo.uid).stringValue];
+        BIMUserFullInfo *oldFriendInfo = self.p_friendDict[@(friendInfo.uid).stringValue];
         [self.p_friendDict setObject:friendInfo forKey:@(friendInfo.uid).stringValue];
         [self.p_friendList removeObject:oldFriendInfo];
         [self.p_friendList addObject:friendInfo];

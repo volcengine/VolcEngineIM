@@ -10,6 +10,7 @@
 
 #import <imsdk-tob/BIMClient+Friend.h>
 #import <Masonry/Masonry.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 
 @interface VEIMDemoBlackListUserCell ()
 
@@ -27,11 +28,15 @@
     [self.contentView addGestureRecognizer:longpPressGes];
 }
 
-- (void)setBlackInfo:(BIMBlackListFriendInfo *)blackInfo
+- (void)setBlackInfo:(BIMUserFullInfo *)blackInfo
 {
     _blackInfo = blackInfo;
-    self.nameLabel.text = (blackInfo.alias && blackInfo.alias.length) ? blackInfo.alias : [NSString stringWithFormat:@"用户%@", @(self.blackInfo.uid)];;
-    self.portrait.image = [UIImage imageNamed:@"icon_recommend_user_default"];
+    NSString *nickName = blackInfo.alias.length ? blackInfo.alias : blackInfo.nickName;
+    if (!nickName.length) {
+        nickName = [NSString stringWithFormat:@"用户%@", @(blackInfo.uid).stringValue];
+    }
+    self.nameLabel.text = nickName;;
+    [self.portrait sd_setImageWithURL:[NSURL URLWithString:blackInfo.portraitUrl] placeholderImage:[UIImage imageNamed:@"icon_recommend_user_default"]];
     self.subTitleLabel.text = nil;
     
     [self setupConstraints];

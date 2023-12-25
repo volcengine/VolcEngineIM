@@ -27,9 +27,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL canRemove;
 
 
-@property (nonatomic, strong) void(^clickHandler)(void);
-@property (nonatomic, strong) void(^addHandler)(void);
-@property (nonatomic, strong) void(^minusHandler)(void);
+@property (nonatomic, copy) void(^clickHandler)(void);
+@property (nonatomic, copy) void(^addHandler)(void);
+@property (nonatomic, copy) void(^minusHandler)(void);
+@property (nonatomic, copy) void(^itemClickHandler)(NSInteger index);
 
 - (void)refreshWithConversationParticipants:(NSArray<id<BIMMember>> *)participants;
 

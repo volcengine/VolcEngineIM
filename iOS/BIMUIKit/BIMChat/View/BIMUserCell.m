@@ -6,6 +6,8 @@
 //
 
 #import "BIMUserCell.h"
+#import <SDWebImage/UIImageView+WebCache.h>
+#import "BIMUIClient.h"
 
 @interface BIMUserCell ()
 
@@ -20,7 +22,7 @@
 - (void)setUser:(BIMUser *)user{
     _user = user;
     
-    self.portrait.image = user.headImg;
+    [self.portrait sd_setImageWithURL:[NSURL URLWithString:user.portraitUrl] placeholderImage:user.placeholderImage];
     self.nameLabel.text = (user.alias && user.alias.length) ? user.alias : user.nickName;
     self.subTitleLabel.text = nil;
     

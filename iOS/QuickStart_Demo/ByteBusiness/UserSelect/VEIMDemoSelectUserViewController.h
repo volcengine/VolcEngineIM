@@ -13,7 +13,16 @@
 typedef NS_ENUM(NSUInteger, VEIMDemoSelectUserShowType) {
     VEIMDemoSelectUserShowTypeCreateChat,      // 创建聊天
     VEIMDemoSelectUserShowTypeAddParticipants, // 群聊添加成员
+    VEIMDemoSelectUserShowTypeMarkUser,        // 标记用户
 };
+
+@protocol VEIMDemoSelectUserViewControllerDelegate <NSObject>
+
+@optional
+
+- (void)didSelectUidList:(NSArray<NSNumber *> *_Nullable)uidList;
+
+@end
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) VEIMDemoSelectUserShowType showType;
 @property (nonatomic, assign) BIMConversationType conversationType;
 @property (nonatomic, strong) BIMConversation *conversation; // 添加群成员
+@property (nonatomic, weak, nullable) id<VEIMDemoSelectUserViewControllerDelegate> delegate;
 
 @end
 

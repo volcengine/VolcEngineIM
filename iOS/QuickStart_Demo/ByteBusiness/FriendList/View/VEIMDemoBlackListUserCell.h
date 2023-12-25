@@ -8,7 +8,7 @@
 
 #import "BIMPortraitBaseCell.h"
 
-@class BIMBlackListFriendInfo, VEIMDemoBlackListUserCell;
+@class BIMUserFullInfo, VEIMDemoBlackListUserCell;
 
 @protocol VEIMDemoBlackListUserCellDelegate <NSObject>
 
@@ -18,7 +18,7 @@
 
 @interface VEIMDemoBlackListUserCell : BIMPortraitBaseCell
 
-@property (nonatomic, strong) BIMBlackListFriendInfo *blackInfo;
+@property (nonatomic, strong) BIMUserFullInfo *blackInfo;
 @property (nonatomic, weak) id<VEIMDemoBlackListUserCellDelegate> delegate;
 
 @end
