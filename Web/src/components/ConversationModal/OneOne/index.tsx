@@ -3,7 +3,6 @@ import { Button, Form, Input, Message, Modal, Select } from '@arco-design/web-re
 import { useRecoilValue } from 'recoil';
 
 import { DefaultUserIds, UserId } from '../../../store';
-import { ACCOUNTS_INFO } from '../../../constant';
 import { useRequest } from 'ahooks';
 import { checkAccount } from '../../../apis/app';
 

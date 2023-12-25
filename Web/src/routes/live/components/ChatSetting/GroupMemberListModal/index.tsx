@@ -1,15 +1,15 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
-import { Button, Input, Popover, Select, Space, Tooltip } from '@arco-design/web-react';
+import { Button, Input, Popover, Radio, Select, Space, Tooltip } from '@arco-design/web-react';
 import { IconDelete, IconEdit, IconStop, IconSync } from '@arco-design/web-react/icon';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { Avatar } from '../../../../../components';
-import { ACCOUNTS_INFO, ROLE } from '../../../../../constant';
-import { CurrentConversation, UserId } from '../../../../../store';
+import { Avatar, ProfilePopover } from '../../../../../components';
+import { ROLE } from '../../../../../constant';
+import { BytedIMInstance, CurrentConversation, UserId } from '../../../../../store';
 
 import GroupSearchModalBox from './Styles';
-import { useParticipant } from '../../../../../hooks';
+import { useAccountsInfo, useParticipant } from '../../../../../hooks';
 import { IconHumanSet } from '../../../../../components/Icon';
 import { uniqBy } from 'lodash';
 import { Participant } from '@volcengine/im-web-sdk';
@@ -80,10 +80,13 @@ function calcPermissionKey(p: Participant): Keys {
 export function MemberNameDisplay({
   offlineParticipant,
   participant,
+  markFilter,
 }: {
   participant: Participant;
   offlineParticipant: boolean;
+  markFilter?: string;
 }) {
+  const ACCOUNTS_INFO = useAccountsInfo();
   const userId = useRecoilValue(UserId);
   let isItemSelf = participant.userId === userId;
   let avatarUrl = participant.avatarUrl || ACCOUNTS_INFO[participant.userId]?.url;
@@ -95,7 +98,11 @@ export function MemberNameDisplay({
 
   return (
     <>
-      <div className="group-auth-avatar">{avatarUrl ? <Avatar size={32} url={avatarUrl} /> : <i>无头像</i>}</div>
+      <div className="group-auth-avatar">
+        <ProfilePopover userId={participant.userId}>
+          {avatarUrl ? <Avatar size={32} url={avatarUrl} /> : <i>无头像</i>}
+        </ProfilePopover>
+      </div>
       <div className="group-auth-item-info">
         <div className="group-auth-username">{displayName}</div>
 
@@ -118,6 +125,13 @@ export function MemberNameDisplay({
           </>
         )}
         {offlineParticipant && <div className="group-title-tag group-offline-title">离线</div>}
+        {participant.marks?.length ? (
+          <Tooltip content={participant.marks.join(',')}>
+            <div className="group-title-tag group-offline-title">
+              {participant.marks.includes(markFilter) ? markFilter : participant.marks[0]}
+            </div>
+          </Tooltip>
+        ) : null}
       </div>
     </>
   );
@@ -137,6 +151,7 @@ export const GroupMemberListModal: FC<GroupSearchModalProps> = props => {
 
   const self = useMemo(() => participants.find(p => p.userId === userId), [participants]);
   const selfPermissionKey = calcPermissionKey(self);
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
 
   const {
     getParticipantsOnline,
@@ -201,6 +216,16 @@ export const GroupMemberListModal: FC<GroupSearchModalProps> = props => {
     }).then(() => getList());
     return true;
   };
+
+  const { data } = useRequest(
+    async () => {
+      return bytedIMInstance.getLiveConversationMarksOnline({ conversation: currentConversation });
+    },
+    {
+      refreshOnWindowFocus: true,
+    }
+  );
+  const [markFilter, setMarkFilter] = useState('');
   return (
     <GroupSearchModalBox>
       <div className="form-item">
@@ -226,177 +251,199 @@ export const GroupMemberListModal: FC<GroupSearchModalProps> = props => {
           刷新
         </Button>
       </div>
+      <Radio.Group
+        options={[
+          {
+            value: '',
+            label: '全部',
+          },
+          ...(data?.markTypes?.sort()?.map(i => ({
+            value: i,
+            label: i,
+          })) ?? []),
+        ]}
+        size="mini"
+        type="button"
+        value={markFilter}
+        onChange={setMarkFilter}
+        style={{ marginBottom: 20 }}
+      />
+      {sortParticipants
+        .filter(i => !markFilter || i.marks?.includes(markFilter))
+        .map((item, index) => {
+          const itemUid = item.userId;
 
-      {sortParticipants.map((item, index) => {
-        const itemUid = item.userId;
+          let isOfflineParticipant = !participants.find(i => i.userId === item.userId);
+          let isItemSelf = itemUid === userId;
+          let itemPermissionKey = calcPermissionKey(item);
+          let allows = OperatePermissionMap[selfPermissionKey][itemPermissionKey];
 
-        let isOfflineParticipant = !participants.find(i => i.userId === item.userId);
-        let isItemSelf = itemUid === userId;
-        let itemPermissionKey = calcPermissionKey(item);
-        let allows = OperatePermissionMap[selfPermissionKey][itemPermissionKey];
+          let isInSettingMute = muteSettingIndex === index;
 
-        let isInSettingMute = muteSettingIndex === index;
+          return (
+            <div className="member-item-wrapper" key={itemUid}>
+              <div className="group-auth-item">
+                <MemberNameDisplay
+                  participant={item}
+                  offlineParticipant={isOfflineParticipant}
+                  markFilter={markFilter}
+                />
 
-        return (
-          <div className="member-item-wrapper" key={itemUid}>
-            <div className="group-auth-item">
-              <MemberNameDisplay participant={item} offlineParticipant={isOfflineParticipant} />
-
-              <div className="group-auth-options">
-                {isItemSelf && (
-                  <Tooltip content="修改成员资料" position="top">
-                    <span
-                      className={classNames('group-option-icon', 'group-option-icon-humanSet')}
-                      onClick={() => {
-                        setIsEditInfo(item);
-                      }}
-                    >
-                      <IconEdit />
-                    </span>
-                  </Tooltip>
-                )}
-
-                {!isItemSelf && (
-                  <>
-                    {allows.includes('setAlias') && (
-                      <Tooltip content="修改成员资料" position="top">
-                        <span
-                          className={classNames('group-option-icon', 'group-option-icon-humanSet')}
-                          onClick={() => {
-                            setIsEditInfo(item);
-                          }}
-                        >
-                          <IconEdit />
-                        </span>
-                      </Tooltip>
-                    )}
-
-                    {item.blocked ? (
-                      <Popover
-                        content={
-                          <>
-                            {Number(item.leftBlockTime) === -1 ? '永久禁言' : `已被禁言, 剩余${item.leftBlockTime}s`}
-                            {allows.includes('mute') && (
-                              <Button
-                                size={'mini'}
-                                onClick={async () => {
-                                  await setParticipantMuteTime({
-                                    memberIds: item.userId,
-                                    block: false,
-                                  });
-                                  getList();
-                                }}
-                              >
-                                解除
-                              </Button>
-                            )}
-                          </>
-                        }
-                        position="top"
+                <div className="group-auth-options">
+                  {isItemSelf && (
+                    <Tooltip content="修改成员资料" position="top">
+                      <span
+                        className={classNames('group-option-icon', 'group-option-icon-humanSet')}
+                        onClick={() => {
+                          setIsEditInfo(item);
+                        }}
                       >
-                        <span className={classNames('group-option-icon', 'group-option-icon-humanSet')}>
-                          <IconStop style={{ color: '#f00' }} />
-                        </span>
-                      </Popover>
-                    ) : (
-                      allows.includes('mute') && (
-                        <Popover
-                          content={
-                            <div className="mute-wrapper">
-                              <Select
-                                style={{ width: 120 }}
-                                size="small"
-                                defaultValue="永久禁言"
-                                onChange={value => setMuteTime(value)}
-                              >
-                                {muteTimeOptions.map((option, index) => (
-                                  <Option key={option.label} value={option.value}>
-                                    {option.label}
-                                  </Option>
-                                ))}
-                              </Select>
+                        <IconEdit />
+                      </span>
+                    </Tooltip>
+                  )}
 
-                              <Button type="primary" size="small" onClick={handleMemberMute}>
-                                确定
-                              </Button>
-                              <Button
-                                size="small"
-                                onClick={() => {
-                                  setMuteSettingIndex(-1);
-                                }}
-                              >
-                                取消
-                              </Button>
-                            </div>
-                          }
-                          popupVisible={isInSettingMute}
-                          position="top"
-                        >
+                  {!isItemSelf && (
+                    <>
+                      {allows.includes('setAlias') && (
+                        <Tooltip content="修改成员资料" position="top">
                           <span
                             className={classNames('group-option-icon', 'group-option-icon-humanSet')}
                             onClick={() => {
-                              setMuteSettingIndex(isInSettingMute ? -1 : index);
+                              setIsEditInfo(item);
                             }}
                           >
-                            <IconStop />
+                            <IconEdit />
+                          </span>
+                        </Tooltip>
+                      )}
+
+                      {item.blocked ? (
+                        <Popover
+                          content={
+                            <>
+                              {Number(item.leftBlockTime) === -1 ? '永久禁言' : `已被禁言, 剩余${item.leftBlockTime}s`}
+                              {allows.includes('mute') && (
+                                <Button
+                                  size={'mini'}
+                                  onClick={async () => {
+                                    await setParticipantMuteTime({
+                                      memberIds: item.userId,
+                                      block: false,
+                                    });
+                                    getList();
+                                  }}
+                                >
+                                  解除
+                                </Button>
+                              )}
+                            </>
+                          }
+                          position="top"
+                        >
+                          <span className={classNames('group-option-icon', 'group-option-icon-humanSet')}>
+                            <IconStop style={{ color: '#f00' }} />
                           </span>
                         </Popover>
-                      )
-                    )}
+                      ) : (
+                        allows.includes('mute') && (
+                          <Popover
+                            content={
+                              <div className="mute-wrapper">
+                                <Select
+                                  style={{ width: 120 }}
+                                  size="small"
+                                  defaultValue="永久禁言"
+                                  onChange={value => setMuteTime(value)}
+                                >
+                                  {muteTimeOptions.map((option, index) => (
+                                    <Option key={option.label} value={option.value}>
+                                      {option.label}
+                                    </Option>
+                                  ))}
+                                </Select>
 
-                    {allows.includes('setManager') && (
-                      <>
-                        {item.role !== ROLE.Manager ? (
-                          <Tooltip content="设为群管理员" position="top">
+                                <Button type="primary" size="small" onClick={handleMemberMute}>
+                                  确定
+                                </Button>
+                                <Button
+                                  size="small"
+                                  onClick={() => {
+                                    setMuteSettingIndex(-1);
+                                  }}
+                                >
+                                  取消
+                                </Button>
+                              </div>
+                            }
+                            popupVisible={isInSettingMute}
+                            position="top"
+                          >
                             <span
                               className={classNames('group-option-icon', 'group-option-icon-humanSet')}
                               onClick={() => {
-                                updateGroupParticipant(currentConversation.id, item.userId, {
-                                  role: ROLE.Manager,
-                                }).then(() => getList());
+                                setMuteSettingIndex(isInSettingMute ? -1 : index);
                               }}
                             >
-                              <IconHumanSet />
+                              <IconStop />
                             </span>
-                          </Tooltip>
-                        ) : (
-                          <Tooltip content="取消群管理员" position="top">
-                            <span
-                              className={classNames('group-option-icon', 'group-option-icon-humanSet')}
-                              onClick={() => {
-                                updateGroupParticipant(currentConversation.id, item.userId, {
-                                  role: ROLE.Normal,
-                                }).then(() => getList());
-                              }}
-                            >
-                              <IconHumanSet />
-                            </span>
-                          </Tooltip>
-                        )}
-                      </>
-                    )}
+                          </Popover>
+                        )
+                      )}
 
-                    {allows.includes('delete') && !isOfflineParticipant && (
-                      <Tooltip content="删除群成员" position="top">
-                        <span
-                          className={classNames('group-option-icon', 'group-option-icon-delete')}
-                          onClick={() => {
-                            handleMemberDelete(item.userId);
-                          }}
-                        >
-                          <IconDelete />
-                        </span>
-                      </Tooltip>
-                    )}
-                  </>
-                )}
+                      {allows.includes('setManager') && (
+                        <>
+                          {item.role !== ROLE.Manager ? (
+                            <Tooltip content="设为群管理员" position="top">
+                              <span
+                                className={classNames('group-option-icon', 'group-option-icon-humanSet')}
+                                onClick={() => {
+                                  updateGroupParticipant(currentConversation.id, item.userId, {
+                                    role: ROLE.Manager,
+                                  }).then(() => getList());
+                                }}
+                              >
+                                <IconHumanSet />
+                              </span>
+                            </Tooltip>
+                          ) : (
+                            <Tooltip content="取消群管理员" position="top">
+                              <span
+                                className={classNames('group-option-icon', 'group-option-icon-humanSet')}
+                                onClick={() => {
+                                  updateGroupParticipant(currentConversation.id, item.userId, {
+                                    role: ROLE.Normal,
+                                  }).then(() => getList());
+                                }}
+                              >
+                                <IconHumanSet />
+                              </span>
+                            </Tooltip>
+                          )}
+                        </>
+                      )}
+
+                      {allows.includes('delete') && !isOfflineParticipant && (
+                        <Tooltip content="删除群成员" position="top">
+                          <span
+                            className={classNames('group-option-icon', 'group-option-icon-delete')}
+                            onClick={() => {
+                              handleMemberDelete(item.userId);
+                            }}
+                          >
+                            <IconDelete />
+                          </span>
+                        </Tooltip>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {muteSettingIndex > -1 && isInSettingMute && <></>}
               </div>
-
-              {muteSettingIndex > -1 && isInSettingMute && <></>}
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
       {isEditInfo && (
         <LiveParticipantInfoModel
           userId={isEditInfo.userId}

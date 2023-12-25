@@ -8,11 +8,11 @@ import { MessageItemType } from '../../../../types';
 import { MessageAvatar, MessageStatusCmp, MessageTime, Toolbar, MessageProperty } from './components';
 import { IconRevocation } from '../../../../components/Icon';
 import { getMessageComponent } from '../../../../components/MessageCards';
-import { useFriendAlias, useInView } from '../../../../hooks';
+import { useAccountsInfo, useInView } from '../../../../hooks';
 import MessageWrap from './Styles';
 import { BytedIMInstance, CurrentConversation, Participants, UserId } from '../../../../store';
 import { getMessageTimeFormat, getMsgStatusIcon } from '../../../../utils';
-import { ACCOUNTS_INFO, EXT_ALIAS_NAME, EXT_AVATAR_URL } from '../../../../constant';
+import { EXT_ALIAS_NAME, EXT_AVATAR_URL } from '../../../../constant';
 import { IconArrowDown, IconArrowUp, IconMinus } from '@arco-design/web-react/icon';
 
 interface MessageLayoutProps {
@@ -148,7 +148,8 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
   };
 
   /** 每个消息的时间 */
-  useFriendAlias();
+  const ACCOUNTS_INFO = useAccountsInfo();
+
   const renderMessageOwnerInfo = () => {
     return (
       <div className="message-info">

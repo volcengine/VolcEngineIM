@@ -8,7 +8,7 @@ import { IconEdit, IconRight } from '../Icon';
 import GroupInfoModal from './GroupInfoModal';
 import GroupMemberManageModal from './GroupMemberManageModal';
 import ChatSettingBox from './Styles';
-import { useConversation } from '../../hooks';
+import { useAccountsInfo, useConversation } from '../../hooks';
 import { CurrentConversation, Participants, UserId } from '../../store';
 import { getConversationAvatar, getConversationName } from '../../utils';
 import { useParticipant } from '../../hooks/useParticipant';
@@ -145,7 +145,7 @@ const ChatSetting: FC<ChatSettingProps> = props => {
     }
     return null;
   };
-
+  useAccountsInfo();
   return (
     <ChatSettingBox className="chat-setting">
       <div className="chat-setting-header">

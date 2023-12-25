@@ -8,9 +8,9 @@ import { getMessageTimeFormat } from '../../../../utils';
 import useMessage from '../../../../hooks/useMessage';
 import { Toolbar } from '../../../MessageLayout/components';
 import EmojiTable from '../../../MessageLayout/components/EmojiTable';
-import { ACCOUNTS_INFO } from '../../../../constant';
 
 import Container from './Style';
+import { useAccountsInfo } from '../../../../hooks';
 
 interface IMessageItemProps {
   message: Message;
@@ -47,6 +47,7 @@ const MessageItem = ({ message, index, messageLen }: IMessageItemProps) => {
     ];
     return <Toolbar items={items} setToolBarVisible={setIsHover} />;
   };
+  const ACCOUNTS_INFO = useAccountsInfo();
 
   return (
     <Container className={index === 0 ? 'divider' : ''}>

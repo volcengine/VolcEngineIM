@@ -9,6 +9,7 @@ import {
   LivePlugin,
   ContactPlugin,
   Message,
+  Friend,
 } from '@volcengine/im-web-sdk';
 import { Modal, Message as ArcoMessage } from '@arco-design/web-react';
 import lang from 'lodash/lang';
@@ -28,7 +29,7 @@ import {
   LiveConversationMemberCount,
   LiveConversationOwner,
 } from '../store';
-import { APP_ID, USER_ID_KEY, IM_TOKEN_KEY, SDK_OPTION, FRIEND_ALIAS } from '../constant';
+import { APP_ID, USER_ID_KEY, IM_TOKEN_KEY, SDK_OPTION, FRIEND_INFO } from '../constant';
 import { fetchToken } from '../apis/app';
 import { Storage, computedVisibleTime } from '../utils';
 import { useLive } from './useLive';
@@ -340,6 +341,13 @@ const useInit = () => {
     const friendDeleteHandler = bytedIMInstance?.event?.subscribe?.(IMEvent.FriendDelete, msg => {
       // Message.info(`${ACCOUNTS_INFO[msg.from_user_id].name} 将好友 ${ACCOUNTS_INFO[msg.to_user_id].name} 删除`);
     });
+    const profileUpdateHandler = bytedIMInstance?.event?.subscribe?.(IMEvent.ProfileUpdate, msg => {
+      window.dispatchEvent(
+        new CustomEvent('profileRequest', {
+          detail: { userIds: [msg.uid.toString()], force: true },
+        })
+      );
+    });
 
     let loadLiveHistoryListener = async event => {
       for (let msg of event.detail.messages) {
@@ -355,11 +363,11 @@ const useInit = () => {
           limit: 500,
         })
         .then(friendList => {
-          const result = {};
+          const result: { [k: string]: Friend } = {};
           friendList.list.map(i => {
-            result[i.userId] = i.alias;
+            result[i.userId] = i;
           });
-          FRIEND_ALIAS.value = result;
+          FRIEND_INFO.value = result;
           window.dispatchEvent(new CustomEvent('friendRefresh'));
         });
     };
@@ -381,6 +389,11 @@ const useInit = () => {
       handleFriendRefresh
     );
 
+    const handleLiveGroupMarkTypeUpdateHandler = bytedIMInstance?.event.subscribe(
+      IMEvent.LiveGroupMarkTypeUpdate,
+      () => {}
+    );
+
     return () => {
       bytedIMInstance?.event.unsubscribe(IMEvent.ConversationUpsert, conversationUpsertHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.ConversationLeave, conversationLeaveHandler);
@@ -398,11 +411,13 @@ const useInit = () => {
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendApplyRefuse, friendApplyRefuseHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendAdd, friendAddHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendDelete, friendDeleteHandler);
+      bytedIMInstance?.event.unsubscribe(IMEvent.ProfileUpdate, profileUpdateHandler);
 
       bytedIMInstance?.event.unsubscribe(IMEvent.InitFinish, handleFriendRefreshForInitFinishHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendAdd, handleFriendRefreshForFriendAddHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendDelete, handleFriendRefreshForFriendDeleteHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendUpdate, handleFriendRefreshForFriendUpdateHandler);
+      bytedIMInstance?.event.unsubscribe(IMEvent.LiveGroupMarkTypeUpdate, handleLiveGroupMarkTypeUpdateHandler);
       window.removeEventListener('loadLiveHistory', loadLiveHistoryListener);
     };
   }, [bytedIMInstance, currentConversation?.id]);

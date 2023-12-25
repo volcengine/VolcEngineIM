@@ -8,10 +8,9 @@ import { ScrollRef } from '../../store';
 import { IconLoading } from '../Icon';
 import MessageLayout from '../MessageLayout';
 import { ScrollView } from '..';
-import { useScroll, useUpdate } from '../../hooks';
+import { useAccountsInfo, useScroll, useUpdate } from '../../hooks';
 import { BsInstance } from '../ScrollView/interface';
 import { SystemMessage } from '../MessageCards';
-import { ACCOUNTS_INFO } from '../../constant';
 
 import ListBox from './Styles';
 import { MessageSystem } from '../MessageLayout/components';
@@ -247,6 +246,7 @@ const MessageList = (props: MessageListProps<any>, ref: any) => {
     },
     [scrollRef.current, handleScrollToBottom, handleRefresh]
   );
+  const ACCOUNTS_INFO = useAccountsInfo();
 
   return (
     <ListBox className={classNames(`${prefixCls}-list`, className)} key={id} {...restProps}>

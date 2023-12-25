@@ -5,8 +5,9 @@ import { im_proto } from '@volcengine/im-web-sdk';
 
 import { BytedIMInstance, CurrentConversation, LiveConversationMemberCount, Participants, UserId } from '../store';
 import useMessage from './useMessage';
-import { ACCOUNTS_INFO, ROLE } from '../constant';
+import { ROLE } from '../constant';
 import { useRequest } from 'ahooks';
+import { useAccountsInfo } from './useProfileUpdater';
 
 const { ConversationOperationStatus } = im_proto;
 
@@ -17,6 +18,7 @@ export const useParticipant = () => {
   const { sendSystemMessage } = useMessage();
   const setLiveConversationMemberCount = useSetRecoilState(LiveConversationMemberCount);
   const userId = useRecoilValue(UserId);
+  const ACCOUNTS_INFO = useAccountsInfo();
 
   /**
    * 根据成员id获取成员对象

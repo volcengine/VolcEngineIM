@@ -139,6 +139,12 @@ const SendMessagePriority = atom<im_proto.MessagePriority>({
   dangerouslyAllowMutability: true,
 });
 
+const AccountsInfoVersion = atom<im_proto.MessagePriority>({
+  key: 'AccountsInfoVersion',
+  default: 0,
+  dangerouslyAllowMutability: true,
+});
+
 export {
   UserId,
   DefaultUserIds,
@@ -162,4 +168,5 @@ export {
   LiveConversationMemberCount,
   LiveConversationOwner,
   SendMessagePriority,
+  AccountsInfoVersion,
 };

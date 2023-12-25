@@ -1,5 +1,5 @@
 import React, { FC, memo } from 'react';
-import { Avatar } from '../../..';
+import { Avatar, ProfilePopover } from '../../..';
 
 interface MessageAvatarProps extends React.AllHTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -15,7 +15,9 @@ const MessageAvatar: FC<MessageAvatarProps> = memo(
 
     return (
       <div className="message-avatar" onClick={onClick}>
-        <Avatar size={24} url={source} desc={desc} />
+        <ProfilePopover userId={desc}>
+          <Avatar size={24} url={source} desc={desc} />
+        </ProfilePopover>
       </div>
     );
   },
@@ -24,7 +26,7 @@ const MessageAvatar: FC<MessageAvatarProps> = memo(
       return false;
     }
     return true;
-  },
+  }
 );
 
 export default MessageAvatar;

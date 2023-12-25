@@ -4,7 +4,7 @@ import { Conversation, im_proto } from '@volcengine/im-web-sdk';
 import { IconClose, IconUserAdd } from '@arco-design/web-react/icon';
 import { useRecoilValue } from 'recoil';
 
-import { Avatar } from '../index';
+import { Avatar, ProfilePopover } from '../index';
 import { getConversationAvatar, getConversationName } from '../../utils/message';
 import GroupMemberAddModal from '../GroupMemberAddModal';
 
@@ -12,6 +12,7 @@ import Styles from './Styles';
 import { useParticipant } from '../../hooks/useParticipant';
 import { Participants, UserId } from '../../store';
 import { ROLE } from '../../constant';
+import { useAccountsInfo } from '../../hooks';
 
 interface ChatInfoPropsTypes {
   conversation?: Conversation;
@@ -47,11 +48,18 @@ const ChatHeader: React.FC<ChatInfoPropsTypes> = memo(props => {
     setVisible(false);
   }, [conversation.id, selectedParticipant]);
 
+  useAccountsInfo();
   return (
     <Styles>
       <div className="chat-info">
         <div className="avatar">
-          <Avatar url={getConversationAvatar(conversation)} size={36} />
+          {conversation.type === im_proto.ConversationType.ONE_TO_ONE_CHAT ? (
+            <ProfilePopover userId={conversation.toParticipantUserId}>
+              <Avatar url={getConversationAvatar(conversation)} size={36} />
+            </ProfilePopover>
+          ) : (
+            <Avatar url={getConversationAvatar(conversation)} size={36} />
+          )}
         </div>
         <div className="info">
           <div className="name">{getConversationName(conversation)}</div>

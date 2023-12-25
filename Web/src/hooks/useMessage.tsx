@@ -323,9 +323,9 @@ const useMessage = () => {
       modifyContent: [
         {
           key,
-          value,
+          value: userId, // 与客户端对齐
           operation: 0,
-          idempotentId: String(key) + userId + value,
+          idempotentId: userId,
         },
       ],
     });

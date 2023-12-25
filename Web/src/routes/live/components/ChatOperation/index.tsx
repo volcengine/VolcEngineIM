@@ -4,8 +4,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import ImEditor, { IRichText } from '../../../../components/MessageEditor';
 import { IMAccountInfoTypes } from '../../../../types';
 import { CurrentConversation, IsMuted, Participants, ReferenceMessage, SendMessagePriority } from '../../../../store';
-import { ACCOUNTS_INFO, EDITOR_TYPE } from '../../../../constant';
-import { useMessage } from '../../../../hooks';
+import { EDITOR_TYPE } from '../../../../constant';
+import { useAccountsInfo, useMessage } from '../../../../hooks';
 
 import Styles from './Styles';
 import { Select } from '@arco-design/web-react';
@@ -23,6 +23,7 @@ export const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
   const { sendTextMessage, sendVolcMessage, sendImageMessage, sendVideoMessage, sendFileMessage, sendAudioMessage } =
     useMessage();
   const [referenceMessage, setReferenceMessage] = useRecoilState(ReferenceMessage);
+  const ACCOUNTS_INFO = useAccountsInfo();
 
   const currentConversation = useRecoilValue(CurrentConversation);
   const { userInfo: convUserInfo, isBlocked } = currentConversation;

@@ -4,12 +4,13 @@ import { Tooltip } from '@arco-design/web-react';
 import { Conversation } from '@volcengine/im-web-sdk';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { Avatar } from '../..';
+import { Avatar, ProfilePopover } from '../..';
 import { IconHumanSet, IconDelete } from '../../Icon';
-import { ACCOUNTS_INFO, ROLE } from '../../../constant';
+import { ROLE } from '../../../constant';
 
 import GroupSearchModalBox from './Styles';
 import { CurrentConversation, Participants } from '../../../store';
+import { useAccountsInfo } from '../../../hooks';
 
 interface GroupSearchModalProps {
   currentConversation?: Conversation;
@@ -97,6 +98,7 @@ const GroupMemberManageModal: FC<GroupSearchModalProps> = props => {
         )
     );
   };
+  const ACCOUNTS_INFO = useAccountsInfo();
 
   return (
     <GroupSearchModalBox>
@@ -104,7 +106,9 @@ const GroupMemberManageModal: FC<GroupSearchModalProps> = props => {
         {sortMember(participants).map(item => (
           <div className="group-auth-item" key={item.userId.toString()}>
             <div className="group-auth-avatar">
-              <Avatar size={32} url={ACCOUNTS_INFO[item.userId]?.url} />
+              <ProfilePopover userId={item.userId}>
+                <Avatar size={32} url={ACCOUNTS_INFO[item.userId]?.url} />
+              </ProfilePopover>
             </div>
             <div className="group-auth-item-info">
               <div className="group-auth-username">{ACCOUNTS_INFO[item.userId]?.name}</div>

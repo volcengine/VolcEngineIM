@@ -4,6 +4,7 @@ import { Conversation, PushStatus } from '@volcengine/im-web-sdk';
 import Styles from './Styles';
 import { getConversationLastMsgDesc, getConversationName } from '../../utils';
 import ConversationItem from '../ConversationItem';
+import { useAccountsInfo } from '../../hooks';
 
 interface ConversationListProps {
   currentUser?: any;
@@ -12,15 +13,16 @@ interface ConversationListProps {
   curConversationId?: string;
   onItemClick?: (item: Conversation) => void;
   onLoadMore?: () => void;
+  emptyText?: string;
 }
 
 const ConversationList: FC<ConversationListProps> = props => {
   const { list = [], curConversationId, hasMore, onItemClick, onLoadMore, ...other } = props;
 
   if (!list.length) {
-    return <div className="empty-conversation-wrap">暂无消息</div>;
+    return <div className="empty-conversation-wrap">{props.emptyText ?? '暂无消息'}</div>;
   }
-
+  useAccountsInfo();
   return (
     <Styles>
       <div className="list">
@@ -40,6 +42,7 @@ const ConversationList: FC<ConversationListProps> = props => {
 
           return (
             <ConversationItem
+              key={item.id}
               onClick={() => onItemClick(item)}
               title={getConversationName(item)}
               conversation={item}
