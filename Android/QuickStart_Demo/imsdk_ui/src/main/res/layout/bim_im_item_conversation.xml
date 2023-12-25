@@ -38,6 +38,7 @@
         android:paddingRight="4dp"
         android:textColor="@color/business_base_white"
         android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/iv_conversation_user_img"
         app:layout_constraintTop_toTopOf="@id/iv_conversation_user_img"
         tools:text="0" />

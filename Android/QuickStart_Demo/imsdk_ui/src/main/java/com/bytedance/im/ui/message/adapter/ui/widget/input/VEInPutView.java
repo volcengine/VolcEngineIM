@@ -20,8 +20,12 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bytedance.im.core.api.BIMClient;
+import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.model.Message;
+import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.emoji.EmojiInfo;
@@ -34,7 +38,6 @@ import com.bytedance.im.ui.message.adapter.ui.widget.input.machine.StateMachine;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.measure.KeyBoardHeightHelper;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.BaseToolBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.adapter.ToolPageAdapter;
-import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.ui.utils.BIMUtils;
 
 import java.util.ArrayList;
@@ -45,6 +48,7 @@ import java.util.Set;
 public class VEInPutView extends FrameLayout implements View.OnClickListener, EmojiGroupView.EmojiClickListener {
     private static final String TAG = "VEInPutView";
     private int REQUEST_CODE_SELECT_USER_FOR_AT = 1000;
+    private int MAX_LENGTH = 500;
     private ImageView mEmojiIv;
     private EmojiGroupView mEmojiGroupView;
     private Message longClickToMsg;
@@ -106,7 +110,7 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
         functionLayout = findViewById(R.id.function_layout);
         mInputEt = findViewById(R.id.et_input_content);
         mInputEt.addTextChangedListener(mTextWatcher);
-        mInputEt.setFilters(new InputFilter[]{new InputFilter.LengthFilter(500)});
+        mInputEt.setFilters(new InputFilter[]{new InputFilter.LengthFilter(MAX_LENGTH)});
         functionLayout.setVisibility(View.GONE);
         initByKeyBoard();
         stateMachine = new StateMachine(mEmojiGroupView, moreInputOptional, mInputEt, mVoiceInputTv, functionLayout);
@@ -218,7 +222,12 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
         } else {
             builder.insert(preSelection, info.text);
             mInputEt.setText(EmojiManager.getInstance().parseEmoJi(getContext(), builder.toString()));
-            mInputEt.setSelection(preSelection + info.text.length());
+            int end = preSelection+info.text.length();
+            if (end > MAX_LENGTH) {
+                mInputEt.setSelection(MAX_LENGTH);
+            } else {
+                mInputEt.setSelection(end);
+            }
         }
     }
 
@@ -285,24 +294,43 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
             if (selectUid == null) {
                 return;
             }
-            StringBuffer mentionStr = new StringBuffer();
-            for (long uid : selectUid) {
-                BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(uid);
-                mentionStr.append(" ");
-                mentionStr.append("@");
-                mentionStr.append(user.getNickName());
-                mentionStr.append(" "); //用空格区分@的内容
-                mentionIds.add(uid);
-            }
-            StringBuffer stringBuffer = new StringBuffer(mInputEt.getText());
-            stringBuffer.deleteCharAt(mInputEt.getText().length() - 1);
-            stringBuffer.append(mentionStr);
-            mInputEt.setText(stringBuffer.toString());
-            Selection.setSelection(mInputEt.getText(), mInputEt.getText().length()); //移动光标到尾部
+
+            BIMUIClient.getInstance().getUserProvider().getUserInfoListAsync(selectUid, new BIMResultCallback<List<BIMUIUser>>() {
+                @Override
+                public void onSuccess(List<BIMUIUser> bimuiUsers) {
+                    for (BIMUIUser user : bimuiUsers) {
+                        StringBuffer mentionStr = new StringBuffer();;
+                        mentionStr.append(" ");
+                        mentionStr.append("@");
+                        mentionStr.append(getNickName(user));
+                        mentionStr.append(" "); //用空格区分@的内容
+                        mentionIds.add(user.getUid());
+                        StringBuffer stringBuffer = new StringBuffer(mInputEt.getText());
+                        stringBuffer.deleteCharAt(mInputEt.getText().length() - 1);
+                        stringBuffer.append(mentionStr);
+                        mInputEt.setText(stringBuffer.toString());
+                        Selection.setSelection(mInputEt.getText(), mInputEt.getText().length()); //移动光标到尾部
+                    }
+                }
+
+                @Override
+                public void onFailed(BIMErrorCode code) {
+
+                }
+            });
+
         } else {
             for (BaseToolBtn toolBtn : baseToolBtnList) {
                 toolBtn.onActivityResult(requestCode, resultCode, data);
             }
         }
+    }
+
+    private String getNickName(BIMUIUser fullInfo) {
+        String name = "用户" + fullInfo.getUid();         //用户ID
+        if (!TextUtils.isEmpty(fullInfo.getNickName())) { //用户资料名
+            name = fullInfo.getNickName();
+        }
+        return name;
     }
 }

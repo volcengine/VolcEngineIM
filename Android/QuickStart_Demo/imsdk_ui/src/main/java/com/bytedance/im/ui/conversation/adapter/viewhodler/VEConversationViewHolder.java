@@ -2,25 +2,30 @@ package com.bytedance.im.ui.conversation.adapter.viewhodler;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bytedance.im.core.api.enums.BIMConversationType;
+import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageType;
+import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.model.inner.msg.BIMCustomElement;
+import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.conversation.adapter.VEViewHolder;
 import com.bytedance.im.ui.conversation.model.VEConvBaseWrapper;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
-import com.bytedance.im.ui.user.UserManager;
+import com.bytedance.im.ui.utils.BIMUIUtils;
 import com.bytedance.im.ui.utils.BIMUtils;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMessage;
@@ -39,9 +44,11 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
     private ImageView conversationMute;
     private ImageView conversationTop;
     private View root;
+    private RecyclerView recyclerView;
 
-    public VEConversationViewHolder(@NonNull View itemView) {
+    public VEConversationViewHolder(@NonNull View itemView,RecyclerView recyclerView) {
         super(itemView);
+        this.recyclerView = recyclerView;
         root = itemView.findViewById(R.id.root);
         userHeadImg = itemView.findViewById(R.id.iv_conversation_user_img);
         nickName = itemView.findViewById(R.id.tv_conversation_user_name);
@@ -58,23 +65,20 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
         super.bind(conversationVEConversationWrapper);
         BIMConversation bimConversation = conversationVEConversationWrapper.getInfo();
         String name = "";
-        int img = R.drawable.icon_recommend_user_default;
         if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
-            BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(bimConversation.getOppositeUserID());
+            long oppositeUID = bimConversation.getOppositeUserID();
+            BIMUIUser user = getBIMUIUSerOrAsyncRefresh(oppositeUID);
             if (user == null) {
-                name = String.valueOf(bimConversation.getOppositeUserID());
-                userHeadImg.setImageResource(R.drawable.icon_recommend_user_default);
+                return;
+            }
+            name = BIMUIUtils.getShowName(user);
+            if (!TextUtils.isEmpty(user.getPortraitUrl())) {
+                Glide.with(userHeadImg.getContext()).load(user.getPortraitUrl())
+                        .placeholder(R.drawable.icon_recommend_user_default)
+                        .error(R.drawable.icon_recommend_user_default)
+                        .into(userHeadImg);
             } else {
-                img = user.getHeadImg();
-                name = user.getNickName();
-                if (TextUtils.isEmpty(user.getHeadUrl())) {
-                    userHeadImg.setImageResource(img);
-                } else {
-                    Glide.with(userHeadImg.getContext()).load(user.getHeadUrl())
-                            .placeholder(R.drawable.icon_recommend_user_default)
-                            .error(R.drawable.icon_recommend_user_default)
-                            .into(userHeadImg);
-                }
+                userHeadImg.setImageResource(R.drawable.icon_recommend_user_default);
             }
         } else {
             //todo 组件化
@@ -83,8 +87,7 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
             } else {
                 name = "未命名群聊";
             }
-            img = R.drawable.default_icon_group;
-            userHeadImg.setImageResource(img);
+            userHeadImg.setImageResource(R.drawable.default_icon_group);
         }
         nickName.setText(name);
         int textColor = R.color.business_im_222;
@@ -141,8 +144,12 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
         //会话最后一条消息
         BIMMessage lastMessage = bimConversation.getLastMessage();
         if (lastMessage != null) {
+            BIMUIUser user = getBIMUIUSerOrAsyncRefresh(lastMessage.getSenderUID());
+            if (user == null) {
+                return;
+            }
             if (lastMessage.isRecalled()) {
-                lastMsg.setText(BIMUtils.generateRecallHint(lastMessage));
+                lastMsg.setText(BIMUtils.generateRecallHint(lastMessage, user));
             } else {
                 BIMBaseElement content = null;
                 if (lastMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_CUSTOM) { //自定义消息解析
@@ -154,22 +161,15 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
                 } else {
                     content = lastMessage.getElement();
                 }
-                String userName = "";
-                BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(lastMessage.getSenderUID());
-                if (user == null) {
-                    userName = lastMessage.getSenderUID()+"";
-                }else {
-                    userName = user.getNickName();
-                }
-                String prefix = userName+": ";
-                if(content instanceof BIMGroupNotifyElement){
+                String prefix = BIMUIUtils.getShowName(user) + ": ";
+                if (content instanceof BIMGroupNotifyElement) {
                     prefix = "";
                 }
                 if (content != null) {
-                    lastMsg.setText(prefix+content.getMsgHint());
+                    lastMsg.setText(prefix + content.getMsgHint());
                 }
                 //兼容web 临时逻辑,后续删除
-                if(lastMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_TEXT){
+                if (lastMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_TEXT) {
                     String msgStr = BIMUtils.fixWebContent(lastMessage.getContentData());
                     if (!TextUtils.isEmpty(msgStr)) {
                         lastMsg.setText(prefix + msgStr);
@@ -181,8 +181,27 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
         }
         if (lastMsg.getText() == null || lastMsg.getText().toString().isEmpty()) {
             lastMsg.setVisibility(View.GONE);
-        }else {
+        } else {
             lastMsg.setVisibility(View.VISIBLE);
         }
+    }
+
+
+    private BIMUIUser getBIMUIUSerOrAsyncRefresh(long uid) {
+        BIMUIUser user = BIMUIClient.getInstance().getUserProvider().getUserInfo(uid);
+        if (user == null) {
+            BIMUIClient.getInstance().getUserProvider().getUserInfoAsync(uid, new BIMResultCallback<BIMUIUser>() {
+                @Override
+                public void onSuccess(BIMUIUser bimuiUser) {
+                    recyclerView.getAdapter().notifyItemChanged(getAdapterPosition());
+                }
+
+                @Override
+                public void onFailed(BIMErrorCode code) {
+
+                }
+            });
+        }
+        return user;
     }
 }

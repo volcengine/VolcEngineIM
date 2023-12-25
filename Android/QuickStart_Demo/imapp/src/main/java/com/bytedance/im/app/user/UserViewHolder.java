@@ -22,7 +22,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(BIMUIUser user) {
-        userHeadImg.setImageResource(user.getHeadImg());
+        userHeadImg.setImageResource(R.drawable.icon_recommend_user_default);
         nickName.setText(user.getNickName());
     }
 }

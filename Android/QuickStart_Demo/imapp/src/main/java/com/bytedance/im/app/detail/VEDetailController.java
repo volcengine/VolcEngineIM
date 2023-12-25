@@ -12,6 +12,8 @@ import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.BIMUIClient;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
+import com.bytedance.im.user.api.model.BIMUserProfile;
 
 public class VEDetailController {
     /**
@@ -94,10 +96,29 @@ public class VEDetailController {
     }
 
     public static String getMemberName(BIMMember member) {
-        String mName = "用户"+ BIMClient.getInstance().getCurrentUserID();
-        if(!TextUtils.isEmpty(member.getAlias())){
+        String mName = "用户" + BIMClient.getInstance().getCurrentUserID();
+        if (!TextUtils.isEmpty(member.getAlias())) {
             mName = member.getAlias();
         }
         return mName;
+    }
+
+    public static String getShowName(BIMUserFullInfo fullInfo) {
+        String name = "用户" + fullInfo.getUid();
+        if (!TextUtils.isEmpty(fullInfo.getNickName())) { //用户资料
+            name = fullInfo.getNickName();
+        }
+        if (!TextUtils.isEmpty(fullInfo.getAlias())) {    //好友备注
+            name = fullInfo.getAlias();
+        }
+        return name;
+    }
+
+    public static String getShowName(BIMUserProfile profile){
+        String name = "用户" + profile.getUid();
+        if (!TextUtils.isEmpty(profile.getNickName())) { //用户资料
+            name = profile.getNickName();
+        }
+        return name;
     }
 }

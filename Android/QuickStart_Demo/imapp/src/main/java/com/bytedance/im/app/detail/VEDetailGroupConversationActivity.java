@@ -19,7 +19,12 @@ import android.widget.Toast;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.detail.manager.VEGroupManagerConfigActivity;
 import com.bytedance.im.app.detail.member.VEMemberAddActivity;
+import com.bytedance.im.app.detail.member.VEMemberUtils;
+import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
+import com.bytedance.im.app.main.edit.VEUserProfileEditActivity;
 import com.bytedance.im.app.search.VESearchResultActivity;
+import com.bytedance.im.app.utils.VENameUtils;
+import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
@@ -36,7 +41,8 @@ import com.bytedance.im.app.detail.member.VEMemberListActivity;
 import com.bytedance.im.app.detail.member.adapter.VEMemberHozionAdapter;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
-import com.bytedance.im.ui.user.UserManager;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +54,7 @@ public class VEDetailGroupConversationActivity extends Activity {
     private String conversationId;
     private RecyclerView recyclerView;
     private VEMemberHozionAdapter adapter;
-    private List<BIMMember> allMemberList;
+    private List<MemberWrapper> allMemberList;
     private View optionNameLayout;
     private View optionNoticeLayout;
     private View optionManager;
@@ -59,7 +65,7 @@ public class VEDetailGroupConversationActivity extends Activity {
 
     private TextView tvGroupName;
     private TextView tvNotice;
-    private BIMMember curMember;//当前用户
+    private MemberWrapper curMember;//当前用户
     private ProgressDialog waitDialog;
     private BIMConversation bimConversation;
     private FrameLayout flSearch;
@@ -104,7 +110,7 @@ public class VEDetailGroupConversationActivity extends Activity {
 
             @Override
             public void onMemberClick(BIMMember member) {
-                Toast.makeText(VEDetailGroupConversationActivity.this, "敬请期待", Toast.LENGTH_SHORT).show();
+                VEUserProfileEditActivity.start(VEDetailGroupConversationActivity.this, member.getUserID(), member.getAlias(), member.getAvatarUrl());
             }
         });
         recyclerView.setAdapter(adapter);
@@ -182,24 +188,25 @@ public class VEDetailGroupConversationActivity extends Activity {
                 finish();
             }
         });
-        BIMUIClient.getInstance().getGroupMemberList(conversationId, new BIMResultCallback<List<BIMMember>>() {
+
+        VEMemberUtils.getGroupMemberList(conversationId, new BIMResultCallback<List<MemberWrapper>>() {
             @Override
-            public void onSuccess(List<BIMMember> members) {
-                Log.i(TAG, "refreshUserListView() members.size(): " + members.size());
-                allMemberList = members;
-                if (members != null && !members.isEmpty()) {
-                    for (BIMMember member : members) {
-                        if (member.getUserID() == BIMUIClient.getInstance().getCurUserId()) {
-                            curMember = member;
+            public void onSuccess(List<MemberWrapper> wrapperList) {
+                Log.i(TAG, "refreshUserListView() members.size(): " + wrapperList.size());
+                allMemberList = wrapperList;
+                if (wrapperList != null && !wrapperList.isEmpty()) {
+                    for (MemberWrapper wrapper : wrapperList) {
+                        if (wrapper.getMember().getUserID() == BIMUIClient.getInstance().getCurUserId()) {
+                            curMember = wrapper;
                             break;
                         }
                     }
                 }
-                boolean isShowAdd = curMember != null && (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER);
-                boolean isShowRemove = curMember != null && (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER || curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN);
-                adapter.updateUserInfoList(members, isShowAdd, isShowRemove);
+                boolean isShowAdd = curMember != null && (curMember.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER);
+                boolean isShowRemove = curMember != null && (curMember.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER || curMember.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN);
+                adapter.updateUserInfoList(wrapperList, isShowAdd, isShowRemove);
                 if (curMember != null) {
-                    if (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
+                    if (curMember.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
                         optionDissolveGroup.setVisibility(View.VISIBLE);
                         optionManager.setVisibility(View.VISIBLE);
                     } else {
@@ -220,49 +227,60 @@ public class VEDetailGroupConversationActivity extends Activity {
         if (!checkConversationValid(bimConversation)) {
             return;
         }
+
         waitDialog = ProgressDialog.show(VEDetailGroupConversationActivity.this, "退出中,稍等...", "");
-        String text = UserManager.geInstance().getUserName(BIMUIClient.getInstance().getCurUserId()) + " 退出群组 ";
-        BIMGroupNotifyElement content = new BIMGroupNotifyElement();
-        content.setText(text);
-        BIMMessage  leaveMessage = BIMUIClient.getInstance().createCustomMessage(content);
-        BIMUIClient.getInstance().sendMessage(leaveMessage, conversationId, new BIMSendCallback() {
+
+        BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfo(BIMClient.getInstance().getCurrentUserID(), new BIMResultCallback<BIMUserFullInfo>() {
             @Override
-            public void onProgress(BIMMessage message, int progress) {
-
-            }
-
-            @Override
-            public void onSaved(BIMMessage bimMessage) {
-
-            }
-
-            @Override
-            public void onSuccess(BIMMessage bimMessage) {
-                //发送成功后，执行退出
-                BIMUIClient.getInstance().leaveGroup(conversationId, false, new BIMSimpleCallback() {
+            public void onSuccess(BIMUserFullInfo fullInfo) {
+                String text = VENameUtils.getShowNickName(fullInfo) + " 退出群组 ";
+                BIMGroupNotifyElement content = new BIMGroupNotifyElement();
+                content.setText(text);
+                BIMMessage  leaveMessage = BIMUIClient.getInstance().createCustomMessage(content);
+                BIMUIClient.getInstance().sendMessage(leaveMessage, conversationId, new BIMSendCallback() {
                     @Override
-                    public void onSuccess() {
-                        List<Long> mySelf = new ArrayList<>();
-                        mySelf.add(BIMUIClient.getInstance().getCurUserId());
-                        waitDialog.dismiss();
-                        setResultDelete();
-                        finish();
+                    public void onProgress(BIMMessage message, int progress) {
+
                     }
 
                     @Override
-                    public void onFailed(BIMErrorCode code) {
+                    public void onSaved(BIMMessage bimMessage) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(BIMMessage bimMessage) {
+                        //发送成功后，执行退出
+                        BIMUIClient.getInstance().leaveGroup(conversationId, false, new BIMSimpleCallback() {
+                            @Override
+                            public void onSuccess() {
+                                List<Long> mySelf = new ArrayList<>();
+                                mySelf.add(BIMUIClient.getInstance().getCurUserId());
+                                waitDialog.dismiss();
+                                setResultDelete();
+                                finish();
+                            }
+
+                            @Override
+                            public void onFailed(BIMErrorCode code) {
+                                waitDialog.dismiss();
+                                finish();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(BIMMessage bimMessage, BIMErrorCode code) {
                         waitDialog.dismiss();
-                        finish();
                     }
                 });
             }
 
             @Override
-            public void onError(BIMMessage bimMessage, BIMErrorCode code) {
-                waitDialog.dismiss();
+            public void onFailed(BIMErrorCode code) {
+
             }
         });
-
     }
 
     private void dissolveGroup() {

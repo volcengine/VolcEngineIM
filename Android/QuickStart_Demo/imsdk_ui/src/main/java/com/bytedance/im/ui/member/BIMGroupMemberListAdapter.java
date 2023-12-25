@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.R;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,15 +17,10 @@ public class BIMGroupMemberListAdapter extends RecyclerView.Adapter<BIMMemberVie
     private List<BIMMemberWrapper> data;
     private OnMemberClickListener listener;
 
-    public BIMGroupMemberListAdapter(Context mContext, List<BIMMember> memberList, OnMemberClickListener listener) {
+    public BIMGroupMemberListAdapter(Context mContext, List<BIMMemberWrapper> memberList, OnMemberClickListener listener) {
         this.mContext = mContext;
         this.listener = listener;
-        data = new ArrayList<>();
-        if (memberList != null && !memberList.isEmpty()) {
-            for (BIMMember member : memberList) {
-                data.add(new BIMMemberWrapper(member, BIMMemberWrapper.TYPE_NORMAL));
-            }
-        }
+        data = memberList;
         Collections.sort(data, (o1, o2) -> {
             int tr = o1.getOrder() - o2.getOrder();
             if (tr == 0) {

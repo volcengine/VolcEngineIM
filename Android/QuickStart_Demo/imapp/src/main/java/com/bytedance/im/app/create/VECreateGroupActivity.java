@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import com.bytedance.im.app.message.VEMessageListActivity;
 import com.bytedance.im.app.user.VEUserAddActivity;
+import com.bytedance.im.app.utils.VENameUtils;
+import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSendCallback;
@@ -16,7 +18,8 @@ import com.bytedance.im.core.api.model.BIMGroupInfo;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
-import com.bytedance.im.ui.user.UserManager;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.List;
 
@@ -32,6 +35,7 @@ public class VECreateGroupActivity extends VEUserAddActivity {
 
     @Override
     protected void onConfirmClick(List<Long> uidList) {
+        super.onConfirmClick(uidList);
         if (uidList == null || uidList.isEmpty()) {
             Toast.makeText(this, "请添加群成员", Toast.LENGTH_SHORT).show();
             return;
@@ -66,36 +70,53 @@ public class VECreateGroupActivity extends VEUserAddActivity {
     }
 
     private void sendAddMemberMessage(BIMConversation conversation, List<Long> uidList) {
-        String text = UserManager.geInstance().getUserName(BIMUIClient.getInstance().getCurUserId())
-                + " 邀请 "
-                + UserManager.geInstance().builderNamelist(uidList) +" 加入群聊";
-        BIMGroupNotifyElement content = new BIMGroupNotifyElement();
-        content.setText(text);
-        BIMMessage createAddMemberMessage = BIMUIClient.getInstance().createCustomMessage(content);
-        BIMUIClient.getInstance().sendMessage(createAddMemberMessage, conversation.getConversationID(), new BIMSendCallback() {
-
+        if(uidList == null ||uidList.isEmpty()){
+            return;
+        }
+        uidList.add(BIMClient.getInstance().getCurrentUserID());//自己追到最后
+        BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfoList(uidList, new BIMResultCallback<List<BIMUserFullInfo>>() {
             @Override
-            public void onProgress(BIMMessage message, int progress) {
+            public void onSuccess(List<BIMUserFullInfo> bimUserProfile) {
+                BIMUserFullInfo selfInfo = bimUserProfile.remove(bimUserProfile.size() - 1); //最后一个是自己
+                String text = VENameUtils.getShowNickName(selfInfo)
+                        + " 邀请 "
+                        + VENameUtils.buildNickNameList(bimUserProfile) + " 加入群聊";
+                BIMGroupNotifyElement content = new BIMGroupNotifyElement();
+                content.setText(text);
+                BIMMessage createAddMemberMessage = BIMUIClient.getInstance().createCustomMessage(content);
+                BIMUIClient.getInstance().sendMessage(createAddMemberMessage, conversation.getConversationID(), new BIMSendCallback() {
 
+                    @Override
+                    public void onProgress(BIMMessage message, int progress) {
+
+                    }
+
+                    @Override
+                    public void onSaved(BIMMessage bimMessage) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(BIMMessage bimMessage) {
+                        waitDialog.dismiss();
+                        VEMessageListActivity.start(VECreateGroupActivity.this, conversation.getConversationID());
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(BIMMessage bimMessage, BIMErrorCode code) {
+                        waitDialog.dismiss();
+                        finish();
+                    }
+                });
             }
 
             @Override
-            public void onSaved(BIMMessage bimMessage) {
-
-            }
-
-            @Override
-            public void onSuccess(BIMMessage bimMessage) {
+            public void onFailed(BIMErrorCode code) {
+                Log.i(TAG, "getUserFullInfoList() BIMErrorCode() code: " + code);
                 waitDialog.dismiss();
-                VEMessageListActivity.start(VECreateGroupActivity.this, conversation.getConversationID());
-                finish();
-            }
-
-            @Override
-            public void onError(BIMMessage bimMessage, BIMErrorCode code) {
-                waitDialog.dismiss();
-                finish();
             }
         });
+
     }
 }

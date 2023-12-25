@@ -10,7 +10,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.detail.VEDetailGroupConversationActivity;
+import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
 import com.bytedance.im.app.detail.member.adapter.VEMemberListAdapter;
+import com.bytedance.im.app.main.edit.VEUserProfileEditActivity;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.BIMUIClient;
@@ -43,16 +46,22 @@ public class VEMemberListActivity extends Activity {
         memberListV = findViewById(R.id.user_list);
         memberListV.setLayoutManager(new LinearLayoutManager(this));
 
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         initData();
     }
 
     protected void initData() {
         String conversationId = getIntent().getStringExtra(CONVERSATION_ID);
-        BIMUIClient.getInstance().getGroupMemberList(conversationId, new BIMResultCallback<List<BIMMember>>() {
+        VEMemberUtils.getGroupMemberList(conversationId, new BIMResultCallback<List<MemberWrapper>>() {
             @Override
-            public void onSuccess(List<BIMMember> members) {
-                Log.i(TAG, "refreshUserListView() members.size(): " + members.size());
-                adapter = new VEMemberListAdapter(VEMemberListActivity.this, filterMember(members), member -> onMemberClick(member));
+            public void onSuccess(List<MemberWrapper> memberWrappers) {
+                Log.i(TAG, "refreshUserListView() members.size(): " + memberWrappers.size());
+                adapter = new VEMemberListAdapter(VEMemberListActivity.this, filterMember(memberWrappers), memberWrapper -> onMemberClick(memberWrapper));
                 memberListV.setAdapter(adapter);
             }
 
@@ -63,11 +72,12 @@ public class VEMemberListActivity extends Activity {
         });
     }
 
-    protected void onMemberClick(BIMMember member) {
-        Toast.makeText(VEMemberListActivity.this, "敬请期待", Toast.LENGTH_SHORT).show();
+    protected void onMemberClick(MemberWrapper memberWrapper) {
+        BIMMember member = memberWrapper.getMember();
+        VEUserProfileEditActivity.start(VEMemberListActivity.this, member.getUserID(), member.getAlias(), member.getAvatarUrl());
     }
 
-    protected List<BIMMember> filterMember(List<BIMMember> members){
+    protected List<MemberWrapper> filterMember(List<MemberWrapper> members){
         return members;
     }
 }

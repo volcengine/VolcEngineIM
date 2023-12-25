@@ -4,20 +4,24 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 
 import com.bumptech.glide.Glide;
+import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageStatus;
+import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.ui.api.BIMUIUser;
-import com.bytedance.im.ui.user.UserManager;
+import com.bytedance.im.ui.user.BIMUserProvider;
+import com.bytedance.im.ui.utils.BIMUIUtils;
 import com.bytedance.im.ui.utils.BIMUtils;
 import com.bytedance.im.core.api.model.BIMMessage;
 
@@ -42,9 +46,13 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
     private TextView recall;
     private View headContainerRight;
     private View headContainerLeft;
+    private BIMUserProvider userProvider;
+    private RecyclerView recyclerView;
 
-    public BIMMessageViewHolder(@NonNull View itemView, BIMMessageAdapter.OnMessageItemClickListener l, BIMMessageAdapter.OnMessageItemLongClickListener longClickListener, BIMMessageAdapter.OnRefreshListener mediaMessageLoadListener) {
+    public BIMMessageViewHolder(@NonNull View itemView,RecyclerView recyclerView, BIMUserProvider provider, BIMMessageAdapter.OnMessageItemClickListener l, BIMMessageAdapter.OnMessageItemLongClickListener longClickListener, BIMMessageAdapter.OnRefreshListener mediaMessageLoadListener) {
         super(itemView);
+        this.recyclerView = recyclerView;
+        this.userProvider = provider;
         listener = l;
         onMessageItemLongClickListener = longClickListener;
         onRefreshListener = mediaMessageLoadListener;
@@ -62,21 +70,20 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
 
     public void update(BIMMessageWrapper wrapper, BIMMessageWrapper preWrapper) {
         BIMMessage bimMessage = wrapper.getBimMessage();
-        BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(bimMessage.getSenderUID());
+        long sendUID = bimMessage.getSenderUID();
+        BIMUIUser user = userProvider.getUserInfo(sendUID);
         int portraitRes = R.drawable.icon_recommend_user_default;
         String portraitUrl = "";
-        String userName = "" + wrapper.getBimMessage().getSenderUID();
+        String userName = "";
         if (user != null) {
-            portraitRes = user.getHeadImg();
-            userName = user.getNickName();
-            portraitUrl = user.getHeadUrl();
+            portraitUrl = user.getPortraitUrl();
+            userName = BIMUIUtils.getShowName(user);
         }
-
         //撤回
         if (bimMessage.isRecalled()) {
             recall.setVisibility(View.VISIBLE);
             msgContainer.setVisibility(View.GONE);
-            recall.setText(BIMUtils.generateRecallHint(bimMessage));
+            recall.setText(BIMUtils.generateRecallHint(bimMessage,user));
             headContainerLeft.setVisibility(View.GONE);
             headContainerRight.setVisibility(View.GONE);
             senStatus.setVisibility(View.GONE);
@@ -191,6 +198,19 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
                 return true;
             }
         });
+        if (user == null) {
+            //异步刷新
+            userProvider.getUserInfoAsync(sendUID, new BIMResultCallback<BIMUIUser>() {
+                @Override
+                public void onSuccess(BIMUIUser bimuiUser) {
+                    recyclerView.getAdapter().notifyItemChanged(getAdapterPosition());
+                }
+                @Override
+                public void onFailed(BIMErrorCode code) {
+
+                }
+            });
+        }
     }
 
     public BIMMessageAdapter.OnRefreshListener getOnOutListener() {

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.ui.api.BIMUIUser;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +19,14 @@ public class BIMUserSelectAdapter extends RecyclerView.Adapter<BaseSelectViewHol
     private Context context;
     private boolean selectSingle = false; //单选
 
-    public BIMUserSelectAdapter(Context context, List<BIMUIUser> list) {
+    public BIMUserSelectAdapter(Context context, List<BIMUserFullInfo> list) {
         this(context, list, false,false);
     }
 
-    public BIMUserSelectAdapter(Context context, List<BIMUIUser> list, boolean isSelectSingle, boolean isShowUid) {
+    public BIMUserSelectAdapter(Context context, List<BIMUserFullInfo> list, boolean isSelectSingle, boolean isShowUid) {
         this.context = context;
         this.selectSingle = isSelectSingle;
-        for (BIMUIUser user : list) {
+        for (BIMUserFullInfo user : list) {
             data.add(new UserSelectWrapper(user, R.layout.ve_im_recycler_view_item_user_select_notid, isShowUid));
         }
     }
@@ -60,7 +61,7 @@ public class BIMUserSelectAdapter extends RecyclerView.Adapter<BaseSelectViewHol
             if (selectList.size() == 1) {
                 UserSelectWrapper userSelectWrapper = data.get(position);
                 UserSelectWrapper lastSelectWrapper = selectList.get(0);
-                if (userSelectWrapper.getInfo().getUserID() != lastSelectWrapper.getInfo().getUserID()) {
+                if (userSelectWrapper.getInfo().getUid() != lastSelectWrapper.getInfo().getUid()) {
                     lastSelectWrapper.isSelect = !lastSelectWrapper.isSelect;
                     userSelectWrapper.isSelect = true;
                 } else {
@@ -81,8 +82,8 @@ public class BIMUserSelectAdapter extends RecyclerView.Adapter<BaseSelectViewHol
         return data.size();
     }
 
-    public List<BIMUIUser> getSelectUser() {
-        List<BIMUIUser> result = new ArrayList<>();
+    public List<BIMUserFullInfo> getSelectUser() {
+        List<BIMUserFullInfo> result = new ArrayList<>();
         for (UserSelectWrapper wrapper : data) {
             if (wrapper.isSelect) {
                 result.add(wrapper.getInfo());

@@ -26,6 +26,9 @@
         android:layout_marginLeft="12dp"
         android:textColor="@color/business_im_222"
         android:textSize="22sp"
+        android:maxEms="8"
+        android:singleLine="true"
+        android:ellipsize="end"
         app:layout_constraintStart_toEndOf="@id/iv_mine_img"
         app:layout_constraintTop_toTopOf="@id/iv_mine_img"
         tools:text="詹姆斯" />

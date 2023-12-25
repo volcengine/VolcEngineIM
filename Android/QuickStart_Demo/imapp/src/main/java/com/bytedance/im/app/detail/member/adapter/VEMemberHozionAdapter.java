@@ -19,10 +19,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.contact.VEFriendInfoManager;
+import com.bytedance.im.app.utils.VENameUtils;
 import com.bytedance.im.core.api.model.BIMMember;
-import com.bytedance.im.ui.api.BIMUIUser;
-import com.bytedance.im.ui.user.UserManager;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,22 +41,19 @@ public class VEMemberHozionAdapter extends RecyclerView.Adapter<VEMemberHozionAd
         this.listener = listener;
     }
 
-    public void updateUserInfoList(List<BIMMember> memberList, boolean isShowAdd, boolean isShowRemove) {
+    public void updateUserInfoList(List<MemberWrapper> memberList, boolean isShowAdd, boolean isShowRemove) {
         if (memberList == null) return;
         data = new ArrayList<>();
-        for (int i = 0; i < memberList.size(); i++) {
-            BIMMember member = memberList.get(i);
-            data.add(new MemberWrapper(member, TYPE_NORMAL));
-        }
+        data.addAll(memberList);
         MemberUtils.sort(data);
         if (data.size() > 5) {
             data = new ArrayList<>(data.subList(0, 5));
         }
         if (isShowAdd) {
-            data.add(new MemberWrapper(null, TYPE_ADD));
+            data.add(new MemberWrapper(null,null, TYPE_ADD));
         }
         if (isShowRemove) {
-            data.add(new MemberWrapper(null, TYPE_DELETE));
+            data.add(new MemberWrapper(null, null,TYPE_DELETE));
         }
         MemberUtils.sort(data);
         notifyDataSetChanged();
@@ -78,22 +74,9 @@ public class VEMemberHozionAdapter extends RecyclerView.Adapter<VEMemberHozionAd
         if (type == TYPE_NORMAL) {
             BIMMember member = memberWrapper.getMember();
             int resId = R.drawable.icon_recommend_user_default;
-            String name = "";
-            BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(member.getUserID());
-            if (user != null) {
-                resId = user.getHeadImg();
-                name = user.getNickName();
-            }
-            String friendAlias = VEFriendInfoManager.getInstance().getFriendAlias(member.getUserID());
-            if (!TextUtils.isEmpty(friendAlias)) {
-                name = VEFriendInfoManager.getInstance().getFriendAlias(member.getUserID());
-            } else {
-                String alias = member.getAlias();
-                if (!TextUtils.isEmpty(alias)) {
-                    name = alias;
-                }
-            }
-            String avatarUrl = member.getAvatarUrl();
+            BIMUserFullInfo fullInfo  = memberWrapper.getFullInfo();;
+            String name = VENameUtils.getShowNameInGroup(memberWrapper);
+            String avatarUrl = VENameUtils.getPortraitUrl(memberWrapper);
             Drawable drawable = mContext.getResources().getDrawable(resId);
             if (TextUtils.isEmpty(avatarUrl)) {
                 Glide.with(mContext).load(drawable).apply(RequestOptions.placeholderOf(R.drawable.icon_recommend_user_default))

@@ -12,11 +12,15 @@ import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMember;
+import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.log.BIMLog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BIMGroupMemberListActivity extends Activity {
 
@@ -46,9 +50,32 @@ public class BIMGroupMemberListActivity extends Activity {
         BIMClient.getInstance().getConversationMemberList(conversationId, new BIMResultCallback<List<BIMMember>>() {
             @Override
             public void onSuccess(List<BIMMember> members) {
+                if (members == null) {
+                    return;
+                }
                 BIMLog.i(TAG, "refreshUserListView() members.size(): " + members.size());
-                adapter = new BIMGroupMemberListAdapter(BIMGroupMemberListActivity.this, members, member -> onMemberClick(member));
-                memberListV.setAdapter(adapter);
+                List<Long> uidList = new ArrayList<>();
+                for (BIMMember member : members) {
+                    uidList.add(member.getUserID());
+                }
+                BIMUIClient.getInstance().getUserProvider().getUserInfoListAsync(uidList, new BIMResultCallback<List<BIMUIUser>>() {
+                    @Override
+                    public void onSuccess(List<BIMUIUser> bimuiUsers) {
+                        if (bimuiUsers != null) {
+                            List<BIMMemberWrapper> data = new ArrayList<>();
+                            for (int i = 0; i < members.size(); i++) {
+                                data.add(new BIMMemberWrapper(members.get(i), bimuiUsers.get(i), BIMMemberWrapper.TYPE_NORMAL));
+                            }
+                            adapter = new BIMGroupMemberListAdapter(BIMGroupMemberListActivity.this, data, member -> onMemberClick(member));
+                            memberListV.setAdapter(adapter);
+                        }
+                    }
+
+                    @Override
+                    public void onFailed(BIMErrorCode code) {
+
+                    }
+                });
             }
 
             @Override

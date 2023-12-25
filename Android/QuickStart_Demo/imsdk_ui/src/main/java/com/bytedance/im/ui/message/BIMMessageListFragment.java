@@ -30,7 +30,9 @@ import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMGetMessageOption;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.api.model.BIMMessageListResult;
+import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.adapter.BIMMessageAdapter;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
@@ -42,6 +44,8 @@ import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.ImageToolBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.PhotoTooBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.pop.BIMMessageOptionPopupWindow;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
+import com.bytedance.im.ui.user.BIMUserProvider;
+import com.bytedance.im.ui.user.OnUserInfoUpdateListener;
 import com.bytedance.im.ui.utils.media.MediaInfo;
 
 import java.io.File;
@@ -54,6 +58,7 @@ public class BIMMessageListFragment extends Fragment {
     public static final String TARGET_CID = "target_cid";
     public static final String TARGET_MSG_ID = "target_msg_id";
     public static final String ACTION = "com.bytedance.im.page.message_list";
+    public static final String ACTION_PORTRAIT_CLICK = "com.bytedance.im.page.message_list.portrait_click";
     private String conversationId;
     private BIMConversation bimConversation;
     private BIMMessageRecyclerView recyclerView;
@@ -66,10 +71,13 @@ public class BIMMessageListFragment extends Fragment {
     private boolean isSyncingNewer = false;
     private VEInPutView inPutView;
 
+    private OnPortraitClickListener onPortraitClickListener;
     private BIMMessageOptionPopupWindow msgOptionMenu;
     private String startMsgId;
-
-
+    private BIMUserProvider userProvider;
+    public interface OnPortraitClickListener{
+        void onClick(long uid);
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,10 +97,14 @@ public class BIMMessageListFragment extends Fragment {
         recyclerView = v.findViewById(R.id.message_list);
         inPutView = v.findViewById(R.id.inputView);
         refreshConversation();
-        adapter = new BIMMessageAdapter(new BIMMessageAdapter.OnMessageItemClickListener() {
+        userProvider = BIMUIClient.getInstance().getUserProvider(); //单聊
+        //todo 群聊群成员资料和备注支持后需代理实现 provider
+        adapter = new BIMMessageAdapter(recyclerView,userProvider,new BIMMessageAdapter.OnMessageItemClickListener() {
             @Override
             public void onPortraitClick(BIMMessage message) {
-                Toast.makeText(getActivity(), "点击头像 uid:" + message.getSenderUID(), Toast.LENGTH_SHORT).show();
+                if (onPortraitClickListener != null) {
+                    onPortraitClickListener.onClick(message.getSenderUID());
+                }
             }
 
             @Override
@@ -191,9 +203,9 @@ public class BIMMessageListFragment extends Fragment {
                 }
             }
         });
+        addUserListener();
         return v;
     }
-
     private List<BaseToolBtn> initToolbtns() {
         List<BaseToolBtn> toolBtnList = new ArrayList<>();
         toolBtnList.add(new ImageToolBtn(new BIMResultCallback<MediaInfo>() {
@@ -291,6 +303,7 @@ public class BIMMessageListFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         BIMClient.getInstance().removeMessageListener(receiveMessageListener);
+        removeUserListener();
     }
 
 
@@ -693,4 +706,34 @@ public class BIMMessageListFragment extends Fragment {
             return 1;
         }
     }
+
+    public void setOnPortraitClickListener(OnPortraitClickListener onPortraitClickListener) {
+        this.onPortraitClickListener = onPortraitClickListener;
+    }
+
+    private OnUserInfoUpdateListener listener;
+    /**
+     * 好友信息更新监听
+     */
+    public void addUserListener(){
+        if (listener == null) {
+            listener = new OnUserInfoUpdateListener() {
+                @Override
+                public void onUpdate(long uid, BIMUIUser user) {
+                    if (adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            };
+        }
+        BIMUIClient.getInstance().getUserProvider().addUserUpdateListener(listener);
+    }
+
+    public void removeUserListener(){
+        if (listener != null) {
+            BIMUIClient.getInstance().getUserProvider().removeUserUpdateListener(listener);
+        }
+    }
+
+
 }

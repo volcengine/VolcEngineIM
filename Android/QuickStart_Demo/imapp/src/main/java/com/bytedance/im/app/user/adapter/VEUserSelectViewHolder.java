@@ -26,11 +26,11 @@ public class VEUserSelectViewHolder extends RecyclerView.ViewHolder {
 
     protected void bind(VEUserSelectWrapper userSelectWrapper) {
         selectWrapper = userSelectWrapper;
-        ivHead.setImageResource(userSelectWrapper.getUser().getHeadImg());
+        ivHead.setImageResource(R.drawable.icon_recommend_user_default);
         tvNickName.setText(userSelectWrapper.getUser().getNickName());
         checkBox.setImageResource(com.bytedance.im.ui.R.drawable.icon_im_radio_checked);
         tvUid.setVisibility(View.VISIBLE);
-        tvUid.setText("UserID:" + userSelectWrapper.getUser().getUserID());
+        tvUid.setText("UserID:" + userSelectWrapper.getUser().getUid());
         if (userSelectWrapper.isSelect) {
             checkBox.setImageResource(com.bytedance.im.ui.R.drawable.icon_im_radio_checked);
         } else {

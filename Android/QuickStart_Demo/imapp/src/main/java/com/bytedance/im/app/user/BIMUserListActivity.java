@@ -51,7 +51,7 @@ public class BIMUserListActivity extends Activity {
             Iterator<BIMUIUser> iterator = all.iterator();
             while (iterator.hasNext()) {
                 BIMUIUser user = iterator.next();
-                if (excludeList.contains((int) user.getUserID())) {
+                if (excludeList.contains((int) user.getUid())) {
                     iterator.remove();
                 }
             }
@@ -59,7 +59,7 @@ public class BIMUserListActivity extends Activity {
             Iterator<BIMUIUser> iterator = all.iterator();
             while (iterator.hasNext()) {
                 BIMUIUser user = iterator.next();
-                if (!includeList.contains((int) user.getUserID())) {
+                if (!includeList.contains((int) user.getUid())) {
                     iterator.remove();
                 }
             }

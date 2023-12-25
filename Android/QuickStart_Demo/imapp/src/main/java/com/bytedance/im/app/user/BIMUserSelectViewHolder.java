@@ -5,7 +5,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.utils.VENameUtils;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 
 public class BIMUserSelectViewHolder extends BaseSelectViewHolder<UserSelectWrapper> {
@@ -27,12 +30,17 @@ public class BIMUserSelectViewHolder extends BaseSelectViewHolder<UserSelectWrap
     protected void bind(UserSelectWrapper userSelectWrapper) {
         super.bind(userSelectWrapper);
         selectWrapper = userSelectWrapper;
-        ivHead.setImageResource(userSelectWrapper.getInfo().getHeadImg());
-        tvNickName.setText(userSelectWrapper.getInfo().getNickName());
+        BIMUserFullInfo fullInfo = userSelectWrapper.getInfo();
+        Glide.with(ivHead.getContext())
+                .load(fullInfo.getPortraitUrl())
+                .placeholder(R.drawable.icon_recommend_user_default)
+                .error(R.drawable.icon_recommend_user_default)
+                .into(ivHead);
+        tvNickName.setText(VENameUtils.getShowName(fullInfo));
         checkBox.setImageResource(R.drawable.icon_im_radio_checked);
         if (userSelectWrapper.isShowUid()) {
             tvUid.setVisibility(View.VISIBLE);
-            tvUid.setText("UserID:" + userSelectWrapper.getInfo().getUserID());
+            tvUid.setText("UserID:" + userSelectWrapper.getInfo().getUid());
         } else {
             tvUid.setVisibility(View.GONE);
         }

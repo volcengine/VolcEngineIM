@@ -11,15 +11,17 @@ import android.widget.Toast;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.user.VEUserAddActivity;
+import com.bytedance.im.app.utils.VENameUtils;
+import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
-import com.bytedance.im.ui.user.UserManager;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 
 import java.util.List;
@@ -34,7 +36,7 @@ public class VEMemberAddActivity extends VEUserAddActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         conversationId = getIntent().getStringExtra(CONVERSATION_ID);
-        BIMUIClient.getInstance().getGroupMemberList(conversationId, new BIMResultCallback<List<BIMMember>>() {
+        BIMUIClient.getInstance().getConversationMemberList(conversationId, new BIMResultCallback<List<BIMMember>>() {
             @Override
             public void onSuccess(List<BIMMember> memberList) {
                 mMemberList = memberList;
@@ -90,10 +92,10 @@ public class VEMemberAddActivity extends VEUserAddActivity {
     }
 
     @Override
-    protected boolean checkMemberExist(BIMUIUser user) {
+    protected boolean checkMemberExist(long uid) {
         if (mMemberList != null) {
             for (BIMMember member : mMemberList) {
-                if (member.getUserID() == user.getUserID()) {
+                if (member.getUserID() == uid) {
                     if (member.getUserID() == BIMUIClient.getInstance().getCurUserId()) {
                         Toast.makeText(VEMemberAddActivity.this, "您已在群聊中", Toast.LENGTH_SHORT).show();
                     } else {
@@ -103,14 +105,29 @@ public class VEMemberAddActivity extends VEUserAddActivity {
                 }
             }
         }
-        return super.checkMemberExist(user);
+        return super.checkMemberExist(uid);
     }
 
     private void sendAddMemberMessage(List<Long> addIdList) {
-        String text = UserManager.geInstance().builderNamelist(addIdList) +" 加入群聊";
-        BIMGroupNotifyElement content = new BIMGroupNotifyElement();
-        content.setText(text);
-        BIMMessage addMemberMessage = BIMUIClient.getInstance().createCustomMessage(content);
-        BIMUIClient.getInstance().sendMessage(addMemberMessage, conversationId, null);
+        addIdList.add(BIMClient.getInstance().getCurrentUserID());
+        BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfoList(addIdList, new BIMResultCallback<List<BIMUserFullInfo>>() {
+            @Override
+            public void onSuccess(List<BIMUserFullInfo> userFullInfoList) {
+                BIMUserFullInfo selfInfo = userFullInfoList.remove(userFullInfoList.size()-1);
+                String text = VENameUtils.getShowNickName(selfInfo)
+                        + " 邀请 "
+                        + VENameUtils.buildNickNameList(userFullInfoList) +" 加入群聊";
+                BIMGroupNotifyElement content = new BIMGroupNotifyElement();
+                content.setText(text);
+                BIMMessage addMemberMessage = BIMUIClient.getInstance().createCustomMessage(content);
+                BIMUIClient.getInstance().sendMessage(addMemberMessage, conversationId, null);
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        });
+
     }
 }

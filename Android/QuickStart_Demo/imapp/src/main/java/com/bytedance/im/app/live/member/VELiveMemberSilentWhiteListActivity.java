@@ -12,10 +12,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.detail.member.VEMemberUtils;
+import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
 import com.bytedance.im.app.detail.member.adapter.VEMemberListAdapter;
 import com.bytedance.im.app.live.VELiveGroupDialogUtils;
 import com.bytedance.im.app.live.create.VEEditCommonActivity;
 import com.bytedance.im.app.live.utils.VELiveUtils;
+import com.bytedance.im.app.utils.VENameUtils;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
@@ -60,8 +63,8 @@ public class VELiveMemberSilentWhiteListActivity extends Activity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(null);
         conversationShortId = getIntent().getLongExtra(CONVERSATION_SHORT_ID, 0L);
-        adapter = new VEMemberListAdapter(this, member -> {
-            showOperation(member);
+        adapter = new VEMemberListAdapter(this, memberWrapper -> {
+            showOperation(memberWrapper);
         },true,false);
         recyclerView.setAdapter(adapter);
         more = findViewById(R.id.tv_more);
@@ -79,19 +82,19 @@ public class VELiveMemberSilentWhiteListActivity extends Activity {
         updateUI();
     }
 
-    private void showOperation(BIMMember member) {
+    private void showOperation(MemberWrapper memberWrapper) {
         if (mConversation != null && mConversation.getCurrentMember() != null) {
             BIMMemberRole role = mConversation.getCurrentMember().getRole();
             if (role == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN || role == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
                 List dialogInfo = new ArrayList<android.util.Pair<String, VELiveGroupDialogUtils.BottomInputDialogListener>>();
-                dialogInfo.add(new android.util.Pair("移出成员", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> BIMClient.getInstance().getService(BIMLiveExpandService.class).removeLiveGroupMemberSilentWhiteList(conversationShortId, Collections.singletonList(member.getUserID()), new BIMSimpleCallback() {
+                dialogInfo.add(new android.util.Pair("移出成员", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> BIMClient.getInstance().getService(BIMLiveExpandService.class).removeLiveGroupMemberSilentWhiteList(conversationShortId, Collections.singletonList(memberWrapper.getMember().getUserID()), new BIMSimpleCallback() {
                     public void onSuccess() {
-                        Toast.makeText(VELiveMemberSilentWhiteListActivity.this, "移出禁言白名单成功" + member.getUserID(), Toast.LENGTH_SHORT).show();
-                        adapter.remove(member.getUserID());
+                        Toast.makeText(VELiveMemberSilentWhiteListActivity.this, "移出禁言白名单成功" + VENameUtils.getShowNameInGroup(memberWrapper), Toast.LENGTH_SHORT).show();
+                        adapter.remove(memberWrapper.getMember().getUserID());
                     }
 
                     public void onFailed(BIMErrorCode code) {
-                        Toast.makeText(VELiveMemberSilentWhiteListActivity.this, "移出禁言白名单失败" + member.getUserID(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(VELiveMemberSilentWhiteListActivity.this, "移出禁言白名单失败" + VENameUtils.getShowNameInGroup(memberWrapper), Toast.LENGTH_SHORT).show();
                     }
 
                 })));
@@ -107,7 +110,18 @@ public class VELiveMemberSilentWhiteListActivity extends Activity {
             public void onSuccess(BIMLiveMemberListResult resultMemberList) {
                 hasMore = resultMemberList.isHasMore();
                 cursor = resultMemberList.getNextCursor();
-                adapter.appendMemberList(resultMemberList.getMemberList());
+                VEMemberUtils.getMemberWrapperList(resultMemberList.getMemberList(), new BIMResultCallback<List<MemberWrapper>>() {
+                    @Override
+                    public void onSuccess(List<MemberWrapper> wrapperList) {
+                        adapter.appendMemberList(wrapperList);
+                    }
+
+                    @Override
+                    public void onFailed(BIMErrorCode code) {
+
+                    }
+                });
+
             }
 
             public void onFailed(BIMErrorCode code) {

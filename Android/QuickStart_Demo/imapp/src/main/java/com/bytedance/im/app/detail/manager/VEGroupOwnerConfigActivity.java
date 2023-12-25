@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.widget.TextView;
 
 import com.bytedance.im.app.detail.member.VEMemberListActivity;
+import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.R;
 
@@ -32,7 +33,7 @@ public class VEGroupOwnerConfigActivity extends VEMemberListActivity {
     }
 
     @Override
-    protected void onMemberClick(BIMMember member) {
+    protected void onMemberClick(MemberWrapper member) {
         super.onMemberClick(member);// 暂不支持转让群主
     }
 }

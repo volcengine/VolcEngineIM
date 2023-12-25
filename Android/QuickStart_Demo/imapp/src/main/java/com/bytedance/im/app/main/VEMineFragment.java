@@ -22,13 +22,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.bytedance.im.app.BuildConfig;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
-import com.bytedance.im.app.contact.VEFriendInfoManager;
+import com.bytedance.im.app.detail.VEDetailController;
 import com.bytedance.im.app.login.VELoginActivity;
 import com.bytedance.im.app.login.model.UserToken;
+import com.bytedance.im.app.main.edit.VEUserProfileEditActivity;
 import com.bytedance.im.app.utils.VECancelUtils;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMConnectStatus;
@@ -36,8 +38,12 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMConnectListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.api.BIMUIUser;
-import com.bytedance.im.ui.user.UserManager;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.BIMFriendListener;
+import com.bytedance.im.user.api.model.BIMBlackListFriendInfo;
+import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
+import com.bytedance.im.user.api.model.BIMFriendInfo;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 
 public class VEMineFragment extends Fragment {
@@ -56,8 +62,6 @@ public class VEMineFragment extends Fragment {
     private View flPermission;
     private View topPanel;
     private View flDId;
-
-    private FrameLayout flDeleteAccount;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,27 +82,24 @@ public class VEMineFragment extends Fragment {
         flDId = view.findViewById(R.id.fl_sdk_did);
         Log.i(TAG, "uikit version: " + BIMUIClient.getInstance().getVersion());
         Log.i(TAG, " imSdk version: " + BIMClient.getInstance().getVersion());
-        BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(BIMUIClient.getInstance().getCurUserId());
-        if (user == null) {
-            ivPortrait.setImageResource(R.drawable.icon_recommend_user_default);
-        } else {
-            ivPortrait.setImageResource(user.getHeadImg());
-        }
-        tvName.setText(user.getNickName());
-        tvUid.setText(String.valueOf(user.getUserID()));
+
+        tvUid.setText(String.valueOf(BIMClient.getInstance().getCurrentUserID()));
         tvAppId.setText(String.valueOf(BIMUIClient.getInstance().getAppId()));
         tvAppVersionName.setText(BuildConfig.VERSION_NAME);
         tvSDKVersionName.setText(BIMUIClient.getInstance().getVersion());
         flLogout.setOnClickListener(v -> doLogout());
-        topPanel.setOnClickListener(v -> copyUidToBoard(v.getContext()));
-        flDId.setOnClickListener(v-> copyDidToBoard(v.getContext()));
+        topPanel.setOnClickListener(v -> VEUserProfileEditActivity.start(getActivity(), true, BIMClient.getInstance().getCurrentUserID(), null, null));
+        topPanel.setOnLongClickListener(v -> {
+            copyUidToBoard(v.getContext());
+            return true;
+        });
+        flDId.setOnClickListener(v -> copyDidToBoard(v.getContext()));
         initCancelItem(view, this::doLogout);
         updateConnectStatus(BIMUIClient.getInstance().getConnectStatus());
         BIMUIClient.getInstance().addConnectListenerListener(connectListener);
         flProto.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975891"));
         flPolicy.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975890"));
         flPermission.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975909"));
-
         BIMClient.getInstance().getSDKDid(new BIMResultCallback<String>() {
             @Override
             public void onSuccess(String s) {
@@ -111,7 +112,34 @@ public class VEMineFragment extends Fragment {
             }
         });
         initTag(view);
+        BIMClient.getInstance().getService(BIMContactExpandService.class).addFriendListener(bimFriendListener);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfo(BIMClient.getInstance().getCurrentUserID(), true, new BIMResultCallback<BIMUserFullInfo>() {
+            @Override
+            public void onSuccess(BIMUserFullInfo bimUserProfile) {
+                updateMyProfileUI(bimUserProfile);
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+                Log.i(TAG, "onFailed code: " + code);
+            }
+        });
+    }
+
+    private void updateMyProfileUI(BIMUserFullInfo bimUserProfile) {
+        if (bimUserProfile == null) return;
+        Log.i(TAG, "onSuccess nickName" + bimUserProfile.getNickName());
+        Glide.with(getActivity()).load(bimUserProfile.getPortraitUrl())
+                .placeholder(R.drawable.icon_recommend_user_default)
+                .error(R.drawable.icon_recommend_user_default)
+                .into(ivPortrait);
+        tvName.setText(VEDetailController.getShowName(bimUserProfile));
     }
 
     private BIMConnectListener connectListener = new BIMConnectListener() {
@@ -143,7 +171,6 @@ public class VEMineFragment extends Fragment {
         BIMUIClient.getInstance().logout();
         SpUtils.getInstance().setLoginUserInfo(null);
         VELoginActivity.start(getActivity());
-        VEFriendInfoManager.getInstance().reset();
         getActivity().finish();
     }
 
@@ -163,14 +190,14 @@ public class VEMineFragment extends Fragment {
         BIMUIClient.getInstance().removeConnectListener(connectListener);
     }
 
-    private void copyUidToBoard(Context context){
+    private void copyUidToBoard(Context context) {
         String mineUid = "" + BIMClient.getInstance().getCurrentUserID();
         ClipData mClipData = ClipData.newPlainText("UID", mineUid);
         ((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(mClipData);
         Toast.makeText(getActivity(), "已复制 uid: " + mineUid, Toast.LENGTH_SHORT).show();
     }
 
-    private void copyDidToBoard(Context context){
+    private void copyDidToBoard(Context context) {
         String did = tvDid.getText().toString();
         ClipData mClipData = ClipData.newPlainText("DID", did);
         ((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(mClipData);
@@ -194,19 +221,16 @@ public class VEMineFragment extends Fragment {
 
     /**
      * 提供环境，打包等调试信息
+     *
      * @param view
      */
     private void initTag(View view) {
         TextView tag = view.findViewById(R.id.tag);
-        String label = view.getContext().getResources().getString(R.string.im_app_app_tag) +"\n";
-
-        if (BIMClient.getInstance().getEnv() == Constants.ENV_BOE) {
-            String env = " boe\n";
-            label += env;
-        }
+        String label = view.getContext().getResources().getString(R.string.im_app_app_tag) + "\n";
+        label += "env: "+BIMClient.getInstance().getEnv()+"\n";
         UserToken userToken = SpUtils.getInstance().getLoginUserInfo();
         if (userToken != null) {
-            label += userToken.getName();
+            label += userToken.getUid();
         }
         tag.setText(label);
         boolean isQA = TextUtils.isEmpty(label.trim());
@@ -216,4 +240,70 @@ public class VEMineFragment extends Fragment {
             tag.setVisibility(View.VISIBLE);
         }
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        BIMClient.getInstance().getService(BIMContactExpandService.class).removeFriendListener(bimFriendListener);
+    }
+
+    private BIMFriendListener bimFriendListener = new BIMFriendListener() {
+        @Override
+        public void onFriendApply(BIMFriendApplyInfo applyInfo) {
+
+        }
+
+        @Override
+        public void onFriendDelete(BIMUserFullInfo friendInfo) {
+
+        }
+
+        @Override
+        public void onFriendUpdate(BIMUserFullInfo friendInfo) {
+
+        }
+
+        @Override
+        public void onFriendAdd(BIMUserFullInfo friendInfo) {
+
+        }
+
+        @Override
+        public void onFriendAgree(BIMFriendApplyInfo applyInfo) {
+
+        }
+
+        @Override
+        public void onFriendRefuse(BIMFriendApplyInfo applyInfo) {
+
+        }
+
+        @Override
+        public void onFriendApplyUnreadCountChanged(int count) {
+
+        }
+
+        @Override
+        public void onBlackListAdd(BIMUserFullInfo blackListFriendInfo) {
+
+        }
+
+        @Override
+        public void onBlackListDelete(BIMUserFullInfo blackListFriendInfo) {
+
+        }
+
+        @Override
+        public void onBlackListUpdate(BIMUserFullInfo blackListFriendInfo) {
+
+        }
+
+        @Override
+        public void onUserProfileUpdate(BIMUserFullInfo userFullInfo) {
+            //用户资料更新
+            if(userFullInfo.getUid() == BIMClient.getInstance().getCurrentUserID()){
+                updateMyProfileUI(userFullInfo);
+            }
+        }
+    };
 }

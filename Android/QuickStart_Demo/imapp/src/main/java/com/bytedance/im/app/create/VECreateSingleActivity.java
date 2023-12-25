@@ -48,15 +48,14 @@ public class VECreateSingleActivity extends Activity {
                     return;
                 }
                 long uid = Long.parseLong(editText.getText().toString());
-                BIMUIUser user = new BIMUIUser(R.drawable.icon_recommend_user_default, "" + uid, uid);
                 BIMUserExistChecker checker = VEIMApplication.accountProvider.createUserExistChecker();
                 List<Long> uidList = new ArrayList<>();
-                uidList.add(user.getUserID());
+                uidList.add(uid);
                 checker.check(uidList, new BIMResultCallback<Map<Long, Boolean>>() {
                     @Override
                     public void onSuccess(Map<Long, Boolean> longBooleanMap) {
-                        if (longBooleanMap.get(user.getUserID())) {
-                            createSingleConversationAndStart(user);
+                        if (longBooleanMap.get(uid)) {
+                            createSingleConversationAndStart(uid);
                         } else {
                             Toast.makeText(VECreateSingleActivity.this, "该用户不存在", Toast.LENGTH_SHORT).show();
                         }
@@ -73,8 +72,8 @@ public class VECreateSingleActivity extends Activity {
         });
     }
 
-    private void createSingleConversationAndStart(BIMUIUser user) {
-        BIMUIClient.getInstance().createSingleConversation(user.getUserID(), new BIMResultCallback<BIMConversation>() {
+    private void createSingleConversationAndStart(Long uid) {
+        BIMUIClient.getInstance().createSingleConversation(uid, new BIMResultCallback<BIMConversation>() {
             @Override
             public void onSuccess(BIMConversation bimConversation) {
                 VEMessageListActivity.start(VECreateSingleActivity.this, bimConversation.getConversationID());

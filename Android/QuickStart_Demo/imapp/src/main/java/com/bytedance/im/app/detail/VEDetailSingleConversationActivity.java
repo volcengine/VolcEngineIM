@@ -11,8 +11,11 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.detail.member.VEMemberUtils;
 import com.bytedance.im.app.detail.member.VESingleMemberListActivity;
+import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
 import com.bytedance.im.app.detail.member.adapter.VEMemberHozionAdapter;
+import com.bytedance.im.app.main.edit.VEUserProfileEditActivity;
 import com.bytedance.im.app.search.VESearchResultActivity;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -41,7 +44,22 @@ public class VEDetailSingleConversationActivity extends Activity {
         String conversationId = getIntent().getStringExtra(CONVERSATION_ID);
         recyclerView = findViewById(R.id.recycler_view_member);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        VEMemberHozionAdapter adapter = new VEMemberHozionAdapter(this, null);
+        VEMemberHozionAdapter adapter = new VEMemberHozionAdapter(this, new VEMemberHozionAdapter.OnClickListener() {
+            @Override
+            public void onAddClick() {
+
+            }
+
+            @Override
+            public void onDeleteClick() {
+
+            }
+
+            @Override
+            public void onMemberClick(BIMMember member) {
+                VEUserProfileEditActivity.start(VEDetailSingleConversationActivity.this, member.getUserID());
+            }
+        });
         recyclerView.setAdapter(adapter);
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
         findViewById(R.id.iv_goto_member).setOnClickListener(v -> VESingleMemberListActivity.start(VEDetailSingleConversationActivity.this, conversationId));
@@ -62,26 +80,23 @@ public class VEDetailSingleConversationActivity extends Activity {
             }
         });
 
-        BIMUIClient.getInstance().getGroupMemberList(conversationId, new BIMResultCallback<List<BIMMember>>() {
+        VEMemberUtils.getGroupMemberList(conversationId, new BIMResultCallback<List<MemberWrapper>>() {
             @Override
-            public void onSuccess(List<BIMMember> memberList) {
-
-                if (memberList != null
-                        && memberList.size() >= 2
-                        && memberList.get(0).getUserID() == BIMClient.getInstance().getCurrentUserID()
-                        && memberList.get(1).getUserID() == BIMClient.getInstance().getCurrentUserID()) {
+            public void onSuccess(List<MemberWrapper> wrapperList) {
+                if (wrapperList != null
+                        && wrapperList.size() >= 2
+                        && wrapperList.get(0).getMember().getUserID() == BIMClient.getInstance().getCurrentUserID()
+                        && wrapperList.get(1).getMember().getUserID() == BIMClient.getInstance().getCurrentUserID()) {
                     //自己和自己发起聊天
-                    memberList.remove(1);
+                    wrapperList.remove(1);
                 }
-                adapter.updateUserInfoList(memberList, false, false);
+                adapter.updateUserInfoList(wrapperList, false, false);
             }
-
 
             @Override
             public void onFailed(BIMErrorCode code) {
 
             }
-
         });
     }
 

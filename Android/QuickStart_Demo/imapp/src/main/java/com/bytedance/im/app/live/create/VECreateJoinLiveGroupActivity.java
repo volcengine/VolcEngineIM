@@ -13,7 +13,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.live.chatRoom.VELiveGroupChatRoomActivity;
+import com.bytedance.im.app.utils.VENameUtils;
 import com.bytedance.im.core.api.BIMClient;
+import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 /**
  * 加入直播群时，修改个人资料
@@ -55,9 +60,8 @@ public class VECreateJoinLiveGroupActivity extends Activity {
         tvNotice = findViewById(R.id.tv_live_group_notice);
         btnConfirm = findViewById(R.id.confirm_btn);
         btnSkip = findViewById(R.id.skip_btn);
-        tvName.setText(getNameWithDefault(null));
         optionName.setOnClickListener(v -> VEEditCommonActivity.startForResult(this, "我的昵称", tvName.getText().toString(), 10, REQUEST_MEMBER_NAME));
-        optionPortrait.setOnClickListener(v -> VEEditCommonActivity.startForResult(this, "我的头像", "", Integer.MAX_VALUE, REQUEST_MEMBER_PORTRAIT));
+        optionPortrait.setOnClickListener(v -> VEEditCommonActivity.startForResult(this, "我的头像", url, Integer.MAX_VALUE, REQUEST_MEMBER_PORTRAIT));
         btnConfirm.setOnClickListener(v ->{
             String name = tvName.getText().toString();
             VELiveGroupChatRoomActivity.startChat(VECreateJoinLiveGroupActivity.this, conversationShortID, name, url);
@@ -73,19 +77,11 @@ public class VECreateJoinLiveGroupActivity extends Activity {
         if (resultCode == RESULT_OK) {
             String resultText = data.getStringExtra(VEEditCommonActivity.RESULT_TEXT);
             if (requestCode == REQUEST_MEMBER_NAME) {
-                tvName.setText(getNameWithDefault(resultText));
+                tvName.setText(resultText);
             } else if (requestCode == REQUEST_MEMBER_PORTRAIT) {
                 url = resultText;
-                Glide.with(ivPortrait.getContext()).load(url).into(ivPortrait);
+                Glide.with(ivPortrait.getContext()).load(url).error(R.drawable.icon_recommend_user_default).into(ivPortrait);
             }
         }
-    }
-
-    private String getNameWithDefault(String text){
-        String name = "用户"+ BIMClient.getInstance().getCurrentUserID();
-        if(!TextUtils.isEmpty(text)){
-            return text;
-        }
-        return name;
     }
 }

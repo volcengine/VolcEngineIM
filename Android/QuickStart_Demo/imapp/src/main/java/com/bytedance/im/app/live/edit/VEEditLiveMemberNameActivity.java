@@ -23,7 +23,7 @@ public class VEEditLiveMemberNameActivity  extends VEEditLiveActivity {
 
     @Override
     protected String initTitle(boolean isOwner) {
-        return "我的昵称";
+        return "我的群昵称";
     }
 
     @Override
@@ -53,9 +53,6 @@ public class VEEditLiveMemberNameActivity  extends VEEditLiveActivity {
      */
     private void setGroupName(String text) {
         waitDialog = ProgressDialog.show(VEEditLiveMemberNameActivity.this, "名称修改中, 稍等...", "");
-        if (TextUtils.isEmpty(text)) {
-            text = "用户" + BIMClient.getInstance().getCurrentUserID();
-        }
         BIMClient.getInstance().getService(BIMLiveExpandService.class).setLiveGroupMemberAlias(conversationId, text, new BIMSimpleCallback() {
             @Override
             public void onSuccess() {

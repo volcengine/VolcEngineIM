@@ -13,7 +13,12 @@ import android.widget.TextView;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.VEIMApplication;
+import com.bytedance.im.core.api.BIMClient;
+import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.ui.api.BIMUIUser;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,16 +53,23 @@ public class BIMUserSelectActivity extends Activity implements View.OnClickListe
         back = findViewById(R.id.back);
         back.setOnClickListener(this);
         confirm.setOnClickListener(this);
-        List<BIMUIUser> data = new ArrayList<>();
-        if (allArray != null) {
-            for (long id : allArray) {
-                data.add(VEIMApplication.accountProvider.getUserProvider().getUserInfo(id));
-            }
-        }
-        adapter = new BIMUserSelectAdapter(this, data, isSinglePick(), isShowUid());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        initUserData(allArray);
+    }
+
+    private void initUserData(List<Long> uidList){
+        BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfoList(uidList, false,new BIMResultCallback<List<BIMUserFullInfo>>() {
+            @Override
+            public void onSuccess(List<BIMUserFullInfo> bimUserFullInfos) {
+                adapter = new BIMUserSelectAdapter(BIMUserSelectActivity.this, bimUserFullInfos, isSinglePick(), isShowUid());
+                recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        });
     }
 
     @Override
@@ -67,12 +79,12 @@ public class BIMUserSelectActivity extends Activity implements View.OnClickListe
             setResult(RESULT_CANCELED);
             finish();
         } else if (id == R.id.tv_confirm) {
-            List<BIMUIUser> result = adapter.getSelectUser();
+            List<BIMUserFullInfo> result = adapter.getSelectUser();
             ArrayList<Long> uidList = new ArrayList<>();
             ArrayList<Long> confirmList = new ArrayList<>();
-            for (BIMUIUser user : result) {
-                confirmList.add(user.getUserID());
-                uidList.add(user.getUserID());
+            for (BIMUserFullInfo user : result) {
+                confirmList.add(user.getUid());
+                uidList.add(user.getUid());
             }
             if (!uidList.isEmpty() && !onConfirmClick(confirmList)) {
                 Intent data = new Intent();

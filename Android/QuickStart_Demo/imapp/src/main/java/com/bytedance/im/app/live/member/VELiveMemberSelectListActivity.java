@@ -6,17 +6,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
 import com.bytedance.im.app.detail.member.adapter.VEMemberSelectAdapter;
 import com.bytedance.im.app.live.utils.VELiveUtils;
-import com.bytedance.im.core.api.BIMClient;
-import com.bytedance.im.core.api.enums.BIMErrorCode;
-import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMember;
-import com.bytedance.im.live.BIMLiveExpandService;
-import com.bytedance.im.live.api.model.BIMLiveMemberListResult;
 
 import java.util.List;
 
@@ -27,13 +22,13 @@ public class VELiveMemberSelectListActivity extends Activity {
     private RecyclerView memberListV;
     private VEMemberSelectAdapter adapter;
     protected long conversationId = -1;
-    private VEAllMemberListViewModel allMemberListViewModel;
+    private VELiveAllMemberListViewModel allMemberListViewModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ve_im_activity_member_list_select_layout);
         conversationId = getIntent().getLongExtra(CONVERSATION_SHORT_ID, -1);
-        allMemberListViewModel = new VEAllMemberListViewModel(conversationId, memberList -> {
+        allMemberListViewModel = new VELiveAllMemberListViewModel(conversationId, memberList -> {
             if (adapter != null) {
                 adapter.appendMemberList(memberList);
             }
@@ -77,7 +72,7 @@ public class VELiveMemberSelectListActivity extends Activity {
         return null;
     }
 
-    protected void onConfirmClick(List<BIMMember> selectList) {
+    protected void onConfirmClick(List<MemberWrapper> selectList) {
 
     }
 

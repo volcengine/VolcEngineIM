@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.widget.TextView;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.BIMUIClient;
@@ -30,11 +31,11 @@ public class VESingleMemberListActivity extends VEMemberListActivity {
     }
 
     @Override
-    protected List<BIMMember> filterMember(List<BIMMember> memberList) {
+    protected List<MemberWrapper> filterMember(List<MemberWrapper> memberList) {
         if (memberList != null
                 && memberList.size() >= 2
-                && memberList.get(0).getUserID() == BIMClient.getInstance().getCurrentUserID()
-                && memberList.get(1).getUserID() == BIMClient.getInstance().getCurrentUserID()) {
+                && memberList.get(0).getMember().getUserID() == BIMClient.getInstance().getCurrentUserID()
+                && memberList.get(1).getMember().getUserID() == BIMClient.getInstance().getCurrentUserID()) {
             //自己和自己发起聊天
             memberList.remove(1);
         }

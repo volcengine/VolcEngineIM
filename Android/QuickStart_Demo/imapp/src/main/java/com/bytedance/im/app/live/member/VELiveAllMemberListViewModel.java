@@ -15,12 +15,13 @@ import java.util.Set;
 /**
  * 拼接常驻成员和在线成员
  */
-public class VEAllMemberListViewModel {
+public class VELiveAllMemberListViewModel {
     private long conversationId;
     private Set<BIMMember> adminSet = new HashSet<>();
     private int LOAD_TYPE_ADMIN = 0;
     private int LOAD_TYPE_ONLINE = 1;
     private int loadType = LOAD_TYPE_ADMIN;
+    private String markType;
     private long cursor = -1;
     private long pageSize = 20;
     private boolean hasMore = true;
@@ -29,7 +30,7 @@ public class VEAllMemberListViewModel {
         void onLoadMore(List<BIMMember> memberList);
     }
 
-    public VEAllMemberListViewModel(long conversationId,OnLoadMemberListener listener) {
+    public VELiveAllMemberListViewModel(long conversationId, OnLoadMemberListener listener) {
         this.conversationId = conversationId;
         this.listener = listener;
     }

@@ -9,8 +9,8 @@ android {
         minSdkVersion MIN_SDK_VERSION as int
         targetSdkVersion TARGET_SDK_VERSION as int
 
-        buildConfigField "String", "VERSION_NAME", "\"1.6.0\""
-        buildConfigField "Integer", "VERSION_CODE", "10600"
+        buildConfigField "String", "VERSION_NAME", "\"1.7.0\""
+        buildConfigField "Integer", "VERSION_CODE", "10700"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

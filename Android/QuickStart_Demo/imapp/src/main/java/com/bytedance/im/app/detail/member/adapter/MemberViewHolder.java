@@ -11,66 +11,85 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bytedance.common.utility.Lists;
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.contact.VEFriendInfoManager;
+import com.bytedance.im.app.utils.VENameUtils;
 import com.bytedance.im.core.api.enums.BIMBlockStatus;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.model.BIMMember;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class MemberViewHolder extends RecyclerView.ViewHolder {
 
     private ImageView userHeadImg;
-    private TextView nickName;
+    private TextView nickName, tvOnline, tvMarks;
     protected ImageView ivSilent;
+    private TextView tvTags;
 
     public MemberViewHolder(@NonNull View itemView) {
         super(itemView);
         userHeadImg = itemView.findViewById(R.id.iv_head);
         nickName = itemView.findViewById(R.id.tv_nick_name);
         ivSilent = itemView.findViewById(R.id.iv_silent);
+        tvTags = itemView.findViewById(R.id.tv_tag_list);
+        tvMarks = itemView.findViewById(R.id.tv_marks);
+        tvOnline = itemView.findViewById(R.id.tv_online);
     }
 
     public void bind(MemberWrapper memberWrapper) {
         BIMMember member = memberWrapper.getMember();
         //名称
-        String name = "用户" + member.getUserID();
-        String friendAlias = VEFriendInfoManager.getInstance().getFriendAlias(member.getUserID());
-        if (!TextUtils.isEmpty(friendAlias)) {
-            name = friendAlias;
-        } else {
-            if (member != null && !TextUtils.isEmpty(member.getAlias())) {
-                name = member.getAlias();
-            }
-        }
+        nickName.setText(VENameUtils.getShowNameInGroup(memberWrapper));
+        String tags = "";
         if (memberWrapper.isShowTag()) {
             if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
-                name += "[群主]";
+                tags += "[群主]";
             } else if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
-                name += "[管理员]";
+                tags += "[管理员]";
             }
         }
+        tvTags.setText(tags);
+
+        String marks = "";
+        if (!Lists.isEmpty(member.getMarkTypes())) {
+            List<String> markTypes = new ArrayList<>(member.getMarkTypes());
+            Collections.sort(markTypes);
+            for (String mark: markTypes) {
+                marks += "[" + mark +"]";
+            }
+        }
+        tvMarks.setText(marks);
+
+        String onlineText = "";
         boolean showOnlineTag = memberWrapper.isShowOnline() &&(member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN || member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER);
         if (showOnlineTag) {
             if (member.isOnline()) {
-                name += " 在线";
+                onlineText += " 在线";
             } else {
-                name += " 离线";
+                onlineText += " 离线";
             }
         }
 
-        SpannableString nameSpannableStr = new SpannableString(name);
+        SpannableString nameSpannableStr = new SpannableString(onlineText);
         if (showOnlineTag && nameSpannableStr.length() >= 2) {
             nameSpannableStr.setSpan(new ForegroundColorSpan(Color.LTGRAY), nameSpannableStr.length() - 2, nameSpannableStr.length(), 0);
         }
-        nickName.setText(nameSpannableStr);
-
-        //头像
-        int res = R.drawable.icon_recommend_user_default;
-        userHeadImg.setImageResource(res);
-        String avatarUlr = member.getAvatarUrl();
-        if (!TextUtils.isEmpty(avatarUlr)) {
-            Glide.with(userHeadImg.getContext()).load(avatarUlr).error(res).into(userHeadImg);
+        tvOnline.setText(nameSpannableStr);
+        if (TextUtils.isEmpty(tags)) {
+            tvTags.setVisibility(View.GONE);
+        } else {
+            tvTags.setVisibility(View.VISIBLE);
+            tvTags.setText(tags);
         }
+        //头像
+        Glide.with(userHeadImg.getContext()).load(VENameUtils.getPortraitUrl(memberWrapper))
+                .dontAnimate()
+                .error(R.drawable.icon_recommend_user_default)
+                .placeholder(R.drawable.icon_recommend_user_default)
+                .into(userHeadImg);
 
         //禁言标签
         if (memberWrapper.isShowSilent()) {

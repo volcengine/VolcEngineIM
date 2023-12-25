@@ -2,12 +2,14 @@ package com.bytedance.im.app.detail.member.adapter;
 
 import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.model.BIMMember;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 public class MemberWrapper {
     public static final int TYPE_NORMAL = 0;
     public static final int TYPE_ADD = 1;
     public static final int TYPE_DELETE = 2;
     private BIMMember member;
+    private BIMUserFullInfo fullInfo;
     private int type;
     public boolean isSelect;
     private int order;
@@ -15,10 +17,15 @@ public class MemberWrapper {
     private boolean isShowSilent;
     private boolean isShowOnline;
     private boolean isShowTag = true;
-    public MemberWrapper(BIMMember member, int type) {
+    public MemberWrapper(BIMMember member, BIMUserFullInfo fullInfo,int type) {
         order = generateOrder(member, type);
         this.member = member;
+        this.fullInfo = fullInfo;
         this.type = type;
+    }
+
+    public void setFullInfo(BIMUserFullInfo fullInfo) {
+        this.fullInfo = fullInfo;
     }
 
     public void setOwner(boolean owner) {
@@ -79,5 +86,9 @@ public class MemberWrapper {
 
     public void setShowTag(boolean showTag) {
         isShowTag = showTag;
+    }
+
+    public BIMUserFullInfo getFullInfo() {
+        return fullInfo;
     }
 }
