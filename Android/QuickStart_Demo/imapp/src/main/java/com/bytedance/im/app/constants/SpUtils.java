@@ -7,14 +7,15 @@ import android.text.TextUtils;
 import com.bytedance.im.app.login.model.UserToken;
 import com.google.gson.Gson;
 
-import org.w3c.dom.Text;
-
 public class SpUtils {
     public static final String SP_NO_RESET_NAME = "no_reset_sp_key";
     public static final String SP_BOE_SWIM_LANE_KEY = "boe_swim_lane";
     public static final String SP_PPE_SWIM_LANE_KEY = "ppe_swim_lane";
     public static final String SP_ENV_KEY = "env_key";
     public static final String SP_LOG_IN_INFO = "login_info";
+
+    public static final String SP_ENABLE_ALOG = "enable_alog";    //埋点开关
+    public static final String SP_ENABLE_APM = "enable_apm";    //日志开关
 
     private static final class InstanceHolder {
         private static final SpUtils instance = new SpUtils();
@@ -81,5 +82,22 @@ public class SpUtils {
             return null;
         }
         return userToken;
+    }
+
+
+    public boolean isEnableALog() {
+        return sp.getBoolean(SP_ENABLE_ALOG, true);
+    }
+
+    public void setEnableALog(boolean isEnable) {
+        sp.edit().putBoolean(SP_ENABLE_ALOG, isEnable).commit();
+    }
+
+    public boolean isEnableAPM() {
+        return sp.getBoolean(SP_ENABLE_APM, true);
+    }
+
+    public void setEnableAPM(boolean isEnable) {
+        sp.edit().putBoolean(SP_ENABLE_APM, isEnable).commit();
     }
 }

@@ -7,7 +7,6 @@ import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_BLACK_MORE
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +23,7 @@ import android.widget.Toast;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.VEIMApplication;
+import com.bytedance.im.app.main.edit.VEUserProfileEditActivity;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
@@ -32,12 +32,10 @@ import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.BIMFriendListener;
 import com.bytedance.im.user.api.model.BIMBlackListFriendInfo;
 import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
-import com.bytedance.im.user.api.model.BIMFriendInfo;
-import com.google.gson.Gson;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +82,12 @@ public class VEContactBlockListActivity extends Activity {
 
             @Override
             public void onLongClick(VEContactBlackListData data) {
-                showMenu(data.getBlackListFriendInfo());
+                showMenu(data.getUserFullInfo().getBlackListFriendInfo());
+            }
+
+            @Override
+            public void onPortraitClick(VEContactBlackListData data) {
+                VEUserProfileEditActivity.start(VEContactBlockListActivity.this,data.getUserFullInfo().getUid());
             }
         });
 
@@ -116,11 +119,11 @@ public class VEContactBlockListActivity extends Activity {
 
     private void loadData() {
         if (null != service) {
-            service.getBlackList(new BIMResultCallback<List<BIMBlackListFriendInfo>>() {
+            service.getBlackList(new BIMResultCallback<List<BIMUserFullInfo>>() {
                 @Override
-                public void onSuccess(List<BIMBlackListFriendInfo> bimBlackListFriendInfoList) {
+                public void onSuccess(List<BIMUserFullInfo> list) {
                     List<VEContactBlackListData> temp = new ArrayList();
-                    for (BIMBlackListFriendInfo info: bimBlackListFriendInfoList) {
+                    for (BIMUserFullInfo info: list) {
                         temp.add(VEContactBlackListData.create(info));
                     }
                     Collections.sort(temp, VEContactBlackListData::compare);
@@ -129,7 +132,7 @@ public class VEContactBlockListActivity extends Activity {
 
                 @Override
                 public void onFailed(BIMErrorCode code) {
-//
+                    Log.i(TAG,"onFailed code:"+code);
                 }
             });
         }
@@ -196,9 +199,9 @@ public class VEContactBlockListActivity extends Activity {
                                             Toast.makeText(VEContactBlockListActivity.this, "TA已经被你拉黑，请重新输入", Toast.LENGTH_SHORT).show();
                                             return;
                                         }
-                                        service.addToBlackList(blackListFriendInfo, new BIMResultCallback<BIMBlackListFriendInfo>() {
+                                        service.addToBlackList(blackListFriendInfo, new BIMResultCallback<BIMUserFullInfo>() {
                                             @Override
-                                            public void onSuccess(BIMBlackListFriendInfo blackListFriendInfo) {
+                                            public void onSuccess(BIMUserFullInfo fullInfo) {
                                                 Toast.makeText(VEContactBlockListActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
                                                 dialog.dismiss();
                                             }
@@ -246,23 +249,23 @@ public class VEContactBlockListActivity extends Activity {
         }
 
         @Override
-        public void onFriendDelete(BIMFriendInfo friendInfo) {
+        public void onFriendDelete(BIMUserFullInfo friendInfo) {
             VEContactBlackListData data = adapter.getData(friendInfo.getUid());
             if (data != null) {
-                adapter.insertOrUpdateData(VEContactBlackListData.create(data.getBlackListFriendInfo()));
+                adapter.insertOrUpdateData(VEContactBlackListData.create(data.getUserFullInfo()));
             }
         }
 
         @Override
-        public void onFriendUpdate(BIMFriendInfo friendInfo) {
+        public void onFriendUpdate(BIMUserFullInfo friendInfo) {
             VEContactBlackListData data = adapter.getData(friendInfo.getUid());
             if (data != null) {
-                adapter.insertOrUpdateData(VEContactBlackListData.create(data.getBlackListFriendInfo()));
+                adapter.insertOrUpdateData(VEContactBlackListData.create(data.getUserFullInfo()));
             }
         }
 
         @Override
-        public void onFriendAdd(BIMFriendInfo friendInfo) {
+        public void onFriendAdd(BIMUserFullInfo friendInfo) {
 
         }
 
@@ -282,18 +285,23 @@ public class VEContactBlockListActivity extends Activity {
         }
 
         @Override
-        public void onBlackListAdd(BIMBlackListFriendInfo blackListInfo) {
-            adapter.insertOrUpdateData(VEContactBlackListData.create(blackListInfo));
+        public void onBlackListAdd(BIMUserFullInfo userFullInfo) {
+            adapter.insertOrUpdateData(VEContactBlackListData.create(userFullInfo));
         }
 
         @Override
-        public void onBlackListDelete(BIMBlackListFriendInfo blackListInfo) {
-            adapter.removeData(VEContactBlackListData.create(blackListInfo));
+        public void onBlackListDelete(BIMUserFullInfo userFullInfo) {
+            adapter.removeData(VEContactBlackListData.create(userFullInfo));
         }
 
         @Override
-        public void onBlackListUpdate(BIMBlackListFriendInfo blackListInfo) {
-            adapter.insertOrUpdateData(VEContactBlackListData.create(blackListInfo));
+        public void onBlackListUpdate(BIMUserFullInfo userFullInfo) {
+            adapter.insertOrUpdateData(VEContactBlackListData.create(userFullInfo));
+        }
+
+        @Override
+        public void onUserProfileUpdate(BIMUserFullInfo userFullInfo) {
+
         }
     };
 }

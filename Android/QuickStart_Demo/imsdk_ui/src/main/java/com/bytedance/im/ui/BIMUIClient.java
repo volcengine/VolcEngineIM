@@ -18,6 +18,7 @@ import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.core.api.model.BIMUnReadInfo;
 import com.bytedance.im.core.internal.utils.IMLog;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareCustomMessageUI;
@@ -25,25 +26,29 @@ import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
 import com.bytedance.im.ui.message.convert.base.model.BaseCustomElement;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
-import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.ui.user.BIMUserProvider;
+import com.bytedance.im.ui.user.DefaultProvider;
+import com.bytedance.im.ui.user.OnUserInfoUpdateListener;
 import com.bytedance.im.ui.utils.FileUtils;
 import com.bytedance.im.ui.utils.BIMUIUtils;
 import com.bytedance.im.ui.utils.media.AudioHelper;
 
 import java.util.List;
+
 /**
  * @type api
  * @brief BIMUI 对外接口类, 通过此类提供所有 UI 能力接口。
  */
 public class BIMUIClient {
     private static final String TAG = "BIMUIClient";
+
     /**
      * @hidden
      */
     private static final class InstanceHolder {
         private static final BIMUIClient instance = new BIMUIClient();
     }
+
     /**
      * @hidden
      */
@@ -75,7 +80,7 @@ public class BIMUIClient {
      * @hidden
      */
     public void init(Application application, int appId, int env, String swimLean, BIMSDKConfig config) {
-        BIMClient.getInstance().initSDK(application, appId, config,env,swimLean);
+        BIMClient.getInstance().initSDK(application, appId, config, env, swimLean);
         if (BIMUIUtils.isMainProcess(application) && BIMUIUtils.isMainThread()) {
             FileUtils.initDir(application);
             AudioHelper.getInstance().initAudio(application);
@@ -85,19 +90,29 @@ public class BIMUIClient {
             BIMMessageManager.getInstance().register("1", BIMShareElement.class);
             BIMMessageManager.getInstance().register("2", BIMGroupNotifyElement.class);
         }
-        IMLog.i(TAG, "initUISDK end initVersion: " + getVersion() + " imSDK initVersion: "+BIMClient.getInstance().getVersion());
+        IMLog.i(TAG, "initUISDK end initVersion: " + getVersion() + " imSDK initVersion: " + BIMClient.getInstance().getVersion());
     }
+
+    /**
+     * @hidden
+     */
+    private BIMUserProvider provider;
     /**
      * @param BIMUserProvider 用户信息 provider,参看 UserProvider{@link #UserProvider}。
      * @type api
      * @brief 设置用户信息 provider。
      */
-    public void setUserProvider(BIMUserProvider BIMUserProvider) {
-        UserManager.geInstance().setUserProvider(BIMUserProvider);
+    public void setUserProvider(BIMUserProvider provider) {
+       this.provider = provider;
     }
-
+    /**
+     * @hidden
+     */
     public BIMUserProvider getUserProvider() {
-        return UserManager.geInstance().getUserProvider();
+        if(provider == null){
+            provider = new DefaultProvider();
+        }
+        return provider;
     }
 
     /**
@@ -120,12 +135,14 @@ public class BIMUIClient {
     public void removeConnectListener(final BIMConnectListener listener) {
         BIMClient.getInstance().removeConnectListener(listener);
     }
+
     /**
      * @hidden
      */
     public void setGroupMemberRole(String conversationId, List<Long> uidList, BIMMemberRole role, BIMSimpleCallback callback) {
         BIMClient.getInstance().setGroupMemberRole(conversationId, uidList, role, callback);
     }
+
     /**
      * @hidden
      */
@@ -143,7 +160,7 @@ public class BIMUIClient {
     /**
      * @hidden
      */
-    public BIMMessage createTextMessage(String text){
+    public BIMMessage createTextMessage(String text) {
         return BIMClient.getInstance().createTextMessage(text);
     }
 
@@ -178,7 +195,7 @@ public class BIMUIClient {
     /**
      * @hidden
      */
-    public void getGroupMemberList(String conversationId, BIMResultCallback<List<BIMMember>> callback) {
+    public void getConversationMemberList(String conversationId, BIMResultCallback<List<BIMMember>> callback) {
         BIMClient.getInstance().getConversationMemberList(conversationId, callback);
     }
 
@@ -288,6 +305,7 @@ public class BIMUIClient {
     public void logout() {
         BIMClient.getInstance().logout();
     }
+
     /**
      * @hidden
      */

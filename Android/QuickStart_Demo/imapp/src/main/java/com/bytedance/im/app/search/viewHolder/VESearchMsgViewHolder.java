@@ -9,14 +9,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.message.VEMessageListActivity;
+import com.bytedance.im.app.search.data.VESearchMsgInfo;
 import com.bytedance.im.app.search.data.VESearchMsgWrapper;
 import com.bytedance.im.app.search.interfaces.OnSearchMsgClickListener;
+import com.bytedance.im.app.utils.VENameUtils;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.search.api.model.BIMSearchDetail;
 import com.bytedance.im.search.api.model.BIMSearchMsgInfo;
 import com.bytedance.im.search.api.model.BIMSearchPosition;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import org.w3c.dom.Text;
 
@@ -47,7 +51,9 @@ public class VESearchMsgViewHolder extends VESearchViewHolder<VESearchMsgWrapper
     @Override
     public void bind(VESearchMsgWrapper t) {
         super.bind(t);
-        BIMSearchMsgInfo searchMsgInfo = t.getInfo();
+        VESearchMsgInfo veSearchMsgInfo = t.getInfo();
+        BIMUserFullInfo userFullInfo = veSearchMsgInfo.getUserFullInfo();
+        BIMSearchMsgInfo searchMsgInfo = veSearchMsgInfo.getSearchMsgInfo();
         BIMSearchDetail searchDetail = searchMsgInfo.getSearchDetail();
         String searchKey = searchDetail.getSearchKey();
         List<BIMSearchPosition> positionList = searchDetail.getKeyPositions();
@@ -58,12 +64,16 @@ public class VESearchMsgViewHolder extends VESearchViewHolder<VESearchMsgWrapper
             spannableString.setSpan(new ForegroundColorSpan(Color.GREEN), pos.getStart(), pos.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         des.setText(spannableString);
-        title.setText("" + bimMessage.getSenderUID());
+        title.setText(VENameUtils.getShowName(userFullInfo));
         itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onSearchMsgClick(searchMsgInfo);
             }
         });
+        Glide.with(imageView.getContext()).load(userFullInfo.getPortraitUrl())
+                .placeholder(R.drawable.icon_recommend_user_default)
+                .error(R.drawable.icon_recommend_user_default)
+                .into(imageView);
         time.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(bimMessage.getCreatedTime()));
     }
 }

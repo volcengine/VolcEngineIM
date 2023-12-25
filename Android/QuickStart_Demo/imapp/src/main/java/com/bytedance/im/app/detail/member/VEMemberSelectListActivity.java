@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
 import com.bytedance.im.app.detail.member.adapter.VEMemberSelectAdapter;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -15,6 +16,7 @@ import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,30 +41,31 @@ public class VEMemberSelectListActivity extends Activity {
         });
         memberListV = findViewById(R.id.user_list);
         memberListV.setLayoutManager(new LinearLayoutManager(this));
-        BIMUIClient.getInstance().getGroupMemberList(conversationId, new BIMResultCallback<List<BIMMember>>() {
+
+        VEMemberUtils.getGroupMemberList(conversationId, new BIMResultCallback<List<MemberWrapper>>() {
             @Override
-            public void onSuccess(List<BIMMember> members) {
-                Log.i(TAG, "refreshUserListView() members.size(): " + members.size());
-                for (BIMMember member : members) {
-                    if (member.getUserID() == BIMClient.getInstance().getCurrentUserID()) {
-                        selfMember = member;
+            public void onSuccess(List<MemberWrapper> memberWrappers) {
+                if (memberWrappers != null) {
+                    Log.i(TAG, "refreshUserListView() members.size(): " + memberWrappers.size());
+                    for (MemberWrapper wrapper : memberWrappers) {
+                        if (wrapper.getMember().getUserID() == BIMClient.getInstance().getCurrentUserID()) {
+                            selfMember = wrapper.getMember();
+                        }
                     }
-                }
-                if (members != null) {
-                    adapter = new VEMemberSelectAdapter(VEMemberSelectListActivity.this, filter(members), onInitCheckList(members), isShowTag());
+                    adapter = new VEMemberSelectAdapter(VEMemberSelectListActivity.this, filter(memberWrappers), onInitCheckList(memberWrappers), isShowTag());
                     memberListV.setAdapter(adapter);
                 }
             }
 
             @Override
             public void onFailed(BIMErrorCode code) {
-                Log.i(TAG, "onFailed() code: " + code);
+
             }
         });
     }
 
 
-    protected List<BIMMember> filter(List<BIMMember> members){
+    protected List<MemberWrapper> filter(List<MemberWrapper> members){
         return members;
     }
     /**
@@ -71,11 +74,11 @@ public class VEMemberSelectListActivity extends Activity {
      * @param list
      * @return
      */
-    protected List<BIMMember> onInitCheckList(List<BIMMember> list) {
+    protected List<MemberWrapper> onInitCheckList(List<MemberWrapper> list) {
         return null;
     }
 
-    protected void onConfirmClick(List<BIMMember> selectList) {
+    protected void onConfirmClick(List<MemberWrapper> selectList) {
 
     }
 

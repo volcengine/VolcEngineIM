@@ -25,6 +25,10 @@ public class Constants {
      */
     public static final int ENV_BOEi18n = 4;
     /**
+     * 海外环境
+     */
+    public static final int ENV_i18n = 5;
+    /**
      * 默认环境
      */
     public static final int ENV_DEFAULT = ENV_RELEASE;

@@ -13,10 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.detail.member.VEMemberUtils;
+import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
 import com.bytedance.im.app.detail.member.adapter.VEMemberListAdapter;
 import com.bytedance.im.app.live.VELiveGroupDialogUtils;
 import com.bytedance.im.app.live.create.VEEditCommonActivity;
 import com.bytedance.im.app.live.utils.VELiveUtils;
+import com.bytedance.im.app.utils.VENameUtils;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
@@ -57,7 +60,7 @@ public class VELiveMemberMasterListActivity extends Activity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(null);
         conversationShortId = getIntent().getLongExtra(CONVERSATION_SHORT_ID, 0L);
-        adapter = new VEMemberListAdapter(this, member -> showOperation(member), true,true);
+        adapter = new VEMemberListAdapter(this, memberWrapper -> showOperation(memberWrapper), true,true);
         recyclerView.setAdapter(adapter);
         findViewById(R.id.tv_more).setVisibility(View.VISIBLE);
         findViewById(R.id.tv_more).setOnClickListener((view) -> VEEditCommonActivity.startForResult(this, "添加群管理员", "", 19, REQUEST_EDIT_UID));
@@ -73,16 +76,16 @@ public class VELiveMemberMasterListActivity extends Activity {
         initData();
     }
 
-    private void showOperation(BIMMember member) {
+    private void showOperation(MemberWrapper memberWrapper) {
         List dialogInfo = new ArrayList<Pair<String, VELiveGroupDialogUtils.BottomInputDialogListener>>();
-        dialogInfo.add(new android.util.Pair("移出管理员", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> BIMClient.getInstance().getService(BIMLiveExpandService.class).removeLiveGroupAdmin(conversationShortId, Collections.singletonList(member.getUserID()), new BIMSimpleCallback() {
+        dialogInfo.add(new android.util.Pair("移出管理员", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> BIMClient.getInstance().getService(BIMLiveExpandService.class).removeLiveGroupAdmin(conversationShortId, Collections.singletonList(memberWrapper.getMember().getUserID()), new BIMSimpleCallback() {
             public void onSuccess() {
-                Toast.makeText(VELiveMemberMasterListActivity.this, "移出管理员成功" + member.getUserID(), Toast.LENGTH_SHORT).show();
-                adapter.remove(member.getUserID());
+                Toast.makeText(VELiveMemberMasterListActivity.this, "移出管理员成功 " + VENameUtils.getPortraitUrl(memberWrapper), Toast.LENGTH_SHORT).show();
+                adapter.remove(memberWrapper.getMember().getUserID());
             }
 
             public void onFailed(BIMErrorCode code) {
-                Toast.makeText(VELiveMemberMasterListActivity.this, "移出管理员失败" + member.getUserID(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(VELiveMemberMasterListActivity.this, "移出管理员失败 " + VENameUtils.getPortraitUrl(memberWrapper), Toast.LENGTH_SHORT).show();
             }
 
         })));
@@ -96,7 +99,17 @@ public class VELiveMemberMasterListActivity extends Activity {
             public void onSuccess(BIMLiveMemberListResult resultMemberList) {
                 hasMore = resultMemberList.isHasMore();
                 cursor = resultMemberList.getNextCursor();
-                adapter.appendMemberList(resultMemberList.getMemberList());
+                VEMemberUtils.getMemberWrapperList(resultMemberList.getMemberList(), new BIMResultCallback<List<MemberWrapper>>() {
+                    @Override
+                    public void onSuccess(List<MemberWrapper> wrapperList) {
+                        adapter.appendMemberList(wrapperList);
+                    }
+
+                    @Override
+                    public void onFailed(BIMErrorCode code) {
+
+                    }
+                });
             }
 
             public void onFailed(BIMErrorCode code) {

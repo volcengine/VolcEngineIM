@@ -1,37 +1,21 @@
 package com.bytedance.im.app.contact.blockList;
 
-import android.text.TextUtils;
-
-import com.bytedance.im.app.utils.SimplePinyinHelper;
-import com.bytedance.im.ui.api.BIMUIUser;
-import com.bytedance.im.ui.user.UserManager;
-import com.bytedance.im.user.api.model.BIMBlackListFriendInfo;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.Locale;
 
 public class VEContactBlackListData {
     private static char SPECIAL = '#';
 
-    private BIMBlackListFriendInfo blackListFriendInfo;
+    private BIMUserFullInfo userFullInfo;
     private char firstChar;
     private String sortKey;
     private String name;
     private long id;
 
-    public static VEContactBlackListData create(BIMBlackListFriendInfo blackListFriendInfo) {
+    public static VEContactBlackListData create(BIMUserFullInfo blackListFriendInfo) {
         String name = "用户" + blackListFriendInfo.getUid();
         String sortKey = "YH" + blackListFriendInfo.getUid();
-
-        BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(blackListFriendInfo.getUid());
-        if (user != null && !TextUtils.isEmpty(user.getNickName())) {
-            name = user.getNickName();
-            if (SimplePinyinHelper.ifValid(name)) {
-                sortKey = SimplePinyinHelper.getFirstPinyinChar(name);
-            } else {
-                sortKey = name;
-            }
-        }
-
         return new VEContactBlackListData(blackListFriendInfo.getUid(), name, sortKey, blackListFriendInfo);
     }
 
@@ -47,11 +31,11 @@ public class VEContactBlackListData {
         }
     }
 
-    public VEContactBlackListData(long id, String name, String sortKey, BIMBlackListFriendInfo bimBlackListFriendInfo) {
+    public VEContactBlackListData(long id, String name, String sortKey, BIMUserFullInfo bimBlackListFriendInfo) {
         this.id = id;
         this.name = name;
         this.sortKey = sortKey;
-        this.blackListFriendInfo = bimBlackListFriendInfo;
+        this.userFullInfo = bimBlackListFriendInfo;
         this.firstChar = (sortKey != null ? sortKey : ("" + SPECIAL)).charAt(0);
     }
 
@@ -92,7 +76,7 @@ public class VEContactBlackListData {
         this.id = id;
     }
 
-    public BIMBlackListFriendInfo getBlackListFriendInfo() {
-        return blackListFriendInfo;
+    public BIMUserFullInfo getUserFullInfo() {
+        return userFullInfo;
     }
 }

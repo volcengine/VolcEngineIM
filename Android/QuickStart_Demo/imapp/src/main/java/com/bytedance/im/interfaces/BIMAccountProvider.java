@@ -16,12 +16,6 @@ public interface BIMAccountProvider {
      * @param application
      */
     void init(Application application, int appId, int env);
-    /**
-     * 用户信息提供
-     *
-     * @return
-     */
-    BIMUserProvider getUserProvider();
 
     /**
      * 用户是否存在

@@ -68,22 +68,27 @@ public class ImageMessageUI extends BaseCustomElementUI {
             return;
         }
         Drawable placeDrawable = imgContent.getDrawable();
-        Glide.with(imgContent.getContext())
-                .load(imageElement.getThumbImg().getURL())
-                .dontAnimate()
-                .placeholder(placeDrawable)
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        holder.getOnOutListener().refreshMediaMessage(bimMessage,null);
-                        return true;
-                    }
+        try {
+            Glide.with(imgContent.getContext())
+                    .load(imageElement.getThumbImg().getURL())
+                    .dontAnimate()
+                    .placeholder(placeDrawable)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            holder.getOnOutListener().refreshMediaMessage(bimMessage, null);
+                            return true;
+                        }
 
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        return false;
-                    }
-                }).into(imgContent);
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            return false;
+                        }
+                    }).into(imgContent);
+        } catch (Exception e) {
+            Log.i(TAG, "load image exception " + Log.getStackTraceString(e));
+            imgContent.setImageResource(R.drawable.bg_record_input_button_normal);
+        }
     }
 
     @Override

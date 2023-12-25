@@ -30,28 +30,30 @@
 
         <TextView
             android:id="@+id/confirm"
-            android:layout_gravity="right|center_vertical"
-            android:text="确定"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:padding="10dp"
+            android:text="确定"
             android:textColor="@color/business_im_222"
-            android:textSize="16sp"
-            android:padding="10dp"/>
+            android:textSize="16sp" />
     </FrameLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/business_im_e8e8" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
-        android:text="环境切换"
-        android:textColor="@color/business_im_222"
-        android:textSize="16sp" />
+        android:background="@android:color/darker_gray">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:text="环境切换"
+            android:textColor="@color/business_im_222"
+            android:textSize="20sp" />
+    </FrameLayout>
+
 
     <RadioGroup
         android:id="@+id/env_group"
@@ -78,17 +80,16 @@
             android:text="boeI18n环境" />
 
         <RadioButton
-            android:id="@+id/env_ppe_device_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ppe(短链)"
-            android:visibility="gone" />
-
-        <RadioButton
             android:id="@+id/env_ppe"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="ppe环境" />
+
+        <RadioButton
+            android:id="@+id/env_i18n"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="i18n环境" />
     </RadioGroup>
 
     <LinearLayout
@@ -113,14 +114,42 @@
             android:textAllCaps="false" />
     </LinearLayout>
 
-    <View
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/business_im_e8e8" />
-    <TextView
-        android:layout_marginTop="30dp"
-        android:text="确定修改后应用会重启"
-        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:text="初始化模块配置"
+            android:textColor="@color/business_im_222"
+            android:textSize="20sp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </FrameLayout>
+    <Switch
+        android:id="@+id/sw_event"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="埋点功能"/>
+    <Switch
+        android:id="@+id/sw_local_log"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="日志功能"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:text="点击确定后应用自动重启生效" />
 </LinearLayout>

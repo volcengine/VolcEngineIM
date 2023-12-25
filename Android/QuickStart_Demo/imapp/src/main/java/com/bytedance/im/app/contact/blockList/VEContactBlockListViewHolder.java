@@ -7,7 +7,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.utils.VENameUtils;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 public class VEContactBlockListViewHolder extends RecyclerView.ViewHolder {
     private static String TAG = "VEContactBlockListViewHolder";
@@ -28,9 +31,13 @@ public class VEContactBlockListViewHolder extends RecyclerView.ViewHolder {
     public void onBind(VEContactBlackListData data,VEContactBlackListData preData, BlackListClickListener listener) {
         this.data = data;
         this.listener = listener;
-        tvNickName.setText(String.valueOf(data.getName()));
-        ivHead.setImageResource(R.drawable.icon_recommend_user_default);
-
+        BIMUserFullInfo userFullInfo = data.getUserFullInfo();
+        tvNickName.setText(VENameUtils.getShowName(userFullInfo));
+        Glide.with(ivHead.getContext())
+                .load(userFullInfo.getPortraitUrl())
+                .dontAnimate()
+                .placeholder(R.drawable.icon_recommend_user_default)
+                .error(R.drawable.icon_recommend_user_default).into(ivHead);
         if (null != listener) {
             itemView.setOnClickListener(v -> listener.onClick(data));
             itemView.setOnLongClickListener(v -> {
@@ -49,5 +56,10 @@ public class VEContactBlockListViewHolder extends RecyclerView.ViewHolder {
         } else {
             tvTitle.setVisibility(View.GONE);
         }
+        ivHead.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onPortraitClick(data);
+            }
+        });
     }
 }

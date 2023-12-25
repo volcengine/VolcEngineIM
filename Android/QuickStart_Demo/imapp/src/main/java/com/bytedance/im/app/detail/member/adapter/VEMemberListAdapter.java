@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.core.api.model.BIMMember;
+import com.bytedance.im.ui.member.BIMMemberWrapper;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,17 +22,13 @@ public class VEMemberListAdapter extends RecyclerView.Adapter<MemberViewHolder> 
     private boolean isShowSilent;
     private boolean isShowOnline;
 
-    public VEMemberListAdapter(Context mContext, List<BIMMember> memberList, OnMemberClickListener listener) {
+    public VEMemberListAdapter(Context mContext, List<MemberWrapper> memberList, OnMemberClickListener listener) {
         this.mContext = mContext;
         this.listener = listener;
         this.isShowSilent = true;
         this.isShowOnline = false;
         data = new ArrayList<>();
-        if (memberList != null && !memberList.isEmpty()) {
-            for (BIMMember member : memberList) {
-                data.add(new MemberWrapper(member, MemberWrapper.TYPE_NORMAL));
-            }
-        }
+        data.addAll(memberList);
         MemberUtils.sort(data);
     }
 
@@ -46,10 +44,9 @@ public class VEMemberListAdapter extends RecyclerView.Adapter<MemberViewHolder> 
         this.isShowOnline = isShowOnline;
     }
 
-    public void appendMemberList(List<BIMMember> list) {
+    public void appendMemberList(List<MemberWrapper> list) {
         if (list != null) {
-            for (BIMMember member : list) {
-                MemberWrapper wrapper = new MemberWrapper(member, MemberWrapper.TYPE_NORMAL);
+            for (MemberWrapper wrapper : list) {
                 wrapper.setShowSilent(isShowSilent);
                 wrapper.setShowOnline(isShowOnline);
                 data.add(wrapper);
@@ -68,7 +65,7 @@ public class VEMemberListAdapter extends RecyclerView.Adapter<MemberViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull MemberViewHolder memberViewHolder, int i) {
         memberViewHolder.bind(data.get(i));
-        memberViewHolder.itemView.setOnClickListener(v -> listener.onMemberClick(data.get(memberViewHolder.getAdapterPosition()).getMember()));
+        memberViewHolder.itemView.setOnClickListener(v -> listener.onMemberClick(data.get(memberViewHolder.getAdapterPosition())));
     }
 
     public void remove(long uid){
@@ -93,12 +90,24 @@ public class VEMemberListAdapter extends RecyclerView.Adapter<MemberViewHolder> 
         }
     }
 
+    public void updateUserInfo(BIMUserFullInfo fullInfo){
+        long uid = fullInfo.getUid();
+        for (int i = 0; i < data.size(); i++) {
+            MemberWrapper wrapper = data.get(i);
+            if (uid == wrapper.getMember().getUserID()) {
+                wrapper.setFullInfo(fullInfo);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
     @Override
     public int getItemCount() {
         return data.size();
     }
 
     public interface OnMemberClickListener {
-        void onMemberClick(BIMMember member);
+        void onMemberClick(MemberWrapper memberWrapper);
     }
 }

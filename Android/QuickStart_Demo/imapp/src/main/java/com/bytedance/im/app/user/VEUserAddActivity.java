@@ -1,6 +1,7 @@
 package com.bytedance.im.app.user;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,11 +19,14 @@ import android.widget.Toast;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.user.adapter.VEUserHorizonAdapter;
+import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.interfaces.BIMUserExistChecker;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUIUser;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,9 +88,8 @@ public class VEUserAddActivity extends Activity {
         tvAdd.setOnClickListener(v -> {
             try {
                 long uid = Long.parseLong(editText.getText().toString());
-                BIMUIUser user = VEIMApplication.accountProvider.getUserProvider().getUserInfo(uid);
                 //用户已经在群组
-                if (checkMemberExist(user)) {
+                if (checkMemberExist(uid)) {
                     return;
                 }
 
@@ -107,12 +111,12 @@ public class VEUserAddActivity extends Activity {
                 BIMUserExistChecker checker = VEIMApplication.accountProvider.createUserExistChecker();
                 if (checker != null) {
                     List<Long> uidList = new ArrayList<>();
-                    uidList.add(user.getUserID());
+                    uidList.add(uid);
                     checker.check(uidList, new BIMResultCallback<Map<Long, Boolean>>() {
                         @Override
                         public void onSuccess(Map<Long, Boolean> map) {
-                            if (map.get(user.getUserID())) {
-                                insertUser(user);
+                            if (map.get(uid)) {
+                                insertUser(uid);
                             } else {
                                 Toast.makeText(VEUserAddActivity.this, "该用户不存在", Toast.LENGTH_SHORT).show();
                             }
@@ -124,7 +128,7 @@ public class VEUserAddActivity extends Activity {
                         }
                     });
                 } else {
-                    insertUser(user);
+                    insertUser(uid);
                 }
             } catch (Exception e) {
                 Toast.makeText(this, "请输入数字", Toast.LENGTH_SHORT).show();
@@ -133,17 +137,32 @@ public class VEUserAddActivity extends Activity {
         updateHorizonView();
     }
 
-    private void insertUser(BIMUIUser user) {
-        if (adapter.getUserIDList().contains(user.getUserID())) {
+    protected void insertUserToSelected(long uid) {
+        insertUser(uid);
+    }
+
+    private void insertUser(long uid) {
+        if (adapter.getUserIDList().contains(uid)) {
             return;
         }
-        adapter.insertData(user);
-        updateHorizonView();
-        editText.setText("");
+        BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfo(uid,new BIMResultCallback<BIMUserFullInfo>() {
+            @Override
+            public void onSuccess(BIMUserFullInfo fullInfo) {
+                adapter.insertData(fullInfo);
+                updateHorizonView();
+                editText.setText("");
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        });
+
     }
 
     private void updateHorizonView() {
-        List<BIMUIUser> userList = adapter.getUserList();
+        List<BIMUserFullInfo> userList = adapter.getUserList();
         tvUserCount.setText(userList.size() + " 人");
         if (userList.isEmpty()) {
             horizonLayout.setVisibility(View.GONE);
@@ -153,10 +172,10 @@ public class VEUserAddActivity extends Activity {
     }
 
     protected void onConfirmClick(List<Long> uidList) {
-
+        hideKeyBoard(editText);
     }
 
-    protected boolean checkMemberExist(BIMUIUser user) {
+    protected boolean checkMemberExist(long uid) {
         return false;
     }
 
@@ -168,5 +187,25 @@ public class VEUserAddActivity extends Activity {
             adapter.removeData(removedList);
             updateHorizonView();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        hideKeyBoard(editText);
+        super.onBackPressed();
+    }
+
+    @Override
+    public void finish() {
+        hideKeyBoard(editText);
+        super.finish();
+    }
+
+
+
+    private void hideKeyBoard(EditText editText) {
+        // 隐藏软键盘
+        InputMethodManager imm = (InputMethodManager) editText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 }

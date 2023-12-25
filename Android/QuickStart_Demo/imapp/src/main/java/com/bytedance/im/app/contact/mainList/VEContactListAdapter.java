@@ -10,6 +10,7 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.contact.mainList.viewHolder.VEContactListActionViewHolder;
 import com.bytedance.im.app.contact.mainList.viewHolder.VEContactListBaseViewHolder;
 import com.bytedance.im.app.contact.mainList.viewHolder.VEContactListViewHolder;
+import com.bytedance.im.user.api.model.BIMFriendInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +20,6 @@ public class VEContactListAdapter extends RecyclerView.Adapter<VEContactListBase
     private OnClickListener listener;
     private List<ContactListDataInfo<?>> data = new ArrayList<>();
     private final List<ContactListDataInfo<?>> stickTopData = new ArrayList<>();
-
     @NonNull
     @Override
     public VEContactListBaseViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
@@ -56,6 +56,16 @@ public class VEContactListAdapter extends RecyclerView.Adapter<VEContactListBase
             }
             return true;
         });
+        if (veContactListBaseViewHolder instanceof VEContactListViewHolder) {
+            veContactListBaseViewHolder.itemView.findViewById(R.id.iv_head).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        listener.onPortraitClick(v, itemData);
+                    }
+                }
+            });
+        }
     }
 
     @Override

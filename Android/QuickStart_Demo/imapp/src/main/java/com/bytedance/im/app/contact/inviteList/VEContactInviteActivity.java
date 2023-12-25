@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.main.edit.VEUserProfileEditActivity;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
@@ -26,8 +27,11 @@ import com.bytedance.im.user.api.BIMFriendListener;
 import com.bytedance.im.user.api.enums.BIMFriendReplyType;
 import com.bytedance.im.user.api.model.BIMBlackListFriendInfo;
 import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
+import com.bytedance.im.user.api.model.BIMFriendApplyListResult;
 import com.bytedance.im.user.api.model.BIMFriendInfo;
 import com.bytedance.im.user.api.model.BIMReplyInfo;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
+import com.bytedance.im.user.api.model.BIMUserProfile;
 
 public class VEContactInviteActivity extends Activity {
     private static int PAGE_SIZE = 20;
@@ -49,6 +53,10 @@ public class VEContactInviteActivity extends Activity {
         @Override
         public void onReject(BIMFriendApplyInfo friendApplyInfo) {
             applyFriend(friendApplyInfo, false);
+        }
+        @Override
+        public void onPortraitClick(BIMFriendApplyInfo friendApplyInfo) {
+            VEUserProfileEditActivity.start(VEContactInviteActivity.this, friendApplyInfo.getFromUid());
         }
     };
     private BIMContactExpandService service = BIMClient.getInstance().getService(BIMContactExpandService.class);
@@ -104,9 +112,9 @@ public class VEContactInviteActivity extends Activity {
         Log.d(TAG, " loadData, cursor " + mCursor + ", hasMore " + mHasMore);
         if (null != service && !mIsLoading && mHasMore) {
             mIsLoading = true;
-            service.getFriendApplyList(this.mCursor, PAGE_SIZE, new BIMResultCallback<com.bytedance.im.user.api.model.BIMFriendApplyListResult>() {
+            service.getFriendApplyList(this.mCursor, PAGE_SIZE, new BIMResultCallback<BIMFriendApplyListResult>() {
                 @Override
-                public void onSuccess(com.bytedance.im.user.api.model.BIMFriendApplyListResult bimFriendApplyListResult) {
+                public void onSuccess(BIMFriendApplyListResult bimFriendApplyListResult) {
                     mIsLoading = false;
                     boolean isFirstPage = mCursor == Long.MAX_VALUE;
                     mHasMore = bimFriendApplyListResult.isHasMore();
@@ -192,17 +200,17 @@ public class VEContactInviteActivity extends Activity {
         }
 
         @Override
-        public void onFriendDelete(BIMFriendInfo friendInfo) {
+        public void onFriendDelete(BIMUserFullInfo friendInfo) {
 
         }
 
         @Override
-        public void onFriendUpdate(BIMFriendInfo friendInfo) {
+        public void onFriendUpdate(BIMUserFullInfo friendInfo) {
 
         }
 
         @Override
-        public void onFriendAdd(BIMFriendInfo friendInfo) {
+        public void onFriendAdd(BIMUserFullInfo friendInfo) {
 
         }
 
@@ -225,17 +233,22 @@ public class VEContactInviteActivity extends Activity {
         }
 
         @Override
-        public void onBlackListAdd(BIMBlackListFriendInfo blackListInfo) {
+        public void onBlackListAdd(BIMUserFullInfo blackListInfo) {
 
         }
 
         @Override
-        public void onBlackListDelete(BIMBlackListFriendInfo blackListInfo) {
+        public void onBlackListDelete(BIMUserFullInfo blackListInfo) {
 
         }
 
         @Override
-        public void onBlackListUpdate(BIMBlackListFriendInfo blackListInfo) {
+        public void onBlackListUpdate(BIMUserFullInfo blackListInfo) {
+
+        }
+
+        @Override
+        public void onUserProfileUpdate(BIMUserFullInfo userFullInfo) {
 
         }
     };

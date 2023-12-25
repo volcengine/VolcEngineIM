@@ -8,7 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.detail.member.VEMemberUtils;
+import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
+import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMember;
 
 import java.util.ArrayList;
@@ -27,18 +30,17 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
      * @param memberList
      * @param checkedList
      */
-    public VEMemberSelectAdapter(Context mContext, List<BIMMember> memberList, List<BIMMember> checkedList, boolean isTag) {
+    public VEMemberSelectAdapter(Context mContext, List<MemberWrapper> memberWrapperList, List<MemberWrapper> checkedList, boolean isTag) {
         this.mContext = mContext;
         data = new ArrayList<>();
         this.isShowTag = isTag;
-        if (memberList != null && !memberList.isEmpty()) {
-            for (BIMMember member : memberList) {
-                MemberWrapper wrapper = new MemberWrapper(member, MemberWrapper.TYPE_NORMAL);
+        if (memberWrapperList != null && !memberWrapperList.isEmpty()) {
+            for (MemberWrapper wrapper : memberWrapperList) {
                 wrapper.setShowTag(isShowTag);
-                if (checkedList != null && checkedList.contains(member)) {
+                if (checkedList != null && checkedList.contains(wrapper.getMember().getUserID())) {
                     wrapper.isSelect = true;
                 }
-                if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
+                if (wrapper.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
                     wrapper.setOwner(true);
                 }
                 data.add(wrapper);
@@ -49,7 +51,7 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
 
 
     public VEMemberSelectAdapter(Context mContext) {
-        this(mContext, new ArrayList<>(), new ArrayList<>(),true);
+        this(mContext, new ArrayList<>(), new ArrayList<>(), true);
     }
 
     @NonNull
@@ -100,15 +102,18 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
      */
     public void appendMemberList(List<BIMMember> list) {
         if (list == null) return;
-        for (BIMMember member : list) {
-            MemberWrapper memberWrapper = new MemberWrapper(member, MemberWrapper.TYPE_NORMAL);
-            memberWrapper.setShowTag(isShowTag);
-            if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
-                memberWrapper.setOwner(true);
+        VEMemberUtils.getMemberWrapperList(list, new BIMResultCallback<List<MemberWrapper>>() {
+            @Override
+            public void onSuccess(List<MemberWrapper> wrapperList) {
+                data.addAll(wrapperList);
+                notifyDataSetChanged();
             }
-            data.add(memberWrapper);
-        }
-        notifyDataSetChanged();
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        });
     }
 
     @Override
@@ -116,11 +121,11 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
         return data.size();
     }
 
-    public List<BIMMember> getSelectMember() {
-        List<BIMMember> result = new ArrayList<>();
+    public List<MemberWrapper> getSelectMember() {
+        List<MemberWrapper> result = new ArrayList<>();
         for (MemberWrapper wrapper : data) {
             if (wrapper.isSelect) {
-                result.add(wrapper.getMember());
+                result.add(wrapper);
             }
         }
         return result;

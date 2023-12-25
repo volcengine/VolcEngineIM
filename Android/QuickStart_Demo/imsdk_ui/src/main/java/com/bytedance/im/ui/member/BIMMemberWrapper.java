@@ -2,18 +2,21 @@ package com.bytedance.im.ui.member;
 
 import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.model.BIMMember;
-import com.bytedance.im.core.proto.GroupRole;
+import com.bytedance.im.ui.api.BIMUIUser;
 
 public class BIMMemberWrapper {
     public static final int TYPE_NORMAL = 0;
     private BIMMember member;
+    private BIMUIUser user;
     private int type;
     public boolean isSelect;
     private int order;
     private boolean isOwner;
-    public BIMMemberWrapper(BIMMember member, int type) {
+
+    public BIMMemberWrapper(BIMMember member, BIMUIUser userFullInfo, int type) {
         order = generateOrder(member, type);
         this.member = member;
+        this.user = userFullInfo;
         this.type = type;
     }
 
@@ -27,6 +30,10 @@ public class BIMMemberWrapper {
 
     public BIMMember getMember() {
         return member;
+    }
+
+    public BIMUIUser getUser() {
+        return user;
     }
 
     public int getType() {

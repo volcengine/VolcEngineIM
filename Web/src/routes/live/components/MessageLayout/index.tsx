@@ -209,9 +209,7 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
 
   /** 消息的操作栏 */
   const renderToolbar = () => {
-    let b =
-      [im_proto.MessageType.MESSAGE_TYPE_TEXT, im_proto.MessageType.MESSAGE_TYPE_CUSTOM].includes(message.type) &&
-      message.messagePriority !== undefined;
+    let b = message.messagePriority !== undefined;
     const items = [
       // {
       //   name: '撤回',

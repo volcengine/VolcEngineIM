@@ -30,7 +30,9 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
     private OnItemLongClickListener onItemLongClickListener;
     private ConversationInsertListener conversationInsertListener;
     private Handler mHandler = new Handler(Looper.getMainLooper());
-    public VEConversationListAdapter(Context context) {
+    private RecyclerView recyclerView;
+    public VEConversationListAdapter(Context context,RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
         mContext = context;
         data = new ArrayList<>();
         checkSet = new HashSet<>();
@@ -53,7 +55,7 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
     public VEViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         int layout = data.get(i).getType();
         View v = LayoutInflater.from(mContext).inflate(layout, viewGroup, false);
-        return new VEConversationViewHolder(v);
+        return new VEConversationViewHolder(v,recyclerView);
     }
 
     @Override
@@ -89,7 +91,7 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
      * @param cid
      * @return
      */
-    private boolean checkExist(String cid) {
+    protected boolean checkExist(String cid) {
         if (checkSet.contains(cid)) {
             return true;
         } else {

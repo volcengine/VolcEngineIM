@@ -1,6 +1,5 @@
 package com.bytedance.im.ui.message.adapter;
 
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,6 +17,7 @@ import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.model.inner.msg.BIMBaseElement;
+import com.bytedance.im.ui.user.BIMUserProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,12 +36,16 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
     private OnMessageItemClickListener onMessageItemClickListener;
     private OnMessageItemLongClickListener onMessageItemLongClickListener;
     private OnRefreshListener onRefreshListener;
+    private BIMUserProvider userProvider;
+    private RecyclerView recyclerView;
 
     public interface OnRefreshListener {
         void refreshMediaMessage(BIMMessage bimMessage, BIMResultCallback<BIMMessage> callback);
     }
 
-    public BIMMessageAdapter(OnMessageItemClickListener listener, OnMessageItemLongClickListener longClickListener, OnRefreshListener onRefreshListener) {
+    public BIMMessageAdapter(RecyclerView recyclerView, BIMUserProvider provider, OnMessageItemClickListener listener, OnMessageItemLongClickListener longClickListener, OnRefreshListener onRefreshListener) {
+        this.recyclerView = recyclerView;
+        this.userProvider = provider;
         onMessageItemClickListener = listener;
         onMessageItemLongClickListener = longClickListener;
         this.onRefreshListener = onRefreshListener;
@@ -55,7 +59,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
         FrameLayout messageContainer = root.findViewById(R.id.container);
 //        messageContainer.setBackground(new DynamicGradientDrawable((RecyclerView) parent, root, messageContainer));
         layoutInflater.inflate(viewType, messageContainer, true);
-        return new BIMMessageViewHolder(root, onMessageItemClickListener, onMessageItemLongClickListener, onRefreshListener);
+        return new BIMMessageViewHolder(root, recyclerView, userProvider, onMessageItemClickListener, onMessageItemLongClickListener, onRefreshListener);
     }
 
     @Override
@@ -82,6 +86,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
 
     /**
      * 批量添加消息
+     *
      * @param messageList
      */
     public void addAllMessageList(List<BIMMessage> messageList) {
@@ -190,19 +195,20 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
     /**
      * 直接追加到尾部，不排序(直播群用）
      */
-    public int appendOrUpdate(BIMMessage bimMessage){
+    public int appendOrUpdate(BIMMessage bimMessage) {
         int containsIndex = findIndex(bimMessage);
         BIMMessageWrapper curMsgWrap = wrapper(bimMessage);
-        if(containsIndex!=-1){
+        if (containsIndex != -1) {
             data.set(containsIndex, curMsgWrap);
             notifyItemChanged(containsIndex);
             return UPDATE;
-        }else {
+        } else {
             data.add(0, curMsgWrap);
             notifyItemInserted(0);
             return APPEND;
         }
     }
+
     /**
      * 直接追加到头部，不排序(直播群用）
      */

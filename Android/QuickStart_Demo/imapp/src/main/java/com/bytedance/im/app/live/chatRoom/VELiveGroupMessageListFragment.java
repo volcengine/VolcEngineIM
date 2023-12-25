@@ -13,7 +13,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,10 +24,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.VEIMApplication;
-import com.bytedance.im.app.contact.VEFriendInfoManager;
+import com.bytedance.im.app.live.LiveUserProvider;
 import com.bytedance.im.app.live.chatRoom.operation.VELiveMessageOptionPopWindow;
 import com.bytedance.im.app.live.detail.VELiveDetailActivity;
+import com.bytedance.im.app.main.edit.VEUserProfileEditActivity;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMBlockStatus;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -46,7 +45,6 @@ import com.bytedance.im.live.api.enmus.BIMMessagePriority;
 import com.bytedance.im.live.api.model.BIMLiveJoinGroupResult;
 import com.bytedance.im.live.api.model.BIMLiveMessageListResult;
 import com.bytedance.im.live.api.model.MemberUpdateInfo;
-import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.BIMMessageRecyclerView;
@@ -59,7 +57,7 @@ import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.FileToolBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.ImageToolBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.PhotoTooBtn;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
-import com.bytedance.im.ui.user.BIMUserProvider;
+import com.bytedance.im.ui.user.OnUserInfoUpdateListener;
 import com.bytedance.im.ui.utils.media.MediaInfo;
 
 import java.io.File;
@@ -96,8 +94,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
     private Boolean hasMore = false;
     private Boolean isSyncing = false;
     private long earliestCursor; //最旧的消息游标
-    private Map<Long, BIMUIUser> cacheMember = new HashMap<>();
-    private BIMUserProvider preUserProvider;
+    public LiveUserProvider liveUserProvider;
 
     private BIMLiveMessageListener messageListener = new BIMLiveMessageListener() {
         public void onReceiveMessage(BIMMessage message) {
@@ -147,7 +144,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
             if (memberList != null) {
                 for (BIMMember member : memberList) {
                     if (member.getUserID() == BIMClient.getInstance().getCurrentUserID()) {
-                        Toast.makeText(getActivity(), "当前用户被踢: " + buildMemberLog(memberList), Toast.LENGTH_SHORT).show();
+                        toast( "当前用户被踢: " + buildMemberLog(memberList));
                         isSelfKicked = true;
                         getActivity().finish();
                         break;
@@ -155,7 +152,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
                 }
             }
             if (!isSelfKicked) {
-                Toast.makeText(getActivity(), "成员被踢: " + buildMemberLog(memberList), Toast.LENGTH_SHORT).show();
+                toast("成员被踢: " + buildMemberLog(memberList));
             }
         }
 
@@ -163,7 +160,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
         public void onMemberOwnerChanged(BIMConversation conversation, long fromUID, long toUID) {
             BIMLog.i(TAG, "onMemberOwnerChanged() fromUID: " + fromUID + " toUID: " + toUID);
             if (!isAdded()) return;
-            Toast.makeText(getActivity(), "群主被 " + fromUID + " 转让给：" + toUID, Toast.LENGTH_SHORT).show();
+            toast("群主被 " + fromUID + " 转让给：" + toUID);
         }
 
         @Override
@@ -190,7 +187,16 @@ public class VELiveGroupMessageListFragment extends Fragment {
         @Override
         public void onMemberInfoChanged(BIMConversation conversation, BIMMember member) {
             BIMLog.i(TAG, "onMemberInfoChanged() conversationID: " + conversation.getConversationID() + "operatorId:" + member.getUserID());
-            cacheMember.put(member.getUserID(), new BIMUIUser(member.getAvatarUrl(), member.getAlias(), member.getUserID()));
+            liveUserProvider.cacheLiveUserInfo(new LiveUserProvider.LiveUserInfo(member.getUserID(), member.getAlias(), member.getAvatarUrl()));
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onBatchMemberInfoChanged(BIMConversation conversation, List<BIMMember> members) {
+            BIMLog.i(TAG, "onMemberInfoChanged() conversationID: " + conversation.getConversationID());
+            for (BIMMember member: members) {
+                liveUserProvider.cacheLiveUserInfo(new LiveUserProvider.LiveUserInfo(member.getUserID(), member.getAlias(), member.getAvatarUrl()));
+            }
             adapter.notifyDataSetChanged();
         }
     };
@@ -205,16 +211,9 @@ public class VELiveGroupMessageListFragment extends Fragment {
     };
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        BIMUIClient.getInstance().setUserProvider(preUserProvider);
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preUserProvider = BIMUIClient.getInstance().getUserProvider();
-        BIMUIClient.getInstance().setUserProvider(liveUserProvider());
+        liveUserProvider = new LiveUserProvider();
         conversationShortId = getActivity().getIntent().getLongExtra(CONVERSATION_SHORT_ID, -1);
         int startType = getActivity().getIntent().getIntExtra(START_TYPE, TYPE_SKIP_UPDATE_MY_MEMBER_INFO);
         String alias = getActivity().getIntent().getStringExtra(ALIAS);
@@ -255,27 +254,28 @@ public class VELiveGroupMessageListFragment extends Fragment {
                 }
             });
         }
+        addUserListener();
         BIMLog.i(TAG, "onCreate() conversationId: $conversationId");
     }
 
     private void joinSuccess(BIMLiveJoinGroupResult bimLiveJoinGroupResult){
-        Toast.makeText(getActivity(), "加入成功", Toast.LENGTH_SHORT).show();
+        toast("加入成功");
         bimConversation = bimLiveJoinGroupResult.getConversation();
         tvTitle.setText(bimConversation.getName());
         refreshOnlineNum(bimConversation.getOnLineMemberCount());
         earliestCursor = bimLiveJoinGroupResult.getJoinMessageCursor();
         BIMMember member = bimConversation.getCurrentMember();
         if (member != null) {
-            cacheMember.put(member.getUserID(), new BIMUIUser(member.getAvatarUrl(), member.getAlias(), member.getUserID()));
+            liveUserProvider.cacheLiveUserInfo(new LiveUserProvider.LiveUserInfo(member.getUserID(),member.getAlias(),member.getAvatarUrl()));
         }
         loadData();
     }
 
     private void joinFailed(BIMErrorCode code){
         if (code == BIMErrorCode.BIM_SERVER_ADD_MEMBER_IS_BLOCK) {
-            Toast.makeText(getActivity(), "用户在进群黑名单!", Toast.LENGTH_SHORT).show();
+            toast( "用户在进群黑名单!");
         } else {
-            Toast.makeText(getActivity(), "加入失败:" + code, Toast.LENGTH_SHORT).show();
+            toast("加入失败:" + code);
         }
         getActivity().finish();
     }
@@ -301,13 +301,13 @@ public class VELiveGroupMessageListFragment extends Fragment {
         inPutView.getTvPriority().setOnClickListener(v1 -> {
             showPriorityWindow();
         });
-        adapter = new BIMMessageAdapter(new BIMMessageAdapter.OnMessageItemClickListener() {
+        adapter = new BIMMessageAdapter(recyclerView,liveUserProvider, new BIMMessageAdapter.OnMessageItemClickListener() {
             public void onPortraitClick(BIMMessage message) {
-                Toast.makeText(getActivity(), "点击头像 uid:" + message.getSenderUID(), Toast.LENGTH_SHORT).show();
+                VEUserProfileEditActivity.start(getActivity(), message.getSenderUID());
             }
 
             public void onResentClick(BIMMessage message) {
-                Toast.makeText(getActivity(), "重发消息 uuid:" + message.getUuid(), Toast.LENGTH_SHORT).show();
+                toast("重发消息 uuid:" + message.getUuid());
                 sendMessage(message);
             }
         }, new BIMMessageAdapter.OnMessageItemLongClickListener() {
@@ -336,7 +336,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
                     if (hasMore) {
                         loadData();
                     } else {
-                        Toast.makeText(getActivity(), "没有更多历史消息了", Toast.LENGTH_SHORT).show();
+                        toast("没有更多历史消息了");
                     }
                 }
             }
@@ -345,7 +345,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (isSlideToBottom(recyclerView) && newState == 0 && !hasMore) {
-                    Toast.makeText(getActivity(), "没有更多历史消息了", Toast.LENGTH_SHORT).show();
+                    toast("没有更多历史消息了");
                 }
             }
         });
@@ -434,7 +434,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
             BIMLog.i(TAG, "e: " + Log.getStackTraceString(e));
         }
         if (duration < 1) {
-            Toast.makeText(getActivity(), "录制时间太短，录音失败", Toast.LENGTH_SHORT).show();
+            toast("录制时间太短，录音失败");
             return;
         }
         BIMMessage message = BIMClient.getInstance().createAudioMessage(path);
@@ -467,7 +467,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
             }
         });
         getOnlineHandler.removeCallbacks(getOnLineCountRunnable);
-        BIMUIClient.getInstance().setUserProvider(VEIMApplication.accountProvider.getUserProvider());//恢复回来
+        removeUserListener();
     }
 
     private void loadData() {
@@ -477,7 +477,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
         }
         isSyncing = true;
         if (isAdded()) {
-            Toast.makeText(getActivity(), "加载更多历史消息中...", Toast.LENGTH_SHORT).show();
+            toast( "加载更多历史消息中...");
         }
         BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroupHistoryMessageList(conversationShortId, earliestCursor,20, new BIMResultCallback<BIMLiveMessageListResult>() {
             @Override
@@ -499,7 +499,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
             public void onFailed(BIMErrorCode code) {
                 BIMLog.i(TAG, "loadData() failed");
                 if (isAdded()) {
-                    Toast.makeText(getActivity(), "加载失败 code: "+code, Toast.LENGTH_SHORT).show();
+                    toast( "加载失败 code: "+code);
                 }
                 isSyncing = false;
             }
@@ -529,11 +529,11 @@ public class VELiveGroupMessageListFragment extends Fragment {
 
     private void sendMessage(BIMMessage msg) {
         if (msg == null) {
-            Toast.makeText(getActivity(), "消息为空", Toast.LENGTH_SHORT).show();
+            toast("消息为空");
             return;
         }
         if (bimConversation == null || bimConversation.isDissolved()) {
-            Toast.makeText(getActivity(), "群聊已解散", Toast.LENGTH_SHORT).show();
+            toast("群聊已解散");
             return;
         }
         BIMLog.i(TAG, "sendMessage() uuid: " + msg.getUuid());
@@ -575,7 +575,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
             public void onError(BIMMessage bimMessage, BIMErrorCode code) {
                 BIMLog.i(TAG, "sendMessage onError() uuid: " + bimMessage.getUuid() + " code: " + code + " thread:" + Thread.currentThread());
                 if (code == BIMErrorCode.BIM_UPLOAD_FILE_SIZE_OUT_LIMIT) {
-                    Toast.makeText(getActivity(), "消息发送失败：文件大小超过限制", Toast.LENGTH_SHORT).show();
+                    toast( "消息发送失败：文件大小超过限制");
                     return;
                 }
                 if (adapter.appendOrUpdate(bimMessage) == BIMMessageAdapter.APPEND) {
@@ -593,7 +593,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
                 } else {
                     failedText += code;
                 }
-                Toast.makeText(getActivity(), failedText, Toast.LENGTH_SHORT).show();
+                toast( failedText);
             }
         });
     }
@@ -612,11 +612,13 @@ public class VELiveGroupMessageListFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        inPutView.onActivityResult(requestCode,resultCode,data);
-        if (requestCode == REQUEST_EDIT_DETAIL && resultCode == RESULT_OK) {
-            boolean isDelete = data.getBooleanExtra(VELiveDetailActivity.IS_DELETE_LOCAL, false);
-            if (isDelete) {
-                getActivity().finish();
+        if (resultCode == RESULT_OK) {
+            inPutView.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == REQUEST_EDIT_DETAIL) {
+                boolean isDelete = data.getBooleanExtra(VELiveDetailActivity.IS_DELETE_LOCAL, false);
+                if (isDelete) {
+                    getActivity().finish();
+                }
             }
         }
     }
@@ -676,32 +678,19 @@ public class VELiveGroupMessageListFragment extends Fragment {
 
     private void cacheMemberInfo(BIMMessage message, boolean fromLoadOlder) {
         if (message.getExtra() != null) {
-            String nickName = message.getExtra().get(EXT_ALIAS_NAME);
+            String liveAliasName = message.getExtra().get(EXT_ALIAS_NAME);
             String avatarUrl = message.getExtra().get(EXT_AVATAR_URL);
+            long uid = message.getSenderUID();
+            LiveUserProvider.LiveUserInfo liveUserInfo = new LiveUserProvider.LiveUserInfo(uid,liveAliasName,avatarUrl);
             if (fromLoadOlder) {
-                if (!cacheMember.containsKey(message.getSenderUID())) {
-                    cacheMember.put(message.getSenderUID(), new BIMUIUser(avatarUrl, nickName, message.getSenderUID()));
+                if (!liveUserProvider.isCachedLiveInfo(uid)) {
+                    liveUserProvider.cacheLiveUserInfo(liveUserInfo);
                 }
             } else {
-                cacheMember.put(message.getSenderUID(), new BIMUIUser(avatarUrl, nickName, message.getSenderUID()));
+                liveUserProvider.cacheLiveUserInfo(liveUserInfo);
             }
             adapter.notifyDataSetChanged();
         }
-    }
-
-    private BIMUserProvider liveUserProvider(){
-        return uid -> {
-            //临时方案，后续普通群资料，需新增 MemberProvider
-            BIMUIUser cachedMemberUser = cacheMember.get(uid);
-            if (cachedMemberUser == null || (TextUtils.isEmpty(cachedMemberUser.getNickName()) && TextUtils.isEmpty(cachedMemberUser.getHeadUrl()))) {
-                cachedMemberUser = VEIMApplication.accountProvider.getUserProvider().getUserInfo(uid);
-            }
-            String friendAlias = VEFriendInfoManager.getInstance().getFriendAlias(uid);
-            if (friendAlias != null && !TextUtils.isEmpty(friendAlias)) {
-                cachedMemberUser.setNickName(friendAlias);
-            }
-            return cachedMemberUser;
-        };
     }
 
     private void showPriorityWindow() {
@@ -737,5 +726,36 @@ public class VELiveGroupMessageListFragment extends Fragment {
         popupWindow.setWidth(width);
         popupWindow.setOutsideTouchable(true);
         popupWindow.showAsDropDown(inPutView.getTvPriority(), 0, -1 * (height + inPutView.getTvPriority().getHeight() + 20), Gravity.BOTTOM);
+    }
+
+
+    private OnUserInfoUpdateListener listener;
+    /**
+     * 好友信息更新监听
+     */
+    public void addUserListener(){
+        if (listener == null) {
+            listener = new OnUserInfoUpdateListener() {
+                @Override
+                public void onUpdate(long uid, BIMUIUser user) {
+                    if (adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            };
+        }
+        liveUserProvider.addUserUpdateListener(listener);
+    }
+
+    public void removeUserListener(){
+        if (listener != null) {
+            liveUserProvider.removeUserUpdateListener(listener);
+        }
+    }
+
+    private void toast(String msg) {
+        if (isAdded()) {
+            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+        }
     }
 }

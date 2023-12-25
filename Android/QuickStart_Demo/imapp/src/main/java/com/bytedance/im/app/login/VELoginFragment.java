@@ -89,7 +89,7 @@ public class VELoginFragment extends Fragment implements BIMAuthProvider {
                     return;
                 }
                 if (null != loginListener) {
-                    loginListener.doLogin(new BIMUIUser(R.drawable.icon_recommend_user_default, "" + Constants.uid, Constants.uid), Constants.token);
+                    loginListener.doLogin(Constants.uid, Constants.token);
                 }
             }
         });

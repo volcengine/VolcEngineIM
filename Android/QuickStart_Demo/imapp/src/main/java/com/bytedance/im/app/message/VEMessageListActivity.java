@@ -13,14 +13,20 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.detail.VEDetailController;
 import com.bytedance.im.app.detail.VEDetailGroupConversationActivity;
 import com.bytedance.im.app.detail.VEDetailSingleConversationActivity;
+import com.bytedance.im.app.main.edit.VEUserProfileEditActivity;
+import com.bytedance.im.app.utils.VENameUtils;
+import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.message.BIMMessageListFragment;
-import com.bytedance.im.ui.api.BIMUIUser;
-import com.bytedance.im.ui.user.UserManager;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
+
+import java.util.List;
 
 
 public class VEMessageListActivity extends Activity {
@@ -81,12 +87,48 @@ public class VEMessageListActivity extends Activity {
             }
         });
         refreshFragment();
+        BIMClient.getInstance().addConversationListener(conversationListListener);
     }
+
+    private BIMConversationListListener conversationListListener = new BIMConversationListListener() {
+        @Override
+        public void onNewConversation(List<BIMConversation> conversationList) {
+
+        }
+
+        @Override
+        public void onConversationChanged(List<BIMConversation> conversationList) {
+            if (conversationList != null) {
+                for (BIMConversation conversation : conversationList) {
+                    if (conversationId.equals(conversation.getConversationID())) {
+                        bimConversation = conversation;
+                        break;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onConversationDelete(List<BIMConversation> conversationList) {
+
+        }
+
+        @Override
+        public void onTotalUnreadMessageCountChanged(int totalUnreadCount) {
+
+        }
+    };
 
     @Override
     protected void onResume() {
         super.onResume();
         refreshConversation();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BIMClient.getInstance().removeConversationListener(conversationListListener);
     }
 
     @Override
@@ -101,6 +143,7 @@ public class VEMessageListActivity extends Activity {
 
     private void refreshFragment() {
         BIMMessageListFragment messageListFragment = new BIMMessageListFragment();
+        messageListFragment.setOnPortraitClickListener(uid -> VEUserProfileEditActivity.start(VEMessageListActivity.this,uid));
         getFragmentManager().beginTransaction().replace(R.id.message_list_container, messageListFragment).commit();
     }
 
@@ -109,18 +152,24 @@ public class VEMessageListActivity extends Activity {
             @Override
             public void onSuccess(BIMConversation conversation) {
                 bimConversation = conversation;
-                String name = "";
                 if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
-                    BIMUIUser BIMUIUser = UserManager.geInstance().getUserProvider().getUserInfo(conversation.getOppositeUserID());
-                    if (BIMUIUser == null) {
-                        name = String.valueOf(conversation.getOppositeUserID());
-                    } else {
-                        name = BIMUIUser.getNickName();
-                    }
+                    BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfo(conversation.getOppositeUserID(), new BIMResultCallback<BIMUserFullInfo>() {
+
+                        @Override
+                        public void onSuccess(BIMUserFullInfo fullInfo) {
+                            tvTitle.setText(VENameUtils.getShowName(fullInfo));
+                        }
+
+                        @Override
+                        public void onFailed(BIMErrorCode code) {
+
+                        }
+                    });
+
                 } else if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT) {
-                    name = VEDetailController.getGroupName(conversation);
+                    tvTitle.setText(VEDetailController.getGroupName(conversation));
                 }
-                tvTitle.setText(name);
+
             }
 
             @Override

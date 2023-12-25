@@ -296,7 +296,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="我的头像"
+                android:text="我的群头像"
                 android:textColor="@color/business_im_222"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -335,7 +335,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="我的昵称"
+                android:text="我的群昵称"
                 android:textColor="@color/business_im_222"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -349,7 +349,6 @@
                 android:ellipsize="end"
                 android:maxEms="10"
                 android:maxLines="1"
-                android:text="未设定"
                 android:textColor="@color/business_im_999"
                 android:textSize="14sp"
                 app:layout_constrainedWidth="true"
@@ -469,6 +468,35 @@
 
             <ImageView
                 android:id="@+id/iv_conversation_block_bl_arrow"
+                android:layout_width="9dp"
+                android:layout_height="18dp"
+                android:layout_marginLeft="9dp"
+                android:src="@drawable/icon_im_goto"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/cl_mark_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@color/business_base_white"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="标记成员"
+                android:textColor="@color/business_im_222"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_mark_user"
                 android:layout_width="9dp"
                 android:layout_height="18dp"
                 android:layout_marginLeft="9dp"

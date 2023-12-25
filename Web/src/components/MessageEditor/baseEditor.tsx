@@ -68,7 +68,7 @@ const BaseEditor: FC<ImEditorProps> = (props, ref) => {
       {renderToolBarList()}
       {renderHeader?.()}
       <div className="post-edit-zone" ref={editorWrapRef}>
-        <textarea className={'editor-textarea'} placeholder={'发送消息...'} ref={ref}></textarea>
+        <textarea className={'editor-textarea'} placeholder={'发送消息...'} ref={ref} maxLength={500}></textarea>
       </div>
     </EditorWrap>
   );

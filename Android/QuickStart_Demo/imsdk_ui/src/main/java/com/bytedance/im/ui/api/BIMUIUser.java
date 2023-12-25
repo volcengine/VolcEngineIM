@@ -1,7 +1,5 @@
 package com.bytedance.im.ui.api;
 
-import com.bytedance.im.ui.R;
-
 /**
  * @type keytype
  * @brief 用户信息。
@@ -10,65 +8,33 @@ public class BIMUIUser {
     /**
      * @hidden
      */
-    public BIMUIUser(int headImg, String url, String nickName, long userID) {
-        if (headImg == -1) {
-            this.headImg = R.drawable.icon_recommend_user_default;
-        } else {
-            this.headImg = headImg;
-        }
-        this.nickName = nickName;
-        this.userID = userID;
-        this.url = url;
-    }
+    private long uid;
 
     /**
      * @hidden
      */
-    public BIMUIUser(int headImg, String nickName, long userID) {
-        this(headImg, "", nickName, userID);
-    }
+    private String portraitUrl;
 
     /**
      * @hidden
      */
-    public BIMUIUser(String url, String nickName, long userID) {
-        this(-1, url, nickName, userID);
-    }
-
+    private String nickName;   //用户资料
     /**
      * @hidden
      */
-    private int headImg;
+    private String alias;   //好友备注
     /**
      * @hidden
      */
-    private String nickName;
+    private String memberAlias; //群成员备注
     /**
      * @hidden
      */
-    private long userID;
+    private boolean isBlock;
     /**
      * @hidden
      */
-    private String url;
-
-    /**
-     * @return 用户头像
-     * @type api
-     * @brief 获取用户头像 resId
-     */
-    public int getHeadImg() {
-        return headImg;
-    }
-
-    /**
-     * @return 用户头像
-     * @type api
-     * @brief 获取用户头像 url
-     */
-    public String getHeadUrl() {
-        return url;
-    }
+    private boolean isFriend;
 
     /**
      * @return 用户昵称
@@ -84,8 +50,8 @@ public class BIMUIUser {
      * @type api
      * @brief 获取用户 id
      */
-    public long getUserID() {
-        return userID;
+    public long getUid() {
+        return uid;
     }
 
     /**
@@ -98,23 +64,68 @@ public class BIMUIUser {
     /**
      * @hidden
      */
-    public void setHeadImg(int headImg) {
-        this.headImg = headImg;
+    public void setUid(long uid) {
+        this.uid = uid;
     }
 
     /**
      * @hidden
      */
-    public void setUserID(long userID) {
-        this.userID = userID;
+    public void setPortraitUrl(String portraitUrl) {
+        this.portraitUrl = portraitUrl;
     }
 
     /**
-     * @hidden
+     * @return 用户头像
+     * @type api
+     * @brief 获取用户头像 url
      */
-    public void setUrl(String url) {
-        this.url = url;
+    public String getPortraitUrl() {
+        return portraitUrl;
     }
 
+    public String getAlias() {
+        return alias;
+    }
 
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    public boolean isBlock() {
+        return isBlock;
+    }
+
+    public void setBlock(boolean block) {
+        isBlock = block;
+    }
+
+    public boolean isFriend() {
+        return isFriend;
+    }
+
+    public void setFriend(boolean friend) {
+        isFriend = friend;
+    }
+
+    public String getMemberAlias() {
+        return memberAlias;
+    }
+
+    public void setMemberAlias(String memberAlias) {
+        this.memberAlias = memberAlias;
+    }
+
+    //避免业务层直接修改内存缓存
+    public BIMUIUser clone() {
+        BIMUIUser user = new BIMUIUser();
+        user.setUid(this.getUid());
+        user.setNickName(this.getNickName());
+        user.setAlias(this.getAlias());
+        user.setPortraitUrl(this.getPortraitUrl());
+        user.setFriend(this.isFriend());
+        user.setBlock(this.isBlock());
+        user.setMemberAlias(this.getMemberAlias());
+        return user;
+    }
 }

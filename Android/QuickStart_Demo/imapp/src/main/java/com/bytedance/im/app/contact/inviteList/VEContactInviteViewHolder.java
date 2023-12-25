@@ -2,15 +2,16 @@ package com.bytedance.im.app.contact.inviteList;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
-import com.bytedance.im.ui.api.BIMUIUser;
-import com.bytedance.im.ui.user.UserManager;
+import com.bytedance.im.app.utils.VENameUtils;
 import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
+import com.bytedance.im.user.api.model.BIMUserProfile;
 
 public class VEContactInviteViewHolder extends RecyclerView.ViewHolder {
     private final ImageView ivHead;
@@ -33,15 +34,14 @@ public class VEContactInviteViewHolder extends RecyclerView.ViewHolder {
         this.data = data;
         this.listener = listener;
         tvUid.setVisibility(View.GONE);
+        BIMUserFullInfo userFullInfo = data.getUserFullInfo();
+        tvNickName.setText(VENameUtils.getShowName(userFullInfo));
 
-        BIMUIUser uiUser = UserManager.geInstance().getUserProvider().getUserInfo(data.getFromUid());
-        if (uiUser == null || TextUtils.isEmpty(uiUser.getNickName())) {
-            tvNickName.setText("用户" + data.getFromUid());
-        } else {
-            tvNickName.setText(uiUser.getNickName());
-        }
-        ivHead.setImageResource(R.drawable.icon_recommend_user_default);
-
+        Glide.with(ivHead.getContext())
+                .load(userFullInfo.getPortraitUrl())
+                .dontAnimate()
+                .placeholder(R.drawable.icon_recommend_user_default)
+                .error(R.drawable.icon_recommend_user_default).into(ivHead);
         tvAgree.setOnClickListener(v -> {
             if (null != this.listener) {
                 this.listener.onAgree(data);
@@ -78,5 +78,11 @@ public class VEContactInviteViewHolder extends RecyclerView.ViewHolder {
                 tvIsInvited.setVisibility(View.INVISIBLE);
             } break;
         }
+
+        ivHead.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onPortraitClick(data);
+            }
+        });
     }
 }

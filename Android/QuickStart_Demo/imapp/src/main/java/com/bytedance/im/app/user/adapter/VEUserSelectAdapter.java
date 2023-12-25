@@ -56,7 +56,7 @@ public class VEUserSelectAdapter extends RecyclerView.Adapter<VEUserSelectViewHo
             if (selectList.size() == 1) {
                 VEUserSelectWrapper userSelectWrapper = data.get(position);
                 VEUserSelectWrapper lastSelectWrapper = selectList.get(0);
-                if (userSelectWrapper.getUser().getUserID() != lastSelectWrapper.getUser().getUserID()) {
+                if (userSelectWrapper.getUser().getUid() != lastSelectWrapper.getUser().getUid()) {
                     lastSelectWrapper.isSelect = !lastSelectWrapper.isSelect;
                     userSelectWrapper.isSelect = true;
                 } else {

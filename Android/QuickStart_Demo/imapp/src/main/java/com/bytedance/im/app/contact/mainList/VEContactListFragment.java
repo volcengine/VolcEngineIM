@@ -36,18 +36,22 @@ import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.contact.blockList.VEContactBlockListActivity;
 import com.bytedance.im.app.contact.inviteList.VEContactInviteActivity;
 import com.bytedance.im.app.contact.mainList.item.ContactListActionItem;
+import com.bytedance.im.app.main.edit.VEUserProfileEditActivity;
 import com.bytedance.im.app.message.VEMessageListActivity;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
+import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.BIMFriendListener;
 import com.bytedance.im.user.api.model.BIMApplyInfo;
 import com.bytedance.im.user.api.model.BIMBlackListFriendInfo;
 import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
 import com.bytedance.im.user.api.model.BIMFriendInfo;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
+import com.bytedance.im.user.api.model.BIMUserProfile;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,7 +86,7 @@ public class VEContactListFragment extends Fragment {
                 }
             } else if (ContactListItemType.TYPE_CONTACT == data.getType()) {
                 if (null != getActivity()) {
-                    BIMFriendInfo friendInfo = (BIMFriendInfo)data.getData();
+                    BIMUserFullInfo friendInfo = (BIMUserFullInfo)data.getData();
                     BIMClient.getInstance().createSingleConversation(friendInfo.getUid(), new BIMResultCallback<BIMConversation>() {
                         @Override
                         public void onSuccess(BIMConversation conversation) {
@@ -101,6 +105,12 @@ public class VEContactListFragment extends Fragment {
         @Override
         public void onLongClick(View v, ContactListDataInfo<?> data) {
             showItemOptionMenu(data);
+        }
+
+        @Override
+        public void onPortraitClick(View v, ContactListDataInfo<?> data) {
+            BIMUserFullInfo userFullInfo = (BIMUserFullInfo) data.getData();
+            VEUserProfileEditActivity.start(getActivity(),userFullInfo.getUid());
         }
     };
     private final BIMContactExpandService service = BIMClient.getInstance().getService(BIMContactExpandService.class);
@@ -155,18 +165,18 @@ public class VEContactListFragment extends Fragment {
         Log.d(TAG, "loadData, cursor " + mCursor + ", hasMore " + mHasMore + ", isLoading " + mIsLoading);
         if (service != null && mHasMore && !mIsLoading) {
             mIsLoading = true;
-            service.getFriendList( new BIMResultCallback<List<BIMFriendInfo>>() {
+            service.getFriendList( new BIMResultCallback<List<BIMUserFullInfo>>() {
 
                 @Override
-                public void onSuccess(List<BIMFriendInfo> bimFriendInfos) {
+                public void onSuccess(List<BIMUserFullInfo> bimFriendInfos) {
                     mIsLoading = false;
                     boolean isFirstPage = mCursor == 0;
                     mHasMore = false;
                     mCursor = 0;
                     List<ContactListDataInfo<?>> temp = new ArrayList<>();
                     if (bimFriendInfos != null) {
-                        for (BIMFriendInfo friendInfo : bimFriendInfos) {
-                            temp.add(ContactListDataInfo.create(friendInfo));
+                        for (BIMUserFullInfo fullInfo : bimFriendInfos) {
+                            temp.add(ContactListDataInfo.create(fullInfo));
                         }
                     }
                     Collections.sort(temp, ContactListDataInfo::compare);
@@ -176,6 +186,7 @@ public class VEContactListFragment extends Fragment {
                 @Override
                 public void onFailed(BIMErrorCode code) {
                     mIsLoading = false;
+                    mHasMore = false;
                     Log.e(TAG, " loadData, error " + code);
                 }
             });
@@ -257,7 +268,7 @@ public class VEContactListFragment extends Fragment {
     private void showItemOptionMenu(ContactListDataInfo<?> data) {
         if (data.getType() == ContactListItemType.TYPE_CONTACT) {
             String[] items = new String[] { "删除好友", "修改好友备注" };
-            long uid = ((BIMFriendInfo) data.getData()).getUid();
+            long uid = ((BIMUserFullInfo) data.getData()).getUid();
             new AlertDialog.Builder(getActivity()).setItems(items, (selectDialog, which) -> {
                 if (which == 0) {
                     selectDialog.dismiss();
@@ -308,7 +319,7 @@ public class VEContactListFragment extends Fragment {
             tvMain.setText("修改好友备注");
             et.setInputType(EditorInfo.TYPE_CLASS_TEXT);
 
-            BIMFriendInfo info = (BIMFriendInfo) data.getData();
+            BIMUserFullInfo info = (BIMUserFullInfo) data.getData();
             et.setHint("输入备注");
             String preAlias = info.getAlias();
             et.setText(preAlias == null ? "" : preAlias);
@@ -362,18 +373,18 @@ public class VEContactListFragment extends Fragment {
 
 
         @Override
-        public void onFriendDelete(BIMFriendInfo friendInfo) {
-            adapter.removeData(ContactListDataInfo.create(friendInfo));
+        public void onFriendDelete(BIMUserFullInfo userFullInfo) {
+            adapter.removeData(ContactListDataInfo.create(userFullInfo));
         }
 
         @Override
-        public void onFriendUpdate(BIMFriendInfo friendInfo) {
-            adapter.insertOrUpdate(ContactListDataInfo.create(friendInfo), !mHasMore);
+        public void onFriendUpdate(BIMUserFullInfo userFullInfo) {
+            adapter.insertOrUpdate(ContactListDataInfo.create(userFullInfo), !mHasMore);
         }
 
         @Override
-        public void onFriendAdd(BIMFriendInfo friendInfo) {
-            adapter.insertOrUpdate(ContactListDataInfo.create(friendInfo), !mHasMore);
+        public void onFriendAdd(BIMUserFullInfo userFullInfo) {
+            adapter.insertOrUpdate(ContactListDataInfo.create(userFullInfo), !mHasMore);
         }
 
         @Override
@@ -396,18 +407,22 @@ public class VEContactListFragment extends Fragment {
         }
 
         @Override
-        public void onBlackListAdd(BIMBlackListFriendInfo blackListInfo) {
+        public void onBlackListAdd(BIMUserFullInfo userFullInfo) {
 
         }
 
         @Override
-        public void onBlackListDelete(BIMBlackListFriendInfo blackListInfo) {
+        public void onBlackListDelete(BIMUserFullInfo userFullInfo) {
 
         }
 
         @Override
-        public void onBlackListUpdate(BIMBlackListFriendInfo blackListInfo) {
+        public void onBlackListUpdate(BIMUserFullInfo userFullInfo) {
 
+        }
+
+        @Override
+        public void onUserProfileUpdate(BIMUserFullInfo userFullInfo) {
         }
     };
 

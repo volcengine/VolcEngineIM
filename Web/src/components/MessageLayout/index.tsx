@@ -146,7 +146,7 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
 
   /** 回复的消息 */
   const renderReply = msg => {
-    if (msg) {
+    if (referenceInfo) {
       return <MessageReply message={msg} messageStatus={referenceInfo.referenced_message_status} />;
     }
   };

@@ -21,7 +21,7 @@ public class VEEditLiveMemberPortraitActivity extends VEEditLiveActivity{
 
     @Override
     protected String initTitle(boolean isOwner) {
-        return "我的头像";
+        return "我的群头像";
     }
 
     @Override

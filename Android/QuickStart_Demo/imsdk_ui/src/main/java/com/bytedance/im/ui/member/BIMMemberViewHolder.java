@@ -11,7 +11,6 @@ import com.bumptech.glide.Glide;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.api.BIMUIUser;
-import com.bytedance.im.ui.user.UserManager;
 
 public class BIMMemberViewHolder extends RecyclerView.ViewHolder {
 
@@ -27,21 +26,21 @@ public class BIMMemberViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(BIMMemberWrapper memberWrapper) {
         BIMMember member = memberWrapper.getMember();
-        BIMUIUser user = UserManager.geInstance().getUserProvider().getUserInfo(member.getUserID());
+        BIMUIUser user = memberWrapper.getUser();
         String name = "" + member.getUserID();
         int res = R.drawable.icon_recommend_user_default;
         userHeadImg.setImageResource(res);
         if (user != null) {
-            res = user.getHeadImg();
-            name = user.getNickName();
-            if (TextUtils.isEmpty(user.getHeadUrl())) {
-                userHeadImg.setImageResource(res);
-            } else {
-                Glide.with(userHeadImg.getContext()).load(user.getHeadUrl())
-                        .placeholder(R.drawable.icon_recommend_user_default)
-                        .error(R.drawable.icon_recommend_user_default)
-                        .into(userHeadImg);
+            if (!TextUtils.isEmpty(user.getNickName())) {
+                name = user.getNickName();
             }
+            if (!TextUtils.isEmpty(user.getAlias())) {
+                name = user.getAlias();
+            }
+            Glide.with(userHeadImg.getContext()).load(user.getPortraitUrl())
+                    .placeholder(R.drawable.icon_recommend_user_default)
+                    .error(R.drawable.icon_recommend_user_default)
+                    .into(userHeadImg);
         }
         nickName.setText(name);
     }

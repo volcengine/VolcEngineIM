@@ -9,15 +9,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.detail.member.VEMemberSelectListActivity;
+import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
+import com.bytedance.im.app.utils.VENameUtils;
+import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
-import com.bytedance.im.core.api.model.BIMMember;
+import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
-import com.bytedance.im.ui.user.UserManager;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMMessage;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,12 +40,12 @@ public class VEGroupManagerConfigActivity extends VEMemberSelectListActivity {
     }
 
     @Override
-    protected List<BIMMember> onInitCheckList(List<BIMMember> list) {
-        List<BIMMember> checkedList = new ArrayList<>();
-        for (BIMMember member : list) {
-            if (member.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
+    protected List<MemberWrapper> onInitCheckList(List<MemberWrapper> list) {
+        List<MemberWrapper> checkedList = new ArrayList<>();
+        for (MemberWrapper member : list) {
+            if (member.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
                 checkedList.add(member);
-                oldManagerUidList.add(member.getUserID());
+                oldManagerUidList.add(member.getMember().getUserID());
             }
         }
         return checkedList;
@@ -57,14 +61,14 @@ public class VEGroupManagerConfigActivity extends VEMemberSelectListActivity {
     }
 
     @Override
-    protected void onConfirmClick(List<BIMMember> selectList) {
+    protected void onConfirmClick(List<MemberWrapper> selectList) {
         if (selectList == null ) {
             finish();
             return;
         }
         List<Long> selectUidList = new ArrayList<>();
-        for (BIMMember member : selectList) {
-            selectUidList.add(member.getUserID());
+        for (MemberWrapper wrapper : selectList) {
+            selectUidList.add(wrapper.getMember().getUserID());
         }
 
         //添加管理员
@@ -134,18 +138,41 @@ public class VEGroupManagerConfigActivity extends VEMemberSelectListActivity {
 
 
     private void sendAddManagerMessage(List<Long> addIdList) {
-        String text = UserManager.geInstance().builderNamelist(addIdList) + " 成为管理员 ";
-        BIMGroupNotifyElement content = new BIMGroupNotifyElement();
-        content.setText(text);
-        BIMMessage addManagerMessage = BIMUIClient.getInstance().createCustomMessage(content);
-        BIMUIClient.getInstance().sendMessage(addManagerMessage, conversationId, null);
+        BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfoList(addIdList, new BIMResultCallback<List<BIMUserFullInfo>>() {
+            @Override
+            public void onSuccess(List<BIMUserFullInfo> userFullInfos) {
+                String text = VENameUtils.buildNickNameList(userFullInfos) + " 成为管理员 ";
+                BIMGroupNotifyElement content = new BIMGroupNotifyElement();
+                content.setText(text);
+                BIMMessage addManagerMessage = BIMUIClient.getInstance().createCustomMessage(content);
+                BIMUIClient.getInstance().sendMessage(addManagerMessage, conversationId, null);
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        });
+
+
     }
 
     private void sendRemoveManagerMessage(List<Long> removeIdList) {
-        String text = UserManager.geInstance().builderNamelist(removeIdList) + " 被取消管理员 ";
-        BIMGroupNotifyElement content = new BIMGroupNotifyElement();
-        content.setText(text);
-        BIMMessage removeManagerMessage = BIMUIClient.getInstance().createCustomMessage(content);
-        BIMUIClient.getInstance().sendMessage(removeManagerMessage, conversationId, null);
+        BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfoList(removeIdList, new BIMResultCallback<List<BIMUserFullInfo>>() {
+            @Override
+            public void onSuccess(List<BIMUserFullInfo> userFullInfos) {
+                String text = VENameUtils.buildNickNameList(userFullInfos) + " 被取消管理员 ";
+                BIMGroupNotifyElement content = new BIMGroupNotifyElement();
+                content.setText(text);
+                BIMMessage removeManagerMessage = BIMUIClient.getInstance().createCustomMessage(content);
+                BIMUIClient.getInstance().sendMessage(removeManagerMessage, conversationId, null);
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        });
+
     }
 }

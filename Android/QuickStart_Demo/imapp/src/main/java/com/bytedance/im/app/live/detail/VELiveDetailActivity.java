@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -19,11 +18,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.detail.VEDetailController;
+import com.bytedance.im.app.detail.member.VEMemberUtils;
+import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
 import com.bytedance.im.app.detail.member.adapter.VEMemberHozionAdapter;
-import com.bytedance.im.app.live.create.VEEditCommonActivity;
 import com.bytedance.im.app.live.edit.VEEditLiveDesActivity;
+import com.bytedance.im.app.live.edit.VEEditLiveMemberMarkTypeActivity;
 import com.bytedance.im.app.live.edit.VEEditLiveMemberNameActivity;
 import com.bytedance.im.app.live.edit.VEEditLiveNameActivity;
 import com.bytedance.im.app.live.edit.VEEditLiveNoticeActivity;
@@ -37,6 +37,8 @@ import com.bytedance.im.app.live.member.VELiveMemberRemoveActivity;
 import com.bytedance.im.app.live.member.VELiveMemberSilentListActivity;
 import com.bytedance.im.app.live.member.VELiveMemberSilentWhiteListActivity;
 import com.bytedance.im.app.live.member.VELiveOnLineQueryActivity;
+import com.bytedance.im.app.main.edit.VEUserProfileEditActivity;
+import com.bytedance.im.app.utils.VENameUtils;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMBlockStatus;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -47,10 +49,10 @@ import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.live.BIMLiveExpandService;
 import com.bytedance.im.live.api.model.BIMLiveMemberListResult;
-import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
-import com.bytedance.im.ui.user.UserManager;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +81,7 @@ public class VELiveDetailActivity extends Activity {
     private View optionQuitGroup;
     private View optionOnlineInfoLayout;
     private Switch silentSwitch;
+    private View optionMarkUserLayout;
     private long ownerId;
 
     private TextView tvOnlineCount;
@@ -132,6 +135,7 @@ public class VELiveDetailActivity extends Activity {
         optionSilentBlockLayout = findViewById(R.id.cl_conversation_silent_bl);
         optionSilentWhiteLayout = findViewById(R.id.cl_conversation_silent_wl);
         optionBlockLayout = findViewById(R.id.cl_conversation_block_bl);
+        optionMarkUserLayout = findViewById(R.id.cl_mark_user);
         optionDissolveGroup = findViewById(R.id.fl_dissolve_group);
         optionQuitGroup = findViewById(R.id.fl_quit_group);
         silentSwitch = findViewById(R.id.switch_silent);
@@ -149,6 +153,7 @@ public class VELiveDetailActivity extends Activity {
         optionSilentWhiteLayout.setOnClickListener(v -> VELiveMemberSilentWhiteListActivity.start(this, conversationShortId));
         optionBlockLayout.setOnClickListener(v -> VELiveMemberBlockListActivity.start(this, conversationShortId));
         optionOwnerManagerLayout.setOnClickListener(v -> VEEditLiveOwnerActivity.start(this, conversationShortId));
+        optionMarkUserLayout.setOnClickListener(v -> VEEditLiveMemberMarkTypeActivity.start(this, conversationShortId));
         optionMasterManagerLayout.setOnClickListener(v -> {
             VELiveMemberMasterListActivity.start(this, conversationShortId);
         });
@@ -168,11 +173,10 @@ public class VELiveDetailActivity extends Activity {
 
             @Override
             public void onMemberClick(BIMMember member) {
-                Toast.makeText(VELiveDetailActivity.this, "敬请期待", Toast.LENGTH_SHORT).show();
+                VEUserProfileEditActivity.start(VELiveDetailActivity.this, member.getUserID(), member.getAlias(), member.getAvatarUrl());
             }
         });
         recyclerView.setAdapter(adapter);
-        tvNickName.setText(VEIMApplication.accountProvider.getUserProvider().getUserInfo(BIMClient.getInstance().getCurrentUserID()).getNickName());
     }
 
     @Override
@@ -190,7 +194,6 @@ public class VELiveDetailActivity extends Activity {
     }
 
     private void refreshDetailView() {
-
         BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroup(conversationShortId, new BIMResultCallback<BIMConversation>() {
             @Override
             public void onSuccess(BIMConversation conversation) {
@@ -209,7 +212,7 @@ public class VELiveDetailActivity extends Activity {
                 tvOnlineCount.setText(bimConversation.getOnLineMemberCount() + " 人");
                 silentSwitch.setChecked(isConvSilent);
                 Glide.with(ivMyAvatar.getContext()).load(curMember.getAvatarUrl()).into(ivMyAvatar);
-                tvNickName.setText(VEDetailController.getMemberName(curMember));
+                tvNickName.setText(curMember.getAlias());
                 updateConvSilentWLUI(isConvSilent);
                 if (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_NORMAL || curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_VISITOR) {
                     optionSilentBlockLayout.setVisibility(View.GONE);
@@ -217,13 +220,16 @@ public class VELiveDetailActivity extends Activity {
                     optionOwnerManagerLayout.setVisibility(View.GONE);
                     optionMasterManagerLayout.setVisibility(View.GONE);
                     optionDissolveGroup.setVisibility(View.GONE);
+                    optionMarkUserLayout.setVisibility(View.GONE);
                     silentSwitch.setEnabled(false);
                 } else if (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
                     silentSwitch.setEnabled(true);
                     optionSilentBlockLayout.setVisibility(View.VISIBLE);
                     optionBlockLayout.setVisibility(View.VISIBLE);
+                    optionDissolveGroup.setVisibility(View.VISIBLE);
                     optionOwnerManagerLayout.setVisibility(View.GONE);
                     optionMasterManagerLayout.setVisibility(View.GONE);
+                    optionMarkUserLayout.setVisibility(View.VISIBLE);
                     optionDissolveGroup.setVisibility(View.GONE);
                 } else if (curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
                     silentSwitch.setEnabled(true);
@@ -233,6 +239,8 @@ public class VELiveDetailActivity extends Activity {
                     optionMasterManagerLayout.setVisibility(View.VISIBLE);
                     optionDissolveGroup.setVisibility(View.VISIBLE);
                     optionOwnerManagerLayout.setVisibility(View.VISIBLE);
+                    optionMarkUserLayout.setVisibility(View.VISIBLE);
+                    optionDissolveGroup.setVisibility(View.VISIBLE);
                 }
 
                 boolean isShowRemove = curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER || curMember.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN;
@@ -240,7 +248,17 @@ public class VELiveDetailActivity extends Activity {
                     @Override
                     public void onSuccess(BIMLiveMemberListResult resultMemberList) {
                         List<BIMMember> members = resultMemberList.getMemberList();
-                        adapter.updateUserInfoList(members, false, isShowRemove);
+                        VEMemberUtils.getMemberWrapperList(members, new BIMResultCallback<List<MemberWrapper>>() {
+                            @Override
+                            public void onSuccess(List<MemberWrapper> wrapperList) {
+                                adapter.updateUserInfoList(wrapperList, false, isShowRemove);
+                            }
+
+                            @Override
+                            public void onFailed(BIMErrorCode code) {
+
+                            }
+                        });
                     }
 
                     @Override
@@ -262,26 +280,35 @@ public class VELiveDetailActivity extends Activity {
     private void quitGroup() {
         waitDialog = ProgressDialog.show(VELiveDetailActivity.this, "退出中,稍等...", "");
         waitDialog.show();
-        String text = UserManager.geInstance().getUserName(BIMUIClient.getInstance().getCurUserId()) + " 退出群组 ";
-        BIMGroupNotifyElement content = new BIMGroupNotifyElement();
-        content.setText(text);
-        BIMClient.getInstance().getService(BIMLiveExpandService.class).leaveLiveGroup(conversationShortId, new BIMSimpleCallback() {
+        BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfo(BIMClient.getInstance().getCurrentUserID(), new BIMResultCallback<BIMUserFullInfo>() {
             @Override
-            public void onSuccess() {
-                waitDialog.dismiss();
-                Intent data = new Intent();
-                data.putExtra(IS_DELETE_LOCAL, true);
-                setResult(RESULT_OK, data);
-                finish();
+            public void onSuccess(BIMUserFullInfo bimUserProfile) {
+                String text = VENameUtils.getShowNickName(bimUserProfile) + " 退出群组 ";
+                BIMGroupNotifyElement content = new BIMGroupNotifyElement();
+                content.setText(text);
+                BIMClient.getInstance().getService(BIMLiveExpandService.class).leaveLiveGroup(conversationShortId, new BIMSimpleCallback() {
+                    @Override
+                    public void onSuccess() {
+                        waitDialog.dismiss();
+                        Intent data = new Intent();
+                        data.putExtra(IS_DELETE_LOCAL, true);
+                        setResult(RESULT_OK, data);
+                        finish();
+                    }
+
+                    @Override
+                    public void onFailed(BIMErrorCode code) {
+                        waitDialog.dismiss();
+                        Toast.makeText(VELiveDetailActivity.this, "退出群聊失败: " + code, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onFailed(BIMErrorCode code) {
-                waitDialog.dismiss();
-                Toast.makeText(VELiveDetailActivity.this, "退出群聊失败: " + code, Toast.LENGTH_SHORT).show();
+
             }
         });
-
     }
 
     private void dissolveGroup() {

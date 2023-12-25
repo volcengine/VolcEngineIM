@@ -20,7 +20,8 @@ export const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
   const { userInfo, scrollRef } = props;
   const participants = useRecoilValue(Participants);
   const imEditorRef = useRef<any>(null);
-  const { sendTextMessage, sendVolcMessage } = useMessage();
+  const { sendTextMessage, sendVolcMessage, sendImageMessage, sendVideoMessage, sendFileMessage, sendAudioMessage } =
+    useMessage();
   const [referenceMessage, setReferenceMessage] = useRecoilState(ReferenceMessage);
 
   const currentConversation = useRecoilValue(CurrentConversation);
@@ -36,6 +37,34 @@ export const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
       {
         key: 'Emoji',
         use: true,
+      },
+      {
+        key: 'Image',
+        use: true,
+        params: {
+          sendMessage: sendImageMessage,
+        },
+      },
+      {
+        key: 'Video',
+        use: true,
+        params: {
+          sendMessage: sendVideoMessage,
+        },
+      },
+      {
+        key: 'File',
+        use: true,
+        params: {
+          sendMessage: sendFileMessage,
+        },
+      },
+      {
+        key: 'Audio',
+        use: true,
+        params: {
+          sendMessage: sendAudioMessage,
+        },
       },
       {
         key: 'Volc',

@@ -16,15 +16,15 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
-import com.bytedance.im.app.contact.VEFriendInfoManager;
 import com.bytedance.im.app.debug.VEEnvSettingActivity;
 import com.bytedance.im.app.main.VEIMMainActivity;
+import com.bytedance.im.app.user.provider.BIMDefaultUserProvider;
 import com.bytedance.im.app.utils.VEUtils;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.interfaces.BIMAuthProvider;
 import com.bytedance.im.interfaces.BIMLoginListener;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.app.login.model.UserToken;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 
@@ -71,7 +71,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         //如果登录过直接登录
         UserToken userToken = SpUtils.getInstance().getLoginUserInfo();
         if (userToken != null) {
-            loginIM(userToken.getUid(), userToken.getName(), userToken.getToken());
+            loginIM(userToken.getUid(), userToken.getToken());
         }
     }
 
@@ -81,9 +81,9 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
      * @param token
      */
     @Override
-    public void doLogin(BIMUIUser user, String token) {
-        Log.i(TAG, "doLogin() uid: " + user.getUserID() + " token:" + token);
-        loginIM(user.getUserID(), user.getNickName(), token);
+    public void doLogin(long uid, String token) {
+        Log.i(TAG, "doLogin() uid: " + uid + " token:" + token);
+        loginIM(uid, token);
     }
 
     @Override
@@ -104,13 +104,13 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
      * @param name
      * @param token
      */
-    private void loginIM(long uid, String name, String token) {
+    private void loginIM(long uid, String token) {
         Log.i(TAG, "loginIM uid:" + uid + " token:" + token);
         BIMUIClient.getInstance().login(uid, token, new BIMSimpleCallback() {
             @Override
             public void onSuccess() {
                 Log.i(TAG, "login success()");
-                SpUtils.getInstance().setLoginUserInfo(new UserToken(uid, name, token));
+                SpUtils.getInstance().setLoginUserInfo(new UserToken(uid, token));
                 Toast.makeText(VELoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                 VEIMMainActivity.start(VELoginActivity.this);
                 finish();
@@ -138,9 +138,12 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         } else if (env == Constants.ENV_PPE) {
             swimLean = SpUtils.getInstance().getPpeSwimLane();
         }
-        BIMUIClient.getInstance().init(application, Constants.APP_ID, env, swimLean, null);
+
+        BIMSDKConfig config = new BIMSDKConfig();
+        config.setEnableAPM(SpUtils.getInstance().isEnableAPM());
+        config.setEnableAppLog(SpUtils.getInstance().isEnableALog());
+        BIMUIClient.getInstance().init(application, Constants.APP_ID, env, swimLean, config);
         VEIMApplication.accountProvider.init(application, Constants.APP_ID, SpUtils.getInstance().getEnv());
-        VEFriendInfoManager.getInstance().init();
-        BIMUIClient.getInstance().setUserProvider(VEFriendInfoManager.getInstance());
+        BIMUIClient.getInstance().setUserProvider(new BIMDefaultUserProvider(500));
     }
 }

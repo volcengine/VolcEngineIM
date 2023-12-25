@@ -9,8 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.utils.VENameUtils;
 import com.bytedance.im.ui.api.BIMUIUser;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,8 +21,8 @@ import java.util.List;
 
 
 public class VEUserHorizonAdapter extends RecyclerView.Adapter<VEUserHorizonAdapter.UserHorizonViewHolder> {
-    private List<BIMUIUser> data = new ArrayList<>();
-    private List<BIMUIUser> subData = new ArrayList<>();
+    private List<BIMUserFullInfo> data = new ArrayList<>();
+    private List<BIMUserFullInfo> subData = new ArrayList<>();
     private Context mContext;
 
     public VEUserHorizonAdapter(Context context) {
@@ -35,9 +38,9 @@ public class VEUserHorizonAdapter extends RecyclerView.Adapter<VEUserHorizonAdap
 
     @Override
     public void onBindViewHolder(@NonNull UserHorizonViewHolder userHorizonViewHolder, int i) {
-        BIMUIUser user = subData.get(i);
-        userHorizonViewHolder.headImg.setImageResource(user.getHeadImg());
-        userHorizonViewHolder.userName.setText(user.getNickName());
+        BIMUserFullInfo user = subData.get(i);
+        Glide.with(userHorizonViewHolder.headImg.getContext()).load(user.getPortraitUrl()).placeholder(R.drawable.icon_recommend_user_default).into(userHorizonViewHolder.headImg);
+        userHorizonViewHolder.userName.setText(VENameUtils.getShowName(user));
     }
 
     @Override
@@ -45,34 +48,34 @@ public class VEUserHorizonAdapter extends RecyclerView.Adapter<VEUserHorizonAdap
         return subData.size();
     }
 
-    public void insertData(BIMUIUser BIMUIUser) {
+    public void insertData(BIMUserFullInfo userFullInfo) {
         if (data.isEmpty()) {
-            data.add(BIMUIUser);
+            data.add(userFullInfo);
         } else {
-            data.add(0, BIMUIUser);
+            data.add(0, userFullInfo);
         }
         notifyDataSetWithSubChanged();
     }
 
     public void removeData(List<Long> removed) {
-        Iterator<BIMUIUser> iterator = data.iterator();
+        Iterator<BIMUserFullInfo> iterator = data.iterator();
         while (iterator.hasNext()) {
-            BIMUIUser user = iterator.next();
-            if (removed.contains(user.getUserID())) {
+            BIMUserFullInfo user = iterator.next();
+            if (removed.contains(user.getUid())) {
                 iterator.remove();
             }
         }
         notifyDataSetWithSubChanged();
     }
 
-    public List<BIMUIUser> getUserList() {
+    public List<BIMUserFullInfo> getUserList() {
         return data;
     }
 
     public ArrayList<Long> getUserIDList() {
         ArrayList<Long> uidList = new ArrayList<>();
-        for (BIMUIUser user : data) {
-            uidList.add(user.getUserID());
+        for (BIMUserFullInfo user : data) {
+            uidList.add(user.getUid());
         }
         return uidList;
     }

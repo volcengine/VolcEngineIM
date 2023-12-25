@@ -49,7 +49,7 @@ export const useParticipant = () => {
       });
       await sendSystemMessage(
         currentConversation,
-        `${participants.map(id => ACCOUNTS_INFO[id]?.name).join('、')} 退出群聊`
+        `${participants.map(id => ACCOUNTS_INFO[id]?.realName).join('、')} 退出群聊`
       );
     }
   };
@@ -85,7 +85,7 @@ export const useParticipant = () => {
       }
       await sendSystemMessage(
         currentConversation,
-        `${participants.map(id => ACCOUNTS_INFO[id]?.name).join('、')} 加入群聊`
+        `${participants.map(id => ACCOUNTS_INFO[id]?.realName).join('、')} 加入群聊`
       );
       return true;
     }
@@ -221,7 +221,7 @@ export const useParticipant = () => {
     if (currentConversation?.id) {
       await sendSystemMessage(
         currentConversation,
-        `${ACCOUNTS_INFO[userId]?.name} ${config?.role === ROLE.Manager ? '成为' : '被取消'}管理员`
+        `${ACCOUNTS_INFO[userId]?.realName} ${config?.role === ROLE.Manager ? '成为' : '被取消'}管理员`
       );
       await bytedIMInstance.updateParticipant({
         conversation: currentConversation,

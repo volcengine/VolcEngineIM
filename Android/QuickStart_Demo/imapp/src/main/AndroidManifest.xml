@@ -50,9 +50,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".message.VEMessageListActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing"
-            android:launchMode="singleTask">
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="com.bytedance.im.page.message_list" />
@@ -107,6 +107,9 @@
             android:name=".live.create.VEEditCommonActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".live.edit.VEEditLiveMemberActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".live.detail.VELiveDetailActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -129,6 +132,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".live.edit.VEEditLiveOwnerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.edit.VEEditLiveMemberMarkTypeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.edit.VEEditLiveMarkTypeActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".live.member.VELiveMemberSilentListActivity"
@@ -154,15 +163,25 @@
         <activity
             android:name=".detail.member.VEMemberAddActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".search.VESearchResultActivity"
-            android:windowSoftInputMode="adjustPan"
+        <activity
+            android:name=".search.VESearchResultActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".live.create.VECreateJoinLiveGroupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.edit.VEEditLiveMemberPortraitActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".live.edit.VEEditLiveMemberNameActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".main.edit.VEUserProfileEditActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".live.create.VECreateJoinLiveGroupActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".live.edit.VEEditLiveMemberPortraitActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".live.edit.VEEditLiveMemberNameActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".main.edit.VEMinePortraitEditActivity"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

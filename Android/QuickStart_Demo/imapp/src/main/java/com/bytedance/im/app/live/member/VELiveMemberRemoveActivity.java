@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
@@ -51,14 +52,14 @@ public class VELiveMemberRemoveActivity extends VELiveMemberSelectListActivity {
     }
 
     @Override
-    protected void onConfirmClick(List<BIMMember> selectList) {
+    protected void onConfirmClick(List<MemberWrapper> selectList) {
         super.onConfirmClick(selectList);
         if (selectList == null) {
             return;
         }
         List<Long> uidList = new ArrayList<>();
-        for (BIMMember member : selectList) {
-            uidList.add(member.getUserID());
+        for (MemberWrapper wrapper : selectList) {
+            uidList.add(wrapper.getMember().getUserID());
         }
         waitDialog = ProgressDialog.show(VELiveMemberRemoveActivity.this, "移出中,稍等...", "");
         BIMClient.getInstance().getService(BIMLiveExpandService.class).kickLiveGroupMemberList(conversationId, uidList, new BIMSimpleCallback() {

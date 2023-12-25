@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,15 +22,16 @@ import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMConversationListResult;
-import com.bytedance.im.core.model.Conversation;
+import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.conversation.adapter.VEConversationListAdapter;
 import com.bytedance.im.ui.conversation.model.VEConvBaseWrapper;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.BIMMessageListFragment;
+import com.bytedance.im.ui.user.OnUserInfoUpdateListener;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class BIMConversationListFragment extends Fragment {
@@ -48,6 +48,11 @@ public class BIMConversationListFragment extends Fragment {
         void onConversationClick(BIMConversation conversation);
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -57,7 +62,7 @@ public class BIMConversationListFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.conversation_list);
         recyclerView.setItemAnimator(null);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new VEConversationListAdapter(getActivity());
+        adapter = new VEConversationListAdapter(getActivity(), recyclerView);
         recyclerView.setAdapter(adapter);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -114,6 +119,7 @@ public class BIMConversationListFragment extends Fragment {
             }
         });
         loadData();
+        addUserListener();
         return rootView;
     }
 
@@ -127,6 +133,7 @@ public class BIMConversationListFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         BIMLog.i(TAG, "onDestroy()");
+        removeUserListener();
     }
 
     private void loadData() {
@@ -247,4 +254,31 @@ public class BIMConversationListFragment extends Fragment {
     public void setOnItemClickListener(OnConversationClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
+
+
+    private OnUserInfoUpdateListener listener;
+    /**
+     * 好友信息更新监听
+     */
+    public void addUserListener(){
+        if (listener == null) {
+            listener = new OnUserInfoUpdateListener() {
+                @Override
+                public void onUpdate(long uid, BIMUIUser user) {
+                    if (adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            };
+        }
+        BIMUIClient.getInstance().getUserProvider().addUserUpdateListener(listener);
+    }
+
+    public void removeUserListener(){
+        if (listener != null) {
+            BIMUIClient.getInstance().getUserProvider().removeUserUpdateListener(listener);
+        }
+    }
+
+
 }

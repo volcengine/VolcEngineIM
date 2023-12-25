@@ -9,7 +9,9 @@ import android.text.TextUtils;
 
 import com.bytedance.im.app.contact.mainList.item.ContactListActionItem;
 import com.bytedance.im.app.utils.SimplePinyinHelper;
+import com.bytedance.im.app.utils.VENameUtils;
 import com.bytedance.im.user.api.model.BIMFriendInfo;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.Locale;
 
@@ -22,21 +24,15 @@ public class ContactListDataInfo<T> {
     private String name;
     private String sortKey;
 
-    public static ContactListDataInfo<BIMFriendInfo> create(BIMFriendInfo friendInfo) {
-        String alias = friendInfo.getAlias();
-
-        String name = "用户" + friendInfo.getUid();
-        String sortKey = "YH" + friendInfo.getUid();
-        if (!TextUtils.isEmpty(alias))  {
-            name = friendInfo.getAlias();
-
-            if (SimplePinyinHelper.ifValid(name)) {
-                sortKey = SimplePinyinHelper.getFirstPinyinChar(name);
-            } else {
-                sortKey = name;
-            }
+    public static ContactListDataInfo<BIMUserFullInfo> create(BIMUserFullInfo fullInfo) {
+        String name = VENameUtils.getShowName(fullInfo);
+        String sortKey = "";
+        if (SimplePinyinHelper.ifValid(name)) {
+            sortKey = SimplePinyinHelper.getFirstPinyinChar(name);
+        } else {
+            sortKey = name;
         }
-        return new ContactListDataInfo<>(friendInfo, ContactListItemType.TYPE_CONTACT, sortKey, friendInfo.getUid(), name);
+        return new ContactListDataInfo<BIMUserFullInfo>(fullInfo, ContactListItemType.TYPE_CONTACT, sortKey, fullInfo.getUid(), name);
     }
 
     public static ContactListDataInfo<ContactListActionItem> create(int type) {
