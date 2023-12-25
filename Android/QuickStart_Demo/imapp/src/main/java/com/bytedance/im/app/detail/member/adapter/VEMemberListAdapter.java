@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.core.api.model.BIMMember;
-import com.bytedance.im.ui.member.BIMMemberWrapper;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;

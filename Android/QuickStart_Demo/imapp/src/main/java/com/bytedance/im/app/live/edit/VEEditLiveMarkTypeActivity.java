@@ -93,7 +93,7 @@ public class VEEditLiveMarkTypeActivity extends Activity {
             }
         });
 
-        BIMClient.getInstance().getServiceManager().getService(BIMLiveExpandService.class).getLiveGroupMarkTypeList(conversationShortId, new BIMResultCallback<List<String>>() {
+        BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroupMarkTypeList(conversationShortId, new BIMResultCallback<List<String>>() {
             @Override
             public void onSuccess(List<String> strings) {
                 marks.clear();

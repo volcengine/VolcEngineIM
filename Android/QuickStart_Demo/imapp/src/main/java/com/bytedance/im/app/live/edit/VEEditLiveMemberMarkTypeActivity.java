@@ -11,7 +11,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bytedance.common.utility.Lists;
+
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.live.create.VEEditCommonActivity;
 import com.bytedance.im.core.api.BIMClient;
@@ -61,10 +61,10 @@ public class VEEditLiveMemberMarkTypeActivity extends Activity {
         tvConfirm = findViewById(R.id.tv_confirm);
         swMarkOption = findViewById(R.id.sw_mark_option);
         tvAddMarkType = findViewById(R.id.cl_add_mark_type);
-        service = BIMClient.getInstance().getServiceManager().getService(BIMLiveExpandService.class);
+        service = BIMClient.getInstance().getService(BIMLiveExpandService.class);
         tvConfirm.setOnClickListener(v -> {
             if (service != null) {
-                if (!Lists.isEmpty(addUser)) {
+                if (addUser != null && !addUser.isEmpty()) {
                     service.markLiveGroupMemberList(conversationShortId, addUser, swMarkOption.isChecked() ? BIMLiveGroupMarkTypeAction.ADD : BIMLiveGroupMarkTypeAction.DELETE,
                             addMarkType, new BIMResultCallback<List<BIMLiveGroupMarkMemberFailedInfo>>() {
                                 @Override

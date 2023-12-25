@@ -5,7 +5,6 @@ import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMember;
-import com.bytedance.im.ui.member.BIMMemberWrapper;
 import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
@@ -61,7 +60,7 @@ public class VEMemberUtils {
                         map.put(userFullInfo.getUid(), userFullInfo);
                     }
                     for (BIMMember bimMember : members) {
-                        data.add(new MemberWrapper(bimMember, map.get(bimMember.getUserID()), BIMMemberWrapper.TYPE_NORMAL));
+                        data.add(new MemberWrapper(bimMember, map.get(bimMember.getUserID()), MemberWrapper.TYPE_NORMAL));
                     }
                 }
                 if (callback != null) {
