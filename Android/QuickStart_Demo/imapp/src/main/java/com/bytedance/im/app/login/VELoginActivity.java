@@ -130,6 +130,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
      */
     public void init(Application application) {
         Log.i(TAG,"initSDK()");
+        SpUtils.getInstance().setEnv(Constants.ENV_BOE);
         //imsdk
         int env = SpUtils.getInstance().getEnv();
         String swimLean = "";
