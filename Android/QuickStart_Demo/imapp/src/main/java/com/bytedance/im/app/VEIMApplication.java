@@ -1,6 +1,7 @@
 package com.bytedance.im.app;
 
 import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.bytedance.im.app.constants.SpUtils;
@@ -10,7 +11,7 @@ import com.bytedance.im.interfaces.BIMAccountProvider;
 import com.bytedance.im.app.user.VEDefaultAccountProvider;
 import com.bytedance.im.ui.BIMUIClient;
 
-public class VEIMApplication extends Application {
+public class VEIMApplication extends MultiDexApplication {
     private static final String TAG = "VEIMApplication";
     //VEDefaultAccountProvider
     public static final BIMAccountProvider accountProvider = new VEDefaultAccountProvider();
