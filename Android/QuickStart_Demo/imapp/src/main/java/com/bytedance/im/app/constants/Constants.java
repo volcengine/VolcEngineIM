@@ -2,11 +2,11 @@ package com.bytedance.im.app.constants;
 
 public class Constants {
 
-    public static final int APP_ID = 666675;
+    public static final int APP_ID = ;
 
-    public static final String token = "1OOPsXjhjDljYyJNLil0dL923cAk4JlPaqRGWajSNTxLjWaOh1yDyT";
+    public static final String token = "";
 
-    public static final long uid = 847097227132384L;
+    public static final long uid = ;
 
     /**
      * 线上环境
