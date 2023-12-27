@@ -12,8 +12,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.live.chatRoom.VELiveGroupMessageListFragment;
 import com.bytedance.im.app.live.create.VEEditCommonActivity;
+import com.bytedance.im.app.utils.VEUtils;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
@@ -21,7 +21,6 @@ import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
 import com.bytedance.im.user.api.model.BIMUserProfile;
-import com.bytedance.im.user.utils.BIMContactUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -101,7 +100,7 @@ public class VEUserProfileEditActivity extends Activity {
         customLayout = findViewById(R.id.cl_custom);
         customLayout.setOnClickListener(v -> {
             BIMUserProfile userProfile = userFullInfo.getUserProfile();
-            String extStr = BIMContactUtils.mapToString(userProfile.getExt());
+            String extStr = VEUtils.mapToString(userProfile.getExt());
             VEEditCommonActivity.startForResult(VEUserProfileEditActivity.this, "自定义字段", extStr, Integer.MAX_VALUE, REQUEST_CODE_EDIT_EXT);
         });
         refreshUserProfile();
@@ -135,7 +134,7 @@ public class VEUserProfileEditActivity extends Activity {
         tvNickName.setText(name);
         tvAliasName.setText(userFullInfo.getAlias());
         tvMemberName.setText(memberName);
-        tvCustom.setText(BIMContactUtils.mapToString(userFullInfo.getUserProfile().getExt()));
+        tvCustom.setText(VEUtils.mapToString(userFullInfo.getUserProfile().getExt()));
         if (TextUtils.isEmpty(userFullInfo.getAlias())) {
             aliasNameLayout.setVisibility(View.GONE);
         } else {
@@ -162,7 +161,7 @@ public class VEUserProfileEditActivity extends Activity {
                 updateUserPortrait(resultText);
             } else if (REQUEST_CODE_EDIT_EXT == requestCode) {
                 String resultExtStr = data.getStringExtra(VEEditCommonActivity.RESULT_TEXT);
-                Map<String, String> ext = BIMContactUtils.stringToMap(resultExtStr, new HashMap<>());
+                Map<String, String> ext = VEUtils.stringToMap(resultExtStr, new HashMap<>());
                 updateUserExt(ext);
             }
         }

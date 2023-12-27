@@ -46,7 +46,7 @@ public class VEFriendConversationFragment extends Fragment {
 
     protected void loadData() {
         BIMLog.i(TAG, "loadData()");
-        BIMClient.getInstance().getServiceManager().getService(BIMContactExpandService.class)
+        BIMClient.getInstance().getService(BIMContactExpandService.class)
                 .getFriendConversationList(cursor, 20, new BIMResultCallback<BIMConversationListResult>() {
             @Override
             public void onSuccess(BIMConversationListResult bimConversationListResult) {
@@ -77,7 +77,7 @@ public class VEFriendConversationFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         BIMLog.i(TAG, "onCreateView() this: " + this);
-        BIMClient.getInstance().getServiceManager().getService(BIMContactExpandService.class).addFriendConversationListener(createConversationListener());
+        BIMClient.getInstance().getService(BIMContactExpandService.class).addFriendConversationListener(createConversationListener());
         rootView = inflater.inflate(R.layout.ve_im_fragment_friend_conv_list, container, false);
         recyclerView = rootView.findViewById(R.id.friend_conv_list);
         emptyView = rootView.findViewById(R.id.empty);

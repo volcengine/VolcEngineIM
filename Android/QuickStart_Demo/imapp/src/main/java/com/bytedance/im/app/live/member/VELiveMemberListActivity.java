@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bytedance.common.utility.Lists;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.detail.member.VEMemberUtils;
 import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
@@ -37,6 +36,7 @@ import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +98,7 @@ public class VELiveMemberListActivity extends Activity {
         });
 
         markTypeListAdapter.setOnClickListener(this::switchTab);
-        BIMClient.getInstance().getServiceManager().getService(BIMLiveExpandService.class)
+        BIMClient.getInstance().getService(BIMLiveExpandService.class)
                 .addLiveGroupMarkTypeListener(markTypeListener);
     }
 
@@ -111,7 +111,7 @@ public class VELiveMemberListActivity extends Activity {
 
         @Override
         public void onMarkTypesDeleted(BIMConversation conversation, BIMLiveGroupMarkTypeChangeInfo changeInfo) {
-            if (!Lists.isEmpty(changeInfo.getMarkType())) {
+            if (changeInfo.getMarkType() != null && !changeInfo.getMarkType().isEmpty()) {
                 boolean needSwitchToDefault = false;
                 for (String deleteMarkType: changeInfo.getMarkType()) {
                     for (int i = 1; i < markTypes.size(); i++) {
@@ -145,7 +145,7 @@ public class VELiveMemberListActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BIMClient.getInstance().getServiceManager().getService(BIMLiveExpandService.class)
+        BIMClient.getInstance().getService(BIMLiveExpandService.class)
                 .removeLiveGroupMarkTypeListener(markTypeListener);
     }
 
@@ -166,7 +166,7 @@ public class VELiveMemberListActivity extends Activity {
     }
 
     private void getMarkTypeFromNet(boolean isFirst) {
-        BIMClient.getInstance().getServiceManager().getService(BIMLiveExpandService.class).getLiveGroupMarkTypeList(conversationId, new BIMResultCallback<List<String>>() {
+        BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroupMarkTypeList(conversationId, new BIMResultCallback<List<String>>() {
             @Override
             public void onSuccess(List<String> list) {
                 markTypes.clear();

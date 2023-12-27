@@ -59,8 +59,8 @@ public class VEConvFragment extends Fragment {
         });
 
         BIMClient.getInstance().addConversationListener(convListener);
-        if (BIMClient.getInstance().getServiceManager().getService(BIMContactExpandService.class) != null) {
-            BIMClient.getInstance().getServiceManager().getService(BIMContactExpandService.class).addFriendConversationListener(friendConvListener);
+        if (BIMClient.getInstance().getService(BIMContactExpandService.class) != null) {
+            BIMClient.getInstance().getService(BIMContactExpandService.class).addFriendConversationListener(friendConvListener);
         }
         toggleList(allConvBtn);
         return rootView;

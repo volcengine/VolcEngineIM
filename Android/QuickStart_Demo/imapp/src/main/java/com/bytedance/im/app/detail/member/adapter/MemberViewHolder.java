@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bytedance.common.utility.Lists;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.utils.VENameUtils;
 import com.bytedance.im.core.api.enums.BIMBlockStatus;
@@ -54,7 +53,7 @@ public class MemberViewHolder extends RecyclerView.ViewHolder {
         tvTags.setText(tags);
 
         String marks = "";
-        if (!Lists.isEmpty(member.getMarkTypes())) {
+        if (member.getMarkTypes() != null && !member.getMarkTypes().isEmpty()) {
             List<String> markTypes = new ArrayList<>(member.getMarkTypes());
             Collections.sort(markTypes);
             for (String mark: markTypes) {
