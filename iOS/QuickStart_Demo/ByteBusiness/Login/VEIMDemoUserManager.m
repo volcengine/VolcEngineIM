@@ -18,7 +18,7 @@
 #import "BIMUIClient.h"
 #import "VEIMDemoIMManager.h"
 #import <imsdk-tob/BIMClient+Friend.h>
-
+#import "BIMToastView.h"
 
 @interface VEIMDemoUserManager ()<BIMConnectListener, BIMFriendListener, BIMUIClientUserInfoDataSource>
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
@@ -63,7 +63,12 @@
         NSError *error;
         VEIMDemoUser *user = [NSKeyedUnarchiver unarchivedObjectOfClass:[VEIMDemoUser class] fromData:userData error:&error];
         if (user && !error) {
-            self.currentUser = user;
+            long long demoUID = kVEIMDemoUserID.longLongValue;
+            if (demoUID <= 0) {
+                self.currentUser = user;
+            } else if (demoUID == user.userID) { // 兼容开源
+                self.currentUser = user;
+            }
         }
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:BDIMDebugNetworkChangeNotification object:nil];
@@ -74,12 +79,6 @@
 
 - (void)initSDK
 {
-    // debug
-//    [BIMDebugManager sharedInstance].imServerBaseURL = [[BDIMDebugNetworkManager sharedManager] apiUrl];
-//    [BIMDebugManager sharedInstance].env = [BDIMDebugNetworkManager sharedManager].env == BDIMDebugNetworkEnvTypePPE ? @"ppe" : @"boe";
-//    [BIMDebugManager sharedInstance].netLane = [BDIMDebugNetworkManager sharedManager].netLane;
-//    [[BIMDebugManager sharedInstance] configNetwork];
-    
     BIMSDKConfig *config = [[BIMSDKConfig alloc] init];
 //    config.enableAPM = ![BDIMDebugNetworkManager sharedManager].disableApm;
 //    config.enableAppLog = ![BDIMDebugNetworkManager sharedManager].disableApplog;
@@ -127,7 +126,12 @@
     if (!self.currentUser) {
         [self presentLoginVC];
     }else{
-        [self loginWithUser:self.currentUser completion:nil];
+        [self loginWithUser:self.currentUser completion:^(NSError * _Nullable error) {
+            if (error) {
+                [BIMToastView toast:[NSString stringWithFormat:@"登录失败：%@", error.localizedDescription]];
+                [self logout];
+            }
+        }];
     }
 }
 
@@ -182,6 +186,12 @@
         @weakify(self);
         [[BIMUIClient sharedInstance] login:@(self.currentUser.userID).stringValue token:self.currentUser.userToken completion:^(BIMError * _Nullable error) {
             @strongify(self);
+            if (error) {
+                if (completion) {
+                    completion(error);
+                }
+                return;
+            }
             [self getUserFullInfo:user.userID syncServer:NO completion:^(BIMUserFullInfo * _Nullable info, BIMError * _Nullable error) {
                 self.currentUserFullInfo = info;
                 dispatch_async(dispatch_get_main_queue(), ^{
