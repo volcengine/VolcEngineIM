@@ -25,7 +25,11 @@ public class VEUtils {
 
     //实验功能，暂时屏蔽
     public static boolean isShield() {
-        return !BuildConfig.DEBUG || VEIMApplication.accountProvider instanceof VEDefaultAccountProvider;
+        return !BuildConfig.DEBUG || isSourceCode();
+    }
+
+    public static boolean isSourceCode(){
+        return VEIMApplication.accountProvider instanceof VEDefaultAccountProvider;
     }
 
 

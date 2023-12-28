@@ -20,6 +20,7 @@ import com.bytedance.im.app.debug.VEEnvSettingActivity;
 import com.bytedance.im.app.main.VEIMMainActivity;
 import com.bytedance.im.app.user.provider.BIMDefaultUserProvider;
 import com.bytedance.im.app.utils.VEUtils;
+import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.interfaces.BIMAuthProvider;
@@ -62,16 +63,27 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
 
     /**
      *  点击同意弹窗
+     * @param forceUserCacheLogin  //本地存在token是否需要校验 uid
      */
     @Override
-    public void onProtoAgree() {
+    public void onProtoAgree(boolean forceUserCacheLogin, long uid, String token) {
         //同意协议,后初始化sdk
         Log.i(TAG,"onProtoAgree()");
-        init(getApplication());
-        //如果登录过直接登录
+        init(Constants.APP_ID,getApplication());
         UserToken userToken = SpUtils.getInstance().getLoginUserInfo();
-        if (userToken != null) {
-            loginIM(userToken.getUid(), userToken.getToken());
+        if (forceUserCacheLogin) {
+            //如果登录过直接登录
+            if (userToken != null) {
+                loginIM(userToken.getUid(), userToken.getToken());
+            }
+        } else {
+            //和上次比对
+            if (userToken != null
+                    && userToken.getAppId() == BIMClient.getInstance().getAppID()
+                    && userToken.getToken().equals(token)
+                    && uid == userToken.getUid()) {
+                loginIM(userToken.getUid(), userToken.getToken());
+            }
         }
     }
 
@@ -110,7 +122,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
             @Override
             public void onSuccess() {
                 Log.i(TAG, "login success()");
-                SpUtils.getInstance().setLoginUserInfo(new UserToken(uid, token));
+                SpUtils.getInstance().setLoginUserInfo(new UserToken(BIMClient.getInstance().getAppID(), uid, token));
                 Toast.makeText(VELoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                 VEIMMainActivity.start(VELoginActivity.this);
                 finish();
@@ -128,7 +140,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
      * 初始化
      * @param application
      */
-    public void init(Application application) {
+    public void init(int appId,Application application) {
         Log.i(TAG,"initSDK()");
         //imsdk
         int env = SpUtils.getInstance().getEnv();
@@ -142,7 +154,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         BIMSDKConfig config = new BIMSDKConfig();
         config.setEnableAPM(SpUtils.getInstance().isEnableAPM());
         config.setEnableAppLog(SpUtils.getInstance().isEnableALog());
-        BIMUIClient.getInstance().init(application, Constants.APP_ID, env, swimLean, config);
+        BIMUIClient.getInstance().init(application,appId, env, swimLean, config);
         VEIMApplication.accountProvider.init(application, Constants.APP_ID, SpUtils.getInstance().getEnv());
         BIMUIClient.getInstance().setUserProvider(new BIMDefaultUserProvider(500));
     }
