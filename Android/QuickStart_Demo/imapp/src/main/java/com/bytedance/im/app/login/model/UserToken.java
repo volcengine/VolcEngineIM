@@ -1,12 +1,14 @@
 package com.bytedance.im.app.login.model;
 
 public class UserToken {
+    private long appId;
     private long uid;
     private String token;
 
-    public UserToken(long uid, String token) {
+    public UserToken(long appID, long uid, String token) {
         this.uid = uid;
         this.token = token;
+        this.appId = appID;
     }
 
     public long getUid() {
@@ -25,10 +27,19 @@ public class UserToken {
         this.token = token;
     }
 
+    public long getAppId() {
+        return appId;
+    }
+
+    public void setAppId(long appId) {
+        this.appId = appId;
+    }
+
     @Override
     public String toString() {
         return "UserToken{" +
-                "uid=" + uid +
+                "appId=" + appId +
+                ", uid=" + uid +
                 ", token='" + token + '\'' +
                 '}';
     }

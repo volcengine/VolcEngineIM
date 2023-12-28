@@ -95,7 +95,7 @@ public class VELoginFragment extends Fragment implements BIMAuthProvider {
         });
         initProtoString();
         if (loginListener != null) {
-            loginListener.onProtoAgree();
+            loginListener.onProtoAgree(false, Constants.uid, Constants.token);
         }
     }
 
