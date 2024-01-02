@@ -3,8 +3,8 @@ package com.bytedance.im.ui.message.adapter;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,7 +14,9 @@ import com.bumptech.glide.Glide;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageStatus;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.core.api.model.BIMMessagePropertyItem;
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.emoji.EmojiManager;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
@@ -26,7 +28,9 @@ import com.bytedance.im.ui.utils.BIMUtils;
 import com.bytedance.im.core.api.model.BIMMessage;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
     private static final String TAG = "MessageViewHolder";
@@ -48,6 +52,7 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
     private View headContainerLeft;
     private BIMUserProvider userProvider;
     private RecyclerView recyclerView;
+    private TextView tvPropertyLeft, tvPropertyRight;
 
     public BIMMessageViewHolder(@NonNull View itemView,RecyclerView recyclerView, BIMUserProvider provider, BIMMessageAdapter.OnMessageItemClickListener l, BIMMessageAdapter.OnMessageItemLongClickListener longClickListener, BIMMessageAdapter.OnRefreshListener mediaMessageLoadListener) {
         super(itemView);
@@ -66,6 +71,8 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         headContainerLeft = itemView.findViewById(R.id.head_container_receive);
         userNameLeft = itemView.findViewById(R.id.tv_msg_head_name_receive);
         userNameRight = itemView.findViewById(R.id.tv_msg_head_name_send);
+        tvPropertyLeft = itemView.findViewById(R.id.tv_base_msg_property_left);
+        tvPropertyRight = itemView.findViewById(R.id.tv_base_msg_property_right);
     }
 
     public void update(BIMMessageWrapper wrapper, BIMMessageWrapper preWrapper) {
@@ -87,6 +94,8 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
             headContainerLeft.setVisibility(View.GONE);
             headContainerRight.setVisibility(View.GONE);
             senStatus.setVisibility(View.GONE);
+            tvPropertyLeft.setVisibility(View.GONE);
+            tvPropertyRight.setVisibility(View.GONE);
             return;
         }
         recall.setVisibility(View.GONE);
@@ -104,8 +113,11 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
             lp.horizontalBias = 0;
         }
         senStatus.setLayoutParams(lp);
+        tvPropertyLeft.setVisibility(View.GONE);
+        tvPropertyRight.setVisibility(View.GONE);
         ImageView curPortraitView;
         TextView curUserNameView;
+        TextView curPropertyView = null;
         if (ui.needPortraitGone()) {
             curPortraitView = null;
             curUserNameView = null;
@@ -116,11 +128,13 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
             headContainerRight.setVisibility(View.VISIBLE);
             curPortraitView = portraitRight;
             curUserNameView = userNameRight;
+            curPropertyView = tvPropertyRight;
         } else {
             headContainerRight.setVisibility(View.GONE);
             headContainerLeft.setVisibility(View.VISIBLE);
             curPortraitView = portraitLeft;
             curUserNameView = userNameLeft;
+            curPropertyView = tvPropertyLeft;
         }
         if (curPortraitView != null) {
             if (TextUtils.isEmpty(portraitUrl)) {
@@ -210,6 +224,69 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
 
                 }
             });
+        }
+        bindProperty(bimMessage, curPropertyView);
+    }
+
+    /**
+     * 展示点赞等property元素
+     * @param bimMessage
+     * @param propertyView
+     */
+    public void bindProperty(BIMMessage bimMessage, TextView propertyView) {
+        Map<String, List<BIMMessagePropertyItem>> properties = bimMessage.getProperties();
+        if (propertyView != null) {
+            if (properties != null && !properties.isEmpty() && !bimMessage.isRecalled()) {
+                String showText = showProperty(bimMessage);
+                if (!TextUtils.isEmpty(showText)) {
+                    SpannableString ss = EmojiManager.getInstance().parseEmoJi(propertyView.getContext(), showText);
+                    propertyView.setVisibility(View.VISIBLE);
+                    propertyView.setText(ss);
+                    return;
+                }
+            }
+            propertyView.setText("");
+            propertyView.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 生成property展示字符
+     * @param bimMessage
+     * @return property展示字符
+     */
+    private String showProperty(BIMMessage bimMessage) {
+        Map<String, List<BIMMessagePropertyItem>> map = bimMessage.getProperties();
+        StringBuilder ret = new StringBuilder();
+        for (Map.Entry<String, List<BIMMessagePropertyItem>> entry : map.entrySet()) {
+            boolean needShow = false;
+            StringBuilder sb = new StringBuilder();
+            sb.append(entry.getKey()).append(" : ");
+            List<BIMMessagePropertyItem> itemList = entry.getValue();
+            if (itemList == null) {
+                sb.append("");
+                continue;
+            }
+            for (BIMMessagePropertyItem item : itemList) {
+                if (item != null) {
+                    BIMUIUser user = userProvider.getUserInfo(item.getSender());
+                    if (user != null) {
+                        sb.append(BIMUIUtils.getShowName(user)).append(",");
+                    } else {
+                        sb.append("用户").append(item.getSender()).append(",");
+                    }
+                    needShow = true;
+                }
+            }
+            if (needShow) {
+                ret.append(sb);
+            }
+        }
+
+        if (ret.lastIndexOf(",") > 0 && ret.length() > 0) {
+            return ret.deleteCharAt(ret.lastIndexOf(",")).toString();
+        } else {
+            return ret.toString();
         }
     }
 

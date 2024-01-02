@@ -63,6 +63,12 @@ public class EmojiGroupView extends RelativeLayout implements AbsListView.OnItem
         mEmojiClickListener = listener;
     }
 
+    public void reset() {
+        if (mViewPager != null) {
+            mViewPager.setCurrentItem(0);
+        }
+    }
+
     private void initView() {
         View.inflate(getContext(), R.layout.bim_layout_emoji_panel, this);
         mViewPager = findViewById(R.id.view_pager_emoji);

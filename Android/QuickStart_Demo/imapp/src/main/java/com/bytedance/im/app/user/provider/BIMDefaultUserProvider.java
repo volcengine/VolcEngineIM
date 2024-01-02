@@ -159,7 +159,7 @@ public class BIMDefaultUserProvider implements BIMUserProvider {
 
         @Override
         public void onBlackListDelete(BIMUserFullInfo userFullInfo) {
-
+            //黑名单删除
         }
 
         @Override
