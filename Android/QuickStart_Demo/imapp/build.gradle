@@ -10,8 +10,8 @@ android {
         applicationId "com.bytedance.im.app"
         minSdkVersion MIN_SDK_VERSION as int
         targetSdkVersion TARGET_SDK_VERSION as int
-        versionCode 10701
-        versionName "1.7.1"
+        versionCode 10800
+        versionName "1.8.0"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders.put("APPLOG_SCHEME", "rangersapplog.b674e0c0eec26787".toLowerCase())
@@ -46,8 +46,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.4'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
     //远程依赖
-    implementation 'com.bytedance.im:im-uikit-tob:1.8.0-alpha.0'
-    implementation 'com.bytedance.im:imsdk-tob:1.8.0-alpha.0'
+    implementation 'com.bytedance.im:im-uikit-tob:1.8.0'
+    implementation 'com.bytedance.im:imsdk-tob:1.8.0'
 //    本地依赖
 //    implementation project(':imsdk_ui')
 }

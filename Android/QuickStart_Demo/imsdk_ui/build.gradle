@@ -9,8 +9,8 @@ android {
         minSdkVersion MIN_SDK_VERSION as int
         targetSdkVersion TARGET_SDK_VERSION as int
 
-        buildConfigField "String", "VERSION_NAME", "\"1.7.1\""
-        buildConfigField "Integer", "VERSION_CODE", "10701"
+        buildConfigField "String", "VERSION_NAME", "\"1.8.0\""
+        buildConfigField "Integer", "VERSION_CODE", "10800"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -42,5 +42,5 @@ dependencies {
     api('com.github.bumptech.glide:glide:4.9.0') {
         exclude group: 'com.android.support'
     }
-    api 'com.bytedance.im:imsdk-tob:1.8.0-alpha.0'
+    api 'com.bytedance.im:imsdk-tob:1.8.0'
 }
