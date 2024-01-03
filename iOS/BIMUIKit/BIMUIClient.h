@@ -21,6 +21,12 @@ typedef BIMUser *_Nullable(^BIMUserProvider)(long long userID);
  * @param completion 回调
  */
 - (void)getUserInfoWithUserId:(long long)userID completion:(void (^)(BIMUser *userInfo))completion;
+/*
+ * 异步批量获取用户资料
+ * @param uidList 用户id列表
+ * @param completion 回调
+ */
+- (void)getUserFullInfoList:(NSArray<NSNumber *> *)uidList completion:(void (^)(NSArray<BIMUser *> *userInfos))completion;
 
 @end
 

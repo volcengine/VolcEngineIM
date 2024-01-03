@@ -138,7 +138,7 @@
         self.referMessageLabel.text = nil;
     }
     
-    if ([self.replyView containSticker:message]) {
+    if ([self.replyView containSticker:message] && !message.isRecalled) {
         self.replyView.hidden = NO;
         [self.replyView refreshWithMessage:message];
     }else{

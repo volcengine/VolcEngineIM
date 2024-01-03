@@ -108,7 +108,7 @@
 
     [self.welcomeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(24);
-        make.top.mas_equalTo(KScreenHeight<680?	60:140);
+        make.top.mas_equalTo(KScreenHeight<680?    60:140);
     }];
     
     [self.infoLabel mas_makeConstraints:^(MASConstraintMaker *make) {

@@ -11,6 +11,7 @@
 #import "BIMChatMenuEmojiView.h"
 
 #import <imsdk-tob/BIMSDK.h>
+#import <im-uikit-tob/BIMStickerDataManager.h>
 
 @interface BIMChatMenuViewNew () <BIMChatMenuCollectionViewDelegate, BIMChatMenuEmojiViewDelegate>
 @property (nonatomic, strong) UIButton *bg;
@@ -94,60 +95,9 @@
     self.collectionView.listMAry = items;
     [self.collectionView reloadData];
     
-//    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(self.collectionView.frame.origin.x, CGRectGetMaxY(self.collectionView.frame), self.collectionView.bounds.size.width - 2 * 16, 1)];
-//    lineView.backgroundColor = kRGBCOLOR(232, 232, 232, 1);
-//    [self addSubview:lineView];
-//    
-//    if (!self.bottomEmojiView) {
-//        self.bottomEmojiView = [[UIView alloc] init];
-//        self.bottomEmojiView.backgroundColor = [UIColor whiteColor];
-//    }
-//    self.bottomEmojiView.frame = CGRectMake(self.collectionView.frame.origin.x, CGRectGetMaxY(lineView.frame), self.collectionView.bounds.size.width, 52);
-//    [self addSubview:self.bottomEmojiView];
-//    
-//
-//    NSArray *allStickers = [[TIMStickerDataManager sharedInstance].allStickers copy];
-//    self.sticker = allStickers.firstObject;
-//    NSArray *ary = self.sticker.emojis;
-//    int max = 6;
-//    if (ary.count > 6) {
-//        max = 6;
-//    } else {
-//        max = (int)ary.count;
-//    }
-//    
-//    if (!self.moreEmojiBtn) {
-//        self.moreEmojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//        [self.moreEmojiBtn setImage:kIMAGE_IN_BUNDLE_NAMED(@"icon_add") forState:UIControlStateNormal];
-//        [self.moreEmojiBtn addTarget:self action:@selector(moreEmojiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
-//    }
-//    [self.bottomEmojiView addSubview:self.moreEmojiBtn];
-//
-//    // 把+按钮增加上
-//    CGFloat emojiButtonWH = 32;
-//
-//    CGFloat margin = (self.bounds.size.width - (max+1) * emojiButtonWH) / (max + 2);
-//
-//    for (int i = 0; i < max; i++) {
-//        TIMEmoji *emoji = ary[i];
-//        
-//        UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-//        btn.frame = CGRectMake(margin + (margin + emojiButtonWH) * i, (self.bottomEmojiView.bounds.size.height - emojiButtonWH) * 0.5, emojiButtonWH, emojiButtonWH);
-//        UIImage *btnImage = [self emojiImageWithName:emoji.imageName];
-//        [btn setImage:btnImage forState:UIControlStateNormal];
-//        [btn addTarget:self action:@selector(clickEmojiAction:) forControlEvents:UIControlEventTouchUpInside];
-//        btn.tag = i;
-//        [self.bottomEmojiView addSubview:btn];
-//    }
-//    
-//    self.moreEmojiBtn.frame = CGRectMake(self.bottomEmojiView.bounds.size.width - 16 - 20, (self.bottomEmojiView.bounds.size.height - 20) * 0.5, 20, 20);
-//    
-//    self.emojiView = [[BIMChatMenuEmojiView alloc] init];
-//    CGFloat emojiHeight = [self.emojiView heightThatFits];
-//    self.emojiView.frame = CGRectMake(16, showingDownward?CGRectGetMaxY(self.bottomEmojiView.frame) - emojiHeight:self.collectionView.frame.origin.y, self.collectionView.bounds.size.width, emojiHeight);
-//    self.emojiView.hidden = YES;
-//    self.emojiView.delegate = self;
-//    [self addSubview:self.emojiView];
+    if (message.serverMessageID) {
+        [self showEmojiViewWithShowingDownward:showingDownward];
+    }
 }
 
 - (void)refreshMessage:(BIMMessage *)message{
@@ -166,7 +116,7 @@
             [self.delegate menuView:self didClickEmoji:emoji message:self.message];
         }
     }
-
+    [self dismiss];
 }
 
 - (void)dismiss{
@@ -195,10 +145,69 @@
     if ([self.delegate respondsToSelector:@selector(menuView:didClickEmoji:message:)]) {
         [self.delegate menuView:self didClickEmoji:emoji message:self.message];
     }
+    self.emojiView.hidden = YES;
+    [self dismiss];
 }
 
 - (void)menuEmojiViewDidClickCloseButton{
     self.emojiView.hidden = YES;
+}
+
+#pragma mark - Private
+
+- (void)showEmojiViewWithShowingDownward:(BOOL)showingDownward
+{
+    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(self.collectionView.frame.origin.x, CGRectGetMaxY(self.collectionView.frame), self.collectionView.bounds.size.width - 2 * 16, 1)];
+    lineView.backgroundColor = kRGBCOLOR(232, 232, 232, 1);
+    [self addSubview:lineView];
+
+    if (!self.bottomEmojiView) {
+        self.bottomEmojiView = [[UIView alloc] init];
+        self.bottomEmojiView.backgroundColor = [UIColor whiteColor];
+    }
+    self.bottomEmojiView.frame = CGRectMake(self.collectionView.frame.origin.x, CGRectGetMaxY(lineView.frame), self.collectionView.bounds.size.width, 52);
+    [self addSubview:self.bottomEmojiView];
+
+
+    NSArray *allStickers = [[BIMStickerDataManager sharedInstance].allStickers copy];
+    self.sticker = allStickers.firstObject;
+    NSArray *emojis = self.sticker.emojis;
+    NSUInteger maxBottomEmojis = 6;
+    if (emojis.count > 6) {
+        maxBottomEmojis = 6;
+    } else {
+        maxBottomEmojis = emojis.count;
+    }
+
+    if (!self.moreEmojiBtn) {
+        self.moreEmojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self.moreEmojiBtn setImage:kIMAGE_IN_BUNDLE_NAMED(@"icon_add") forState:UIControlStateNormal];
+        [self.moreEmojiBtn addTarget:self action:@selector(moreEmojiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    [self.bottomEmojiView addSubview:self.moreEmojiBtn];
+
+    // 把+按钮增加上
+    CGFloat emojiButtonWH = 32;
+    CGFloat margin = (self.bounds.size.width - (maxBottomEmojis + 1) * emojiButtonWH) / (maxBottomEmojis + 2);
+
+    for (NSUInteger emojiIndex = 0; emojiIndex < maxBottomEmojis; emojiIndex++) {
+        BIMEmoji *emoji = emojis[emojiIndex];
+        UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+        btn.frame = CGRectMake(margin + (margin + emojiButtonWH) * emojiIndex, (self.bottomEmojiView.bounds.size.height - emojiButtonWH) * 0.5, emojiButtonWH, emojiButtonWH);
+        UIImage *btnImage = [self emojiImageWithName:emoji.imageName];
+        [btn setImage:btnImage forState:UIControlStateNormal];
+        [btn addTarget:self action:@selector(clickEmojiAction:) forControlEvents:UIControlEventTouchUpInside];
+        btn.tag = emojiIndex;
+        [self.bottomEmojiView addSubview:btn];
+    }
+    self.moreEmojiBtn.frame = CGRectMake(self.bottomEmojiView.bounds.size.width - 16 - 20, (self.bottomEmojiView.bounds.size.height - 20) * 0.5, 20, 20);
+
+    self.emojiView = [[BIMChatMenuEmojiView alloc] init];
+    CGFloat emojiHeight = [self.emojiView heightThatFits];
+    self.emojiView.frame = CGRectMake(16, showingDownward?CGRectGetMaxY(self.bottomEmojiView.frame) - emojiHeight:self.collectionView.frame.origin.y, self.collectionView.bounds.size.width, emojiHeight);
+    self.emojiView.hidden = YES;
+    self.emojiView.delegate = self;
+    [self addSubview:self.emojiView];
 }
 
 @end

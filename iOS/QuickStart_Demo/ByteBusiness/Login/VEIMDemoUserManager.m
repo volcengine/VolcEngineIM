@@ -239,8 +239,7 @@
                         });
                     }];
                 }];
-                
-            }else{
+            } else {
                 [self.progressHUD hideAnimated:YES];
                 if (completion) {
                     completion([NSError errorWithDomain:kVEIMDemoErrorDomain code:VEIMDemoErrorTypeFormatError userInfo:@{NSLocalizedDescriptionKey : @"Response params error"}]);
@@ -345,7 +344,7 @@
     }];
     [alertVC addAction:sure];
     
-    [[BTDResponder topViewController] presentViewController:alertVC animated:YES completion:nil];
+    [[UIApplication sharedApplication].delegate.window.rootViewController presentViewController:alertVC animated:YES completion:nil];
 }
 
 #pragma mark - BIMFriendListener
@@ -386,17 +385,49 @@
 - (void)getUserInfoWithUserId:(long long)userID completion:(void (^)(BIMUser *))completion
 {
     [self getUserFullInfo:userID syncServer:NO completion:^(BIMUserFullInfo * _Nullable info, BIMError * _Nullable error) {
-        BIMUserFullInfo *fullInfo = self.userDict[@(userID)];
-        BIMUser *user = [[BIMUser alloc] init];
-        user.nickName = fullInfo.nickName.length ? fullInfo.nickName : [self nicknameForTestUser:userID];
-        user.placeholderImage = [UIImage imageNamed:[self portraitForTestUser:userID]];
-        user.userID = userID;
-        user.alias = fullInfo.alias;
-        user.portraitUrl = fullInfo.portraitUrl;
+        BIMUser *user = [self userWithFullInfo:info];
         if (completion) {
             completion(user);
         }
     }];
+}
+
+- (void)getUserFullInfoList:(NSArray<NSNumber *> *)uidList completion:(void (^)(NSArray<BIMUser *> *userInfos))completion
+{
+    [self getUserFullInfoList:uidList syncServer:NO completion:^(NSArray<BIMUserFullInfo *> * _Nullable infos, BIMError * _Nullable error) {
+        NSArray *users = [self usersWithFullInfos:infos];
+        if (completion) {
+            completion(users);
+        }
+    }];
+}
+
+- (BIMUser *)userWithFullInfo:(BIMUserFullInfo *)fullInfo
+{
+    if (!fullInfo) {
+        return nil;
+    }
+    long long userID = fullInfo.uid;
+    BIMUser *user = [[BIMUser alloc] init];
+    user.nickName = fullInfo.nickName.length ? fullInfo.nickName : [self nicknameForTestUser:userID];
+    user.placeholderImage = [UIImage imageNamed:[self portraitForTestUser:userID]];
+    user.userID = userID;
+    user.alias = fullInfo.alias;
+    user.portraitUrl = fullInfo.portraitUrl;
+    return user;
+}
+
+- (NSArray<BIMUser *> *)usersWithFullInfos:(NSArray<BIMUserFullInfo *> *)fullInfos
+{
+    if (!fullInfos.count) {
+        return nil;
+    }
+    NSMutableArray *array = [NSMutableArray array];
+    for (BIMUserFullInfo *fullInfo in fullInfos) {
+        BIMUser *user = [self userWithFullInfo:fullInfo];
+        [array addObject:user];
+    }
+    return [array copy];
 }
 
 @end

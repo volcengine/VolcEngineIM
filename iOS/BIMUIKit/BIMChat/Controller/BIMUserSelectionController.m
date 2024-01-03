@@ -8,6 +8,8 @@
 #import "BIMUserSelectionController.h"
 #import "BIMUserCell.h"
 #import "BIMUIDefine.h"
+#import "BIMUIClient.h"
+#import <OneKit/BTDMacros.h>
 
 @interface BIMUserSelectionController ()
 
@@ -15,23 +17,43 @@
 
 @property (nonatomic, strong) NSMutableArray *users;
 
+@property (nonatomic, copy) NSString *conversationID;
+
 @end
 
 @implementation BIMUserSelectionController
 
-- (BIMUserSelectionController *)initWithUsers:(NSArray<BIMUser *> *)users{
+- (instancetype)initWithConversationID:(NSString *)conversationID
+{
     if (self = [super init]) {
-        if ([users isKindOfClass:[NSArray class]]) {
-            self.users = [users mutableCopy];
-        } else {
-            self.users = [NSMutableArray array];
-        }
+        _conversationID = conversationID;
     }
     return self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self loadData];
+}
+
+- (void)loadData
+{
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        if (self.users) {
+            return;
+        }
+        self.users = [NSMutableArray array];
+        NSArray *participants = [[BIMClient sharedInstance] getConversationMemberList:self.conversationID];
+        @weakify(self);
+        NSArray *uidList = [participants valueForKey:@"userID"];
+        if ([[BIMUIClient sharedInstance].userInfoDataSource respondsToSelector:@selector(getUserFullInfoList:completion:)]) {
+            [[BIMUIClient sharedInstance].userInfoDataSource getUserFullInfoList:uidList completion:^(NSArray<BIMUser *> *userInfos) {
+                @strongify(self);
+                self.users = userInfos;
+                [self.tableview reloadData];
+            }];
+        }
+    });
 }
 
 - (void)rightClicked: (id)sender{

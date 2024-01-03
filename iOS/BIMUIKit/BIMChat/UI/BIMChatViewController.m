@@ -513,15 +513,7 @@
 }
 
 - (void)inputToolDidTriggerMention{
-    NSMutableArray *users = [NSMutableArray array];
-    NSArray *participants = [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID];
-    for (int i = 0; i<participants.count; i++) {
-        id <BIMMember> participant = [participants objectAtIndex:i];
-        BIMUser *user = [BIMUIClient sharedInstance].userProvider(participant.userID);
-        user.userID = participant.userID;
-        [users addObject:user];
-    }
-    BIMUserSelectionController *selectionVC = [[BIMUserSelectionController alloc] initWithUsers:users];
+    BIMUserSelectionController *selectionVC = [[BIMUserSelectionController alloc] initWithConversationID:self.conversation.conversationID];
     selectionVC.isNeedLeftBack = NO;
     selectionVC.isNeedCloseBtn = YES;
     selectionVC.delegate = self;
@@ -787,38 +779,39 @@
 
 #pragma mark - 表情回复
 - (void)menuView:(BIMChatMenuViewNew *)menu didClickEmoji:(BIMEmoji *)emoji message:(BIMMessage *)message{
-    // 注释，暂时关闭该功能
-//    NSInteger row = [self.messageDataSource indexOfItem:message];
-//    NSString *currentUserIDStr = [NSString stringWithFormat:@"%lld",[BIMClient sharedInstance].getCurrentUserID.longLongValue];
-//    BOOL found = NO;
-//    NSArray<BIMMessagePropertyItem *> *arr = message.properties[emoji.emojiDes];
-//    for (BIMMessagePropertyItem *prob in arr) {
-//        if ([prob.idempotentID isEqualToString:currentUserIDStr]) {
-//            found = YES;
-//            break;
-//        }
-//    }
-//
-//    BIMMessageNewPropertyModify *modify = [[BIMMessageNewPropertyModify alloc] init];
-//    modify.key = emoji.emojiDes;
-//    modify.idempotentID = currentUserIDStr;
-//    modify.value = emoji.imageName;
-//    modify.type = found ? BIMMessageNewPropertyModifyTypeRemove : BIMMessageNewPropertyModifyTypeAdd;
-//
-//        kWeakSelf(self);
-//    [[BIMClient sharedInstance] modifyMessage:message propertyItems:@[modify] completion:^(NSError * _Nullable error) {
-//        if (error) {
-//            [BIMToastView toast:[NSString stringWithFormat:@"表情回复出错：%@",error.localizedDescription]];
-//        }
-//
-//        if (row>=0) {
-//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                BIMMessage *msg = [weakself.messageDataSource itemAtIndex:row];
-//                [menu refreshMessage:msg];
-//            });
-//        }
-//    }];
+    NSInteger row = [self.messageDataSource indexOfItem:message];
+    NSString *currentUserIDStr = [NSString stringWithFormat:@"%lld",[BIMClient sharedInstance].getCurrentUserID.longLongValue];
+    BOOL found = NO;
+    NSArray<BIMMessagePropertyItem *> *properties = message.properties[emoji.emojiDes];
+    for (BIMMessagePropertyItem *propertie in properties) {
+        if ([propertie.idempotentID isEqualToString:currentUserIDStr]) {
+            found = YES;
+            break;
+        }
+    }
+
+    BIMMessageNewPropertyModify *modify = [[BIMMessageNewPropertyModify alloc] init];
+    modify.key = emoji.emojiDes;
+    modify.idempotentID = currentUserIDStr;
+    modify.value = currentUserIDStr;
+    modify.type = found ? BIMMessageNewPropertyModifyTypeRemove : BIMMessageNewPropertyModifyTypeAdd;
+
+    kWeakSelf(self);
+    [[BIMClient sharedInstance] modifyMessageProperty:message propertyItems:@[modify] completion:^(BIMError * _Nullable error) {
+        kStrongSelf(self);
+        if (error) {
+            [BIMToastView toast:[NSString stringWithFormat:@"表情回复出错：%@",error.localizedDescription]];
+        }
+
+        if (row >= 0) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                BIMMessage *msg = [self.messageDataSource itemAtIndex:row];
+                [menu refreshMessage:msg];
+            });
+        }
+    }];
 }
+
 - (void)menuView:(BIMChatMenuViewNew *)menu didClickType:(BIMChatMenuType)type message:(BIMMessage *)message{
     switch (type) {
         case BIMChatMenuTypeCopy:{

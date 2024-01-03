@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BIMUserSelectionController : BIMBaseTableViewController
 
-- (instancetype)initWithUsers: (NSArray <BIMUser *>*)users;
+- (instancetype)initWithConversationID:(NSString *)conversationID;
 
 @property (nonatomic, weak) id<BIMUserSelectionControllerDelegate> delegate;
 
