@@ -2,7 +2,7 @@ PODS:
   - Bolts/Tasks (1.9.1)
   - Godzippa (2.1.1)
   - IGListDiffKit (4.0.0)
-  - im-uikit-tob (1.8.0):
+  - im-uikit-tob (1.8.0-alpha.0):
     - imsdk-tob (= 1.8.0-alpha.0)
     - Masonry
     - MJRefresh
@@ -156,7 +156,7 @@ PODS:
   - YYCache (1.0.4)
 
 DEPENDENCIES:
-  - im-uikit-tob (from `../`)
+  - im-uikit-tob (= 1.8.0-alpha.0)
   - JSONModel
   - Masonry
   - MBProgressHUD
@@ -185,6 +185,7 @@ SPEC REPOS:
     - WCDBOptimizedSQLCipher
     - YYCache
   https://github.com/volcengine/volcengine-specs.git:
+    - im-uikit-tob
     - imsdk-tob
     - OneKit
     - RangersAPM
@@ -192,15 +193,11 @@ SPEC REPOS:
     - TTNetworkManager
     - TTSDK
 
-EXTERNAL SOURCES:
-  im-uikit-tob:
-    :path: "../"
-
 SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   Godzippa: f438af100364a775ef0707d29ab152c356375fbf
   IGListDiffKit: 665d6cf43ce726e676013db9c7d6c4294259b6b2
-  im-uikit-tob: e21a813e7e911a800afa9e7facb6c5699a00b9d1
+  im-uikit-tob: 555d531d642aff46ae9ad0d0ad97a91d72aee6ae
   imsdk-tob: 1387e565619741db285cb10d0b266332e3ca521c
   JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
@@ -223,6 +220,6 @@ SPEC CHECKSUMS:
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: e2950ea0982925675211f81c7ffc3f49b61cbcfd
+PODFILE CHECKSUM: 28949b318e4e48688e425b2806488d562631ab00
 
 COCOAPODS: 1.14.3
