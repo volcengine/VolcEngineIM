@@ -5,9 +5,9 @@ import { IconClose } from '@arco-design/web-react/icon';
 import IconButtonMask from '../IconButtonMask';
 import BaseEditor from './baseEditor';
 import { IRichText } from './interface';
-import { ACCOUNTS_INFO, EDITOR_TYPE, KeyCode } from '../../constant';
+import { EDITOR_TYPE, KeyCode } from '../../constant';
 import { getMessagePreview } from '../../utils';
-import { useMessage } from '../../hooks';
+import { useAccountsInfo, useMessage } from '../../hooks';
 import { CurrentConversation } from '../../store';
 import { useRecoilValue } from 'recoil';
 
@@ -129,6 +129,7 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
 
     return false;
   };
+  const ACCOUNTS_INFO = useAccountsInfo();
 
   const renderReplyTitle = () => {
     const content = getMessagePreview(repliedMessage);

@@ -4,7 +4,7 @@ import { Button, Input, Tooltip } from '@arco-design/web-react';
 import { useRecoilValue } from 'recoil';
 
 import { Avatar } from '../../../../../components';
-import { ACCOUNTS_INFO, ROLE } from '../../../../../constant';
+import { ROLE } from '../../../../../constant';
 import { CurrentConversation, LiveConversationOwner, UserId } from '../../../../../store';
 
 import GroupSearchModalBox from './Styles';

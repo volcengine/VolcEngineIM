@@ -5,8 +5,7 @@ import ImEditor, { IRichText } from '../MessageEditor';
 import { IMAccountInfoTypes } from '../../types';
 import Styles from './Styles';
 import { Participants, ReferenceMessage } from '../../store';
-import { ACCOUNTS_INFO } from '../../constant';
-import { useMessage } from '../../hooks';
+import { useAccountsInfo, useMessage } from '../../hooks';
 
 interface ChatOperationPropsType {
   userInfo?: IMAccountInfoTypes;
@@ -19,7 +18,7 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
   const imEditorRef = useRef<any>(null);
   const { sendTextMessage } = useMessage();
   const [referenceMessage, setReferenceMessage] = useRecoilState(ReferenceMessage);
-
+  const ACCOUNTS_INFO = useAccountsInfo();
   const suggestions = participants.map(item => {
     return {
       id: item.userId,

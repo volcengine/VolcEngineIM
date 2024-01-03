@@ -2,7 +2,7 @@ import React, { useCallback, memo, FC, useEffect, useRef, useMemo, useState } fr
 import { Spin } from '@arco-design/web-react';
 import { useRecoilValue } from 'recoil';
 import classNames from 'classnames';
-import { Conversation, Message } from '@volcengine/im-web-sdk';
+import { Conversation, im_proto, Message } from '@volcengine/im-web-sdk';
 
 import { IconSetting, IconNotice } from '../components/Icon';
 import {
@@ -16,12 +16,14 @@ import {
   ChatHeader,
   ChatStatus,
   ReplyList,
+  ConversationTab,
 } from '../components/index';
-import { useConversation } from '../hooks';
+import { useAccountsInfo, useConversation, useProfileUpdater } from '../hooks';
 import { Conversations, CurrentConversation } from '../store';
 import { Iui } from '../types';
 
 import MainContainer from './Style';
+import { FRIEND_INFO } from '../constant';
 
 interface PCFePropsType {
   ui?: Iui;
@@ -110,6 +112,12 @@ const Home: FC<PCFePropsType> = memo(() => {
       setSelectedKey('');
     }
   }, [currentConversation]);
+  const [filterType, setFilterType] = useState('all');
+
+  const ACCOUNTS_INFO = useAccountsInfo(); // 订阅好友关系更新
+  let friendConvList = conversations.filter(
+    i => i.type === im_proto.ConversationType.ONE_TO_ONE_CHAT && FRIEND_INFO.value[i.toParticipantUserId]
+  );
 
   return (
     <MainContainer>
@@ -119,10 +127,16 @@ const Home: FC<PCFePropsType> = memo(() => {
           createOneOneConversation={createOneOneConversation}
         />
 
+        <ConversationTab
+          onChange={setFilterType}
+          allUnreadCount={conversations.reduce((a, c) => a + (c.isMuted ? 0 : c.unreadCount), 0)}
+          friendUnreadCount={friendConvList.reduce((a, c) => a + (c.isMuted ? 0 : c.unreadCount), 0)}
+        ></ConversationTab>
         <ConversationList
           curConversationId={currentConversation?.id}
-          list={conversations}
+          list={filterType === 'all' ? conversations : friendConvList}
           onItemClick={handleConversationItemClick}
+          emptyText={filterType === 'friend' ? '暂无好友会话' : undefined}
         />
       </div>
 

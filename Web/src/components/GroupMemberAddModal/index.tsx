@@ -1,7 +1,6 @@
 import { Form, Transfer } from '@arco-design/web-react';
 import React, { FC, useState, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import { ACCOUNTS_INFO } from '../../constant';
 
 import { CurrentConversation, Participants } from '../../store';
 import { UserIdsInput } from '../ConversationModal/Group';
@@ -10,7 +9,7 @@ interface GroupMemberAddModalProps {
   setSelectedParticipant?: (p) => void;
 }
 
-const GroupMemberAddModal: FC<GroupMemberAddModalProps> = React.forwardRef(props => {
+const GroupMemberAddModal: FC<GroupMemberAddModalProps> = props => {
   const { setSelectedParticipant } = props;
   const [groupIds, setGroupIds] = useState<string[]>([]);
 
@@ -27,6 +26,6 @@ const GroupMemberAddModal: FC<GroupMemberAddModalProps> = React.forwardRef(props
       </Form.Item>
     </Form>
   );
-});
+};
 
 export default GroupMemberAddModal;

@@ -4,11 +4,12 @@ import { Spin, Message } from '@arco-design/web-react';
 
 import { PageLoading, AppLayout } from './Style';
 import { AppNavbar } from '../components';
-import { useImSdK } from '../hooks';
+import { useImSdK, useProfileUpdater } from '../hooks';
 import { useEffect } from 'react';
 
 const Layout = () => {
   const { loading } = useImSdK();
+  useProfileUpdater();
 
   if (loading) {
     return (

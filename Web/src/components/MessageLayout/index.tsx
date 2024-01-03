@@ -2,7 +2,7 @@ import React, { FC, CSSProperties, useMemo, useEffect, useState, useCallback } f
 import classNames from 'classnames';
 import { useRecoilValue } from 'recoil';
 import { FlightStatus, im_proto, Message } from '@volcengine/im-web-sdk';
-import { Message as MessageToast } from '@arco-design/web-react';
+import { Message as MessageToast, Tooltip } from '@arco-design/web-react';
 
 import { MessageItemType } from '../../types';
 import {
@@ -16,7 +16,7 @@ import {
 } from './components';
 import { IconReply, IconDelete, IconRevocation, IconFillPin, IconLike } from '../Icon';
 import { getMessageComponent } from '../MessageCards';
-import { useInView } from '../../hooks';
+import { useAccountsInfo, useInView } from '../../hooks';
 import { getMessageTimeFormat } from '../../utils/formatTime';
 import MessageWrap from './Styles';
 import { BytedIMInstance, CurrentConversation } from '../../store';
@@ -135,11 +135,17 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
     return <MessageTime createAt={createdAt} />;
   };
 
+  const ACCOUNTS_INFO = useAccountsInfo();
+
   /** 每个消息的时间 */
   const renderMessageOwnerInfo = () => {
     return (
       <div className="message-info">
-        <span className="message-timestamp noselect">{getMessageTimeFormat(createdAt)}</span>
+        {isFromMe && <span className="message-timestamp noselect">{getMessageTimeFormat(createdAt)}&nbsp;</span>}
+        <Tooltip content={ACCOUNTS_INFO[sender]?.realName}>
+          <span>{ACCOUNTS_INFO[sender]?.name}</span>
+        </Tooltip>
+        {!isFromMe && <span className="message-timestamp noselect">&nbsp;{getMessageTimeFormat(createdAt)}</span>}
       </div>
     );
   };
@@ -288,7 +294,7 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
             >
               {renderReply(replyMsg)}
               {renderMessageContent()}
-              {renderMessageProperty()}
+              {!isRecalled && renderMessageProperty()}
             </div>
 
             <div className="message-section-right">

@@ -11,4 +11,4 @@ export * from './useParticipant';
 export * from './useLive';
 export * from './useLiveConversation';
 export { useUnreadFriendApplyCount } from './useUnreadFriendApplyCount';
-export * from './useFriendAlias';
+export * from './useProfileUpdater';

@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Button, Form, Input, Message, Modal, Radio, Select } from '@arco-design/web-react';
 import Avatar from '../../Avatar';
-import { ACCOUNTS_INFO } from '../../../constant';
+import { useAccountsInfo } from '../../../hooks';
 
 interface LiveParticipantInfoModelProps {
   onClose?: () => void;
@@ -33,6 +33,7 @@ const LiveParticipantInfoModel: FC<LiveParticipantInfoModelProps> = props => {
   };
 
   const [form] = Form.useForm();
+  const ACCOUNTS_INFO = useAccountsInfo();
 
   return (
     <Modal
@@ -54,16 +55,11 @@ const LiveParticipantInfoModel: FC<LiveParticipantInfoModelProps> = props => {
           alias: props.initAlias ?? '',
         }}
       >
-        <Form.Item label="昵称" field="alias">
-          <Input
-            placeholder={props.userId ? ACCOUNTS_INFO[props.userId]?.name || props.userId : '请输入群昵称'}
-            maxLength={10}
-            showWordLimit
-            autoComplete={'off'}
-          />
+        <Form.Item label="我的群昵称" field="alias">
+          <Input maxLength={10} showWordLimit autoComplete={'off'} />
         </Form.Item>
-        <Form.Item label="头像" field="avatarUrl">
-          <Input placeholder="头像 URL" maxLength={500} showWordLimit />
+        <Form.Item label="我的群头像" field="avatarUrl">
+          <Input maxLength={500} showWordLimit />
         </Form.Item>
       </Form>
     </Modal>

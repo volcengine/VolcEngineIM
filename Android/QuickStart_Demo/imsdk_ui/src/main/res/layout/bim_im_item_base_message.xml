@@ -87,10 +87,37 @@
             android:id="@+id/container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/iv_send_status"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            app:layout_constraintStart_toStartOf="@id/container"
+            app:layout_constraintTop_toBottomOf="@id/container"
+            android:id="@+id/tv_base_msg_property_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/shape_im_msg_property_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textColor="@color/business_im_999"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <TextView
+            app:layout_constraintEnd_toEndOf="@id/container"
+            app:layout_constraintTop_toBottomOf="@id/container"
+            android:id="@+id/tv_base_msg_property_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/shape_im_msg_property_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textColor="@color/business_im_999"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_recall"

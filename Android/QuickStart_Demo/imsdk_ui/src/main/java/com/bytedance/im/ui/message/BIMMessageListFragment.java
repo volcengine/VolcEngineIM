@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.enums.BIMMessageNewPropertyModifyType;
 import com.bytedance.im.core.api.interfaces.BIMMessageListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSendCallback;
@@ -30,9 +31,15 @@ import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMGetMessageOption;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.api.model.BIMMessageListResult;
+import com.bytedance.im.core.api.model.BIMMessageNewPropertyModify;
+import com.bytedance.im.core.client.IMClient;
+import com.bytedance.im.core.model.LocalPropertyItem;
+import com.bytedance.im.core.model.ModifyMsgPropertyMsg;
+import com.bytedance.im.core.proto.OPERATION_TYPE;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.api.BIMUIUser;
+import com.bytedance.im.ui.emoji.EmojiInfo;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.adapter.BIMMessageAdapter;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
@@ -50,7 +57,9 @@ import com.bytedance.im.ui.utils.media.MediaInfo;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class BIMMessageListFragment extends Fragment {
@@ -540,6 +549,46 @@ public class BIMMessageListFragment extends Fragment {
 
     public void onRefMessage(BIMMessage message) {
         inPutView.onRefMessage(message);
+    }
+
+    public void onClickEmoji(EmojiInfo emojiInfo, BIMMessage message) {
+        long uid = BIMClient.getInstance().getCurrentUserID();
+        Map<String, List<LocalPropertyItem>> map = message.getMessage().getPropertyItemListMap();
+
+        BIMMessageNewPropertyModify bimMessageNewPropertyModify = new BIMMessageNewPropertyModify();
+        bimMessageNewPropertyModify.setValue("" + uid);
+        bimMessageNewPropertyModify.setKey(emojiInfo.text);
+        bimMessageNewPropertyModify.setIdempotentID("" + uid);
+
+        //没有消息属性，或消息属性中不存在该表情，直接添加
+        boolean needAdd = false;
+        if (map == null || map.size() == 0 || !map.containsKey(emojiInfo.text)) {
+            needAdd = true;
+        } else {
+            boolean needRemove = false;
+            for (Map.Entry<String, List<LocalPropertyItem>> entry : map.entrySet()) {
+                if (entry.getKey().equals(emojiInfo.text) && entry.getValue().size() != 0) {
+                    for (LocalPropertyItem item : entry.getValue()) {
+                        if (item.uid == BIMClient.getInstance().getCurrentUserID()) {
+                            needRemove = true;
+                            break;
+                        }
+                    }
+                    if (needRemove) {
+                        break;
+                    }
+                }
+            }
+            needAdd = !needRemove;
+        }
+        bimMessageNewPropertyModify.setType(needAdd ? BIMMessageNewPropertyModifyType.ADD : BIMMessageNewPropertyModifyType.REMOVE);
+        BIMClient.getInstance().modifyMessageProperty(message, Collections.singletonList(bimMessageNewPropertyModify), new BIMSimpleCallback() {
+            @Override
+            public void onSuccess() { }
+
+            @Override
+            public void onFailed(BIMErrorCode code) { }
+        });
     }
 
     private void sendMessage(BIMMessage msg) {

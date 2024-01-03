@@ -2,10 +2,9 @@ import React, { FC, useCallback, memo } from 'react';
 import { Message, im_proto } from '@volcengine/im-web-sdk';
 
 import { getMessagePreview } from '../../../../utils/message';
-import { ACCOUNTS_INFO } from '../../../../constant';
 
 import MessageReplyBox from './Styles';
-import { useFriendAlias } from '../../../../hooks';
+import { useAccountsInfo } from '../../../../hooks';
 
 interface MessageReplyProps {
   isBurned?: boolean;
@@ -16,8 +15,8 @@ interface MessageReplyProps {
 const MessageReply: FC<MessageReplyProps> = props => {
   const { message, messageStatus } = props;
   const { sender } = message || {};
+  const ACCOUNTS_INFO = useAccountsInfo();
 
-  useFriendAlias();
   const getReplyHeaderText = () => {
     return `回复${ACCOUNTS_INFO[sender]?.name}:`;
   };

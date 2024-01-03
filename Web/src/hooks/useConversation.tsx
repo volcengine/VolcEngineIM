@@ -2,9 +2,10 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { im_proto, ConversationSettingWeakMuteInfo, PushStatus } from '@volcengine/im-web-sdk';
 
 import { BytedIMInstance, CurrentConversation, UserId } from '../store';
-import { ACCOUNTS_INFO, CheckCode } from '../constant';
+import { CheckCode } from '../constant';
 import useMessage from './useMessage';
 import { Message } from '@arco-design/web-react';
+import { useAccountsInfo } from './useProfileUpdater';
 
 const { ConversationOperationStatus, ConversationType } = im_proto;
 
@@ -13,6 +14,7 @@ const useConversation = () => {
   const setCurrentConversation = useSetRecoilState(CurrentConversation);
   const userId = useRecoilValue(UserId);
   const { sendSystemMessage } = useMessage();
+  const ACCOUNTS_INFO = useAccountsInfo();
 
   /**
    * 根据id获取会话

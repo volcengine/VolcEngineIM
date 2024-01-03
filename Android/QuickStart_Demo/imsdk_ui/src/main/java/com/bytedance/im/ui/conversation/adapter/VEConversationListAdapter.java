@@ -138,6 +138,7 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
         for (BIMConversation conversation : list) {
             VEConversationWrapper wrapper = wrap(conversation);
             removeIndex(finIndex(wrapper));
+            checkExist(conversation.getConversationID());
             insertIndex(findInsertIndex(wrapper), wrapper);
         }
     }

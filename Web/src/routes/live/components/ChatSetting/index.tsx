@@ -30,6 +30,7 @@ import GroupQueryUserInfoModal from './GroupQueryUserInfoModal';
 import LiveParticipantInfoModel from '../../../../components/ConversationModal/LiveParticipantInfo';
 import { Participant } from '@volcengine/im-web-sdk';
 import { useRequest } from 'ahooks';
+import MarkUserModal from './MarkUserModal';
 
 enum ModalType {
   Info = 1,
@@ -39,6 +40,7 @@ enum ModalType {
   Transfer = 5,
   MuteWhiteList = 6,
   QueryUserStatus = 7,
+  MarkUser = 8,
 }
 
 const ModalMap = {
@@ -75,6 +77,11 @@ const ModalMap = {
   },
   [ModalType.QueryUserStatus]: {
     title: '查询用户状态',
+    width: 600,
+    footer: null,
+  },
+  [ModalType.MarkUser]: {
+    title: '标记成员',
     width: 600,
     footer: null,
   },
@@ -218,6 +225,15 @@ export const ChatSetting: FC<ChatSettingProps> = props => {
       case ModalType.QueryUserStatus:
         component = <GroupQueryUserInfoModal />;
         break;
+      case ModalType.MarkUser:
+        component = (
+          <MarkUserModal
+            onClose={() => {
+              setModalVisible(false);
+            }}
+          />
+        );
+        break;
       default:
         break;
     }
@@ -284,6 +300,20 @@ export const ChatSetting: FC<ChatSettingProps> = props => {
               <IconRight />
             </div>
           </div>
+          {isManageable && (
+            <div
+              className="select-item-wrapper"
+              onClick={() => {
+                showTypeModel(ModalType.MarkUser);
+              }}
+            >
+              <div className="item-name-wrapper">标记成员</div>
+
+              <div className="item-icon-wrapper">
+                <IconRight />
+              </div>
+            </div>
+          )}
           <div
             className="select-item-wrapper"
             onClick={() => {

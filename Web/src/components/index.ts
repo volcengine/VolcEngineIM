@@ -35,3 +35,5 @@ export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as MessageList } from './MessageList';
 export { default as ChatHeaderBox } from './ChatHeaderBox';
 export { default as MessageLayout } from './MessageLayout';
+export { default as ProfilePopover } from './ProfilePopover';
+export { default as ConversationTab } from './ConversationTab';

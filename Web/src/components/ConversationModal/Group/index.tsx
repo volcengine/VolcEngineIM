@@ -3,7 +3,6 @@ import { Button, Form, Input, List, Message, Modal, Transfer } from '@arco-desig
 import { useRecoilValue } from 'recoil';
 
 import { DefaultUserIds, UserId } from '../../../store';
-import { ACCOUNTS_INFO } from '../../../constant';
 
 import styles from './index.module.scss';
 import { useRequest } from 'ahooks';
@@ -44,7 +43,7 @@ export function UserIdsInput({
   );
 
   return (
-    <Form className={styles['user-input-wrapper']}>
+    <div className={styles['user-input-wrapper']}>
       {/*<Transfer simple dataSource={dataSource} titleTexts={['全部好友', '已选择']} onChange={handleTransferData} />*/}
       <Input
         placeholder={exceedMaxCount ? '最多只能选择' + maxCount + '个用户' : placeholder ?? '请输入用户 ID'}
@@ -95,7 +94,7 @@ export function UserIdsInput({
           </List.Item>
         )}
       />
-    </Form>
+    </div>
   );
 }
 

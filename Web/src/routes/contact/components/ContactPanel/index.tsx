@@ -1,10 +1,9 @@
 import React, { memo, useState, useRef, useMemo, useCallback, useEffect } from 'react';
 
 import Styles from './Styles';
-import { Avatar, NoMessage } from '../../../../components';
+import { Avatar, NoMessage, ProfilePopover } from '../../../../components';
 import { ContactPanelHeader } from '../ContactPanelHeader';
 import { getConversationAvatar } from '../../../../utils';
-import { ACCOUNTS_INFO, CheckCode } from '../../../../constant';
 import { Button, Form, Input, List, Message, Modal, Tooltip } from '@arco-design/web-react';
 import { useRequest } from 'ahooks';
 import { useRecoilValue } from 'recoil';
@@ -19,7 +18,7 @@ import {
   BlackUserInfo,
 } from '@volcengine/im-web-sdk';
 import { sortBy } from 'lodash';
-import { useConversation } from '../../../../hooks';
+import { useAccountsInfo, useConversation } from '../../../../hooks';
 import { useNavigate } from '@modern-js/runtime/router';
 import { sleep } from '../../../../utils/sleep';
 
@@ -38,13 +37,15 @@ function ContactItem({
   onClick?: () => void;
   alias?: string;
 }) {
+  const ACCOUNTS_INFO = useAccountsInfo();
+
   return (
     <div key={userId} className={'contact-item'}>
-      <Tooltip content={ACCOUNTS_INFO[userId]?.realName}>
-        <div className={'contact-item-avatar'} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'unset' }}>
+      <div className={'contact-item-avatar'} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'unset' }}>
+        <ProfilePopover userId={userId}>
           <Avatar url={ACCOUNTS_INFO[userId]?.url} size={36} />
-        </div>
-      </Tooltip>
+        </ProfilePopover>
+      </div>
       <div
         className={'contact-item-name'}
         onClick={onClick}
@@ -346,6 +347,7 @@ function FriendItem({ i, refresh }: { i: Friend; refresh: () => void }) {
 
 function FriendList() {
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
+  const ACCOUNTS_INFO = useAccountsInfo();
 
   const {
     data = [],

@@ -20,8 +20,8 @@ const PropertyContainer = styled.div`
       display: flex;
       cursor: pointer;
       .emoji-img {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
       }
     }
     .message-property-separate {

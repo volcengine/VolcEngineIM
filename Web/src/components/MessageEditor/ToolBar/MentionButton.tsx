@@ -3,7 +3,7 @@ import { Select, Tooltip } from '@arco-design/web-react';
 import { IconAt } from '@arco-design/web-react/icon';
 
 import IconButtonMask from '../../IconButtonMask';
-import { ACCOUNTS_INFO } from '../../../constant';
+import { useAccountsInfo } from '../../../hooks';
 
 interface MentionButtonProps {
   isSimple: boolean;
@@ -13,13 +13,14 @@ interface MentionButtonProps {
 
 const MentionButton: FC<MentionButtonProps> = props => {
   const { isSimple, suggestions, editor } = props;
+  const ACCOUNTS_INFO = useAccountsInfo();
 
   return (
     <Select
       value={''}
       defaultActiveFirstOption={false}
       onChange={value => {
-        editor.value += '@' + ACCOUNTS_INFO[value].name;
+        editor.value += '@' + ACCOUNTS_INFO[value].realName;
       }}
       triggerProps={{
         position: 'tl',
@@ -43,7 +44,9 @@ const MentionButton: FC<MentionButtonProps> = props => {
       }
     >
       {suggestions?.map(i => (
-        <Select.Option value={i.id}>{i.username}</Select.Option>
+        <Select.Option value={i.id} key={i.id}>
+          {i.username}
+        </Select.Option>
       ))}
     </Select>
   );

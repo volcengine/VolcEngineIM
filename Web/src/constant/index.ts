@@ -2,17 +2,8 @@ export const APP_ID =  0; // 更换为自己的 APP_ID
 export const BUSINESS_BACKEND_DOMAIN =
    ''; // 业务后端域名（选填，IM Token 应由后端生成，如暂无业务后端接口可使用控制台 Token 生成工具）
 
-import { im_proto } from '@volcengine/im-web-sdk';
-import User_01 from '../assets/images/user_01.png';
-import User_02 from '../assets/images/user_02.png';
-import User_03 from '../assets/images/user_03.png';
-import User_04 from '../assets/images/user_04.png';
-import User_05 from '../assets/images/user_05.png';
-import User_06 from '../assets/images/user_06.png';
-import User_07 from '../assets/images/user_07.png';
-import User_08 from '../assets/images/user_08.png';
-import User_09 from '../assets/images/user_09.png';
-import User_10 from '../assets/images/user_10.png';
+import { Friend, im_proto, UserProfile } from '@volcengine/im-web-sdk';
+import DefaultAvatar from '../assets/images/default_avatar.png';
 
 // @ts-ignore
 if (APP_ID === 0) {
@@ -79,34 +70,50 @@ export const ENABLE_LIVE_DEMO =
 export const SDK_OPTION =
    SDK_CONFIG_ONLINE;
 
-const AVATAR_MAP = {
-  1: User_01,
-  2: User_02,
-  3: User_03,
-  4: User_04,
-  5: User_05,
-  6: User_06,
-  7: User_07,
-  8: User_08,
-  9: User_09,
-  10: User_10,
+export const FRIEND_INFO: { value: { [k: string]: Friend } } = { value: {} };
+
+export const PROFILE: {
+  value: {
+    [k: string]: {
+      lastSeen: number;
+      profile?: UserProfile;
+    };
+  };
+} = {
+  value: {},
 };
 
-export const FRIEND_ALIAS: { value: { [k: string]: string } } = { value: {} };
-
 export const ACCOUNTS_INFO = new Proxy(
-  {} as { [id: string]: { id: string; name: string; url: string; realName: string; hasFriendAlias: boolean } },
+  {} as {
+    [id: string]: {
+      id: string;
+      /* 好友备注，realName */ name: string;
+      url: string;
+      /* 用户昵称，默认名称 */ realName: string;
+      hasFriendAlias: boolean;
+    };
+  },
   {
     get: function (target, id: string) {
       if (!target[id]) {
         let last = Number(id[id.length - 1]) % 10;
         if (last === 0) last = 10;
+        if (!PROFILE.value[id]) {
+          window.dispatchEvent(
+            new CustomEvent('profileRequest', {
+              detail: { userIds: [id] },
+            })
+          );
+        }
+
+        let realName = PROFILE.value[id]?.profile?.nickname || `用户${id}`;
+        let friendAlias = FRIEND_INFO.value[id]?.alias;
         return {
           id: id,
-          name: FRIEND_ALIAS.value[id] ? FRIEND_ALIAS.value[id] : `用户${id}`,
-          hasFriendAlias: Boolean(FRIEND_ALIAS.value[id]),
-          realName: `用户${id}`,
-          url: AVATAR_MAP[last],
+          name: friendAlias ? friendAlias : realName,
+          hasFriendAlias: Boolean(friendAlias),
+          realName: realName,
+          url: PROFILE.value[id]?.profile?.portrait || DefaultAvatar,
         };
       }
       return target[id];
