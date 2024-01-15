@@ -144,8 +144,12 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         int env = SpUtils.getInstance().getEnv();
         String swimLean = "";
         int curAppId = Constants.APP_ID;
-        if (Constants.APP_ENV != -1) {
-            curAppId = Constants.APP_ENV; //已代码配置为准
+        if (Constants.APP_ENV != -1) {  //以代码配置为准
+            if (Constants.APP_ENV == Constants.ENV_i18n) {
+                curAppId = Constants.APP_ID_I18N;  //海外 appid
+            } else if (Constants.APP_ENV == Constants.ENV_DEFAULT) {
+                curAppId = Constants.APP_ID;    //国内 appid
+            }
         } else {
             if (env == Constants.ENV_BOE) {
                 swimLean = SpUtils.getInstance().getBoeSwimLane();
