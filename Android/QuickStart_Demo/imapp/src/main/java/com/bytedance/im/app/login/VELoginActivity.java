@@ -113,7 +113,6 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
      * 登陆 IMSDK
      *
      * @param uid
-     * @param name
      * @param token
      */
     private void loginIM(long uid, String token) {
@@ -142,22 +141,27 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
      */
     public void init(Application application) {
         //imsdk
-        int appId = Constants.APP_ID;
         int env = SpUtils.getInstance().getEnv();
         String swimLean = "";
-        if (env == Constants.ENV_BOE) {
-            swimLean = SpUtils.getInstance().getBoeSwimLane();
-        } else if (env == Constants.ENV_PPE) {
-            swimLean = SpUtils.getInstance().getPpeSwimLane();
-        } else if (env == Constants.ENV_i18n) {
-            appId = Constants.APP_ID_I18N;//海外
+        int curAppId = Constants.APP_ID;
+        if (Constants.APP_ENV != -1) {
+            curAppId = Constants.APP_ENV; //已代码配置为准
+        } else {
+            if (env == Constants.ENV_BOE) {
+                swimLean = SpUtils.getInstance().getBoeSwimLane();
+            } else if (env == Constants.ENV_PPE) {
+                swimLean = SpUtils.getInstance().getPpeSwimLane();
+            } else if (env == Constants.ENV_i18n) {
+                curAppId = Constants.APP_ID_I18N;//海外
+            }
         }
+
         Log.i(TAG,"initSDK() env: "+env+" swimLean: "+swimLean);
         BIMSDKConfig config = new BIMSDKConfig();
         config.setEnableAPM(SpUtils.getInstance().isEnableAPM());
         config.setEnableAppLog(SpUtils.getInstance().isEnableALog());
-        BIMUIClient.getInstance().init(application,appId, env, swimLean, config);
-        VEIMApplication.accountProvider.init(application, appId, SpUtils.getInstance().getEnv());
+        BIMUIClient.getInstance().init(application,curAppId, env, swimLean, config);
+        VEIMApplication.accountProvider.init(application, curAppId, SpUtils.getInstance().getEnv());
         BIMUIClient.getInstance().setUserProvider(new BIMDefaultUserProvider(500));
     }
 }

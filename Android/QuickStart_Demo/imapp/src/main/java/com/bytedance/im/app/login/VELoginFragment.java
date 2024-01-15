@@ -65,7 +65,11 @@ public class VELoginFragment extends Fragment implements BIMAuthProvider {
         loginLayout = view.findViewById(R.id.login_btn);
         tvProtocol = view.findViewById(R.id.tv_protocol);
         tvAppId = view.findViewById(R.id.tv_app_id);
-        tvAppId.setText("APPID:" + Constants.APP_ID);
+        if (Constants.APP_ENV == Constants.ENV_DEFAULT) {
+            tvAppId.setText("APPID:" + Constants.APP_ID);   //默认国内
+        } else if (Constants.APP_ENV == Constants.ENV_i18n) {
+            tvAppId.setText("APPID:" + Constants.APP_ID_I18N);  //海外
+        }
         tvUId.setText("用户ID:" + Constants.uid);
         tvNickName.setText("用户名称:" + Constants.uid);
         tvToken.setText("token:" + Constants.token);
