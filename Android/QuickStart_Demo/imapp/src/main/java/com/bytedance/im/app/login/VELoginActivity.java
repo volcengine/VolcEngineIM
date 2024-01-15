@@ -145,9 +145,10 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         String swimLean = "";
         int curAppId = Constants.APP_ID;
         if (Constants.APP_ENV != -1) {  //以代码配置为准
-            if (Constants.APP_ENV == Constants.ENV_i18n) {
+            env = Constants.APP_ENV;
+            if (env == Constants.ENV_i18n) {
                 curAppId = Constants.APP_ID_I18N;  //海外 appid
-            } else if (Constants.APP_ENV == Constants.ENV_DEFAULT) {
+            } else if (env == Constants.ENV_DEFAULT) {
                 curAppId = Constants.APP_ID;    //国内 appid
             }
         } else {
@@ -160,12 +161,12 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
             }
         }
 
-        Log.i(TAG,"initSDK() env: "+env+" swimLean: "+swimLean);
+        Log.i(TAG, "initSDK() env: " + env + " curAppId: " + curAppId + " swimLean: " + swimLean +);
         BIMSDKConfig config = new BIMSDKConfig();
         config.setEnableAPM(SpUtils.getInstance().isEnableAPM());
         config.setEnableAppLog(SpUtils.getInstance().isEnableALog());
         BIMUIClient.getInstance().init(application,curAppId, env, swimLean, config);
-        VEIMApplication.accountProvider.init(application, curAppId, SpUtils.getInstance().getEnv());
+        VEIMApplication.accountProvider.init(application, curAppId, env);
         BIMUIClient.getInstance().setUserProvider(new BIMDefaultUserProvider(500));
     }
 }
