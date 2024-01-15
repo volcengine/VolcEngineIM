@@ -141,31 +141,21 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
      */
     public void init(Application application) {
         //imsdk
-        int env = SpUtils.getInstance().getEnv();
-        String swimLean = "";
-        int curAppId = Constants.APP_ID;
         if (Constants.APP_ENV != -1) {  //以代码配置为准
-            env = Constants.APP_ENV;
-            if (env == Constants.ENV_i18n) {
-                curAppId = Constants.APP_ID_I18N;  //海外 appid
-            } else if (env == Constants.ENV_DEFAULT) {
-                curAppId = Constants.APP_ID;    //国内 appid
-            }
-        } else {
-            if (env == Constants.ENV_BOE) {
-                swimLean = SpUtils.getInstance().getBoeSwimLane();
-            } else if (env == Constants.ENV_PPE) {
-                swimLean = SpUtils.getInstance().getPpeSwimLane();
-            } else if (env == Constants.ENV_i18n) {
-                curAppId = Constants.APP_ID_I18N;//海外
-            }
+            SpUtils.getInstance().setEnv(Constants.APP_ENV);
         }
-
-        Log.i(TAG, "initSDK() env: " + env + " curAppId: " + curAppId + " swimLean: " + swimLean);
+        int env = SpUtils.getInstance().getEnv();
+        int curAppId = Constants.APP_ID;
+        if (env == Constants.ENV_i18n) {
+            curAppId = Constants.APP_ID_I18N;  //海外 appid
+        } else if (env == Constants.ENV_DEFAULT) {
+            curAppId = Constants.APP_ID;    //国内 appid
+        }
+        Log.i(TAG, "initSDK() env: " + env + " curAppId: " + curAppId);
         BIMSDKConfig config = new BIMSDKConfig();
         config.setEnableAPM(SpUtils.getInstance().isEnableAPM());
         config.setEnableAppLog(SpUtils.getInstance().isEnableALog());
-        BIMUIClient.getInstance().init(application,curAppId, env, swimLean, config);
+        BIMUIClient.getInstance().init(application,curAppId, env, config);
         VEIMApplication.accountProvider.init(application, curAppId, env);
         BIMUIClient.getInstance().setUserProvider(new BIMDefaultUserProvider(500));
     }
