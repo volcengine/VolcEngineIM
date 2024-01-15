@@ -150,7 +150,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         } else if (env == Constants.ENV_PPE) {
             swimLean = SpUtils.getInstance().getPpeSwimLane();
         } else if (env == Constants.ENV_i18n) {
-            appId = 889260;//海外
+            appId = Constants.APP_ID_I18N;//海外
         }
         Log.i(TAG,"initSDK() env: "+env+" swimLean: "+swimLean);
         BIMSDKConfig config = new BIMSDKConfig();

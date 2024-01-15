@@ -10,8 +10,8 @@ android {
         applicationId "com.bytedance.im.app"
         minSdkVersion MIN_SDK_VERSION as int
         targetSdkVersion TARGET_SDK_VERSION as int
-        versionCode 10800
-        versionName "1.8.0"
+        versionCode 10900
+        versionName "1.9.0"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders.put("APPLOG_SCHEME", "rangersapplog.b674e0c0eec26787".toLowerCase())

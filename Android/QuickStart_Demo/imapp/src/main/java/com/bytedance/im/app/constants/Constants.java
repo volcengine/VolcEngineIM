@@ -3,6 +3,7 @@ package com.bytedance.im.app.constants;
 public class Constants {
 
     public static final int APP_ID = 0;
+    public static final int APP_ID_I18N =  0;
 
     public static final String token = "";
 
