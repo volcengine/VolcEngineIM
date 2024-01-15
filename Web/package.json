@@ -35,7 +35,6 @@
     "react-transition-group": "^4.4.5",
     "recoil": "^0.6.1",
     "styled-components": "^5.3.5",
-    "tt-uploader": "1.0.25",
     "web-vitals": "^1.1.2"
   },
   "devDependencies": {
