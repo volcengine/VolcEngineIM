@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -170,6 +171,7 @@ public class VEContactBlockListActivity extends Activity {
             window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
             EditText et = window.findViewById(R.id.et_uid);
+            et.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
             TextView tvMain = window.findViewById(R.id.tv_main);
             TextView tvReject = window.findViewById(R.id.tv_reject);
             TextView tvConfirm = window.findViewById(R.id.tv_confirm);

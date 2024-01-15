@@ -210,6 +210,8 @@ public class VEContactListFragment extends Fragment {
             window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
             EditText et = window.findViewById(R.id.et_uid);
+            et.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
+
             TextView tvReject = window.findViewById(R.id.tv_reject);
             TextView tvConfirm = window.findViewById(R.id.tv_confirm);
 
