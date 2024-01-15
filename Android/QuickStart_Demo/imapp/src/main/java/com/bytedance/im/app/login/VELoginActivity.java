@@ -161,7 +161,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
             }
         }
 
-        Log.i(TAG, "initSDK() env: " + env + " curAppId: " + curAppId + " swimLean: " + swimLean +);
+        Log.i(TAG, "initSDK() env: " + env + " curAppId: " + curAppId + " swimLean: " + swimLean);
         BIMSDKConfig config = new BIMSDKConfig();
         config.setEnableAPM(SpUtils.getInstance().isEnableAPM());
         config.setEnableAppLog(SpUtils.getInstance().isEnableALog());
