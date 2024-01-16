@@ -29,7 +29,6 @@
             android:ellipsize="end"
             android:maxEms="10"
             android:maxLines="1"
-            android:text="54145432"
             android:textColor="@color/business_im_222"
             android:textSize="18sp"
             android:textStyle="bold"

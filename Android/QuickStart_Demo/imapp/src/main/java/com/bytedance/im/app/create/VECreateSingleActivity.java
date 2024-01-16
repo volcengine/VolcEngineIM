@@ -38,7 +38,7 @@ public class VECreateSingleActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ve_im_activity_create_conversaiton_single);
         editText = findViewById(R.id.edit);
-        editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(30)});
+        editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
         findViewById(R.id.back).setOnClickListener(v -> finish());
         TextView tvConfirm = findViewById(R.id.tv_confirm);
         tvConfirm.setOnClickListener(v -> {

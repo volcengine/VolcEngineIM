@@ -5,6 +5,7 @@ import android.app.Application;
 
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMConnectStatus;
+import com.bytedance.im.core.api.enums.BIMEnv;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.interfaces.BIMConnectListener;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
@@ -73,7 +74,14 @@ public class BIMUIClient {
      * @brief 初始化 SDK。
      */
     public void init(Application application, int appId, BIMSDKConfig config) {
-        init(application, appId, 0, "", config);
+        init(application, appId, BIMEnv.DEFAULT_ZH.getEnv(), "", config);
+    }
+
+    /**
+     * @hidden
+     */
+    public void init(Application application, int appId, int env, BIMSDKConfig config) {
+        init(application, appId, env, "", config);
     }
 
     /**

@@ -632,23 +632,25 @@ public class BIMMessageListFragment extends Fragment {
             @Override
             public void onError(BIMMessage bimMessage, BIMErrorCode code) {
                 BIMLog.i(TAG, "sendMessage onError() uuid: " + bimMessage.getUuid() + " code: " + code + " thread:" + Thread.currentThread());
-                if (code == BIMErrorCode.BIM_UPLOAD_FILE_SIZE_OUT_LIMIT) {
-                    Toast.makeText(getActivity(), "消息发送失败：文件大小超过限制", Toast.LENGTH_SHORT).show();
-                    return;
-                } else if (code == BIMErrorCode.BIM_CONVERSATION_NOT_EXIST) {
-                    Toast.makeText(getActivity(), "发送失败 code: " + code, Toast.LENGTH_SHORT).show();
-                    return;
-                } else if (code == BIMErrorCode.BIM_SERVER_ERROR_SEND_MESSAGE_TOO_LARGE) {
-                    Toast.makeText(getActivity(), "消息发送失败：消息内容超过限制", Toast.LENGTH_SHORT).show();
-                    return;
-                } else if (code == BIMErrorCode.BIM_SERVER_NOT_FRIEND) {
-                    Toast.makeText(getActivity(), "对方不是你的好友，无法发送消息", Toast.LENGTH_SHORT).show();
-                    return;
-                } else if (code == BIMErrorCode.BIM_SERVER_AlREADY_IN_BLACK) {
-                    Toast.makeText(getActivity(), "对方已拒收你的消息", Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
-                    Toast.makeText(getActivity(), "发送失败 code: " + code, Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    if (code == BIMErrorCode.BIM_UPLOAD_FILE_SIZE_OUT_LIMIT) {
+                        Toast.makeText(getActivity(), "消息发送失败：文件大小超过限制", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (code == BIMErrorCode.BIM_CONVERSATION_NOT_EXIST) {
+                        Toast.makeText(getActivity(), "发送失败 code: " + code, Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (code == BIMErrorCode.BIM_SERVER_ERROR_SEND_MESSAGE_TOO_LARGE) {
+                        Toast.makeText(getActivity(), "消息发送失败：消息内容超过限制", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (code == BIMErrorCode.BIM_SERVER_NOT_FRIEND) {
+                        Toast.makeText(getActivity(), "对方不是你的好友，无法发送消息", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else if (code == BIMErrorCode.BIM_SERVER_AlREADY_IN_BLACK) {
+                        Toast.makeText(getActivity(), "对方已拒收你的消息", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else {
+                        Toast.makeText(getActivity(), "发送失败 code: " + code, Toast.LENGTH_SHORT).show();
+                    }
                 }
                 if (adapter.insertOrUpdateMessage(bimMessage) == BIMMessageAdapter.APPEND) {
                     scrollBottom();

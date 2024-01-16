@@ -21,6 +21,7 @@ import com.bytedance.im.app.main.VEIMMainActivity;
 import com.bytedance.im.app.user.provider.BIMDefaultUserProvider;
 import com.bytedance.im.app.utils.VEUtils;
 import com.bytedance.im.core.api.BIMClient;
+import com.bytedance.im.core.api.enums.BIMEnv;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.interfaces.BIMAuthProvider;
@@ -69,7 +70,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
     public void onProtoAgree(boolean forceUserCacheLogin, long uid, String token) {
         //同意协议,后初始化sdk
         Log.i(TAG,"onProtoAgree()");
-        init(Constants.APP_ID,getApplication());
+        init(getApplication());
         UserToken userToken = SpUtils.getInstance().getLoginUserInfo();
         if (forceUserCacheLogin) {
             //如果登录过直接登录
@@ -89,7 +90,6 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
 
     /**
      * 点击登录按钮
-     * @param user
      * @param token
      */
     @Override
@@ -113,7 +113,6 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
      * 登陆 IMSDK
      *
      * @param uid
-     * @param name
      * @param token
      */
     private void loginIM(long uid, String token) {
@@ -140,22 +139,24 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
      * 初始化
      * @param application
      */
-    public void init(int appId,Application application) {
-        Log.i(TAG,"initSDK()");
+    public void init(Application application) {
         //imsdk
-        int env = SpUtils.getInstance().getEnv();
-        String swimLean = "";
-        if (env == Constants.ENV_BOE) {
-            swimLean = SpUtils.getInstance().getBoeSwimLane();
-        } else if (env == Constants.ENV_PPE) {
-            swimLean = SpUtils.getInstance().getPpeSwimLane();
+        if (Constants.APP_ENV != -1) {  //以代码配置为准
+            SpUtils.getInstance().setEnv(Constants.APP_ENV);
         }
-
+        int env = SpUtils.getInstance().getEnv();
+        int curAppId = Constants.APP_ID;
+        if (env == Constants.ENV_i18n) {
+            curAppId = Constants.APP_ID_I18N;  //海外 appid
+        } else if (env == Constants.ENV_DEFAULT) {
+            curAppId = Constants.APP_ID;    //国内 appid
+        }
+        Log.i(TAG, "initSDK() env: " + env + " curAppId: " + curAppId);
         BIMSDKConfig config = new BIMSDKConfig();
         config.setEnableAPM(SpUtils.getInstance().isEnableAPM());
         config.setEnableAppLog(SpUtils.getInstance().isEnableALog());
-        BIMUIClient.getInstance().init(application,appId, env, swimLean, config);
-        VEIMApplication.accountProvider.init(application, Constants.APP_ID, SpUtils.getInstance().getEnv());
+        BIMUIClient.getInstance().init(application,curAppId, env, config);
+        VEIMApplication.accountProvider.init(application, curAppId, env);
         BIMUIClient.getInstance().setUserProvider(new BIMDefaultUserProvider(500));
     }
 }

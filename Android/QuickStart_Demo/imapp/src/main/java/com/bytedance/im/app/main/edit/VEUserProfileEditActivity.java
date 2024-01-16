@@ -99,6 +99,9 @@ public class VEUserProfileEditActivity extends Activity {
         });
         customLayout = findViewById(R.id.cl_custom);
         customLayout.setOnClickListener(v -> {
+            if (userFullInfo == null) {
+                return;
+            }
             BIMUserProfile userProfile = userFullInfo.getUserProfile();
             String extStr = VEUtils.mapToString(userProfile.getExt());
             VEEditCommonActivity.startForResult(VEUserProfileEditActivity.this, "自定义字段", extStr, Integer.MAX_VALUE, REQUEST_CODE_EDIT_EXT);

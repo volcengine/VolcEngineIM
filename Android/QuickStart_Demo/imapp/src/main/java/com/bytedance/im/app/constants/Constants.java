@@ -2,11 +2,18 @@ package com.bytedance.im.app.constants;
 
 public class Constants {
 
-    public static final int APP_ID = 0;
+    public static final int APP_ID = 0; //国内appID
 
-    public static final String token = "";
+    public static final String token = "";  //token
 
-    public static final long uid = 0L;
+    public static final long uid = 0L;      //用户uid
+
+
+    /**
+     * 海外环境配置
+     */
+    public static final int APP_ID_I18N = 0;//海外appID
+    public static final int APP_ENV = Constants.ENV_DEFAULT;   //海外需要配置为 ENV_i18n //国内配置为 ENV_RELEASE
 
     /**
      * 线上环境
