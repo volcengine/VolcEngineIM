@@ -24,16 +24,16 @@
 		<key>PPE</key>
 		<dict>
 			<key>tokenUrl</key>
-			<string>https://imapi-my.sinf.net/imcloud</string>
+			<string>https://imapi.bytepluses.com/imcloud</string>
 			<key>apiUrl</key>
-			<string>https://imapi-my.sinf.net</string>
+			<string>https://imapi.bytepluses.com</string>
 		</dict>
 		<key>BOE</key>
 		<dict>
 			<key>tokenUrl</key>
-			<string>https://imapi-my.sinf.net/imcloud</string>
+			<string>https://imapi.bytepluses.com/imcloud</string>
 			<key>apiUrl</key>
-			<string>https://imapi-my.sinf.net</string>
+			<string>https://imapi.bytepluses.com</string>
 		</dict>
 	</dict>
 </dict>

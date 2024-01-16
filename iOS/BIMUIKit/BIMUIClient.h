@@ -54,6 +54,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * @type api
+ * @brief 初始化 SDK。
+ * @param sdkAppID 从[控制台](https://console.volcengine.com/rtc/im/appManage)获取的应用 ID。
+ *                 不同应用 ID 无法进行互通。
+ * @param config 配置信息，参看 BIMSDKConfig{@link #BIMSDKConfig}。
+ * @param env 区域环境码，默认国内环境 参看 BIMEnv{@link #BIMEnv}。
+ * @return  <br>
+ *        + `true`: 成功。
+ *        + `false`: 失败。
+ */
+- (BOOL)initSDK:(int)sdkAppID config:(BIMSDKConfig *)config env:(BIMEnv)env;
+
+/**
+ * @type api
  * @brief 注销 SDK，释放内存缓存资源、注销监听等。
  */
 - (void)unInitSDK;

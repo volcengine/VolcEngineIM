@@ -419,6 +419,9 @@
 }
 
 - (void)scrollViewToBottom: (BOOL)animated{
+    if ([self.messageDataSource numberOfItems] == 0) {
+        return;
+    }
     @weakify(self);
     NSTimeInterval delay = animated ? 0.25 : 0;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -493,8 +496,6 @@
 
 - (void)inputToolViewDidChange:(CGRect)frame keyboardFrame:(CGRect)keyboardFrame
 {
-//    self.tableview.frame = CGRectMake(self.tableview.frame.origin.x, self.tableview.frame.origin.y, self.tableview.frame.size.width, self.tableview.frame.size.height - (KScreenHeight - self.inputTool.frame.origin.y));
-//    [self.tableview setContentOffset:CGPointMake(0, self.tableview.contentSize.height - self.tableview.bounds.size.height) animated:YES];
     [self.tableview mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.top.left.right.mas_equalTo(0);
         make.bottom.equalTo(self.inputTool.mas_top);

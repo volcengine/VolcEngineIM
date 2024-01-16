@@ -86,7 +86,7 @@
             // 日志 输出
         NSLog(@"TIM--%@", logContent);
     }];
-    [[BIMUIClient sharedInstance] initSDK:[kVEIMDemoAppID integerValue] config:config];
+    [[BIMUIClient sharedInstance] initSDK:[kVEIMDemoAppID integerValue] config:config env:BIM_ENV_DEFAULT_ZH];
     
     [[BIMUIClient sharedInstance] setUserProvider:^BIMUser * _Nullable(long long userID) {
         if (userID == 0) {
@@ -120,19 +120,23 @@
 }
 
 - (void)showLoginVCIfNeed{
-    if (self.isLogedIn) {
-        return;
-    }
+    // 从未登录成功过或已经退出登录
     if (!self.currentUser) {
         [self presentLoginVC];
-    }else{
-        [self loginWithUser:self.currentUser completion:^(NSError * _Nullable error) {
-            if (error) {
-                [BIMToastView toast:[NSString stringWithFormat:@"登录失败：%@", error.localizedDescription]];
-                [self logout];
-            }
-        }];
+        return;
     }
+    
+    // sdk是否登录
+    if ([[BIMClient sharedInstance] getToken]) {
+        return;
+    }
+    
+    [self loginWithUser:self.currentUser completion:^(NSError * _Nullable error) {
+        if (error) {
+            [BIMToastView toast:[NSString stringWithFormat:@"登录失败：%@", error.localizedDescription]];
+            [self logout];
+        }
+    }];
 }
 
 - (void)presentLoginVC
@@ -209,36 +213,25 @@
         }];
         
     } else {
+        if (user.userToken.length) {
+            [self __loginIMSDKWithUserID:user.userID token:user.userToken completion:completion];
+            return;
+        }
         NSString *tokenUrl = [[BDIMDebugNetworkManager sharedManager] tokenUrl];
         NSString *URL = [NSString stringWithFormat:@"%@/get_token?appID=%@&userID=%lld",tokenUrl, kVEIMDemoAppID, user.userID];
         @weakify(self);
-        [TTNetworkManager.shareInstance requestForJSONWithResponse:URL params:nil method:@"GET" needCommonParams:YES callback:^(NSError *error, id obj, TTHttpResponse *response) {
+        NSDate *date1 = [NSDate date];
+        [TTNetworkManager.shareInstance requestForJSONWithResponse:URL params:nil method:@"GET" needCommonParams:YES callback:^(NSError *error, NSDictionary *obj, TTHttpResponse *response) {
             NSString *token = @"";
             if (error == nil && [obj isKindOfClass:[NSDictionary class]]) {
-                token = [(NSDictionary *)obj objectForKey:@"Token"];
+                token = [obj objectForKey:@"Token"];
             }
             
             if (token.length && user) {
                 self.currentUser = user;
                 self.currentUser.userToken = token;
                 [self saveCurrentUser:user];
-                [[BIMUIClient sharedInstance] login:@(self.currentUser.userID).stringValue token:self.currentUser.userToken completion:^(BIMError * _Nullable error) {
-                    @strongify(self);
-                    [self getUserFullInfo:user.userID syncServer:NO completion:^(BIMUserFullInfo * _Nullable info, BIMError * _Nullable error) {
-                        self.currentUserFullInfo = info;
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [self.progressHUD hideAnimated:YES];
-                            if (error) {
-                                [self logout];
-                            } else {
-                                [[NSNotificationCenter defaultCenter] postNotificationName:kVEIMDemoUserDidLoginNotification object:nil];
-                            }
-                            if (completion){
-                                completion(error);
-                            }
-                        });
-                    }];
-                }];
+                [self __loginIMSDKWithUserID:user.userID token:token completion:completion];
             } else {
                 [self.progressHUD hideAnimated:YES];
                 if (completion) {
@@ -247,6 +240,28 @@
             }
         }];
     }
+}
+
+- (void)__loginIMSDKWithUserID:(long long )userID token:(NSString *)token completion:(void (^ _Nullable)(NSError * _Nullable))completion
+{
+    @weakify(self);
+    [[BIMUIClient sharedInstance] login:@(userID).stringValue token:token completion:^(BIMError * _Nullable error) {
+        @strongify(self);
+        [self getUserFullInfo:userID syncServer:NO completion:^(BIMUserFullInfo * _Nullable info, BIMError * _Nullable error) {
+            self.currentUserFullInfo = info;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.progressHUD hideAnimated:YES];
+                if (error) {
+                    [self logout];
+                } else {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kVEIMDemoUserDidLoginNotification object:nil];
+                }
+                if (completion){
+                    completion(error);
+                }
+            });
+        }];
+    }];
 }
 
 - (void)saveCurrentUser: (VEIMDemoUser *)user{

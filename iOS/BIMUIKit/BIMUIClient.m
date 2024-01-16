@@ -40,6 +40,11 @@ NSString *const kBIMUserProfileUpdateNotification = @"kBIMUserProfileUpdateNotif
     return [[BIMClient sharedInstance] initSDK:sdkAppID config:config];
 }
 
+- (BOOL)initSDK:(int)sdkAppID config:(BIMSDKConfig *)config env:(BIMEnv)env
+{
+    return [[BIMClient sharedInstance] initSDK:sdkAppID config:config env:env];
+}
+
 
 - (void)unInitSDK
 {

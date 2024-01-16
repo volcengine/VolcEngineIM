@@ -482,19 +482,20 @@ static CGFloat textHei = 0;
 
 - (void)keyboardWillShow:(NSNotification *)notify
 {
+    NSLog(@"zj--%s", __func__);
     // 下面的三处return先去掉，1.弹出键盘 2.长按弹出删除 3点击alert取消后搜狗键盘没有弹出工具条
-//    if (!self.window || !self.tempTextView.isFirstResponder) {
-//        return;
-//    }
+    if (!self.window) {
+        return;
+    }
     self.taType = IMTextAudioTypeText;
 //    [self textAudioBtnChangeAction:nil];
 }
 
 - (void)keyboardWillHide:(NSNotification *)notify
 {
-//    if (!self.window || !self.tempTextView.isFirstResponder) {
-//        return;
-//    }
+    if (!self.window) {
+        return;
+    }
     CGRect textViewFrame = self.tempTextView.frame;
     CGSize textSize = [self.tempTextView sizeThatFits:CGSizeMake(CGRectGetWidth(textViewFrame), CGFLOAT_MAX)];
     textHei = MAX(kMinHei, MIN(kMaxHei, textSize.height));
@@ -505,9 +506,15 @@ static CGFloat textHei = 0;
 
 - (void)keyboardWillChangeFrame:(NSNotification *)notify
 {
-//    if (!self.window || !self.tempTextView.isFirstResponder) {
-//        return;
-//    }
+    if (!self.window) {
+        return;
+    }
+    
+    CGRect newFrame = [notify.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    if (CGRectEqualToRect(self.keyboardFrame, newFrame)) {
+        return;
+    }
+    
     self.itType = IMInputToolTypeTextAudio;
 
     self.moreMenuView.hidden = YES;
@@ -515,9 +522,8 @@ static CGFloat textHei = 0;
 
     self.stickerKeyboard.hidden = YES;
     [self.stickerKeyboard removeFromSuperview];
-
-
-    self.keyboardFrame = [notify.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    self.keyboardFrame = newFrame;
     [self textViewDidChange:self.tempTextView];
 }
 

@@ -96,7 +96,11 @@
     [self.collectionView reloadData];
     
     if (message.serverMessageID) {
-        [self showEmojiViewWithShowingDownward:showingDownward];
+        [[BIMClient sharedInstance] getConversation:message.conversationID completion:^(BIMConversation * _Nonnull conversation, BIMError * _Nullable error) {
+            if (conversation && conversation.conversationType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+                [self showEmojiViewWithShowingDownward:showingDownward];
+            }
+        }];
     }
 }
 

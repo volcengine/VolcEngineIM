@@ -61,7 +61,7 @@ typedef enum : NSUInteger {
     
     if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_ONE_CHAT) {
         //群聊名称
-        NSString *detail = self.conversation.name.length?self.conversation.name:@"未命名群聊";
+        NSString *detail = self.conversation.name.length ? self.conversation.name : @"未命名群聊";
         VEIMDemoSettingModel *nameSetting = [VEIMDemoSettingModel settingWithTitle:@"群聊名称" detail:detail isNeedSwitch:NO switchOn:NO];
         nameSetting.clickHandler = ^() {
             VEIMDemoInputController *vc = [[VEIMDemoInputController alloc] initWithTitle:@"群聊名称" text:detail maxWordCount:10 editable:weakself.currentParticant.role == BIM_MEMBER_ROLE_OWNER handler:^(NSString * _Nonnull text) {
@@ -173,6 +173,9 @@ typedef enum : NSUInteger {
         VEIMDemoFTSViewController *vc = [VEIMDemoFTSViewController new];
         vc.conversationID = weakself.conversation.conversationID;
         [weakself.navigationController pushViewController:vc animated:YES];
+        NSMutableArray *controllers = [NSMutableArray arrayWithArray:weakself.navigationController.viewControllers];
+        [controllers removeObjectAtIndex:1];
+        weakself.navigationController.viewControllers = controllers;
     };
     [self.settings addObject:searchMessage];
 
