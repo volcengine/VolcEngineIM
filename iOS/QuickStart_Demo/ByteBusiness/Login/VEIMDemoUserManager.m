@@ -87,7 +87,7 @@
         NSLog(@"TIM--%@", logContent);
     }];
     // env 国内：BIM_ENV_DEFAULT_ZH 海外：BIM_ENV_I18N
-    [[BIMUIClient sharedInstance] initSDK:[kVEIMDemoAppID integerValue] config:config env:BIM_ENV_DEFAULT_ZH];
+    [[BIMUIClient sharedInstance] initSDK:[kVEIMDemoAppID integerValue] config:config env:kVEIMDemoEnv];
     
     [[BIMUIClient sharedInstance] setUserProvider:^BIMUser * _Nullable(long long userID) {
         if (userID == 0) {

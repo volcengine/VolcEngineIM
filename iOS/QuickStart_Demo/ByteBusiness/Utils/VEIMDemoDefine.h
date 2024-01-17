@@ -14,9 +14,10 @@
 
 ///IM config
 //////从[控制台](https://console.volcengine.com/rtc/im/appManage)获取的应用 ID。
-#define kVEIMDemoAppID @""
+#define kVEIMDemoAppID  @""
 #define kVEIMDemoToken @""
 #define kVEIMDemoUserID @""
+#define kVEIMDemoEnv (BIM_ENV_DEFAULT_ZH) // env 国内：BIM_ENV_DEFAULT_ZH 海外：BIM_ENV_I18N
 
 ///Error
 #define kVEIMDemoErrorDomain @"VEIMDemoErrorDomain"
