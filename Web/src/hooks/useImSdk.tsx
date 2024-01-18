@@ -48,9 +48,11 @@ const init = ({ userId, deviceId }) => {
     debug: true,
     timeCalibration: true,
     // @ts-ignore
-    _teaReportAll: Boolean(localStorage.getItem('tea_report_all')),
+    _teaOptionReportAll: Boolean(localStorage.getItem('tea_report_all')),
     // @ts-ignore
-    _teaLog: Boolean(localStorage.getItem('tea_log')),
+    _teaOptionLog: Boolean(localStorage.getItem('tea_log')),
+    disableAppLog: Boolean(localStorage.getItem('im_option_disable_app_log')),
+    disableApmLog: Boolean(localStorage.getItem('im_option_disable_apm_log')),
     token: () =>
       getToken({
         appId: APP_ID,

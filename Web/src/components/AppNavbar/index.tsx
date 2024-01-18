@@ -15,7 +15,14 @@ import { useLocation, useNavigate } from '@modern-js/runtime/router';
 
 import { Avatar, Badge } from '..';
 import AppNavBarBox from './Styles';
-import { ACCOUNT_CHECK_ENABLE, ENABLE_LIVE_DEMO, USER_ID_KEY } from '../../constant';
+import {
+  ACCOUNT_CHECK_ENABLE,
+  ENABLE_LIVE_DEMO,
+  ENABLE_OVERSEA_SWITCH,
+  IM_OVERSEA_KEY,
+  IS_OVERSEA,
+  USER_ID_KEY,
+} from '../../constant';
 import { Storage } from '../../utils/storage';
 import { BytedIMInstance, Conversations, Messages, Participants, UnReadTotal, UserId } from '../../store';
 import { useLive } from '../../hooks/useLive';
@@ -206,6 +213,19 @@ const AppNavBar: FC<AppNavBarProps> = props => {
       name: '注销',
       handleClick: () => {
         setDeleteAccountModalShow(true);
+      },
+    },
+    ENABLE_OVERSEA_SWITCH && {
+      key: 'oversea',
+      icon: IS_OVERSEA ? '外' : '内',
+      name: `切换区域，当前区域: ${IS_OVERSEA ? '海外' : '国内'}`,
+      handleClick: () => {
+        if (IS_OVERSEA) {
+          localStorage.removeItem(IM_OVERSEA_KEY);
+        } else {
+          localStorage.setItem(IM_OVERSEA_KEY, '1');
+        }
+        window.location.reload();
       },
     },
     {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Input, Message } from '@arco-design/web-react';
 import { useRecoilValue } from 'recoil';
 
@@ -18,6 +18,10 @@ export const GroupNotice: React.FC = ({}) => {
   } = currentConversation;
   const isOwner = owner === userId;
   const [text, setText] = useState(notice);
+
+  useEffect(() => {
+    setText(notice);
+  }, [notice]);
 
   const handleTextChange = async () => {
     try {

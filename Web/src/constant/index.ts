@@ -1,4 +1,7 @@
+export const IS_OVERSEA = Boolean(localStorage.getItem('IM_OVERSEA_KEY') ?? false); // 是否是海外环境
+
 export const APP_ID =  0; // 更换为自己的 APP_ID
+
 export const BUSINESS_BACKEND_DOMAIN =
    ''; // 业务后端域名（选填，IM Token 应由后端生成，如暂无业务后端接口可使用控制台 Token 生成工具）
 
@@ -48,12 +51,14 @@ export enum ROLE {
 export const USER_ID_KEY = 'IM_USER_ID_KEY';
 export const IM_TOKEN_KEY = 'IM_TOKEN_KEY';
 
+export const IM_OVERSEA_KEY = 'IM_OVERSEA_KEY';
+
 let SDK_CONFIG_ONLINE = {
   appId: APP_ID,
   authType: im_proto.AuthType.TOKEN_AUTH,
   debug: true,
-  apiUrl: 'https://imapi.volcvideo.com',
-  frontierUrl: 'wss://frontier-sinftob.ivolces.com/ws/v2',
+  apiUrl: IS_OVERSEA ? 'https://imapi.bytepluses.com' : 'https://imapi.volcvideo.com',
+  frontierUrl: IS_OVERSEA ? 'wss://frontier-myatob.byteoversea.com/ws/v2' : 'wss://frontier-sinftob.ivolces.com/ws/v2',
 };
 
 
@@ -65,6 +70,9 @@ export const ACCOUNT_CHECK_ENABLE =
    false;
 
 export const ENABLE_LIVE_DEMO =
+   false;
+
+export const ENABLE_OVERSEA_SWITCH =
    false;
 
 export const SDK_OPTION =
