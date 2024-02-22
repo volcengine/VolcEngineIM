@@ -91,6 +91,13 @@ const ReferenceMessage = atom<Message>({
   dangerouslyAllowMutability: true,
 });
 
+/** 正在二次编辑的消息 */
+export const EditMessage = atom<Message>({
+  key: 'EditMessage',
+  default: null,
+  dangerouslyAllowMutability: true,
+});
+
 const UserBlockList = atom<BlockItem[]>({
   key: 'UserBlockList',
   default: [],

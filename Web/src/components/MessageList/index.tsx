@@ -43,6 +43,8 @@ export interface MessageListProps<T> {
   recallMessage?: (msg: Message) => void;
   deleteMessage?: (msg: Message) => void;
   replyMessage?: (msg: Message) => void;
+  editMessage?: (msg: Message) => void;
+
   modifyProperty?: (msg: Message, key: string, value: string) => void;
   resendMessage?: (msg: Message) => Message;
   triggerBottom?: (isShow: boolean) => void;
@@ -80,6 +82,7 @@ const MessageList = (props: MessageListProps<any>, ref: any) => {
     recallMessage,
     deleteMessage,
     replyMessage,
+    editMessage,
     resendMessage,
     modifyProperty,
     readIndex,
@@ -302,6 +305,7 @@ const MessageList = (props: MessageListProps<any>, ref: any) => {
                 recallMessage={recallMessage}
                 resendMessage={resendMessage}
                 replyMessage={replyMessage}
+                editMessage={editMessage}
                 modifyProperty={modifyProperty}
               />
             );

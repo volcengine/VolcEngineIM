@@ -6,9 +6,10 @@ import * as PCIcon from '../components/Icon';
 import { ACCOUNTS_INFO } from '../constant';
 import GroupIcon from '../assets/images/group_icon.png';
 
-enum customType {
+export enum customType {
   volc = 1,
   system = 2,
+  coupon = 3,
 }
 
 const MsgStatusElePC = {

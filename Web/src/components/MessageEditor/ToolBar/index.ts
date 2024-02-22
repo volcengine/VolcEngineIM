@@ -6,3 +6,4 @@ export { default as VideoButton } from './VideoButton';
 export { default as AudioButton } from './AudioButton';
 export { default as FileButton } from './FileButton';
 export { default as VolcButton } from './VolcButton';
+export { default as CouponButton } from './CouponButton';

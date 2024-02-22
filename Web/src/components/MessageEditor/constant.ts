@@ -7,6 +7,7 @@ import {
   AudioButton,
   FileButton,
   VolcButton,
+  CouponButton,
 } from './ToolBar';
 
 const TOOL_BAR_ITEM_MAP: any = {
@@ -18,6 +19,7 @@ const TOOL_BAR_ITEM_MAP: any = {
   Mention: MentionButton,
   MorePanel: MorePanelButton,
   Volc: VolcButton,
+  Coupon: CouponButton,
 };
 
 export { TOOL_BAR_ITEM_MAP };

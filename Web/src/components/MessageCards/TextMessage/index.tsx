@@ -3,7 +3,7 @@ import { Message } from '@volcengine/im-web-sdk';
 
 import { Bubble, RichText } from '../..';
 import { isObject } from '../../../utils/tools';
-import { isNumeric } from '../../../utils';
+import { getMessageTimeFormat, isNumeric } from '../../../utils';
 import { Emoji } from '../../../assets/emotion/emojify';
 
 import { GlobalStyle } from './Styles';
@@ -36,10 +36,19 @@ const TextMessage = memo((props: ITextMessage) => {
     return parseContent(message.content);
   }, [message.content]);
 
+  const suffix = useMemo(() => {
+    return message.isEdited ? (
+      <span style={{ fontSize: '0.8em', color: 'gray' }}>
+        （已编辑; 用户: {message.editInfo.contentEditorUid}; 时间:{' '}
+        {getMessageTimeFormat(message.editInfo.contentEditTime)}）
+      </span>
+    ) : null;
+  }, [message.isEdited]);
+
   if (isObject(content)) {
     return (
       <Bubble>
-        <RichText richText={content} />
+        <RichText richText={content} suffix={suffix} />
       </Bubble>
     );
   }
@@ -55,6 +64,7 @@ const TextMessage = memo((props: ITextMessage) => {
     <Bubble>
       <GlobalStyle />
       <div dangerouslySetInnerHTML={{ __html: richContent }}></div>
+      {suffix}
     </Bubble>
   );
 });

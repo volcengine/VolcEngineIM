@@ -16,6 +16,7 @@ interface ImEditorProps {
   className?: string;
   placeholder?: string;
   repliedMessage?: Message;
+  editingMessage?: Message;
   ref?: any;
   onSubmit?: (richText?: IRichText) => void;
   changeReplyMessage?: (message) => void;
@@ -31,6 +32,7 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
     className,
     placeholder,
     repliedMessage,
+    editingMessage,
     changeReplyMessage,
     onEditorStateChange,
     onSubmit,
@@ -42,7 +44,8 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
   const focusAnimationFrame = useRef<any>(null);
   const focusAtEndAnimationFrame = useRef<any>(null);
   const isEditorIsEmpty = useRef(true);
-  const { sendFileMessage, sendImageMessage, sendVideoMessage, sendAudioMessage, sendVolcMessage } = useMessage();
+  const { sendFileMessage, sendImageMessage, sendVideoMessage, sendAudioMessage, sendVolcMessage, sendCouponMessage } =
+    useMessage();
 
   const focus = () => {
     cancelAnimationFrame(focusAnimationFrame.current);
@@ -106,6 +109,13 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
         },
       },
       {
+        key: 'Coupon',
+        use: true,
+        params: {
+          sendMessage: sendCouponMessage,
+        },
+      },
+      {
         key: 'MorePanel',
         use: false,
       },
@@ -132,7 +142,10 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
   const ACCOUNTS_INFO = useAccountsInfo();
 
   const renderReplyTitle = () => {
-    const content = getMessagePreview(repliedMessage);
+    const msg = editingMessage || repliedMessage;
+
+    const content = getMessagePreview(msg);
+
     return (
       <div className="reply-title">
         <IconButtonMask
@@ -148,7 +161,7 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
           </span>
         </IconButtonMask>
         <span className="reply-text">
-          回复 {ACCOUNTS_INFO[repliedMessage.sender].name}:&nbsp;{content}
+          {editingMessage ? '编辑' : '回复'} {ACCOUNTS_INFO[msg.sender].name}:&nbsp;{content}
         </span>
       </div>
     );
@@ -212,7 +225,7 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
       placeholder={placeholder}
       editorType={editorType}
       toolBarList={toolBarList || getToolBarList()}
-      renderHeader={repliedMessage ? renderReplyTitle : null}
+      renderHeader={editingMessage || repliedMessage ? renderReplyTitle : null}
       suggestions={suggestions}
     />
   );

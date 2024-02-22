@@ -1,0 +1,12 @@
+.container {
+  color: rgb(235, 86, 77)!important;
+  a, a:visited {
+    color: rgb(210, 181, 59);
+  }
+  a:hover {
+    color: rgb(248, 235, 185);
+  }
+  :global(.arco-spin-icon) {
+    color: rgb(235, 86, 77);
+  }
+}

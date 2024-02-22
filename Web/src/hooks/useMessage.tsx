@@ -9,6 +9,7 @@ import {
   ReferenceMessage,
   SendMessagePriority,
   UserId,
+  EditMessage,
 } from '../store';
 import { CalcVideo, getImageSize, getMessagePreview } from '../utils';
 import { Message as ArcoMessage } from '@arco-design/web-react';
@@ -42,6 +43,8 @@ const useMessage = () => {
   const currentConversation = useRecoilValue(CurrentConversation);
   const [messages, setMessages] = useRecoilState(Messages);
   const [referenceMessage, setReferenceMessage] = useRecoilState(ReferenceMessage);
+  const [editingMessage, setEditingMessage] = useRecoilState(EditMessage);
+
   const setFileUploadProcess = useSetRecoilState(FileUploadProcessStore);
   const userId = useRecoilValue(UserId);
   const priority = useRecoilValue(SendMessagePriority);
@@ -74,6 +77,11 @@ const useMessage = () => {
    * @param msg
    */
   const sendTextMessage = async (msg: object) => {
+    if (editingMessage && editingMessage.type === im_proto.MessageType.MESSAGE_TYPE_TEXT) {
+      await editTextMessage(editingMessage, JSON.stringify(msg));
+      return;
+    }
+
     const params = {
       conversation: currentConversation,
       content: JSON.stringify(msg),
@@ -91,7 +99,13 @@ const useMessage = () => {
     sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
     setReferenceMessage(null);
   };
-
+  const editTextMessage = async (message: Message, content: string) => {
+    const resp = await bytedIMInstance.modifyMessage({
+      message,
+      content: content,
+    });
+    setEditingMessage(null);
+  };
   /**
    * 发送文件消息
    * @param file
@@ -238,6 +252,30 @@ const useMessage = () => {
   };
 
   /**
+   * 发送优惠券消息
+   */
+  const sendCouponMessage = async () => {
+    const ext = {};
+    await insertAliasExtForMassChat(ext);
+    const message = await bytedIMInstance.createCustomMessage({
+      conversation: currentConversation,
+      content: JSON.stringify({
+        detail: '这是一张优惠券,点击此处领取',
+        start: 8,
+        end: 14,
+        type: '3',
+      }),
+      ext: ext,
+    });
+
+    if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
+      bytedIMInstance?.event?.emit?.(IMEvent.MessageUpsert, null, message);
+    }
+
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
+  };
+
+  /**
    * 设置消息已读
    * @param msg
    * @param index
@@ -281,6 +319,12 @@ const useMessage = () => {
       return;
     }
     setReferenceMessage(msg);
+    setEditingMessage(null);
+  };
+
+  const editMessage = (msg: Message) => {
+    setReferenceMessage(null);
+    setEditingMessage(msg);
   };
 
   /**
@@ -364,9 +408,12 @@ const useMessage = () => {
     markMessageRead,
     loadMoreMessage,
     replyMessage,
+    editMessage,
+    editingMessage,
     recallMessage,
     deleteMessage,
     modifyMessageProperty,
+    sendCouponMessage,
   };
 };
 

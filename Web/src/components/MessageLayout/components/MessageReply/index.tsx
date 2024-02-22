@@ -41,4 +41,4 @@ const MessageReply: FC<MessageReplyProps> = props => {
   );
 };
 
-export default memo(MessageReply);
+export default MessageReply;
