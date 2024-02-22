@@ -8,8 +8,9 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 
-public class RecallOperationInfo extends OperationInfo {
+public class RecallOperationInfo extends BIMMessageOperation {
 
     public RecallOperationInfo() {
         super(R.drawable.icon_msg_option_menu_recall, "撤回");

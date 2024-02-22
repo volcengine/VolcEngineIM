@@ -6,10 +6,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 import com.bytedance.im.ui.forward.ForwardActivity;
 import com.bytedance.im.core.api.model.BIMMessage;
 
-public class FrowardOperationInfo extends OperationInfo {
+public class FrowardOperationInfo extends BIMMessageOperation {
     private static final String TAG = "FrowardOperationInfo";
     private int requestForwardCode = 0;
     private BIMMessage bimMessage;

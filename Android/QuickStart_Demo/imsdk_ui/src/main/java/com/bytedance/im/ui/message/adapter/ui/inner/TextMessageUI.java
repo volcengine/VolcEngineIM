@@ -1,30 +1,38 @@
 package com.bytedance.im.ui.message.adapter.ui.inner;
 
-import android.graphics.Color;
+import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bytedance.im.core.api.enums.BIMMessageType;
+import com.bytedance.im.core.api.model.BIMEditInfo;
+import com.bytedance.im.core.api.model.BIMMessage;
+import com.bytedance.im.core.model.inner.msg.BIMAudioElement;
+import com.bytedance.im.core.model.inner.msg.BIMCustomElement;
+import com.bytedance.im.core.model.inner.msg.BIMFileElement;
+import com.bytedance.im.core.model.inner.msg.BIMImageElement;
+import com.bytedance.im.core.model.inner.msg.BIMTextElement;
+import com.bytedance.im.core.model.inner.msg.BIMVideoElement;
+import com.bytedance.im.core.proto.MessageStatus;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.emoji.EmojiManager;
 import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
+import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
-import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.ui.utils.BIMUtils;
-import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.core.model.inner.msg.BIMTextElement;
-import com.bytedance.im.core.proto.MessageStatus;
 
 import java.util.List;
 
 
 @CustomUIType(contentCls = BIMTextElement.class)
 public class TextMessageUI extends BaseCustomElementUI {
-    private static final String TAG = "TextMsgViewHolder";
+    private static final String TAG = "TextMessageUI";
 
     @Override
     public int getLayoutId() {
@@ -63,11 +71,12 @@ public class TextMessageUI extends BaseCustomElementUI {
             replayTxt.setVisibility(View.VISIBLE);
             String replay = "引用:";
             if (bimMessage.getReferenceInfo().getStatus() == MessageStatus.AVAILABLE) {
-                String fixHint = BIMUtils.fixWebHint(bimMessage.getReferenceInfo().getHint());
-                if (TextUtils.isEmpty(fixHint)) {
-                    fixHint = bimMessage.getReferenceInfo().getHint();
+                BIMMessage refMessage = bimMessage.getReferenceInfo().getRefMessage();
+                if (refMessage != null) {
+                    replay += getRefHint(v.getContext(), refMessage);
+                } else {
+                    replay += bimMessage.getReferenceInfo().getHint() +"(兜底)";
                 }
-                replay += fixHint;
             } else if (bimMessage.getReferenceInfo().getStatus() == MessageStatus.DELETED) {
                 replay += "消息已被删除";
             } else if (bimMessage.getReferenceInfo().getStatus() == MessageStatus.RECALLED) {
@@ -79,12 +88,10 @@ public class TextMessageUI extends BaseCustomElementUI {
         } else {
             replayTxt.setVisibility(View.GONE);
         }
+        if (bimMessage.getEditInfo() != null) {
+            msgStr += "(已编辑)";
+        }
         msgContent.setText(EmojiManager.getInstance().parseEmoJi(v.getContext(), msgStr));
-    }
-
-    @Override
-    public boolean onLongClickListener(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
-        return false;
     }
 
     @Override
@@ -107,6 +114,54 @@ public class TextMessageUI extends BaseCustomElementUI {
     @Override
     public boolean isEnableRecall(BIMMessage bimMessage) {
         return bimMessage.isSelf() && bimMessage.getServerMsgId() > 0;
+    }
+
+    @Override
+    public boolean isEnableEdit(BIMMessage bimMessage) {
+        return bimMessage.isSelf();
+    }
+
+    private String getRefHint(Context context,BIMMessage refMessage) {
+        String refHint = "";
+        Log.i(TAG,"getRefHint element: "+refMessage.getElement());
+        switch (refMessage.getMsgType()) {
+            case BIM_MESSAGE_TYPE_TEXT:
+                if (!(refMessage.getElement() instanceof BIMTextElement)) {
+                    Toast.makeText(context, "出现错误！element: "+refMessage.getElement(), Toast.LENGTH_SHORT).show();
+                    return refHint;
+                }
+                BIMTextElement textElement = (BIMTextElement) refMessage.getElement();
+                refHint = textElement.getText();
+                BIMEditInfo editInfo = refMessage.getEditInfo();
+                if (editInfo != null && editInfo.isEdit()) {
+                    refHint += "(已编辑)";
+                }
+                break;
+            case BIM_MESSAGE_TYPE_AUDIO:
+                BIMAudioElement audioElement = (BIMAudioElement) refMessage.getElement();
+                refHint += "[语音]";
+                break;
+            case BIM_MESSAGE_TYPE_IMAGE:
+                BIMImageElement bimImageElement = (BIMImageElement) refMessage.getElement();
+                refHint += "[图片]";
+                break;
+            case BIM_MESSAGE_TYPE_VIDEO:
+                BIMVideoElement videoElement = (BIMVideoElement) refMessage.getElement();
+                refHint += "[视频]";
+                break;
+            case BIM_MESSAGE_TYPE_CUSTOM:
+                BIMCustomElement customElement = (BIMCustomElement) refMessage.getElement();
+                refHint += "[自定义]";
+                break;
+            case BIM_MESSAGE_TYPE_FILE:
+                BIMFileElement fileElement = (BIMFileElement) refMessage.getElement();
+                refHint += "[文件]";
+                break;
+            default:
+                refHint += "不支持此消息";
+                break;
+        }
+        return refHint;
     }
 
     @Override

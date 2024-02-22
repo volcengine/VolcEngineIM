@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.view.View;
 
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.R;
 
 public class CustomToolBtn extends BaseToolBtn<Boolean> {
@@ -25,7 +26,7 @@ public class CustomToolBtn extends BaseToolBtn<Boolean> {
     }
 
     @Override
-    public void onClick(Fragment fragment, View view) {
+    public void onClick(Fragment fragment, View view, BIMConversation conversation) {
         resultCallback.onSuccess(true);
     }
 

@@ -34,10 +34,16 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
         this.mContext = mContext;
         data = new ArrayList<>();
         this.isShowTag = isTag;
+        List<Long> checkedIdList = new ArrayList<>();
+        if (checkedIdList != null) {
+            for (MemberWrapper memberWrapper : checkedList) {
+                checkedIdList.add(memberWrapper.getMember().getUserID());
+            }
+        }
         if (memberWrapperList != null && !memberWrapperList.isEmpty()) {
             for (MemberWrapper wrapper : memberWrapperList) {
                 wrapper.setShowTag(isShowTag);
-                if (checkedList != null && checkedList.contains(wrapper.getMember().getUserID())) {
+                if (checkedIdList.contains(wrapper.getMember().getUserID())) {
                     wrapper.isSelect = true;
                 }
                 if (wrapper.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {

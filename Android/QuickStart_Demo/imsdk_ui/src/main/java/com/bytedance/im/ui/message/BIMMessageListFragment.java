@@ -32,10 +32,8 @@ import com.bytedance.im.core.api.model.BIMGetMessageOption;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.api.model.BIMMessageListResult;
 import com.bytedance.im.core.api.model.BIMMessageNewPropertyModify;
-import com.bytedance.im.core.client.IMClient;
 import com.bytedance.im.core.model.LocalPropertyItem;
-import com.bytedance.im.core.model.ModifyMsgPropertyMsg;
-import com.bytedance.im.core.proto.OPERATION_TYPE;
+import com.bytedance.im.core.model.inner.msg.BIMTextElement;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.api.BIMUIUser;
@@ -44,6 +42,7 @@ import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.adapter.BIMMessageAdapter;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.VEInPutView;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.audio.VoiceInputButton;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.BaseToolBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.CustomToolBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.FileToolBtn;
@@ -63,6 +62,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class BIMMessageListFragment extends Fragment {
+    private static List<BaseToolBtn> customToolBtnList = new ArrayList<>();
     private static final String TAG = "VEMessageListFragment";
     public static final String TARGET_CID = "target_cid";
     public static final String TARGET_MSG_ID = "target_msg_id";
@@ -200,18 +200,6 @@ public class BIMMessageListFragment extends Fragment {
         } else {
             initOlderDirection();
         }
-        inPutView.initFragment(this, conversationId, initToolbtns(), path -> sendVoiceMessage(path), (text, refMessage, mentionIdList) -> {
-            if (refMessage != null) {
-                //发送引用消息
-                sendRefMessage(text, refMessage, mentionIdList);
-            } else {
-                if (mentionIdList.isEmpty()) {
-                    sendTextMessage(text);
-                } else {
-                    sendMentionTextMessage(text, mentionIdList);
-                }
-            }
-        });
         addUserListener();
         return v;
     }
@@ -265,6 +253,7 @@ public class BIMMessageListFragment extends Fragment {
 
             }
         }));
+        toolBtnList.addAll(customToolBtnList);
         return toolBtnList;
     }
 
@@ -281,6 +270,7 @@ public class BIMMessageListFragment extends Fragment {
                 bimConversation = conversation;
                 String name = "";
                 String draft = bimConversation.getDraftText();
+                initInputView(conversation);
                 if (!TextUtils.isEmpty(draft) && TextUtils.isEmpty(inPutView.getmInputEt().getText())) {
                     inPutView.setEditDraft(draft);
                 }
@@ -546,9 +536,19 @@ public class BIMMessageListFragment extends Fragment {
         BIMMessage customMessage = BIMClient.getInstance().createCustomMessage(BIMMessageManager.getInstance().encode(shareVEContent));
         sendMessage(customMessage);
     }
+    //修改消息
+    private void modifyTextMessage(String newText,BIMMessage oldMessage){
+        BIMTextElement textElement = (BIMTextElement) oldMessage.getElement();
+        textElement.setText(newText);
+        BIMClient.getInstance().modifyMessage(oldMessage, null);
+    }
 
     public void onRefMessage(BIMMessage message) {
         inPutView.onRefMessage(message);
+    }
+
+    public void onEditMessage(BIMMessage message) {
+        inPutView.onEditMessage(message);
     }
 
     public void onClickEmoji(EmojiInfo emojiInfo, BIMMessage message) {
@@ -698,7 +698,7 @@ public class BIMMessageListFragment extends Fragment {
 
         @Override
         public void onUpdateMessage(BIMMessage message) {
-            BIMLog.i(TAG, "onUpdateMessage() uuid: " + message.getUuid() + " thread:" + Thread.currentThread());
+            BIMLog.i(TAG, "onUpdateMessage() uuid: " + message.getUuid() + " thread:" + Thread.currentThread() +" element: "+message.getElement() +" contentData:"+message.getContentData());
             if (message.getConversationID().equals(bimConversation.getConversationID())) {
                 adapter.insertOrUpdateMessage(message);
             }
@@ -716,6 +716,35 @@ public class BIMMessageListFragment extends Fragment {
             msgOptionMenu = new BIMMessageOptionPopupWindow(getActivity(), BIMMessageListFragment.this);
         }
         msgOptionMenu.setBimMessageAndShow(view, message);
+    }
+
+    private void initInputView(BIMConversation bimConversation){
+        inPutView.initFragment(this, bimConversation, initToolbtns(), new VoiceInputButton.OnAudioRecordListener() {
+            @Override
+            public void onSuccess(String path) {
+                sendVoiceMessage(path);//发语音
+            }
+        }, new VEInPutView.OnInputListener() {
+            @Override
+            public void onSendClick(String text, BIMMessage refMessage, List<Long> mentionIdList) {
+                if (refMessage != null) {
+                    //发送引用消息
+                    sendRefMessage(text, refMessage, mentionIdList);
+                } else {
+                    if (mentionIdList.isEmpty()) {
+                        sendTextMessage(text);
+                    } else {
+                        sendMentionTextMessage(text, mentionIdList);
+                    }
+                }
+            }
+
+            @Override
+            public void onSendEditClick(String newText, BIMMessage editMessage, List<Long> mentionIdList) {
+                //发编辑消息
+                modifyTextMessage(newText,editMessage);
+            }
+        });
     }
 
     private void scrollBottom() {
@@ -786,5 +815,7 @@ public class BIMMessageListFragment extends Fragment {
         }
     }
 
-
+    public static void registerCustomToolBtn(BaseToolBtn toolBtn) {
+        customToolBtnList.add(toolBtn);
+    }
 }

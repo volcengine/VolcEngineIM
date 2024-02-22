@@ -6,12 +6,13 @@ import android.widget.Toast;
 
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 import com.bytedance.im.ui.message.adapter.ui.widget.pop.DialogUtil;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMessage;
 
-public class DeleteOperationInfo extends OperationInfo {
+public class DeleteOperationInfo extends BIMMessageOperation {
     public DeleteOperationInfo() {
         super(R.drawable.icon_msg_option_menu_delete, "删除");
     }

@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.ui.message.adapter.ui.widget.pop.operation.OperationInfo;
+import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 
 public class VELiveOperationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private ImageView icon;
@@ -22,9 +22,9 @@ public class VELiveOperationViewHolder extends RecyclerView.ViewHolder implement
         this.onItemClickListener = listener;
     }
 
-    private OperationInfo mOperationInfo;
+    private BIMMessageOperation mOperationInfo;
 
-    public void update(OperationInfo operationInfo) {
+    public void update(BIMMessageOperation operationInfo) {
         mOperationInfo = operationInfo;
         if (operationInfo.getResId() == -1) {
             icon.setVisibility(View.GONE);

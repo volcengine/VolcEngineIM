@@ -27,11 +27,6 @@ public class DefaultMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public boolean onLongClickListener(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
-        return false;
-    }
-
-    @Override
     public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
 
     }

@@ -6,13 +6,14 @@ import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 
-public class RefOperationInfo extends BIMMessageOperation {
+public class EditOperationInfo extends BIMMessageOperation {
 
-    public RefOperationInfo() {
-        super(R.drawable.icon_msg_option_menu_read_callback, "引用");
+    public EditOperationInfo() {
+        super(R.drawable.icon_msg_option_menu_read_callback, "编辑");
     }
 
     @Override
     public void onClick(View v, BIMMessage bimMessage) {
+
     }
 }

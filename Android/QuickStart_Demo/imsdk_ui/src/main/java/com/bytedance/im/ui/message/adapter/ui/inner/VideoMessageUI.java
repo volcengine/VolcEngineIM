@@ -91,11 +91,6 @@ public class VideoMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public boolean onLongClickListener(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
-        return false;
-    }
-
-    @Override
     public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         BIMVideoElement videoElement = (BIMVideoElement) messageWrapper.getBimMessage().getElement();
         if (messageWrapper.getBimMessage().isSelf() && !TextUtils.isEmpty(videoElement.getLocalPath())) {

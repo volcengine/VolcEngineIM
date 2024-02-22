@@ -6,9 +6,9 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.core.api.enums.BIMMessageStatus;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.live.api.enmus.BIMMessagePriority;
-import com.bytedance.im.ui.message.adapter.ui.widget.pop.operation.OperationInfo;
+import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 
-public class VELivePriorityInfo extends OperationInfo {
+public class VELivePriorityInfo extends BIMMessageOperation {
 
     public VELivePriorityInfo(int resId, String name) {
         super(resId, name);

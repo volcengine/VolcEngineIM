@@ -139,7 +139,7 @@ public class VEContactInviteActivity extends Activity {
             service.replyFriendApply(apply, new BIMResultCallback<BIMFriendApplyInfo>() {
                 @Override
                 public void onSuccess(BIMFriendApplyInfo friendApplyInfo) {
-                    Log.d(TAG, "apply success, " + friendApplyInfo.getFromUid());
+                    Log.d(TAG, "apply success, from " + friendApplyInfo.getFromUid() + ", " + friendApplyInfo.getToUid());
                     Toast.makeText(VEContactInviteActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
                     if (isConfirm) {
                         afterApplyFriend(friendApplyInfo);

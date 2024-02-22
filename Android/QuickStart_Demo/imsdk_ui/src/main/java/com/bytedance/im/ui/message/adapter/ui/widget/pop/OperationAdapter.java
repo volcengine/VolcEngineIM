@@ -8,18 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bytedance.im.ui.R;
-import com.bytedance.im.ui.message.adapter.ui.widget.pop.operation.OperationInfo;
+import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 import com.bytedance.im.core.api.model.BIMMessage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OperationAdapter extends RecyclerView.Adapter<OperationViewHolder> {
-    private List<OperationInfo> operationInfoList = new ArrayList<>();
+    private List<BIMMessageOperation> operationInfoList = new ArrayList<>();
     private BIMMessage bimMessage;
     private OnItemOperationClickListener onItemOperationClickListener;
 
-    public OperationAdapter(List<OperationInfo> operationInfoList, BIMMessage bimMessage, OnItemOperationClickListener onItemOperationClickListener) {
+    public OperationAdapter(List<BIMMessageOperation> operationInfoList, BIMMessage bimMessage, OnItemOperationClickListener onItemOperationClickListener) {
         this.operationInfoList = operationInfoList;
         this.bimMessage = bimMessage;
         this.onItemOperationClickListener = onItemOperationClickListener;
@@ -48,7 +48,7 @@ public class OperationAdapter extends RecyclerView.Adapter<OperationViewHolder> 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (operationInfoList != null) {
-            for (OperationInfo info : operationInfoList) {
+            for (BIMMessageOperation info : operationInfoList) {
                 info.onActivityResult(requestCode, resultCode, data);
             }
         }

@@ -9,17 +9,17 @@ import android.view.ViewGroup;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.ui.message.adapter.ui.widget.pop.operation.OperationInfo;
+import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class VELiveOperationAdapter extends RecyclerView.Adapter<VELiveOperationViewHolder> {
-    private List<OperationInfo> operationInfoList = new ArrayList<>();
+    private List<BIMMessageOperation> operationInfoList = new ArrayList<>();
     private BIMMessage bimMessage;
     private VELiveOperationAdapter.OnItemOperationClickListener onItemOperationClickListener;
 
-    public VELiveOperationAdapter(List<OperationInfo> operationInfoList, BIMMessage bimMessage, VELiveOperationAdapter.OnItemOperationClickListener onItemOperationClickListener) {
+    public VELiveOperationAdapter(List<BIMMessageOperation> operationInfoList, BIMMessage bimMessage, VELiveOperationAdapter.OnItemOperationClickListener onItemOperationClickListener) {
         this.operationInfoList = operationInfoList;
         this.bimMessage = bimMessage;
         this.onItemOperationClickListener = onItemOperationClickListener;
@@ -48,7 +48,7 @@ public class VELiveOperationAdapter extends RecyclerView.Adapter<VELiveOperation
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (operationInfoList != null) {
-            for (OperationInfo info : operationInfoList) {
+            for (BIMMessageOperation info : operationInfoList) {
                 info.onActivityResult(requestCode, resultCode, data);
             }
         }

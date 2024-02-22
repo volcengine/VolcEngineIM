@@ -11,16 +11,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.PopupWindow;
+
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.emoji.EmojiInfo;
 import com.bytedance.im.ui.emoji.EmojiManager;
 import com.bytedance.im.ui.message.BIMMessageListFragment;
 import com.bytedance.im.ui.message.adapter.ui.widget.EmojiGroupView;
+import com.bytedance.im.ui.message.adapter.ui.widget.pop.operation.EditOperationInfo;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
 import com.bytedance.im.ui.message.adapter.ui.widget.pop.operation.CopyOperationInfo;
 import com.bytedance.im.ui.message.adapter.ui.widget.pop.operation.DeleteOperationInfo;
-import com.bytedance.im.ui.message.adapter.ui.widget.pop.operation.OperationInfo;
+import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 import com.bytedance.im.ui.message.adapter.ui.widget.pop.operation.RecallOperationInfo;
 import com.bytedance.im.ui.message.adapter.ui.widget.pop.operation.RefOperationInfo;
 import com.bytedance.im.core.api.model.BIMMessage;
@@ -39,6 +41,7 @@ public class BIMMessageOptionPopupWindow extends PopupWindow {
     private EmojiAdapter emojiAdapter;
     private RecyclerView rvOptionEmoji;
     private EmojiGroupView emojiGroupView;
+    private static List<BIMMessageOperation> customOperationList = new ArrayList<>();
 
     public BIMMessageOptionPopupWindow(Context context, BIMMessageListFragment fragment) {
         super(context);
@@ -83,7 +86,7 @@ public class BIMMessageOptionPopupWindow extends PopupWindow {
      */
     public void setBimMessageAndShow(View anchor, BIMMessage bimMessage) {
         mBimMessage = bimMessage;
-        List<OperationInfo> data = new ArrayList<>();
+        List<BIMMessageOperation> data = new ArrayList<>();
         BaseCustomElementUI ui = BIMMessageUIManager.getInstance().getMessageUI(mBimMessage.getElement().getClass());
         if (ui != null) {
             if (ui.isEnableCopy(mBimMessage)) {
@@ -95,7 +98,6 @@ public class BIMMessageOptionPopupWindow extends PopupWindow {
             if (ui.isEnableRecall(mBimMessage)) {
                 data.add(new RecallOperationInfo());
             }
-
             if (ui.isEnableRef(mBimMessage)) {
                 data.add(new RefOperationInfo() {
                     @Override
@@ -104,8 +106,18 @@ public class BIMMessageOptionPopupWindow extends PopupWindow {
                     }
                 });
             }
+            if (ui.isEnableEdit(mBimMessage)) {
+                data.add(new EditOperationInfo() {
+                    @Override
+                    public void onClick(View v, BIMMessage bimMessage) {
+                        mMessageListFragment.onEditMessage(bimMessage);
+                    }
+                });
+            }
+            //自定义的部分
+            data.addAll(customOperationList);
         }
-        for (OperationInfo info : data) {
+        for (BIMMessageOperation info : data) {
             info.setVeMessageListFragment(mMessageListFragment);
         }
         operationAdapter = new OperationAdapter(data, mBimMessage, new OperationAdapter.OnItemOperationClickListener() {
@@ -136,10 +148,10 @@ public class BIMMessageOptionPopupWindow extends PopupWindow {
             int anchorHeight = anchor.getMeasuredHeight();
             int height = getContentView().getMeasuredHeight();
 
-            if ((r.bottom - anchorHeight - location[1]) > BIMUIUtils.dpToPx(anchor.getContext(),200)) {
+            if ((r.bottom - anchorHeight - location[1]) > BIMUIUtils.dpToPx(anchor.getContext(), 200)) {
                 return 0;
             } else {
-                return - (height + anchorHeight);
+                return -(height + anchorHeight);
             }
         } catch (Exception e) {
             // ignore
@@ -181,5 +193,9 @@ public class BIMMessageOptionPopupWindow extends PopupWindow {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         operationAdapter.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public static void registerOperation(BIMMessageOperation operation) {
+        customOperationList.add(operation);
     }
 }

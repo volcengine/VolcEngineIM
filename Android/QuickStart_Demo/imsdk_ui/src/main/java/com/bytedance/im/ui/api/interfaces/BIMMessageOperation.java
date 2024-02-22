@@ -1,11 +1,11 @@
-package com.bytedance.im.ui.message.adapter.ui.widget.pop.operation;
+package com.bytedance.im.ui.api.interfaces;
 
 import android.app.Fragment;
 import android.content.Intent;
 import android.view.View;
 import com.bytedance.im.core.api.model.BIMMessage;
 
-public abstract class OperationInfo {
+public abstract class BIMMessageOperation {
     private int resId;
     private String name;
     protected Fragment veMessageListFragment;
@@ -14,7 +14,7 @@ public abstract class OperationInfo {
         this.veMessageListFragment = veMessageListFragment;
     }
 
-    public OperationInfo(int resId, String name) {
+    public BIMMessageOperation(int resId, String name) {
         this.resId = resId;
         this.name = name;
     }

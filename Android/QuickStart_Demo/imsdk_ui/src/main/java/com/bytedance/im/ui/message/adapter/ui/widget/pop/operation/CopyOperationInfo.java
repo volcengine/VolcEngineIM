@@ -6,11 +6,12 @@ import android.content.Context;
 import android.view.View;
 
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
 import com.bytedance.im.core.api.model.BIMMessage;
 
-public class CopyOperationInfo extends OperationInfo {
+public class CopyOperationInfo extends BIMMessageOperation {
     public CopyOperationInfo() {
         super(R.drawable.icon_msg_option_menu_copy, "复制");
     }

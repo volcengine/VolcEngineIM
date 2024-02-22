@@ -7,11 +7,11 @@ import android.view.View;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.ui.message.adapter.ui.widget.pop.operation.OperationInfo;
+import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
 
-public class VELiveCopyOperationInfo extends OperationInfo {
+public class VELiveCopyOperationInfo extends BIMMessageOperation {
     public VELiveCopyOperationInfo() {
         super(R.drawable.icon_msg_option_menu_copy, "复制");
     }

@@ -228,7 +228,7 @@ public class VEFriendConversationFragment extends Fragment {
 
                             @Override
                             public void onFailed(BIMErrorCode code) {
-                                Toast.makeText(getActivity(), "删除失败", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "删除失败: " + code, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }

@@ -16,12 +16,15 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
+import com.bytedance.im.app.custom.data.BIMCouponElement;
+import com.bytedance.im.app.custom.toolbtn.CouponToolBtn;
+import com.bytedance.im.app.custom.ui.BIMCouponMessageUI;
 import com.bytedance.im.app.debug.VEEnvSettingActivity;
 import com.bytedance.im.app.main.VEIMMainActivity;
+import com.bytedance.im.app.custom.operations.VEMessageDetailOperationInfo;
 import com.bytedance.im.app.user.provider.BIMDefaultUserProvider;
 import com.bytedance.im.app.utils.VEUtils;
 import com.bytedance.im.core.api.BIMClient;
-import com.bytedance.im.core.api.enums.BIMEnv;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.interfaces.BIMAuthProvider;
@@ -139,7 +142,13 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
      * 初始化
      * @param application
      */
+    private static boolean isInit = false;
     public void init(Application application) {
+        if(isInit){
+            Log.i(TAG, "login init() already init return !");
+            return;
+        }
+        isInit = true;
         //imsdk
         if (Constants.APP_ENV != -1) {  //以代码配置为准
             SpUtils.getInstance().setEnv(Constants.APP_ENV);
@@ -155,8 +164,33 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         BIMSDKConfig config = new BIMSDKConfig();
         config.setEnableAPM(SpUtils.getInstance().isEnableAPM());
         config.setEnableAppLog(SpUtils.getInstance().isEnableALog());
+        initCustom();
         BIMUIClient.getInstance().init(application,curAppId, env, config);
         VEIMApplication.accountProvider.init(application, curAppId, env);
         BIMUIClient.getInstance().setUserProvider(new BIMDefaultUserProvider(500));
+    }
+
+
+    private void initCustom(){
+            initCustomMessageList();
+            initMessageOperationList();
+            initToolBtnList();
+
+    }
+
+    //自定义消息
+    private void initCustomMessageList(){
+        BIMUIClient.getInstance().registerMessageUI(new BIMCouponMessageUI());
+        BIMUIClient.getInstance().registerMessageElement("3", BIMCouponElement.class);
+    }
+    //长按消息操作
+    private void initMessageOperationList(){
+        if (!VEUtils.isShield()) {  //查看消息详情， debug 功能屏蔽
+            BIMUIClient.getInstance().registerMessageOperation(new VEMessageDetailOperationInfo());
+        }
+    }
+    //输入工具栏
+    private void initToolBtnList(){
+        BIMUIClient.getInstance().registerToolBtn(new CouponToolBtn());
     }
 }

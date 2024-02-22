@@ -261,6 +261,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
     private void joinSuccess(BIMLiveJoinGroupResult bimLiveJoinGroupResult){
         toast("加入成功");
         bimConversation = bimLiveJoinGroupResult.getConversation();
+        initVeInputView(bimConversation);
         tvTitle.setText(bimConversation.getName());
         refreshOnlineNum(bimConversation.getOnLineMemberCount());
         earliestCursor = bimLiveJoinGroupResult.getJoinMessageCursor();
@@ -293,14 +294,6 @@ public class VELiveGroupMessageListFragment extends Fragment {
 
         recyclerView = v.findViewById(R.id.message_list);
         inPutView = v.findViewById(R.id.inputView);
-        inPutView.initFragment(this, "" + conversationShortId, true, initToolbtns(), path -> {
-            sendVoiceMessage(path);
-        }, (text, refMessage, mentionIdList) -> {
-            sendTextMessage(text);
-        });
-        inPutView.getTvPriority().setOnClickListener(v1 -> {
-            showPriorityWindow();
-        });
         adapter = new BIMMessageAdapter(recyclerView,liveUserProvider, new BIMMessageAdapter.OnMessageItemClickListener() {
             public void onPortraitClick(BIMMessage message) {
                 VEUserProfileEditActivity.start(getActivity(), message.getSenderUID());
@@ -361,58 +354,6 @@ public class VELiveGroupMessageListFragment extends Fragment {
     }
 
 
-    private List<BaseToolBtn> initToolbtns() {
-        List<BaseToolBtn> toolBtnList = new ArrayList<>();
-        toolBtnList.add(new ImageToolBtn(new BIMResultCallback<MediaInfo>() {
-            @Override
-            public void onSuccess(MediaInfo mediaInfo) {
-                if (mediaInfo.getFileType() == MediaInfo.MEDIA_TYPE_IMAGE) {
-                    sendImageMessage(mediaInfo.getFilePath());
-                } else {
-                    sendVideoMessage(mediaInfo.getFilePath());
-                }
-            }
-
-            @Override
-            public void onFailed(BIMErrorCode code) {
-
-            }
-        }));
-        toolBtnList.add(new PhotoTooBtn(new BIMResultCallback<String>() {
-            @Override
-            public void onSuccess(String path) {
-                sendImageMessage(path);
-            }
-
-            @Override
-            public void onFailed(BIMErrorCode code) {
-
-            }
-        }));
-        toolBtnList.add(new FileToolBtn(new BIMResultCallback<FileToolBtn.SelectFileInfo>() {
-            @Override
-            public void onSuccess(FileToolBtn.SelectFileInfo info) {
-                sendFileMessage(info.getUri(), info.getPath(), info.getName(), info.getLength());
-            }
-
-            @Override
-            public void onFailed(BIMErrorCode code) {
-
-            }
-        }));
-        toolBtnList.add(new CustomToolBtn(new BIMResultCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean aBoolean) {
-                sendCustomMessage();
-            }
-
-            @Override
-            public void onFailed(BIMErrorCode code) {
-
-            }
-        }));
-        return toolBtnList;
-    }
 
     private void sendFileMessage(Uri uri, String path, String name, long length) {
         BIMMessage bimMessage = BIMClient.getInstance().createFileMessage(uri,path,name,length);
@@ -758,4 +699,78 @@ public class VELiveGroupMessageListFragment extends Fragment {
             Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
         }
     }
+    // 初始化输入面板
+    private void initVeInputView(BIMConversation conversation){
+        inPutView.initFragment(this, conversation, true, initToolbtns(), path -> {
+            sendVoiceMessage(path);
+        }, new VEInPutView.OnInputListener() {
+            @Override
+            public void onSendClick(String text, BIMMessage refMessage, List<Long> mentionIdList) {
+                sendTextMessage(text);
+            }
+
+            @Override
+            public void onSendEditClick(String text, BIMMessage editMessage, List<Long> mentionIdList) {
+
+            }
+        });
+        inPutView.getTvPriority().setOnClickListener(v1 -> {
+            showPriorityWindow();
+        });
+    }
+
+    //工具栏按钮
+    private List<BaseToolBtn> initToolbtns() {
+        List<BaseToolBtn> toolBtnList = new ArrayList<>();
+        toolBtnList.add(new ImageToolBtn(new BIMResultCallback<MediaInfo>() {
+            @Override
+            public void onSuccess(MediaInfo mediaInfo) {
+                if (mediaInfo.getFileType() == MediaInfo.MEDIA_TYPE_IMAGE) {
+                    sendImageMessage(mediaInfo.getFilePath());
+                } else {
+                    sendVideoMessage(mediaInfo.getFilePath());
+                }
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        }));
+        toolBtnList.add(new PhotoTooBtn(new BIMResultCallback<String>() {
+            @Override
+            public void onSuccess(String path) {
+                sendImageMessage(path);
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        }));
+        toolBtnList.add(new FileToolBtn(new BIMResultCallback<FileToolBtn.SelectFileInfo>() {
+            @Override
+            public void onSuccess(FileToolBtn.SelectFileInfo info) {
+                sendFileMessage(info.getUri(), info.getPath(), info.getName(), info.getLength());
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        }));
+        toolBtnList.add(new CustomToolBtn(new BIMResultCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean aBoolean) {
+                sendCustomMessage();
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        }));
+        return toolBtnList;
+    }
+
 }

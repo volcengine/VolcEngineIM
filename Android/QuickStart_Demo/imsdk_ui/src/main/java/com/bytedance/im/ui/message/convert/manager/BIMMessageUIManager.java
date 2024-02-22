@@ -2,8 +2,7 @@ package com.bytedance.im.ui.message.convert.manager;
 
 import android.util.Log;
 
-import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
-import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
+import com.bytedance.im.core.model.inner.msg.BIMBaseElement;
 import com.bytedance.im.ui.message.adapter.ui.inner.DefaultMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.FileMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.ImageMessageUI;
@@ -11,7 +10,8 @@ import com.bytedance.im.ui.message.adapter.ui.inner.PoiMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.TextMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.VideoMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.VoiceMessageUI;
-import com.bytedance.im.core.model.inner.msg.BIMBaseElement;
+import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
+import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;

@@ -11,7 +11,6 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.contact.mainList.ContactListDataInfo;
 import com.bytedance.im.app.contact.mainList.ContactListItemType;
 import com.bytedance.im.app.utils.VENameUtils;
-import com.bytedance.im.user.api.model.BIMFriendInfo;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 public class VEContactListViewHolder extends VEContactListBaseViewHolder {

@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,7 +48,7 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
     private BIMMessageAdapter.OnMessageItemClickListener listener;
     private BIMMessageAdapter.OnMessageItemLongClickListener onMessageItemLongClickListener;
     private BIMMessageAdapter.OnRefreshListener onRefreshListener;
-    private View msgContainer;
+    private ViewGroup msgContainer;
     private TextView recall;
     private View headContainerRight;
     private View headContainerLeft;
@@ -201,16 +203,9 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         senStatus.setOnClickListener(onClickListener);
         portraitLeft.setOnClickListener(onClickListener);
         portraitRight.setOnClickListener(onClickListener);
-        msgContainer.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (ui.onLongClickListener(BIMMessageViewHolder.this,v, wrapper)) {
-                    return true;
-                } else if (onMessageItemLongClickListener != null) {
-                    return onMessageItemLongClickListener.onLongMessageItemClick(v, msgContainer, wrapper.getBimMessage());
-                }
-                return true;
-            }
+        msgContainer.setOnLongClickListener(v -> {
+            performLongClick(v, wrapper);
+            return true;
         });
         if (user == null) {
             //异步刷新
@@ -292,5 +287,12 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
 
     public BIMMessageAdapter.OnRefreshListener getOnOutListener() {
         return onRefreshListener;
+    }
+
+    public boolean performLongClick(View v,BIMMessageWrapper bimMessageWrapper){
+        if (onMessageItemLongClickListener != null) {
+            return onMessageItemLongClickListener.onLongMessageItemClick(v, msgContainer, bimMessageWrapper.getBimMessage());
+        }
+        return true;
     }
 }

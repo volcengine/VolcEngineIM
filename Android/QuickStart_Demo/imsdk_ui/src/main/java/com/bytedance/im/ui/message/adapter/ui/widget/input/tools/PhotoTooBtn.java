@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.utils.BIMPermissionController;
 import com.bytedance.im.ui.utils.media.BIMMediaListActivity;
@@ -42,7 +43,7 @@ public class PhotoTooBtn extends BaseToolBtn<String> {
     }
 
     @Override
-    public void onClick(Fragment fragment, View view) {
+    public void onClick(Fragment fragment, View view, BIMConversation conversation) {
         BIMPermissionController.checkPermission(fragment.getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE}, (isAllGranted, permissions, grantResults) -> {
             if (isAllGranted) {

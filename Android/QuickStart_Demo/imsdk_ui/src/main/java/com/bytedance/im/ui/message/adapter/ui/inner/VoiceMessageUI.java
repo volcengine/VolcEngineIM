@@ -64,11 +64,6 @@ public class VoiceMessageUI extends BaseCustomElementUI {
     }
 
     @Override
-    public boolean onLongClickListener(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
-        return false;
-    }
-
-    @Override
     public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         BIMAudioElement audioElement = (BIMAudioElement) messageWrapper.getBimMessage().getElement();
         if (audioElement != null) {

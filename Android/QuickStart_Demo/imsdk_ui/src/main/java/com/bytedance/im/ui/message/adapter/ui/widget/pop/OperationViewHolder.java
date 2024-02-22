@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 
 import com.bytedance.im.ui.R;
-import com.bytedance.im.ui.message.adapter.ui.widget.pop.operation.OperationInfo;
+import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 import com.bytedance.im.core.api.model.BIMMessage;
 
 public class OperationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -24,8 +24,8 @@ public class OperationViewHolder extends RecyclerView.ViewHolder implements View
         this.onItemClickListener = listener;
     }
 
-    private OperationInfo mOperationInfo;
-    public void update(OperationInfo operationInfo) {
+    private BIMMessageOperation mOperationInfo;
+    public void update(BIMMessageOperation operationInfo) {
         mOperationInfo = operationInfo;
         icon.setImageResource(operationInfo.getResId());
         name.setText(operationInfo.getName());

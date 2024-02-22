@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.BaseToolBtn;
 
@@ -22,11 +23,13 @@ public class ToolPageAdapter extends PagerAdapter {
     private List<BaseToolBtn> toolBtnList;
 
     private List<RecyclerView> eachPageViewList;
+    private BIMConversation conversation;
 
 
-    public ToolPageAdapter(Fragment fragment, List<BaseToolBtn> list) {
+    public ToolPageAdapter(Fragment fragment, BIMConversation conversation, List<BaseToolBtn> list) {
         toolBtnList = list;
         eachPageViewList = new ArrayList<>();
+        this.conversation = conversation;
         List<BaseToolBtn> pageList = new ArrayList<>();
         for (int i = 0; i < toolBtnList.size(); i++) {
             pageList.add(toolBtnList.get(i));
@@ -43,7 +46,7 @@ public class ToolPageAdapter extends PagerAdapter {
     private RecyclerView createPageView(Fragment fragment, List<BaseToolBtn> list) {
         RecyclerView view = (RecyclerView) LayoutInflater.from(fragment.getActivity()).inflate(R.layout.bim_im_input_tool_list, null);
         view.setLayoutManager(new GridLayoutManager(fragment.getActivity(), 4));
-        view.setAdapter(new ToolListAdapter(fragment,list));
+        view.setAdapter(new ToolListAdapter(fragment, conversation, list));
         return view;
     }
 

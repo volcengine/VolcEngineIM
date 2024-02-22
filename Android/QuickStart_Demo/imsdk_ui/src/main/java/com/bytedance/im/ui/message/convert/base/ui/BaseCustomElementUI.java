@@ -22,14 +22,6 @@ public abstract class BaseCustomElementUI {
     public abstract void onBindView(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper, BIMMessageWrapper preMessageWrapper);
 
     /**
-     * 长按监听
-     * @param v
-     * @param messageWrapper
-     * @return
-     */
-    public abstract boolean onLongClickListener(BIMMessageViewHolder holder,View v, BIMMessageWrapper messageWrapper);
-
-    /**
      * 点击监听
      * @param v
      * @param messageWrapper
@@ -94,6 +86,16 @@ public abstract class BaseCustomElementUI {
      * @return
      */
     public boolean isEnableRef(BIMMessage bimMessage) {
+        return false;
+    }
+
+    /**
+     * 是否支持编辑消息
+     *
+     * @param bimMessage
+     * @return
+     */
+    public boolean isEnableEdit(BIMMessage bimMessage) {
         return false;
     }
 }

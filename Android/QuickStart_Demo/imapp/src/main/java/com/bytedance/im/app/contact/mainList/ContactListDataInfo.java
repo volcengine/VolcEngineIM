@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import com.bytedance.im.app.contact.mainList.item.ContactListActionItem;
 import com.bytedance.im.app.utils.SimplePinyinHelper;
 import com.bytedance.im.app.utils.VENameUtils;
-import com.bytedance.im.user.api.model.BIMFriendInfo;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.Locale;

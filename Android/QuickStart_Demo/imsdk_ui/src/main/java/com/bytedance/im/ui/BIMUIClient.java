@@ -6,7 +6,9 @@ import android.app.Application;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMConnectStatus;
 import com.bytedance.im.core.api.enums.BIMEnv;
+import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
+import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.api.interfaces.BIMConnectListener;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
@@ -19,17 +21,20 @@ import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.core.api.model.BIMUnReadInfo;
 import com.bytedance.im.core.internal.utils.IMLog;
-import com.bytedance.im.ui.api.BIMUIUser;
+import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
+import com.bytedance.im.ui.message.BIMMessageListFragment;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareCustomMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.BaseToolBtn;
+import com.bytedance.im.ui.message.adapter.ui.widget.pop.BIMMessageOptionPopupWindow;
 import com.bytedance.im.ui.message.convert.base.model.BaseCustomElement;
+import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
 import com.bytedance.im.ui.user.BIMUserProvider;
 import com.bytedance.im.ui.user.DefaultProvider;
-import com.bytedance.im.ui.user.OnUserInfoUpdateListener;
 import com.bytedance.im.ui.utils.FileUtils;
 import com.bytedance.im.ui.utils.BIMUIUtils;
 import com.bytedance.im.ui.utils.media.AudioHelper;
@@ -66,7 +71,7 @@ public class BIMUIClient {
     }
 
     /**
-     * @param app    应用 Application 实例。
+     * @param application    应用 Application 实例。
      * @param appId  从[控制台](https://console.volcengine.com/rtc/im/appManage)获取的应用 ID。
      *               不同应用 ID 无法进行互通。
      * @param config 配置信息，参看 BIMSDKConfig{@link #BIMSDKConfig}。
@@ -93,10 +98,10 @@ public class BIMUIClient {
             FileUtils.initDir(application);
             AudioHelper.getInstance().initAudio(application);
             BIMMessageUIManager.getInstance().init();
-            BIMMessageUIManager.getInstance().registerMessageUI(new BIMShareCustomMessageUI());
-            BIMMessageUIManager.getInstance().registerMessageUI(new BIMGroupNotifyMessageUI());
-            BIMMessageManager.getInstance().register("1", BIMShareElement.class);
-            BIMMessageManager.getInstance().register("2", BIMGroupNotifyElement.class);
+            registerMessageUI(new BIMShareCustomMessageUI());
+            registerMessageUI(new BIMGroupNotifyMessageUI());
+            registerMessageElement("1", BIMShareElement.class);
+            registerMessageElement("2", BIMGroupNotifyElement.class);
         }
         IMLog.i(TAG, "initUISDK end initVersion: " + getVersion() + " imSDK initVersion: " + BIMClient.getInstance().getVersion());
     }
@@ -104,7 +109,34 @@ public class BIMUIClient {
     /**
      * @hidden
      */
+    public <T extends BaseCustomElementUI> void registerMessageUI(T abstractMessageUI) {
+        BIMMessageUIManager.getInstance().registerMessageUI(abstractMessageUI);
+    }
+
+    /**
+     * @hidden
+     */
+    public void registerMessageElement(String type, Class<? extends BaseCustomElement> cls) {
+        BIMMessageManager.getInstance().register(type, cls);
+    }
+    /**
+     * @hidden
+     */
+    public void registerMessageOperation(BIMMessageOperation operation){
+        BIMMessageOptionPopupWindow.registerOperation(operation);
+    }
+    /**
+     * @hidden
+     */
+    public void registerToolBtn(BaseToolBtn toolBtn){
+        BIMMessageListFragment.registerCustomToolBtn(toolBtn);
+    }
+
+        /**
+         * @hidden
+         */
     private BIMUserProvider provider;
+
     /**
      * @param BIMUserProvider 用户信息 provider,参看 UserProvider{@link #UserProvider}。
      * @type api
@@ -122,6 +154,7 @@ public class BIMUIClient {
         }
         return provider;
     }
+
 
     /**
      * @hidden
@@ -327,5 +360,40 @@ public class BIMUIClient {
     public void refreshMediaMessage(BIMMessage bimMessage, BIMResultCallback<BIMMessage> callback) {
         BIMClient.getInstance().refreshMediaMessage(bimMessage, callback);
     }
+
+
+    /**
+     * @hidden
+     */
+    public void getMessage(String uuid, BIMResultCallback<BIMMessage> callback) {
+        BIMClient.getInstance().getMessage(uuid, callback);
+    }
+
+    /**
+     * @hidden
+     */
+    public void getMessageByServerID(long msgId, long conversationShortId, boolean isServer, BIMResultCallback<BIMMessage> callback) {
+        BIMClient.getInstance().getMessageByServerID(msgId, conversationShortId, isServer, callback);
+    }
+
+    /**
+     * @param message  待更新的消息
+     * @param callback 结果回调, 参看 BIMResultCallback{@link #BIMResultCallback},BIMMessage{@link #BIMMessage}
+     * @type api
+     * @brief 修改消息内容和ext。
+     */
+    public void modifyMessage(BIMMessage message, BIMResultCallback<BIMMessage> callback) {
+        if (message.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_CUSTOM) {
+            BaseCustomElement customElement = (BaseCustomElement) message.getElement();
+            customElement.setData(BIMMessageManager.getInstance().encode(customElement));//更新element
+            BIMClient.getInstance().modifyMessage(message, callback);
+        } else {
+            if (callback != null) {
+                callback.onFailed(BIMErrorCode.BIM_PARAMETER_ERROR);
+            }
+        }
+    }
+
+
 }
 

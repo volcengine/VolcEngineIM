@@ -22,9 +22,12 @@ import android.widget.TextView;
 
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.model.Message;
+import com.bytedance.im.core.model.inner.msg.BIMTextElement;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.api.BIMUIUser;
@@ -63,6 +66,7 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
     private TextView replayMsgTv;
     private View closeReplayMsgTv;
     private BIMMessage refMessage;
+    private BIMMessage editMessage;
     private List<BaseToolBtn> baseToolBtnList;
     private Set<Long> mentionIds = new HashSet<Long>();
     private Fragment fragment;
@@ -71,6 +75,7 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
     private FrameLayout functionLayout;
     private KeyBoardHeightHelper keyBoardHeightHelper;
     private StateMachine stateMachine;
+    private boolean isInit = false;
 
     public VEInPutView(@NonNull Context context) {
         this(context, null);
@@ -138,8 +143,8 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
         });
     }
 
-    public void initFragment(Fragment fragment, String conversationId, boolean showPriority, List<BaseToolBtn> baseToolBtns, VoiceInputButton.OnAudioRecordListener audioRecordListener, OnInputListener inputListener) {
-        initFragment(fragment, conversationId, baseToolBtns, audioRecordListener, inputListener);
+    public void initFragment(Fragment fragment, BIMConversation bimConversation, boolean showPriority, List<BaseToolBtn> baseToolBtns, VoiceInputButton.OnAudioRecordListener audioRecordListener, OnInputListener inputListener) {
+        initFragment(fragment, bimConversation, baseToolBtns, audioRecordListener, inputListener);
         if (showPriority) {
             tvPriority.setVisibility(View.VISIBLE);
         }
@@ -155,13 +160,17 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
         return tvPriority;
     }
 
-    public void initFragment(Fragment fragment, String conversationId, List<BaseToolBtn> baseToolBtns, VoiceInputButton.OnAudioRecordListener audioRecordListener, OnInputListener inputListener) {
+    public void initFragment(Fragment fragment, BIMConversation conversation, List<BaseToolBtn> baseToolBtns, VoiceInputButton.OnAudioRecordListener audioRecordListener, OnInputListener inputListener) {
+        if (isInit || conversation == null) {
+            return;
+        }
+        isInit = true;//仅可以初始化一次
         this.fragment = fragment;
-        this.conversationId = conversationId;
+        this.conversationId = conversation.getConversationID();
         baseToolBtnList = baseToolBtns;
-        moreInputOptional.setAdapter(new ToolPageAdapter(fragment, baseToolBtns));
         mVoiceInputTv.init(fragment, audioRecordListener);
         this.listener = inputListener;
+        moreInputOptional.setAdapter(new ToolPageAdapter(fragment, conversation, baseToolBtns));
     }
 
 
@@ -175,9 +184,16 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
 
     @Override
     public void onClick(View v) {
+        if (!isInit) {
+            return;
+        }
         if (v == sendBtn) {
             if (listener != null) {
-                listener.onSendClick(mInputEt.getText().toString(), refMessage, new ArrayList<>(mentionIds));
+                if (editMessage != null) {
+                    listener.onSendEditClick(mInputEt.getText().toString(), editMessage, new ArrayList<>(mentionIds));
+                } else {
+                    listener.onSendClick(mInputEt.getText().toString(), refMessage, new ArrayList<>(mentionIds));
+                }
                 mentionIds.clear();
                 closeReplayMsgTv.performClick();
             }
@@ -191,6 +207,7 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
             stateMachine.sendMsg(StateMachine.MSG_VOICE_CLICK);
         } else if (v == closeReplayMsgTv) {
             refMessage = null;
+            editMessage = null;
             replayMsgTv.setText("");
             replayMsgLayout.setVisibility(View.GONE);
         }
@@ -206,9 +223,20 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
         replayMsgTv.setText("引用: " + fixHint);
     }
 
+
+    public void onEditMessage(BIMMessage message){
+        if (message.getMsgType() != BIMMessageType.BIM_MESSAGE_TYPE_TEXT) {
+            return;
+        }
+        BIMTextElement textElement = (BIMTextElement) message.getElement();
+        editMessage = message;
+        replayMsgLayout.setVisibility(View.VISIBLE);
+        replayMsgTv.setText("旧内容: " + textElement.getText());
+    }
+
     @Override
     public void OnEmojiClick(EmojiInfo info) {
-        if (info == null || TextUtils.isEmpty(info.text)) {
+        if (info == null || TextUtils.isEmpty(info.text)||!isInit) {
             return;
         }
         int preSelection = mInputEt.getSelectionStart();
@@ -267,6 +295,8 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
 
     public interface OnInputListener {
         void onSendClick(String text, BIMMessage refMessage, List<Long> mentionIdList);
+
+        void onSendEditClick(String text, BIMMessage editMessage, List<Long> mentionIdList);
     }
 
     public void setListener(OnInputListener listener) {

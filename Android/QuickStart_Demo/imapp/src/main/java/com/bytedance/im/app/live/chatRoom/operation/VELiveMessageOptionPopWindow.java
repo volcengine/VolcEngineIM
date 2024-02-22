@@ -13,7 +13,7 @@ import android.widget.PopupWindow;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.live.chatRoom.VELiveGroupMessageListFragment;
 import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.ui.message.adapter.ui.widget.pop.operation.OperationInfo;
+import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
 
@@ -45,7 +45,7 @@ public class VELiveMessageOptionPopWindow extends PopupWindow {
      */
     public void setBimMessageAndShow(View anchor, BIMMessage bimMessage) {
         mBimMessage = bimMessage;
-        List<OperationInfo> data = new ArrayList<>();
+        List<BIMMessageOperation> data = new ArrayList<>();
         BaseCustomElementUI ui = BIMMessageUIManager.getInstance().getMessageUI(mBimMessage.getElement().getClass());
         if (ui != null) {
             data.add(VELivePriorityInfo.create(bimMessage));
@@ -71,7 +71,7 @@ public class VELiveMessageOptionPopWindow extends PopupWindow {
 //                });
 //            }
         }
-        for (OperationInfo info : data) {
+        for (BIMMessageOperation info : data) {
             info.setVeMessageListFragment(mLiveMessageListFragment);
         }
         operationAdapter = new VELiveOperationAdapter(data, mBimMessage, () -> dismiss());
