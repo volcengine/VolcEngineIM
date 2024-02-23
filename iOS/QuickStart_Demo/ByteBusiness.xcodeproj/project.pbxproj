@@ -901,8 +901,8 @@
 				25EE37292433166D00AB5267 /* Frameworks */,
 				25EE372A2433166D00AB5267 /* Resources */,
 				22330D1862241CE1AB0F4C2A /* [CP] Copy Pods Resources */,
-				C67D99022CDAAB876274E3D4 /* [CP] Embed Pods Frameworks */,
 				2B469D7E2B2B0E6100844755 /* ShellScript */,
+				122368ECB5F72CCC98792829 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1025,6 +1025,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		122368ECB5F72CCC98792829 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ByteBusiness/Pods-ByteBusiness-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ByteBusiness/Pods-ByteBusiness-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ByteBusiness/Pods-ByteBusiness-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		22330D1862241CE1AB0F4C2A /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1080,23 +1097,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh ${PODS_ROOT}/RangersAPM/RangersAPM/Core/APMPlus_DSYMUploader.sh \"520458\"\n";
-		};
-		C67D99022CDAAB876274E3D4 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ByteBusiness/Pods-ByteBusiness-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ByteBusiness/Pods-ByteBusiness-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ByteBusiness/Pods-ByteBusiness-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		D05BF5AA605007EE9820EE94 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1336,7 +1336,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusinessRelease_inhouse.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CURRENT_PROJECT_VERSION = 19000;
+				CURRENT_PROJECT_VERSION = 1;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XXHND5J98K;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -1362,7 +1362,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.9.0;
+				MARKETING_VERSION = 1.10.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1539,10 +1539,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusiness.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 19000;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 5HG673Y488;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XXHND5J98K;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1568,17 +1570,18 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.9.0;
+				MARKETING_VERSION = 1.10.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-ld64",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse.zj;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = comssiphoneucentercninhouse;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1593,9 +1596,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusiness.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 19000;
-				DEVELOPMENT_TEAM = 5HG673Y488;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1620,14 +1623,14 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.9.0;
+				MARKETING_VERSION = 1.10.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-ld64",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse.zj;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

@@ -22,12 +22,9 @@ typedef NS_ENUM(NSUInteger, BIMInputToolPriority) {
 
 - (void)inputToolViewSendMessage:(BIMMessage *)sendMessage;
 
-//视频聊天，视频还是语音
-- (void)inputToolViewStartVOIP:(BOOL)useVideo;
-
-- (void)inputToolViewLive;
-
 - (void)inputToolDidTriggerMention;
+
+- (void)inputToolViewModifyMessage:(BIMMessage *)message newContent:(NSString *)newContent mentionedUsers:(NSArray<NSNumber *> *)mentionedUsers;
 
 @end
 
@@ -39,6 +36,7 @@ typedef NS_ENUM(NSUInteger, BIMInputToolPriority) {
 @property (nonatomic, strong) NSString *referMessageHint;
 @property (nonatomic, assign) BIMInputToolPriority priority;
 @property (nonatomic, assign) NSInteger maxWordLimit;
+@property (nonatomic, assign) BOOL isModifyMessage;
 
 - (instancetype)initWithConvType:(BIMConversationType)type;
 
@@ -46,8 +44,6 @@ typedef NS_ENUM(NSUInteger, BIMInputToolPriority) {
 - (void)revertToTheOriginalType;
 - (void)enableInput;
 - (void)disableInputWithReason:(NSString *)reason;
-
-- (void)setRefreMessage: (BIMMessage *)message;
 
 - (void)setDraft: (NSString *)draft;
 

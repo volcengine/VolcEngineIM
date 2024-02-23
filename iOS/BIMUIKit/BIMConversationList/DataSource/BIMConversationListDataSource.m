@@ -11,7 +11,7 @@
 #import <imsdk-tob/BIMSDK.h>
 #import <OneKit/BTDMacros.h>
 
-@interface BIMConversationListDataSource () <BIMConversationListListener, BIMConversationListManagerDelegate>
+@interface BIMConversationListDataSource () <BIMConversationListListener, BIMConversationListManagerDelegate, BIMMessageListener>
 
 @property (nonatomic, assign) long long currentCursor;
 
@@ -37,6 +37,7 @@
         _conversationListManager = [[BIMConversationListManager alloc] init];
         _conversationListManager.delegate = self;
         [[BIMClient sharedInstance] addConversationListener:self];
+        [[BIMClient sharedInstance] addMessageListener:self];
     }
     return self;
 }
@@ -44,6 +45,7 @@
 - (void)dealloc
 {
     [[BIMClient sharedInstance] removeConversationListener:self];
+    [[BIMClient sharedInstance] removeMessageListener:self];
 }
 
 #pragma mark - BIMConversationListDataSourceProtocol
@@ -101,6 +103,17 @@
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         self.conversationList = chatList;
+        if ([self.delegate respondsToSelector:@selector(conversationDataSourceDidReloadAllConversations:)]) {
+            [self.delegate conversationDataSourceDidReloadAllConversations:self];
+        }
+    });
+}
+
+#pragma mark - BIMMessageListener
+
+- (void)onUpdateMessage:(BIMMessage *)message
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
         if ([self.delegate respondsToSelector:@selector(conversationDataSourceDidReloadAllConversations:)]) {
             [self.delegate conversationDataSourceDidReloadAllConversations:self];
         }

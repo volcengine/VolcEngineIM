@@ -112,6 +112,12 @@
         if (str.length) {
             NSMutableAttributedString *attStr = [[NSMutableAttributedString alloc] initWithString:str];
             [[BIMStickerDataManager sharedInstance] replaceEmojiForAttributedString:attStr font:self.chatTextLabel.font];
+            if (message.editInfo.isEdit) {
+                NSAttributedString *isEditedAttString = [[NSAttributedString alloc] initWithString:[self getIsEditedSuffixString] attributes:@{
+                    NSForegroundColorAttributeName : kIM_Main_Color
+                }];
+                [attStr appendAttributedString:isEditedAttString];
+            }
             self.chatTextLabel.attributedText = attStr;
         }else{
             self.chatTextLabel.text = @"";
@@ -131,5 +137,16 @@
 //    
 //    return CGRectGetMaxY(self.chatTextBg.frame) + 16;
 //}
+
+#pragma mark Private
+
+- (NSString *)getIsEditedSuffixString
+{
+    BIMEditInfo *editInfo = self.message.editInfo;
+    if (!editInfo.isEdit) {
+        return @"";
+    }
+    return @"(已编辑)";
+}
 
 @end

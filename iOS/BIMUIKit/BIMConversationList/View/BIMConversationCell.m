@@ -165,6 +165,9 @@
                 case BIM_MESSAGE_TYPE_TEXT: {
                     BIMTextElement *element = (BIMTextElement *)msg.element;
                     displayStr = [NSString stringWithFormat:@"%@: %@", msgSenderNickname, element.text];
+                    if (msg.editInfo.isEdit) {
+                        displayStr = [displayStr stringByAppendingString:@"(已编辑)"];
+                    }
                 } break;
                 case BIM_MESSAGE_TYPE_IMAGE: {
                     displayStr = [NSString stringWithFormat:@"%@: %@", msgSenderNickname, @"[图片]"];

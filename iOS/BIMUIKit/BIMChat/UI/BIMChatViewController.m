@@ -22,6 +22,8 @@
 #import "BIMParticipantsInConversationDataSource.h"
 #import "BIMScanImage.h"
 #import "BIMUIClient.h"
+#import "BIMMessageDetailDebugViewController.h"
+#import "BIMCouponChatCell.h"
 
 #import <Masonry/Masonry.h>
 #import <AVFoundation/AVPlayer.h>
@@ -57,7 +59,7 @@
 @end
 
 
-@interface BIMChatViewController () <BIMInputToolViewDelegate, BIMBaseChatCellDelegate, BIMCustomChatCellDelegate, BIMChatViewDataSourceDelegate, BIMUserSelectionControllerDelegate, BIMConversationListListener, BIMMessageListener, BIMLiveGroupMemberEventListener, BIMFriendListener>
+@interface BIMChatViewController () <BIMInputToolViewDelegate, BIMBaseChatCellDelegate, BIMCustomChatCellDelegate, BIMChatViewDataSourceDelegate, BIMUserSelectionControllerDelegate, BIMConversationListListener, BIMMessageListener, BIMLiveGroupMemberEventListener, BIMFriendListener, BIMCouponChatCellDelegate>
 
 
 //UI related
@@ -257,12 +259,13 @@
     
     self.tableview.allowsSelection = NO;
     self.tableview.backgroundColor = kIM_View_Background_Color;
-    [self.tableview registerClass:[BIMTextChatCell class] forCellReuseIdentifier:@"BIMDemoTextChatCell"];
-    [self.tableview registerClass:[BIMImageVideoChatCell class] forCellReuseIdentifier:@"BIMDemoImageVideoChatCell"];
-    [self.tableview registerClass:[BIMSystemMsgChatCell class] forCellReuseIdentifier:@"BIMDemoSystemMsgChatCell"];
-    [self.tableview registerClass:[BIMFileChatCell class] forCellReuseIdentifier:@"BIMDemoFileChatCell"];
-    [self.tableview registerClass:[BIMAudioChatCell class] forCellReuseIdentifier:@"BIMDemoAudioChatCell"];
-    [self.tableview registerClass:[BIMCustomChatCell class] forCellReuseIdentifier:@"BIMDemoCustomChatCell"];
+    [self.tableview registerClass:[BIMTextChatCell class] forCellReuseIdentifier:@"BIMTextChatCell"];
+    [self.tableview registerClass:[BIMImageVideoChatCell class] forCellReuseIdentifier:@"BIMImageVideoChatCell"];
+    [self.tableview registerClass:[BIMSystemMsgChatCell class] forCellReuseIdentifier:@"BIMSystemMsgChatCell"];
+    [self.tableview registerClass:[BIMFileChatCell class] forCellReuseIdentifier:@"BIMFileChatCell"];
+    [self.tableview registerClass:[BIMAudioChatCell class] forCellReuseIdentifier:@"BIMAudioChatCell"];
+    [self.tableview registerClass:[BIMCustomChatCell class] forCellReuseIdentifier:@"BIMCustomChatCell"];
+    [self.tableview registerClass:[BIMCouponChatCell class] forCellReuseIdentifier:@"BIMCouponChatCell"];
     
     self.menu = [[BIMChatMenuViewNew alloc] init];
     self.menu.delegate = self;
@@ -357,6 +360,17 @@
             [items addObject:[BIMChatMenuItemModel modelWithTitle:@"引用" icon:@"icon_menu_read" type:BIMChatMenuTypeReferMessage]];
         }
     }
+    if (message.msgType == BIM_MESSAGE_TYPE_TEXT && message.senderUID == [BIMClient sharedInstance].getCurrentUserID.longLongValue) {
+        [items addObject:[BIMChatMenuItemModel modelWithTitle:@"编辑" icon:@"icon_menu_read" type:BIMChatMenuTypeModify]];
+    }
+    
+#ifdef UI_INTERNAL_TEST
+    if (message.serverMessageID) {
+        [items addObject:[BIMChatMenuItemModel modelWithTitle:@"详情" icon:@"icon_menu_read" type:BIMChatMenuTypeDebugMessageDetail]];
+    }
+    
+#endif
+    
     return items;
 }
 
@@ -522,6 +536,15 @@
     [self presentViewController:nav animated:YES completion:nil];
 }
 
+- (void)inputToolViewModifyMessage:(BIMMessage *)message newContent:(NSString *)newContent mentionedUsers:(NSArray<NSNumber *> *)mentionedUsers
+{
+    BIMTextElement *element = (BIMTextElement *)message.element;
+    element.text = newContent;
+    [[BIMClient sharedInstance] modifyMessage:message completion:^(BIMError * _Nullable error) {
+        
+    }];
+}
+
 #pragma mark - BIMChatViewDataSourceDelegate
 
 - (void)chatViewDataSourceDidReloadAllMessage:(BIMChatViewDataSource *)dataSource scrollToBottom:(BOOL)scrollToBottom
@@ -599,25 +622,29 @@
 - (BIMBaseChatCell *)dequestCellForMessage: (BIMMessage *)msg tableView: (UITableView *)tableView{
     BIMBaseChatCell *cell;
     if (msg.isRecalled) {
-        cell = [tableView dequeueReusableCellWithIdentifier:@"BIMDemoSystemMsgChatCell"];
-    } else if (msg.msgType == BIM_MESSAGE_TYPE_CUSTOM){
+        cell = [tableView dequeueReusableCellWithIdentifier:@"BIMSystemMsgChatCell"];
+    } else if (msg.msgType == BIM_MESSAGE_TYPE_CUSTOM) {
         BIMCustomElement *element = (BIMCustomElement *)msg.element;
         NSInteger type = [element.dataDict[@"type"] integerValue];
         if (type == kBIMMessageTypeSystem || msg.isRecalled) {
-            cell = [tableView dequeueReusableCellWithIdentifier:@"BIMDemoSystemMsgChatCell"];
-        }else{
-            cell = [tableView dequeueReusableCellWithIdentifier:@"BIMDemoCustomChatCell"];
+            cell = [tableView dequeueReusableCellWithIdentifier:@"BIMSystemMsgChatCell"];
+        } else if (type == 3) {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"BIMCouponChatCell"];
+        } else if (type == 1) {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"BIMCustomChatCell"];
+        } else {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"BIMTextChatCell"];
         }
     } else if (msg.msgType == BIM_MESSAGE_TYPE_TEXT){
-        cell = [tableView dequeueReusableCellWithIdentifier:@"BIMDemoTextChatCell"];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"BIMTextChatCell"];
     } else if (msg.msgType == BIM_MESSAGE_TYPE_IMAGE || msg.msgType ==     BIM_MESSAGE_TYPE_VIDEO){
-        cell = [tableView dequeueReusableCellWithIdentifier:@"BIMDemoImageVideoChatCell"];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"BIMImageVideoChatCell"];
     } else if (msg.msgType == BIM_MESSAGE_TYPE_FILE){
-        cell = [tableView dequeueReusableCellWithIdentifier:@"BIMDemoFileChatCell"];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"BIMFileChatCell"];
     } else if (msg.msgType == BIM_MESSAGE_TYPE_AUDIO) {
-        cell = [tableView dequeueReusableCellWithIdentifier:@"BIMDemoAudioChatCell"];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"BIMAudioChatCell"];
     } else {
-        cell = [tableView dequeueReusableCellWithIdentifier:@"BIMDemoTextChatCell"];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"BIMTextChatCell"];
     }
     
     @weakify(self);
@@ -778,6 +805,17 @@
     }
 }
 
+- (void)cellDidClickCouponLink:(BIMCouponChatCell *)cell
+{
+    // 修改message
+    BIMMessage *message = cell.message;
+    BIMCustomElement *element = (BIMCustomElement *)message.element;
+    message.ext = @{@"a:coupon_status": @"1"};
+    [[BIMClient sharedInstance] modifyMessage:message completion:^(BIMError * _Nullable error) {
+        
+    }];
+}
+
 #pragma mark - 表情回复
 - (void)menuView:(BIMChatMenuViewNew *)menu didClickEmoji:(BIMEmoji *)emoji message:(BIMMessage *)message{
     NSInteger row = [self.messageDataSource indexOfItem:message];
@@ -862,6 +900,18 @@
         case BIMChatMenuTypeDebug:{
             NSString *msg = [[message valueForKey:@"message"] description];
             [self showTextCopyAlertWithTitle:@"调试" message:msg];
+            break;
+        }
+        case BIMChatMenuTypeDebugMessageDetail:{
+            BIMMessageDetailDebugViewController *vc = [[BIMMessageDetailDebugViewController alloc] init];
+            vc.message = message;
+            vc.conversationShortID = self.conversation.conversationShortID.longLongValue;
+            [self.navigationController pushViewController:vc animated:YES];
+            break;
+        }
+        case BIMChatMenuTypeModify:{
+            self.inputTool.isModifyMessage = YES;
+            self.inputTool.referMessage = message;
             break;
         }
         default:

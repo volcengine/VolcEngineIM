@@ -36,7 +36,9 @@ typedef NS_ENUM(NSInteger, BIMChatMenuType) {
     BIMChatMenuTypeMarkUnRead,
     BIMChatMenuTypeMarkRead,
     BIMChatMenuTypePinTag,
+    BIMChatMenuTypeModify,
     BIMChatMenuTypeDebug,
+    BIMChatMenuTypeDebugMessageDetail,
 };
 
 @protocol BIMChatMenuViewDelegate <NSObject>

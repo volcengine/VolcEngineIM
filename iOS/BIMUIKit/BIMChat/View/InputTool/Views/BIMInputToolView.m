@@ -161,6 +161,7 @@ typedef NS_ENUM(NSInteger, IMTextAudioType) {
     [self.tempTextView resignFirstResponder];
 
     self.itType = IMInputToolTypeMore;
+    self.isModifyMessage = NO;
 
     self.stickerKeyboard.hidden = YES;
     [self.stickerKeyboard removeFromSuperview];
@@ -178,6 +179,7 @@ typedef NS_ENUM(NSInteger, IMTextAudioType) {
 - (void)revertToTheOriginalType
 {
     self.itType = IMInputToolTypeTextAudio;
+    self.isModifyMessage = NO;
     [self.tempTextView resignFirstResponder];
 
     self.stickerKeyboard.hidden = YES;
@@ -482,7 +484,6 @@ static CGFloat textHei = 0;
 
 - (void)keyboardWillShow:(NSNotification *)notify
 {
-    NSLog(@"zj--%s", __func__);
     // 下面的三处return先去掉，1.弹出键盘 2.长按弹出删除 3点击alert取消后搜狗键盘没有弹出工具条
     if (!self.window) {
         return;
@@ -641,6 +642,18 @@ static CGFloat textHei = 0;
                 @"type" : @1,
                 @"link" : @"https://www.volcengine.com/",
                 @"text" : @"欢迎体验火山引擎即时通信IM Demo"
+            };
+            BIMMessage *sendMsg = [[BIMClient sharedInstance] createCustomMessage:content];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(inputToolViewSendMessage:)]) {
+                [self.delegate inputToolViewSendMessage:sendMsg];
+            }
+        } break;
+        case BIMInputMenuTypeCoupon: {
+            NSDictionary *content = @{
+                @"type" : @3,
+                @"start" : @8,
+                @"end" : @14,
+                @"detail" : @"这是一张优惠券,点击此处领取"
             };
             BIMMessage *sendMsg = [[BIMClient sharedInstance] createCustomMessage:content];
             if (self.delegate && [self.delegate respondsToSelector:@selector(inputToolViewSendMessage:)]) {
@@ -844,10 +857,17 @@ static CGFloat textHei = 0;
         }
     }
     
-   BIMMessage *sendMsg = [[BIMClient sharedInstance] createTextAtMessage:self.tempTextView.text atUserList:mentionUids refMessage:self.referMessage hint:self.referMessageHint];
+    if (self.isModifyMessage && self.referMessage) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(inputToolViewModifyMessage:newContent:mentionedUsers:)]) {
+            [self.delegate inputToolViewModifyMessage:self.referMessage newContent:self.tempTextView.text mentionedUsers:mentionUids.copy];
+        }
+        self.mentionUsers = nil;
+    } else {
+        BIMMessage *sendMsg = [[BIMClient sharedInstance] createTextAtMessage:self.tempTextView.text atUserList:mentionUids refMessage:self.referMessage hint:self.referMessageHint];
 
-    if (self.delegate && [self.delegate respondsToSelector:@selector(inputToolViewSendMessage:)]) {
-        [self.delegate inputToolViewSendMessage:sendMsg];
+         if (self.delegate && [self.delegate respondsToSelector:@selector(inputToolViewSendMessage:)]) {
+             [self.delegate inputToolViewSendMessage:sendMsg];
+         }
     }
 
     self.tempTextView.text = @"";
@@ -959,6 +979,14 @@ static CGFloat textHei = 0;
         customCoverModel.iconStr = @"icon_photo";
         customCoverModel.type = BIMInputMenuTypeCustomMessage;
         [_menuMAry btd_addObject:customCoverModel];
+        
+        if (self.convType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+            BIMInputMenuModel *couponModel = [[BIMInputMenuModel alloc] init];
+            couponModel.titleStr = @"优惠券";
+            couponModel.iconStr = @"icon_photo";
+            couponModel.type = BIMInputMenuTypeCoupon;
+            [_menuMAry btd_addObject:couponModel];
+        }
 #endif
     }
 
