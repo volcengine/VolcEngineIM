@@ -2,14 +2,14 @@ PODS:
   - Bolts/Tasks (1.9.1)
   - Godzippa (2.1.1)
   - IGListDiffKit (4.0.0)
-  - im-uikit-tob (1.10.0-alpha.1):
-    - imsdk-tob (= 1.10.0-alpha.0)
+  - im-uikit-tob (1.10.0):
+    - imsdk-tob (= 1.10.0)
     - Masonry
     - MJRefresh
     - SDWebImage
-  - imsdk-tob (1.10.0-alpha.0):
-    - imsdk-tob/Core (= 1.10.0-alpha.0)
-  - imsdk-tob/Core (1.10.0-alpha.0):
+  - imsdk-tob (1.10.0):
+    - imsdk-tob/Core (= 1.10.0)
+  - imsdk-tob/Core (1.10.0):
     - Bolts/Tasks
     - IGListDiffKit
     - imsdk-tob/Feature_EssentialPB
@@ -30,7 +30,7 @@ PODS:
     - TTSDK/Uploader (> 1.28)
     - WCDB (~> 1.0.6)
     - YYCache
-  - imsdk-tob/Feature_EssentialPB (1.10.0-alpha.0):
+  - imsdk-tob/Feature_EssentialPB (1.10.0):
     - Protobuf (= 3.21.9)
   - JSONModel (1.8.0)
   - libextobjc (0.6):
@@ -156,7 +156,7 @@ PODS:
   - YYCache (1.0.4)
 
 DEPENDENCIES:
-  - im-uikit-tob (= 1.10.0-alpha.1)
+  - im-uikit-tob (= 1.10.0)
   - JSONModel
   - Masonry
   - MBProgressHUD
@@ -197,8 +197,8 @@ SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   Godzippa: f438af100364a775ef0707d29ab152c356375fbf
   IGListDiffKit: 665d6cf43ce726e676013db9c7d6c4294259b6b2
-  im-uikit-tob: e87f7a401f32f37f42eaf7dda1418dbaf06c9841
-  imsdk-tob: fdd83fef0b3de591053b3462a7a9bb603b2887ce
+  im-uikit-tob: c82b6fc746064c1badef6780ef2cdb570a1ad07e
+  imsdk-tob: 04e6a4cae99576bca9073f7e4eb7d9d87303bc67
   JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
@@ -220,6 +220,6 @@ SPEC CHECKSUMS:
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: 8099ce793951dd91c1c85c85e33ee38b19515e11
+PODFILE CHECKSUM: c4a1bc1941f3979674d25cdb5e1d32e1df191ce8
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.15.2
