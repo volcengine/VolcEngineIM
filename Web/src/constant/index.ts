@@ -72,6 +72,9 @@ export const ACCOUNT_CHECK_ENABLE =
 export const ENABLE_LIVE_DEMO =
    false;
 
+export const ENABLE_MESSAGE_INSPECTOR =
+   false;
+
 export const ENABLE_OVERSEA_SWITCH =
    false;
 
@@ -135,3 +138,4 @@ export enum CheckCode {
 
 export const EXT_ALIAS_NAME = 'a:live_group_member_alias_name';
 export const EXT_AVATAR_URL = 'a:live_group_member_avatar_url';
+export const EXT_COUPON_STATUS = 'a:coupon_status';

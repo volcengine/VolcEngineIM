@@ -33,4 +33,13 @@ export default styled.div`
     border: none;
     resize: none;
   }
+  .reply-title {
+    display: flex;
+  }
+  .reply-text {
+    width: 0;
+    flex-grow: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 `;

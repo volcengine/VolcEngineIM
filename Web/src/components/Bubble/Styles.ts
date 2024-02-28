@@ -4,7 +4,7 @@ const prefixCls = 'im-bubble';
 export default styled.div`
   position: relative;
   min-height: 20px;
-  max-height: 324px;
+  //max-height: 324px;
   line-height: 20px;
   padding: 10px;
   overflow: hidden;
@@ -24,11 +24,7 @@ export default styled.div`
   .${prefixCls}-mask {
     width: 100%;
     height: 60px;
-    background: linear-gradient(
-      183.02deg,
-      rgba(214, 213, 254, 0) -4.63%,
-      #d6d5fe 62.51%
-    );
+    background: linear-gradient(183.02deg, rgba(214, 213, 254, 0) -4.63%, #d6d5fe 62.51%);
   }
 
   .${prefixCls}-actionBox {

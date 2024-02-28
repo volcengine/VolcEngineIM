@@ -101,7 +101,7 @@ export default styled.div`
   .message-section-left {
     position: relative;
     border-radius: 8px;
-    max-width: calc(100% - 120px); // 预留 toolbar
+    max-width: calc(100% - 180px); // 预留 toolbar
     background-color: #fff;
     overflow: hidden;
     box-sizing: border-box;

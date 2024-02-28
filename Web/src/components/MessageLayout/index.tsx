@@ -2,7 +2,7 @@ import React, { FC, CSSProperties, useMemo, useEffect, useState, useCallback } f
 import classNames from 'classnames';
 import { useRecoilValue } from 'recoil';
 import { FlightStatus, im_proto, Message } from '@volcengine/im-web-sdk';
-import { Message as MessageToast, Tooltip } from '@arco-design/web-react';
+import { Message as MessageToast, Modal, Tooltip } from '@arco-design/web-react';
 
 import { MessageItemType } from '../../types';
 import {
@@ -21,6 +21,11 @@ import { getMessageTimeFormat } from '../../utils/formatTime';
 import MessageWrap from './Styles';
 import { BytedIMInstance, CurrentConversation } from '../../store';
 import { getMsgStatusIcon } from '../../utils';
+import { IconEdit, IconEye } from '@arco-design/web-react/icon';
+import { ENABLE_MESSAGE_INSPECTOR } from '../../constant';
+import { useRequest } from 'ahooks';
+import Row from '@arco-design/web-react/es/Grid/row';
+import Col from '@arco-design/web-react/es/Grid/col';
 
 interface MessageLayoutProps {
   className?: string;
@@ -35,8 +40,73 @@ interface MessageLayoutProps {
   recallMessage?: (msg: Message) => void;
   deleteMessage?: (msg: Message) => void;
   replyMessage?: (msg: Message) => void;
+  editMessage?: (msg: Message) => void;
   resendMessage?: (msg: Message) => void;
   modifyProperty?: (msg: Message, key: string, value: string) => void;
+}
+function format(message: Message) {
+  return JSON.stringify(message?.getObjectWithoutContext?.(), null, 2);
+}
+export function MessageDetailModal({
+  message,
+  setVisible,
+  visible,
+}: {
+  visible: boolean;
+  setVisible: (v: boolean) => void;
+  message: Message;
+}) {
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
+  const currentConversation = useRecoilValue(CurrentConversation);
+
+  const { data, loading } = useRequest(
+    async () => {
+      if (visible) {
+        return bytedIMInstance.getMessageByServerId({
+          conversation: currentConversation,
+          serverMessageId: message.serverId,
+          online: true,
+        });
+      }
+    },
+    {
+      refreshDeps: [message.serverId, visible],
+    }
+  );
+  return (
+    <Modal
+      title="消息详情"
+      visible={visible}
+      onOk={() => setVisible(false)}
+      onCancel={() => setVisible(false)}
+      hideCancel={true}
+      autoFocus={false}
+      focusLock={true}
+      escToExit={true}
+      style={{ width: 'calc(100vw - 200px)' }}
+    >
+      {visible && (
+        <Row>
+          <Col span={12}>
+            <div>服务端详情</div>
+          </Col>
+          <Col span={12}>
+            <div>本地详情</div>
+          </Col>
+          <Col span={12}>
+            {loading ? (
+              '请求中'
+            ) : (
+              <pre style={{ maxHeight: 'calc(100vh - 300px)', overflow: 'auto' }}>{format(data)}</pre>
+            )}
+          </Col>
+          <Col span={12}>
+            <pre style={{ maxHeight: 'calc(100vh - 300px)', overflow: 'auto' }}>{format(message)}</pre>
+          </Col>
+        </Row>
+      )}
+    </Modal>
+  );
 }
 
 const MessageLayout: FC<MessageLayoutProps> = props => {
@@ -52,6 +122,7 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
     recallMessage,
     deleteMessage,
     replyMessage,
+    editMessage,
     resendMessage,
     modifyProperty,
     ...otherProps
@@ -197,6 +268,7 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
     return <MessageStatusCmp showMessageStatus={message.isFromMe} icon={iconContet} />;
   };
 
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
   /** 消息的操作栏 */
   const renderToolbar = () => {
     const items = [
@@ -232,6 +304,21 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
           }
         },
       },
+      ENABLE_MESSAGE_INSPECTOR && {
+        name: '消息详情',
+        icon: <IconEye />,
+        onClick: async () => {
+          setDetailModalVisible(true);
+        },
+      },
+      message.type === im_proto.MessageType.MESSAGE_TYPE_TEXT &&
+        message.isFromMe && {
+          name: '编辑',
+          icon: <IconEdit />, // 编辑
+          onClick: () => {
+            editMessage(message);
+          },
+        },
       {
         name: '删除',
         icon: <IconDelete />, // 删除
@@ -239,7 +326,7 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
           deleteMessage(message);
         },
       },
-    ];
+    ].filter(Boolean);
     if (!isFromMe) {
       items.splice(2, 1);
     }
@@ -304,6 +391,8 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
           </div>
         </div>
       </div>
+
+      <MessageDetailModal visible={detailModalVisible} setVisible={setDetailModalVisible} message={message} />
     </MessageWrap>
   );
 };

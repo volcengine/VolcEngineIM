@@ -13,7 +13,7 @@ const useConversation = () => {
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
   const setCurrentConversation = useSetRecoilState(CurrentConversation);
   const userId = useRecoilValue(UserId);
-  const { sendSystemMessage } = useMessage();
+  const { sendSystemMessage, editMessage, replyMessage } = useMessage();
   const ACCOUNTS_INFO = useAccountsInfo();
 
   /**
@@ -101,6 +101,8 @@ const useConversation = () => {
     const conv = getConversation(id);
     if (conv?.id) {
       setCurrentConversation(conv);
+      editMessage(null);
+      replyMessage(null);
     }
   };
 

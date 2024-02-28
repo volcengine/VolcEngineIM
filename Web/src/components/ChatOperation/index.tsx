@@ -4,12 +4,13 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import ImEditor, { IRichText } from '../MessageEditor';
 import { IMAccountInfoTypes } from '../../types';
 import Styles from './Styles';
-import { Participants, ReferenceMessage } from '../../store';
+import { EditMessage, Participants, ReferenceMessage } from '../../store';
 import { useAccountsInfo, useMessage } from '../../hooks';
 
 interface ChatOperationPropsType {
   userInfo?: IMAccountInfoTypes;
   scrollRef?: any;
+  editingMessage?: any;
 }
 
 const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
@@ -18,6 +19,8 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
   const imEditorRef = useRef<any>(null);
   const { sendTextMessage } = useMessage();
   const [referenceMessage, setReferenceMessage] = useRecoilState(ReferenceMessage);
+  const [editingMessage, setEditingMessage] = useRecoilState(EditMessage);
+
   const ACCOUNTS_INFO = useAccountsInfo();
   const suggestions = participants.map(item => {
     return {
@@ -50,7 +53,11 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
         placeholder={placeholderWithForid}
         onSubmit={handleSubmit}
         repliedMessage={referenceMessage}
-        changeReplyMessage={setReferenceMessage}
+        changeReplyMessage={() => {
+          setReferenceMessage(null);
+          setEditingMessage(null);
+        }}
+        editingMessage={editingMessage}
         ref={imEditorRef}
         suggestions={suggestions}
       />

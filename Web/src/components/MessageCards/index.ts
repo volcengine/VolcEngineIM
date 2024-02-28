@@ -10,6 +10,7 @@ import VideoMessage from './VideoMessage';
 import RecalledMessage from './RecalledMessage';
 import FileMessage from './FileMessage';
 import VolcMessage from './VolcMessage';
+import CustomMessage from './CustomMessage';
 
 export interface IMessageCardsMap {
   [key: string]: ComponentType<any>;
@@ -21,7 +22,7 @@ const MessageCardsMap: IMessageCardsMap = {
   [`${im_proto.MessageType.MESSAGE_TYPE_AUDIO}`]: AudioMessage,
   [`${im_proto.MessageType.MESSAGE_TYPE_VIDEO}`]: VideoMessage,
   [`${im_proto.MessageType.MESSAGE_TYPE_FILE}`]: FileMessage,
-  [`${im_proto.MessageType.MESSAGE_TYPE_CUSTOM}`]: VolcMessage,
+  [`${im_proto.MessageType.MESSAGE_TYPE_CUSTOM}`]: CustomMessage,
 };
 
 const getMessageComponent = (type: im_proto.MessageType, isRecalled: boolean) => {

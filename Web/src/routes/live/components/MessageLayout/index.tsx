@@ -12,8 +12,9 @@ import { useAccountsInfo, useInView } from '../../../../hooks';
 import MessageWrap from './Styles';
 import { BytedIMInstance, CurrentConversation, Participants, UserId } from '../../../../store';
 import { getMessageTimeFormat, getMsgStatusIcon } from '../../../../utils';
-import { EXT_ALIAS_NAME, EXT_AVATAR_URL } from '../../../../constant';
-import { IconArrowDown, IconArrowUp, IconMinus } from '@arco-design/web-react/icon';
+import { ENABLE_MESSAGE_INSPECTOR, EXT_ALIAS_NAME, EXT_AVATAR_URL } from '../../../../constant';
+import { IconArrowDown, IconArrowUp, IconEye, IconMinus } from '@arco-design/web-react/icon';
+import { MessageDetailModal } from '../../../../components/MessageLayout';
 
 interface MessageLayoutProps {
   className?: string;
@@ -208,6 +209,8 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
     return <MessageStatusCmp showMessageStatus={isFromMe} icon={iconContet} />;
   };
 
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+
   /** 消息的操作栏 */
   const renderToolbar = () => {
     let b = message.messagePriority !== undefined;
@@ -229,6 +232,17 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
         name: `消息优先级：${PRIORITY_STRING[message.messagePriority]}`,
         icon: PRIORITY_ICON[message.messagePriority],
       },
+      // ...(ENABLE_MESSAGE_INSPECTOR
+      //   ? [
+      //       {
+      //         name: '消息详情',
+      //         icon: <IconEye />,
+      //         onClick: async () => {
+      //           setDetailModalVisible(true);
+      //         },
+      //       },
+      //     ]
+      //   : []),
     ].filter(Boolean);
     if (!isFromMe) {
       items.splice(2, 1);
@@ -281,6 +295,7 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
           </div>
         </div>
       </div>
+      <MessageDetailModal visible={detailModalVisible} setVisible={setDetailModalVisible} message={message} />
     </MessageWrap>
   );
 };

@@ -27,6 +27,7 @@ const ChatPanel: React.FC<ChatPanelPropsType> = memo(props => {
     recallMessage,
     deleteMessage,
     replyMessage,
+    editMessage,
     modifyMessageProperty,
     markMessageRead,
     resendMessage,
@@ -124,6 +125,7 @@ const ChatPanel: React.FC<ChatPanelPropsType> = memo(props => {
                 recallMessage={recallMessage}
                 deleteMessage={deleteMessage}
                 replyMessage={replyMessage}
+                editMessage={editMessage}
                 modifyProperty={modifyMessageProperty}
                 readIndex={readIndex}
                 unReadCount={currentConversationUnreadCount}

@@ -14,8 +14,8 @@ export function useProfileUpdater() {
       let profileStore = PROFILE.value;
       const ids = [...pending.keys()].filter(id => pending.get(id).force || !profileStore[id]?.profile);
       pending.clear();
-      if (ids.length) {
-        const r = await bytedIMInstance.getUserProfilesOnline({ userIds: ids });
+      while (ids.length) {
+        const r = await bytedIMInstance.getUserProfilesOnline({ userIds: ids.splice(0, 30) });
         r.list.forEach(x => {
           profileStore[x.userId] = { lastSeen: Date.now(), profile: x };
         });

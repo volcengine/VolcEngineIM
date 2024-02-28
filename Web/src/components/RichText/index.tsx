@@ -6,12 +6,10 @@ import RichConainer from './Styles';
 interface RichTextProps {
   richText?: IRichText;
   parseStyleKeys?(styleKeys: string[], element: IRichTextElement): string; // 解析element内的StyleKeys, 最终返回需要插入的classname
+  suffix?: React.ReactNode;
 }
 
-const parseClassName = (
-  element: IRichTextElement,
-  parseStyleKeys: RichTextProps['parseStyleKeys'],
-): string => {
+const parseClassName = (element: IRichTextElement, parseStyleKeys: RichTextProps['parseStyleKeys']): string => {
   const { styleKeys } = element;
   if (!parseStyleKeys || !styleKeys || !styleKeys.length) {
     return '';
@@ -23,7 +21,7 @@ const maxElementsEachRender = 200;
 const timeoutEachRender = 2000; // ms
 
 const RichText: FC<RichTextProps> = props => {
-  const { richText, parseStyleKeys } = props;
+  const { richText, parseStyleKeys, suffix } = props;
   const { elementIds, elements } = richText || {};
 
   const renderContent = useCallback(() => {
@@ -40,13 +38,7 @@ const RichText: FC<RichTextProps> = props => {
         }
 
         return (
-          <Cmp
-            key={id}
-            className={className}
-            richTextElement={element}
-            richTextElements={elements}
-            elementId={id}
-          />
+          <Cmp key={id} className={className} richTextElement={element} richTextElements={elements} elementId={id} />
         );
       });
     }
@@ -57,6 +49,7 @@ const RichText: FC<RichTextProps> = props => {
   return (
     <RichConainer className="richText-container">
       {renderContent()}
+      {suffix}
     </RichConainer>
   );
 };
