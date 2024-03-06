@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 
 import com.bumptech.glide.Glide;
+import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageStatus;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
@@ -55,6 +56,7 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
     private BIMUserProvider userProvider;
     private RecyclerView recyclerView;
     private TextView tvPropertyLeft, tvPropertyRight;
+    private TextView tvReadReceipt;
 
     public BIMMessageViewHolder(@NonNull View itemView,RecyclerView recyclerView, BIMUserProvider provider, BIMMessageAdapter.OnMessageItemClickListener l, BIMMessageAdapter.OnMessageItemLongClickListener longClickListener, BIMMessageAdapter.OnRefreshListener mediaMessageLoadListener) {
         super(itemView);
@@ -75,9 +77,10 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         userNameRight = itemView.findViewById(R.id.tv_msg_head_name_send);
         tvPropertyLeft = itemView.findViewById(R.id.tv_base_msg_property_left);
         tvPropertyRight = itemView.findViewById(R.id.tv_base_msg_property_right);
+        tvReadReceipt = itemView.findViewById(R.id.tv_read_receipt);
     }
 
-    public void update(BIMMessageWrapper wrapper, BIMMessageWrapper preWrapper) {
+    public void update(BIMMessageWrapper wrapper, BIMMessageWrapper preWrapper, boolean showReadStatus) {
         BIMMessage bimMessage = wrapper.getBimMessage();
         long sendUID = bimMessage.getSenderUID();
         BIMUIUser user = userProvider.getUserInfo(sendUID);
@@ -98,7 +101,19 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
             senStatus.setVisibility(View.GONE);
             tvPropertyLeft.setVisibility(View.GONE);
             tvPropertyRight.setVisibility(View.GONE);
+            tvReadReceipt.setVisibility(View.GONE);
             return;
+        }
+        if (showReadStatus && bimMessage.isSelf()
+                && (bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS || bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL)) {
+            tvReadReceipt.setVisibility(View.VISIBLE);
+            if (bimMessage.isReadAck()) {
+                tvReadReceipt.setText("已读");
+            } else {
+                tvReadReceipt.setText("未读");
+            }
+        } else {
+            tvReadReceipt.setVisibility(View.GONE);
         }
         recall.setVisibility(View.GONE);
         msgContainer.setVisibility(View.VISIBLE);

@@ -35,7 +35,7 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
         data = new ArrayList<>();
         this.isShowTag = isTag;
         List<Long> checkedIdList = new ArrayList<>();
-        if (checkedIdList != null) {
+        if (checkedList != null) {
             for (MemberWrapper memberWrapper : checkedList) {
                 checkedIdList.add(memberWrapper.getMember().getUserID());
             }

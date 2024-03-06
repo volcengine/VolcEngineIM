@@ -208,6 +208,11 @@ public class VEFriendConversationFragment extends Fragment {
             public void onTotalUnreadMessageCountChanged(int unreadCount) {
                 BIMLog.i(TAG, "onTotalUnreadMessageCountChanged() totalUnreadCount: " + unreadCount);
             }
+
+            @Override
+            public void onConversationRead(String conversationId, long fromUid) {
+
+            }
         };
     }
 

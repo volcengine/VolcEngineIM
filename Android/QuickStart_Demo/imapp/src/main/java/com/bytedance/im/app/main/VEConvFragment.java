@@ -161,6 +161,11 @@ public class VEConvFragment extends Fragment {
         public void onTotalUnreadMessageCountChanged(int totalUnreadCount) {
             allConvBtn.setText("全部" + getUnreadText(totalUnreadCount));
         }
+
+        @Override
+        public void onConversationRead(String conversationId, long fromUid) {
+
+        }
     };
 
     BIMConversationListListener friendConvListener = new BIMConversationListListener() {
@@ -182,6 +187,11 @@ public class VEConvFragment extends Fragment {
         @Override
         public void onTotalUnreadMessageCountChanged(int totalUnreadCount) {
             friendConvBtn.setText("好友" + getUnreadText(totalUnreadCount));
+        }
+
+        @Override
+        public void onConversationRead(String conversationId, long fromUid) {
+
         }
     };
 

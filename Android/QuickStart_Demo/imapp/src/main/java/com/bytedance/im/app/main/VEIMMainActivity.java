@@ -106,6 +106,11 @@ public class VEIMMainActivity extends Activity implements View.OnClickListener {
                     totalUnread.setVisibility(View.GONE);
                 }
             }
+
+            @Override
+            public void onConversationRead(String conversationId, long fromUid) {
+
+            }
         });
         if (VEUtils.isShield()) { //隐藏了直播群，删掉 if 可体验
             View liveTab = findViewById(R.id.rl_live_group);

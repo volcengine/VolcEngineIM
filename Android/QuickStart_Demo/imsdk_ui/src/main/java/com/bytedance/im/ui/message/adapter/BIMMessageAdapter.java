@@ -38,6 +38,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
     private OnRefreshListener onRefreshListener;
     private BIMUserProvider userProvider;
     private RecyclerView recyclerView;
+    private Boolean showReadStatus = false;
 
     public interface OnRefreshListener {
         void refreshMediaMessage(BIMMessage bimMessage, BIMResultCallback<BIMMessage> callback);
@@ -69,7 +70,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
         if (position + 1 < data.size()) {
             preWrapper = data.get(position + 1);
         }
-        holder.update(wrapper, preWrapper);
+        holder.update(wrapper, preWrapper, showReadStatus);
         BIMMessageUIManager.getInstance().getMessageUI(wrapper.getContentClass()).onBindView(holder, holder.itemView, wrapper, preWrapper);
     }
 
@@ -239,6 +240,27 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
             bimMessage.setContent(baseContent);
         }
         return new BIMMessageWrapper(bimMessage);
+    }
+
+    public List<BIMMessage> getVisibleList(int start, int end) {
+        List<BIMMessage> ret = new ArrayList<>();
+
+        start = Math.max(start, 0);
+        end = Math.min(end, data.size() - 1);
+        List<BIMMessageWrapper> subList = data.subList(start, end);
+
+        for (BIMMessageWrapper wrapper: subList) {
+            ret.add(wrapper.getBimMessage());
+        }
+
+        return ret;
+    }
+
+    public void needShowReadReceipt(boolean needShow) {
+        if (this.showReadStatus != needShow) {
+            this.showReadStatus = needShow;
+            this.notifyDataSetChanged();
+        }
     }
 
     public interface OnMessageItemClickListener {

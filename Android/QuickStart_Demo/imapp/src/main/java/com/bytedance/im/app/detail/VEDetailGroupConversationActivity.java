@@ -150,6 +150,11 @@ public class VEDetailGroupConversationActivity extends Activity {
         public void onTotalUnreadMessageCountChanged(int totalUnreadCount) {
 
         }
+
+        @Override
+        public void onConversationRead(String conversationId, long fromUid) {
+
+        }
     };
 
     @Override

@@ -21,17 +21,22 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.bytedance.im.core.api.BIMClient;
+import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageNewPropertyModifyType;
+import com.bytedance.im.core.api.enums.BIMMessageType;
+import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
 import com.bytedance.im.core.api.interfaces.BIMMessageListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSendCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMGetMessageOption;
+import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.api.model.BIMMessageListResult;
 import com.bytedance.im.core.api.model.BIMMessageNewPropertyModify;
+import com.bytedance.im.core.api.model.BIMMessageReadReceipt;
 import com.bytedance.im.core.model.LocalPropertyItem;
 import com.bytedance.im.core.model.inner.msg.BIMTextElement;
 import com.bytedance.im.ui.BIMUIClient;
@@ -57,8 +62,10 @@ import com.bytedance.im.ui.utils.media.MediaInfo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 public class BIMMessageListFragment extends Fragment {
@@ -105,7 +112,6 @@ public class BIMMessageListFragment extends Fragment {
         View v = inflater.inflate(R.layout.bim_im_fragment_message_list, container, false);
         recyclerView = v.findViewById(R.id.message_list);
         inPutView = v.findViewById(R.id.inputView);
-        refreshConversation();
         userProvider = BIMUIClient.getInstance().getUserProvider(); //单聊
         //todo 群聊群成员资料和备注支持后需代理实现 provider
         adapter = new BIMMessageAdapter(recyclerView,userProvider,new BIMMessageAdapter.OnMessageItemClickListener() {
@@ -138,6 +144,7 @@ public class BIMMessageListFragment extends Fragment {
                 BIMClient.getInstance().refreshMediaMessage(bimMessage,callback);
             }
         });
+        refreshConversation();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, true));
         recyclerView.setItemAnimator(null);
@@ -151,6 +158,8 @@ public class BIMMessageListFragment extends Fragment {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+
+                sendMessageReadReceipt();
                 if (dy == 0) return;
                 boolean isSlideToBottom = isSlideToTop(recyclerView);
                 if (isSlideToBottom) {
@@ -170,7 +179,6 @@ public class BIMMessageListFragment extends Fragment {
                         Toast.makeText(getActivity(), "最新没有更多了", Toast.LENGTH_SHORT).show();
                     }
                 }
-
             }
         });
         recyclerView.setOnDispatchListener(new BIMMessageRecyclerView.OnDispatchListener() {
@@ -182,6 +190,7 @@ public class BIMMessageListFragment extends Fragment {
         });
 
         BIMClient.getInstance().addMessageListener(receiveMessageListener);
+        BIMClient.getInstance().addConversationListener(conversationListListener);
         if (!TextUtils.isEmpty(startMsgId)) {
             newerHasMore = true;
             BIMClient.getInstance().getMessage(startMsgId, new BIMResultCallback<BIMMessage>() {
@@ -201,6 +210,7 @@ public class BIMMessageListFragment extends Fragment {
             initOlderDirection();
         }
         addUserListener();
+        BIMClient.getInstance().markConversationMessagesRead(conversationId, null);
         return v;
     }
     private List<BaseToolBtn> initToolbtns() {
@@ -263,6 +273,64 @@ public class BIMMessageListFragment extends Fragment {
         BIMLog.i(TAG, "onConfigurationChanged() newConfig: " + newConfig);
     }
 
+    public void sendMessageReadReceipt() {
+        if (recyclerView != null && bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
+            LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+            int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+            int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+
+            if (firstVisibleItemPosition < 0 || lastVisibleItemPosition < 0) return;
+            List<BIMMessage> msgList = adapter.getVisibleList(firstVisibleItemPosition, lastVisibleItemPosition);
+
+            List<BIMMessage> realSendList = new ArrayList<>();
+            for (BIMMessage bimMessage : msgList) {
+                if (!bimMessage.isReadAck()
+                        && !bimMessage.isSelf()
+                        && bimMessage.getMsgType() != BIMMessageType.BIM_MESSAGE_TYPE_AUDIO
+                        && bimMessage.getMsgType() != BIMMessageType.BIM_MESSAGE_TYPE_VIDEO) {
+                    realSendList.add(bimMessage);
+                }
+            }
+
+            if (!realSendList.isEmpty()) {
+                BIMClient.getInstance().sendMessageReadReceipts(realSendList, new BIMSimpleCallback() {
+                    @Override
+                    public void onSuccess() {
+                        BIMLog.i(TAG, "sendMessageReadReceipts success");
+                    }
+
+                    @Override
+                    public void onFailed(BIMErrorCode code) {
+                        BIMLog.e(TAG, "sendMessageReadReceipts failed, error: " + code);
+                    }
+                });
+            }
+        }
+    }
+
+    public void checkCanShowReadStatus(BIMConversation conversation) {
+        adapter.needShowReadReceipt(false);
+        if (conversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
+            BIMClient.getInstance().getConversationMemberList(conversation.getConversationID(), new BIMResultCallback<List<BIMMember>>() {
+                @Override
+                public void onSuccess(List<BIMMember> members) {
+                    Set<Long> memberIds = new HashSet<>();
+                    for (BIMMember member: members) {
+                        memberIds.add(member.getUserID());
+                    }
+                    if (memberIds.size() > 1) {
+                        adapter.needShowReadReceipt(true);
+                    }
+                }
+
+                @Override
+                public void onFailed(BIMErrorCode code) {
+
+                }
+            });
+        }
+    }
+
     private void refreshConversation() {
         BIMClient.getInstance().getConversation(conversationId, new BIMResultCallback<BIMConversation>() {
             @Override
@@ -274,6 +342,7 @@ public class BIMMessageListFragment extends Fragment {
                 if (!TextUtils.isEmpty(draft) && TextUtils.isEmpty(inPutView.getmInputEt().getText())) {
                     inPutView.setEditDraft(draft);
                 }
+                checkCanShowReadStatus(conversation);
             }
 
             @Override
@@ -287,6 +356,7 @@ public class BIMMessageListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         refreshConversation();
+        sendMessageReadReceipt();
         BIMClient.getInstance().markConversationRead(conversationId, null);
     }
 
@@ -302,6 +372,7 @@ public class BIMMessageListFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         BIMClient.getInstance().removeMessageListener(receiveMessageListener);
+        BIMClient.getInstance().removeConversationListener(conversationListListener);
         removeUserListener();
     }
 
@@ -382,6 +453,25 @@ public class BIMMessageListFragment extends Fragment {
         }
     }
 
+    private void loadMessageReceipt(List<BIMMessage> messageList) {
+        BIMLog.i(TAG, "loadMessageReceipt()");
+        if (messageList != null && !messageList.isEmpty()) {
+            BIMClient.getInstance().getMessagesReadReceipt(messageList, new BIMResultCallback<List<BIMMessageReadReceipt>>() {
+                @Override
+                public void onSuccess(List<BIMMessageReadReceipt> messageReadReceipts) {
+                    for (BIMMessageReadReceipt readReceipt: messageReadReceipts) {
+                        adapter.insertOrUpdateMessage(readReceipt.getMessage());
+                    }
+                }
+
+                @Override
+                public void onFailed(BIMErrorCode code) {
+                    BIMLog.e(TAG, "loadMessageReceipt failed");
+                }
+            });
+        }
+    }
+
     private void loadOlderData(BIMSimpleCallback loadOldCallback) {
         BIMLog.i(TAG, "loadOlderData()");
         if (isSyncingOlder) {
@@ -404,6 +494,7 @@ public class BIMMessageListFragment extends Fragment {
                 if (loadOldCallback != null) {
                     loadOldCallback.onSuccess();
                 }
+                loadMessageReceipt(bimMessageListResult.getMessageList());
             }
 
             @Override
@@ -439,6 +530,7 @@ public class BIMMessageListFragment extends Fragment {
                 if (loadNewCallback != null) {
                     loadNewCallback.onSuccess();
                 }
+                loadMessageReceipt(bimMessageListResult.getMessageList());
             }
 
             @Override
@@ -703,8 +795,44 @@ public class BIMMessageListFragment extends Fragment {
                 adapter.insertOrUpdateMessage(message);
             }
         }
+
+        @Override
+        public void onReceiveMessagesReadReceipt(List<BIMMessageReadReceipt> receiptList) {
+            for (BIMMessageReadReceipt receipt: receiptList) {
+                BIMLog.i(TAG, "onReceiveMessagesReadReceipt() uuid: " + receipt.getMessage().getUuid() + " thread:" + Thread.currentThread());
+                if (receipt.getConversationId().equals(bimConversation.getConversationID())) {
+                    adapter.insertOrUpdateMessage(receipt.getMessage());
+                }
+            }
+        }
     };
 
+    private BIMConversationListListener conversationListListener = new BIMConversationListListener() {
+        @Override
+        public void onNewConversation(List<BIMConversation> conversationList) {
+
+        }
+
+        @Override
+        public void onConversationChanged(List<BIMConversation> conversationList) {
+
+        }
+
+        @Override
+        public void onConversationDelete(List<BIMConversation> conversationList) {
+
+        }
+
+        @Override
+        public void onTotalUnreadMessageCountChanged(int totalUnreadCount) {
+
+        }
+
+        @Override
+        public void onConversationRead(String conversationId, long fromUid) {
+            adapter.notifyDataSetChanged();
+        }
+    };
 
     private void showMessageOperationDialog(View view, BIMMessage message) {
         if (bimConversation == null) return;

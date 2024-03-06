@@ -10,7 +10,9 @@ import android.widget.TextView;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
 import com.bytedance.im.ui.utils.media.AudioHelper;
 import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
@@ -19,6 +21,8 @@ import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.ui.utils.BIMUtils;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.model.inner.msg.BIMAudioElement;
+
+import java.util.Collections;
 
 
 @CustomUIType(contentCls = BIMAudioElement.class)
@@ -66,6 +70,17 @@ public class VoiceMessageUI extends BaseCustomElementUI {
     @Override
     public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         BIMAudioElement audioElement = (BIMAudioElement) messageWrapper.getBimMessage().getElement();
+        BIMClient.getInstance().sendMessageReadReceipts(Collections.singletonList(messageWrapper.getBimMessage()), new BIMSimpleCallback() {
+            @Override
+            public void onSuccess() {
+                BIMLog.i("VoiceMessageUI", "sendMessageReadReceipts success");
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+                BIMLog.e("VoiceMessageUI", "sendMessageReadReceipts failed: " + code);
+            }
+        });
         if (audioElement != null) {
             if (audioElement.isExpired()) {
                 holder.getOnOutListener().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {

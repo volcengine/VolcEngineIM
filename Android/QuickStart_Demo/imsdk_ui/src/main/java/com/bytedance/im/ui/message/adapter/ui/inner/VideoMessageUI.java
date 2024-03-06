@@ -21,6 +21,7 @@ import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageStatus;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
@@ -32,6 +33,8 @@ import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.model.inner.msg.BIMVideoElement;
 import com.bytedance.im.ui.utils.BIMUIUtils;
 import com.bytedance.im.ui.utils.media.LoadIMageUtils;
+
+import java.util.Collections;
 
 @CustomUIType(contentCls = BIMVideoElement.class)
 public class VideoMessageUI extends BaseCustomElementUI {
@@ -93,6 +96,17 @@ public class VideoMessageUI extends BaseCustomElementUI {
     @Override
     public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         BIMVideoElement videoElement = (BIMVideoElement) messageWrapper.getBimMessage().getElement();
+        BIMClient.getInstance().sendMessageReadReceipts(Collections.singletonList(messageWrapper.getBimMessage()), new BIMSimpleCallback() {
+            @Override
+            public void onSuccess() {
+                BIMLog.i(TAG, "sendMessageReadReceipts success");
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+                BIMLog.e(TAG, "sendMessageReadReceipts failed: " + code);
+            }
+        });
         if (messageWrapper.getBimMessage().isSelf() && !TextUtils.isEmpty(videoElement.getLocalPath())) {
             startPlay(v.getContext(), videoElement.getLocalPath());
         } else {
