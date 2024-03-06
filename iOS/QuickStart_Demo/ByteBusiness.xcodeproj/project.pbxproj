@@ -1362,7 +1362,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.10.0;
+				MARKETING_VERSION = 1.11.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1570,7 +1570,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.10.0;
+				MARKETING_VERSION = 1.11.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1623,7 +1623,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.10.0;
+				MARKETING_VERSION = 1.11.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",

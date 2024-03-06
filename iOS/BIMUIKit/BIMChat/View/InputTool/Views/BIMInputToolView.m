@@ -377,7 +377,7 @@ typedef NS_ENUM(NSInteger, IMTextAudioType) {
     self.textAudioBtn.alpha = 1;
 
     self.tempTextView.userInteractionEnabled = YES;
-    self.tempTextView.text = @"";
+//    self.tempTextView.text = @"";
     self.tempTextView.alpha = 1;
 
     self.emojiBtn.userInteractionEnabled = YES;

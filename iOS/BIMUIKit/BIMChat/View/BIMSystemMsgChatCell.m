@@ -43,6 +43,7 @@
     self.chatBg.hidden = YES;
     self.retrySentBtn.hidden = YES;
     self.referMessageLabel.hidden = YES;
+    self.readLabel.hidden = YES;
     [self setupConstraints];
     
 }

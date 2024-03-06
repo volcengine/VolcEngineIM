@@ -68,6 +68,13 @@
     self.replyView = [[BIMChatStickerReplyView alloc] init];
     self.replyView.hidden = YES;
     [self.contentView addSubview:self.replyView];
+
+    self.readLabel = [UILabel new];
+    self.readLabel.textAlignment = NSTextAlignmentCenter;
+    self.readLabel.font = kFont(14);
+    self.readLabel.backgroundColor = kClearColor;
+    self.readLabel.textColor = kIM_Main_Color_30;
+    [self.contentView addSubview:self.readLabel];
 }
 
 - (void)longPress: (UILongPressGestureRecognizer *)ges{
@@ -145,7 +152,8 @@
         self.replyView.hidden = YES;
     }
     
-    
+    [self refsershReadLabelText];
+
     [self setupConstraints];
 }
 
@@ -285,6 +293,15 @@
                 make.bottom.mas_equalTo(-[self margin]*2);
             }];
         }
+
+        if (!self.readLabel.hidden) {
+            [self.readLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.height.mas_equalTo(20);
+                make.width.mas_equalTo(40);
+                make.bottom.mas_equalTo(self.chatBg);
+                make.right.equalTo(self.chatBg.mas_left).offset(-8);
+            }];
+        }
     }else{
         [self.portrait mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.mas_equalTo(16);
@@ -305,8 +322,8 @@
             }];
         }
     }
-    
-    
+
+
 }
 
 /**
@@ -345,5 +362,21 @@
     }
 }
 
+/// 展示消息已读回执文案
+- (void)refsershReadLabelText
+{
+    if (!self.isSelfMsg || self.converstaion.conversationType != BIM_CONVERSATION_TYPE_ONE_CHAT || self.message.msgStatus != BIM_MESSAGE_STATUS_SUCCESS) {
+        self.readLabel.hidden = YES;
+        return;
+    }
+    /// 和自己的单聊不展示已读回执文案
+    if (self.converstaion.oppositeUserID == [BIMClient sharedInstance].getCurrentUserID.longLongValue) {
+        self.readLabel.hidden = YES;
+        return;
+    }
+
+    self.readLabel.hidden = NO;
+    self.readLabel.text = self.message.isReadAck ? @"已读" : @"未读";
+}
 
 @end

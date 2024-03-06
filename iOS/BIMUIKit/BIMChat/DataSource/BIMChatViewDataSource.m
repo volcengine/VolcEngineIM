@@ -18,7 +18,7 @@
 @property (nonatomic, strong) NSMutableDictionary *messageDict;
 @property (nonatomic, assign) BOOL hasOlderMessages;
 @property (nonatomic, assign) BOOL hasNewerMessages;
-@property (nonatomic, strong) NSLock *lock;
+@property (nonatomic, strong) NSObject *lock;
 @property (nonatomic, strong) BIMMessage *earliestMessage;
 @property (nonatomic, strong) BIMMessage *searchAnchorMessage;
 
@@ -36,7 +36,7 @@
         _conversation = conversation;
         _p_messageList = [NSMutableArray array];
         _messageDict = [NSMutableDictionary dictionary];
-        _lock = [[NSLock alloc] init];
+        _lock = [[NSObject alloc] init];
         _liveGroupNextCursor = joinMessageCursor;
         //        _earliestMessage = anchorMessage;
         _searchAnchorMessage = anchorMessage;
@@ -80,14 +80,20 @@
 
 - (NSUInteger)numberOfItems
 {
-    NSUInteger count = self.messageList.count;
+    NSUInteger count;
+    @synchronized (self.lock) {
+        count = self.messageList.count;
+    }
     return count;
 }
 
 - (BIMMessage *)itemAtIndex:(NSUInteger)index
 {
-    NSInteger reverseIndex = self.messageList.count - index - 1;
-    BIMMessage *message = kSafeArrayIndex(self.messageList, reverseIndex);
+    BIMMessage *message;
+    @synchronized (self.lock) {
+        NSInteger reverseIndex = self.messageList.count - index - 1;
+        message = kSafeArrayIndex(self.messageList, reverseIndex);
+    }
     if (!message) {
         return nil;
     }
@@ -95,18 +101,22 @@
 }
 
 - (NSUInteger)indexOfItem:(BIMMessage *)item {
-    NSUInteger index;
-    if ([self.messageList containsObject:item]) {
-        index = [self.messageList indexOfObject:item];
-    }
-    for (int i = 0; i<self.messageList.count; i++) {
-        BIMMessage *msg = kSafeArrayIndex(self.messageList, i);
-        if ([msg.uuid isEqualToString:item.uuid]) {
-            index = i;
-            break;
+    NSUInteger indexOfItem;
+    @synchronized (self.lock) {
+        NSUInteger index;
+        if ([self.messageList containsObject:item]) {
+            index = [self.messageList indexOfObject:item];
         }
+        for (int i = 0; i<self.messageList.count; i++) {
+            BIMMessage *msg = kSafeArrayIndex(self.messageList, i);
+            if ([msg.uuid isEqualToString:item.uuid]) {
+                index = i;
+                break;
+            }
+        }
+        indexOfItem = self.messageList.count - index - 1;
     }
-    return self.messageList.count - index - 1;
+    return indexOfItem;
 }
 
 - (void)loadOlderMessagesWithCompletionBlock:(void (^)(BIMError * _Nullable))completion
@@ -122,7 +132,9 @@
                 self.hasOlderMessages = hasMore;
             }
             dispatch_async(dispatch_get_main_queue(), ^{
-                self.messageList = [self.p_messageList copy];
+                @synchronized (self.lock) {
+                    self.messageList = [self.p_messageList copy];
+                }
                 if (completion) {
                     completion(error);
                 }
@@ -131,7 +143,9 @@
     } else {
         BIMGetMessageOption *option = [[BIMGetMessageOption alloc] init];
         option.limit = limit;
-        option.anchorMessage = self.earliestMessage ?: self.messageList.lastObject;
+        @synchronized (self.lock) {
+            option.anchorMessage = self.earliestMessage ?: self.messageList.lastObject;
+        }
         [[BIMClient sharedInstance] getHistoryMessageList:self.conversation.conversationID option:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable earliestMessage, BIMError * _Nullable error) {
             @strongify(self);
             if (!error) {
@@ -139,8 +153,11 @@
                 [self addOlderMessages:messages];
                 self.hasOlderMessages = hasMore;
             }
+            [self getMessagesReadReceipt:messages];
             dispatch_async(dispatch_get_main_queue(), ^{
-                self.messageList = [self.p_messageList copy];
+                @synchronized (self.lock) {
+                    self.messageList = [self.p_messageList copy];
+                }
                 if (completion) {
                     completion(error);
                 }
@@ -159,12 +176,12 @@
         }
     }
     
-    [self.lock lock];
-    [self.p_messageList addObjectsFromArray:messages];
-    [messages enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        self.messageDict[obj.uuid] = obj;
-    }];
-    [self.lock unlock];
+    @synchronized (self.lock) {
+        [self.p_messageList addObjectsFromArray:messages];
+        [messages enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            self.messageDict[obj.uuid] = obj;
+        }];
+    }
 }
 
 - (void)loadNewerMessagesWithCompletionBlock:(void (^)(BIMError * _Nullable))completion
@@ -174,15 +191,20 @@
     if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
         BIMGetMessageOption *option = [[BIMGetMessageOption alloc] init];
         option.limit = limit;
-        option.anchorMessage = self.messageList.firstObject ?: self.searchAnchorMessage;
+        @synchronized (self.lock) {
+            option.anchorMessage = self.messageList.firstObject ?: self.searchAnchorMessage;
+        }
         [[BIMClient sharedInstance] getNewerMessageList:self.conversation.conversationID option:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable anchorMessage, BIMError * _Nullable error) {
             @strongify(self);
             if (!error) {
                 [self addNewerMessages:messages];
                 self.hasNewerMessages = hasMore;
             }
+            [self getMessagesReadReceipt:messages];
             dispatch_async(dispatch_get_main_queue(), ^{
-                self.messageList = [self.p_messageList copy];
+                @synchronized (self.lock) {
+                    self.messageList = [self.p_messageList copy];
+                }
                 if (completion) {
                     completion(error);
                 }
@@ -192,12 +214,12 @@
 }
 
 - (void)addNewerMessages:(NSArray<BIMMessage *> *)messages {
-    [self.lock lock];
-    self.p_messageList = [messages arrayByAddingObjectsFromArray:self.p_messageList].mutableCopy;
-    [messages enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        self.messageDict[obj.uuid] = obj;
-    }];
-    [self.lock unlock];
+    @synchronized (self.lock) {
+        self.p_messageList = [messages arrayByAddingObjectsFromArray:self.p_messageList].mutableCopy;
+        [messages enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            self.messageDict[obj.uuid] = obj;
+        }];
+    }
 }
 
 - (void)loadMessagesWithSearchMsg:(BIMMessage *)searchMessage completionBlock:(void (^)(NSIndexPath * _Nonnull, BIMError * _Nullable))completion
@@ -227,6 +249,7 @@
                 e = error;
             }
             dispatch_group_leave(group);
+            [self getMessagesReadReceipt:messages];
         }];
     }
     
@@ -245,21 +268,22 @@
                 e = error;
             }
             dispatch_group_leave(group);
+            [self getMessagesReadReceipt:messages];
         }];
     }
     
     
     dispatch_group_notify(group, dispatch_get_main_queue(), ^{
-        [self.lock lock];
-        [self.p_messageList addObjectsFromArray:newers];
-        [self.p_messageList addObject:searchMessage];
-        [self.p_messageList addObjectsFromArray:olders];
-        [self.p_messageList enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            self.messageDict[obj.uuid] = obj;
-        }];
-        [self.lock unlock];
-        
-        self.messageList = [self.p_messageList copy];
+        @synchronized (self.lock) {
+            [self.p_messageList addObjectsFromArray:newers];
+            [self.p_messageList addObject:searchMessage];
+            [self.p_messageList addObjectsFromArray:olders];
+            [self.p_messageList enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                self.messageDict[obj.uuid] = obj;
+            }];
+
+            self.messageList = [self.p_messageList copy];
+        }
         if (completion) {
             completion([NSIndexPath indexPathForRow:olders.count inSection:0], e);
         }
@@ -283,6 +307,7 @@
     }
     
     [self p_insertMessage:message];
+    [self sendMessageReadReceipt:message];
 }
 
 /// 收到消息被删除
@@ -294,81 +319,128 @@
 /// 收到消息撤回
 - (void)onRecallMessage:(BIMMessage *)message
 {
-    if (![self isCurrentConversationMessage:message]) {
-        return;
-    }
     [self p_updateMessage:message];
 }
 
 /// 消息被修改（内容+扩展）
 - (void)onUpdateMessage:(BIMMessage *)message
 {
-    if (![self isCurrentConversationMessage:message]) {
-        return;
-    }
     [self p_updateMessage:message];
 }
 
 /// 发送消息入库完成
 - (void)onSendMessage:(BIMMessage *)message
 {
-    if (![self isCurrentConversationMessage:message]) {
-        return;
-    }
     [self p_insertMessage:message];
 }
 
+/// 收到消息已读回执
+- (void)onReceiveMessagesReadReceipt:(NSArray<BIMMessageReadReceipt *> *)receiptList;
+{
+    [receiptList enumerateObjectsUsingBlock:^(BIMMessageReadReceipt * _Nonnull receipt, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self p_updateMessage:receipt.message];
+    }];
+}
+
+#pragma mark - Private
+
 - (void)p_insertMessage:(BIMMessage *)message
 {
-    [self.lock lock];
-    if (self.p_messageList.count == 0) {
-        self.earliestMessage = message;
+    if (![self isCurrentConversationMessage:message]) {
+        return;
     }
-    if (self.messageDict[message.uuid]) { // update
-        [self.messageList enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            if ([obj.uuid isEqualToString:message.uuid]) {
-                [self.p_messageList replaceObjectAtIndex:idx withObject:message];
-                *stop = YES;
-            }
-        }];
-    } else { // insert
-        if (self.hasNewerMessages) {
-            [self.lock unlock];
-            return;
+    @synchronized (self.lock) {
+        if (self.p_messageList.count == 0) {
+            self.earliestMessage = message;
         }
-        [self.p_messageList insertObject:message atIndex:0];
+        if (self.messageDict[message.uuid]) { // update
+            [self.messageList enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj.uuid isEqualToString:message.uuid]) {
+                    [self.p_messageList replaceObjectAtIndex:idx withObject:message];
+                    *stop = YES;
+                }
+            }];
+        } else { // insert
+            if (self.hasNewerMessages) {
+                return;
+            }
+            [self.p_messageList insertObject:message atIndex:0];
+        }
+        self.messageDict[message.uuid] = message;
     }
-    self.messageDict[message.uuid] = message;
-    [self.lock unlock];
     [self sortMessageListWithScrollToBottom:YES];
 }
 
 - (void)p_updateMessage:(BIMMessage *)message
 {
-    [self.messageList enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if ([obj.uuid isEqualToString:message.uuid]) {
-            [self.lock lock];
-            [self.p_messageList replaceObjectAtIndex:idx withObject:message];
-            self.messageDict[message.uuid] = obj;
-            [self.lock unlock];
-            [self sortMessageListWithScrollToBottom:NO];
-            *stop = YES;
-        }
-    }];
+    if (![self isCurrentConversationMessage:message]) {
+        return;
+    }
+    @synchronized (self.lock) {
+        [self.messageList enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj.uuid isEqualToString:message.uuid]) {
+                [self.p_messageList replaceObjectAtIndex:idx withObject:message];
+                self.messageDict[message.uuid] = obj;
+                [self sortMessageListWithScrollToBottom:NO];
+                *stop = YES;
+            }
+        }];
+    }
 }
 
 - (void)p_deleteMessage:(NSString *)msgID
 {
-    for (BIMMessage *msg in self.messageList) {
-        if ([msg.uuid isEqualToString:msgID]) {
-            [self.lock lock];
-            [self.p_messageList removeObject:msg];
-            self.messageDict[msgID] = nil;
-            [self.lock unlock];
-            [self sortMessageListWithScrollToBottom:NO];
-            return;
+    @synchronized (self.lock) {
+        for (BIMMessage *msg in self.messageList) {
+            if ([msg.uuid isEqualToString:msgID]) {
+                [self.p_messageList removeObject:msg];
+                self.messageDict[msgID] = nil;
+                [self sortMessageListWithScrollToBottom:NO];
+                return;
+            }
         }
     }
+}
+
+/// 发送消息已读回执
+- (void)sendMessageReadReceipt:(BIMMessage *)message
+{
+    if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_ONE_CHAT) {
+        return;
+    }
+    if (message.senderUID == [BIMClient sharedInstance].getCurrentUserID.longLongValue) {
+        return;
+    }
+    if (!message.serverMessageID || message.isReadAck || self.conversation.conversationType != BIM_CONVERSATION_TYPE_ONE_CHAT) {
+        return;
+    }
+    /// 语音和视频消息需要点开才发送已读回执，可以根据需求调整。
+    if (message.msgType == BIM_MESSAGE_TYPE_VIDEO || message.msgType == BIM_MESSAGE_TYPE_AUDIO) {
+        return;
+    }
+    [[BIMClient sharedInstance] sendMessageReadReceipts:@[message] completion:^(BIMError * _Nullable error) {}];
+}
+
+/// 获取消息已读回执
+- (void)getMessagesReadReceipt:(NSArray<BIMMessage *> *)messages
+{
+    if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_ONE_CHAT) {
+        return;
+    }
+    NSMutableArray<BIMMessage *> *needGetReceiptMessages = [NSMutableArray array];
+    [messages enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (message.isReadAck || message.isRecalled) {
+            return;
+        }
+        if (message.senderUID != [[BIMClient sharedInstance] getCurrentUserID].longLongValue) {
+            return;
+        }
+        [needGetReceiptMessages addObject:message];
+    }];
+    if (BTD_isEmptyArray(needGetReceiptMessages)) {
+        return;
+    }
+    [[BIMClient sharedInstance] getMessagesReadReceipt:[needGetReceiptMessages copy] completion:^(NSArray<BIMMessageReadReceipt *> * _Nullable receiptList, BIMError * _Nullable error) {}];
 }
 
 #pragma mark -
@@ -376,15 +448,17 @@
 - (void)sortMessageListWithScrollToBottom:(BOOL)scrollToBottom
 {
     if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
-        [self.lock lock];
-        [self.p_messageList sortUsingComparator:^NSComparisonResult(BIMMessage *obj1, BIMMessage *obj2) {
-            return [@(obj2.orderIndex) compare:@(obj1.orderIndex)];
-        }];
-        [self.lock unlock];
+        @synchronized (self.lock) {
+            [self.p_messageList sortUsingComparator:^NSComparisonResult(BIMMessage *obj1, BIMMessage *obj2) {
+                return [@(obj2.orderIndex) compare:@(obj1.orderIndex)];
+            }];
+        }
     }
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.messageList = [self.p_messageList copy];
+        @synchronized (self.lock) {
+            self.messageList = [self.p_messageList copy];
+        }
         if ([self.delegate respondsToSelector:@selector(chatViewDataSourceDidReloadAllMessage:scrollToBottom:)]) {
             [self.delegate chatViewDataSourceDidReloadAllMessage:self scrollToBottom:scrollToBottom];
         }

@@ -187,15 +187,11 @@
                         if (error) {
                             [BIMToastView toast:[NSString stringWithFormat:@"无法播放，URL错误:%@",self.file.url]];
                         } else {
-                            [self.player replaceCurrentItemWithPlayerItem:item];
-                            [self.player play];
-                            [self startAnimation];
+                            [self playItem:item];
                         }
                     }];
                 } else {
-                    [self.player replaceCurrentItemWithPlayerItem:item];
-                    [self.player play];
-                    [self startAnimation];
+                    [self playItem:item];
                 }
                 
                 
@@ -209,6 +205,16 @@
             [self.delegate cell:self didClickImageContent:self.message];
         }
     });
+}
+
+- (void)playItem:(AVPlayerItem *)item
+{
+    [self.player replaceCurrentItemWithPlayerItem:item];
+    [self.player play];
+    [self startAnimation];
+    if (self.converstaion.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
+        [[BIMClient sharedInstance] sendMessageReadReceipts:@[self.message] completion:^(BIMError * _Nullable error) {}];
+    }
 }
 
 - (void)refreshMediaMessage:(BIMMessage *)message completion:(BIMCompletion)completion

@@ -36,6 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIImageView *portrait;
 @property (nonatomic, strong) UILabel *nameLabel;
 @property (nonatomic, strong) UILabel *referMessageLabel;
+@property (nonatomic, strong) UILabel *readLabel;
 @property (nonatomic, strong) BIMChatStickerReplyView *replyView;
 
 @property (nonatomic, strong) UIButton *retrySentBtn;

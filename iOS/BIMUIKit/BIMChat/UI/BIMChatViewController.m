@@ -106,6 +106,10 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        [[BIMClient sharedInstance] markConversationRead:self.conversation.conversationID completion:nil];
+    }
 }
 
 - (BOOL)headerRefreshEnable {
@@ -198,7 +202,10 @@
 
 - (void)setupMsgs{
     [[BIMClient sharedInstance] markConversationRead:self.conversation.conversationID completion:nil];
-    
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
+        [[BIMClient sharedInstance] markConversationMessagesRead:self.conversation.conversationID completion:^(BIMError * _Nullable error) {}];
+    }
+
     self.messageDataSource = [[BIMChatViewDataSource alloc] initWithConversation:self.conversation joinMessageCursor:self.joinMessageCursor anchorMessage:self.anchorMessage];
     self.messageDataSource.delegate = self;
     
@@ -302,14 +309,17 @@
     return playerItem;
 }
 
-- (void)playWithElement:(BIMVideoElement *)element
+- (void)playElementWithMessage:(BIMMessage *)message
 {
-    AVPlayerItem *playItem = [self playItemWithFile:element];
+    AVPlayerItem *playItem = [self playItemWithFile:(BIMVideoElement *)message.element];
     if (!playItem) {
         [BIMToastView toast:@"播放链接错误，无法播放"];
     } else {
         [self.player replaceCurrentItemWithPlayerItem:playItem];
         [self.player play];
+    }
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
+        [[BIMClient sharedInstance] sendMessageReadReceipts:@[message] completion:^(BIMError * _Nullable error) {}];
     }
 }
 
@@ -328,11 +338,11 @@
             if (error) {
                 [BIMToastView toast:@"播放链接错误，无法播放"];
             } else {
-                [self playWithElement:element];
+                [self playElementWithMessage:message];
             }
         }];
     } else {
-        [self playWithElement:element];
+        [self playElementWithMessage:message];
     }
     
 }
@@ -549,10 +559,6 @@
 
 - (void)chatViewDataSourceDidReloadAllMessage:(BIMChatViewDataSource *)dataSource scrollToBottom:(BOOL)scrollToBottom
 {
-    if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
-        [[BIMClient sharedInstance] markConversationRead:self.conversation.conversationID completion:nil];
-    }
-    
     [self.tableview reloadData];
 
     // 新消息到来时滚动至底部
@@ -683,6 +689,13 @@
             break;
         }
     }
+}
+
+- (void)onConversationRead:(NSString *)conversationId fromUid:(long long)uid
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableview reloadData];
+    });
 }
 
 #pragma mark - User Selection
