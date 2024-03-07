@@ -28,8 +28,16 @@ import {
   IsMuted,
   LiveConversationMemberCount,
   LiveConversationOwner,
+  ReadReceiptVersion,
 } from '../store';
-import { APP_ID, USER_ID_KEY, IM_TOKEN_KEY, SDK_OPTION, FRIEND_INFO } from '../constant';
+import {
+  APP_ID,
+  USER_ID_KEY,
+  IM_TOKEN_KEY,
+  SDK_OPTION,
+  FRIEND_INFO,
+  ENABLE_AUTO_REFRESH_EXPIRED_TOKEN,
+} from '../constant';
 import { fetchToken } from '../apis/app';
 import { Storage, computedVisibleTime } from '../utils';
 import { useLive } from './useLive';
@@ -95,6 +103,7 @@ const useInit = () => {
   const { clearCurrentLiveConversationStatus } = useLive();
   const [liveMessagesMap, setLiveMessagesMap] = useState(new Map());
   const setLiveConversationOwner = useSetRecoilState(LiveConversationOwner);
+  const setReadReceiptVersion = useSetRecoilState(ReadReceiptVersion);
 
   /**
    * 获取会话最新消息列表
@@ -164,28 +173,32 @@ const useInit = () => {
 
   useEffect(() => {
     const tokenExpiredHandler = bytedIMInstance?.event?.subscribe?.(IMEvent.TokenExpired, () => {
-      if (isShowExpiredToast.current) {
-        return;
+      if (ENABLE_AUTO_REFRESH_EXPIRED_TOKEN) {
+        ArcoMessage.info('触发 Token 过期事件');
+      } else {
+        if (isShowExpiredToast.current) {
+          return;
+        }
+        isShowExpiredToast.current = true;
+        Modal.warning({
+          title: '账号已过期，请重新登录',
+          onOk: () => {
+            bytedIMInstance.dispose();
+
+            Storage.set(USER_ID_KEY, '');
+
+            setMessages([]);
+            setParticipants([]);
+            setConversations([]);
+
+            clearCurrentLiveConversationStatus();
+
+            navigate('/login');
+            setUserId('');
+            isShowExpiredToast.current = false;
+          },
+        });
       }
-      isShowExpiredToast.current = true;
-      Modal.warning({
-        title: '账号已过期，请重新登录',
-        onOk: () => {
-          bytedIMInstance.dispose();
-
-          Storage.set(USER_ID_KEY, '');
-
-          setMessages([]);
-          setParticipants([]);
-          setConversations([]);
-
-          clearCurrentLiveConversationStatus();
-
-          navigate('/login');
-          setUserId('');
-          isShowExpiredToast.current = false;
-        },
-      });
     });
 
     const conversationChangeHandler = bytedIMInstance?.event?.subscribe?.(IMEvent.ConversationChange, () => {
@@ -396,6 +409,17 @@ const useInit = () => {
       () => {}
     );
 
+    const handleMessageReadHandler = bytedIMInstance?.event.subscribe(IMEvent.MessageRead, () => {
+      setReadReceiptVersion(v => v + 1);
+    });
+
+    const handleConversationMessageReadHandler = bytedIMInstance?.event.subscribe(
+      IMEvent.ConversationMessageRead,
+      () => {
+        setReadReceiptVersion(v => v + 1);
+      }
+    );
+
     return () => {
       bytedIMInstance?.event.unsubscribe(IMEvent.ConversationUpsert, conversationUpsertHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.ConversationLeave, conversationLeaveHandler);
@@ -420,6 +444,8 @@ const useInit = () => {
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendDelete, handleFriendRefreshForFriendDeleteHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendUpdate, handleFriendRefreshForFriendUpdateHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.LiveGroupMarkTypeUpdate, handleLiveGroupMarkTypeUpdateHandler);
+      bytedIMInstance?.event.unsubscribe(IMEvent.MessageRead, handleMessageReadHandler);
+      bytedIMInstance?.event.unsubscribe(IMEvent.ConversationMessageRead, handleConversationMessageReadHandler);
       window.removeEventListener('loadLiveHistory', loadLiveHistoryListener);
     };
   }, [bytedIMInstance, currentConversation?.id]);

@@ -4,6 +4,7 @@ import {
   BUSINESS_BACKEND_DOMAIN,
   ACCOUNT_CHECK_ENABLE,
   BUSINESS_BACKEND_TOKEN_ENABLE,
+  IM_TOKEN_EXPIRED_SECONDS,
 } from '../constant';
 import request from './request';
 import { Storage } from '../utils/storage';
@@ -13,8 +14,9 @@ import Long from 'long';
 export const fetchToken = <T>(data: { appId: number; userId: string }) => {
   const { appId, userId } = data;
   if (BUSINESS_BACKEND_TOKEN_ENABLE) {
+    const expire = Date.now() + IM_TOKEN_EXPIRED_SECONDS * 1000;
     return request.get<T, { Token: string; userId: string }>(
-      `${BUSINESS_BACKEND_DOMAIN}/get_token?appID=${appId}&userID=${userId}`
+      `${BUSINESS_BACKEND_DOMAIN}/get_token?appID=${appId}&userID=${userId}&expire=${expire}`
     );
   } else {
     return { Token: Storage.get(IM_TOKEN_KEY).content as string, userId: data.userId };

@@ -1,11 +1,13 @@
 import React, { memo, FC, useRef, useState, useMemo } from 'react';
 import classNames from 'classnames';
-import { Message, FileExtKey } from '@volcengine/im-web-sdk';
+import { Message, FileExtKey, BytedIM } from '@volcengine/im-web-sdk';
 import { Progress } from '@arco-design/web-react';
 
 import VideoBox from './Styles';
 import { useUploadProcessText } from '../../../hooks';
 import { parseMessageContent } from '../../../utils';
+import { BytedIMInstance, CurrentConversation } from '../../../store';
+import { useRecoilValue } from 'recoil';
 
 type VideoMessageContentProps = React.HtmlHTMLAttributes<HTMLVideoElement> & {
   className?: string;
@@ -15,6 +17,7 @@ type VideoMessageContentProps = React.HtmlHTMLAttributes<HTMLVideoElement> & {
   style?: React.CSSProperties;
   videoRef?: React.RefObject<HTMLVideoElement>;
   onClick?: (paused: boolean, event: React.MouseEvent) => void;
+  onPlay?: () => void;
   onCoverLoad?: (event: React.SyntheticEvent<HTMLImageElement, Event>) => void;
 };
 
@@ -31,6 +34,7 @@ const VideoContent: FC<VideoMessageContentProps> = props => {
     style,
     videoRef: outerVideoRef,
     children,
+    onPlay,
     ...other
   } = props;
 
@@ -57,6 +61,7 @@ const VideoContent: FC<VideoMessageContentProps> = props => {
 
   function handlePlay() {
     setPaused(false);
+    onPlay?.();
   }
 
   function handlePause() {
@@ -100,6 +105,8 @@ interface VideoMessageProps {
 }
 
 const VideoMessage: FC<VideoMessageProps> = props => {
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
+  const currentConversation = useRecoilValue(CurrentConversation);
   const { message } = props;
   const { percent } = useUploadProcessText(message);
 
@@ -146,6 +153,9 @@ const VideoMessage: FC<VideoMessageProps> = props => {
           src={remoteURL}
           style={{
             width,
+          }}
+          onPlay={() => {
+            bytedIMInstance.sendMessageReadReceipts({ conversation: currentConversation, messages: [message] });
           }}
         />
       ) : (

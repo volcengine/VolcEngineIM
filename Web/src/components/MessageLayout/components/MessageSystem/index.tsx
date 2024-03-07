@@ -1,9 +1,9 @@
-import React, { FC, memo, useEffect } from 'react';
+import React, { FC, memo, useEffect, useRef } from 'react';
 import { Message } from '@volcengine/im-web-sdk';
 
 import styles from './index.module.scss';
 import { parseMessageContent } from '../../../../utils';
-import { useInView } from '../../../../hooks';
+import { useInViewport } from 'ahooks';
 
 interface GroupSystemMessageProps {
   message?: Message;
@@ -15,7 +15,8 @@ const GroupSystemMessage: FC<GroupSystemMessageProps> = props => {
   const { message, markMessageRead, index } = props;
   const content = message.content && parseMessageContent(message);
   const { text } = content;
-  const [messageItemRef, isInview] = useInView(null, { threshold: 0.7 }, [document.visibilityState]);
+  const messageItemRef = useRef();
+  const [isInview] = useInViewport(messageItemRef, { threshold: 0.7 });
 
   useEffect(() => {
     if (isInview && document.visibilityState === 'visible') {
