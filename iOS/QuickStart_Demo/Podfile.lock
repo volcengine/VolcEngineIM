@@ -2,14 +2,14 @@ PODS:
   - Bolts/Tasks (1.9.1)
   - Godzippa (2.1.1)
   - IGListDiffKit (4.0.0)
-  - im-uikit-tob (1.11.0-alpha.0):
-    - imsdk-tob (= 1.11.0-alpha.0)
+  - im-uikit-tob (1.11.0):
+    - imsdk-tob (= 1.11.0)
     - Masonry
     - MJRefresh
     - SDWebImage
-  - imsdk-tob (1.11.0-alpha.0):
-    - imsdk-tob/Core (= 1.11.0-alpha.0)
-  - imsdk-tob/Core (1.11.0-alpha.0):
+  - imsdk-tob (1.11.0):
+    - imsdk-tob/Core (= 1.11.0)
+  - imsdk-tob/Core (1.11.0):
     - Bolts/Tasks
     - IGListDiffKit
     - imsdk-tob/Feature_EssentialPB
@@ -30,7 +30,7 @@ PODS:
     - TTSDK/Uploader (> 1.28)
     - WCDB (~> 1.0.6)
     - YYCache
-  - imsdk-tob/Feature_EssentialPB (1.11.0-alpha.0):
+  - imsdk-tob/Feature_EssentialPB (1.11.0):
     - Protobuf (= 3.21.9)
   - JSONModel (1.8.0)
   - libextobjc (0.6):
@@ -135,11 +135,11 @@ PODS:
   - SDWebImage/Core (5.19.0)
   - SQLiteRepairKit (1.2.2):
     - WCDBOptimizedSQLCipher (~> 1.2.0)
-  - TTNetworkManager (5.0.29.26):
+  - TTNetworkManager (5.0.29.27):
     - Godzippa
     - OneKit/BaseKit
     - OneKit/boringssl
-    - OneKit/StartUp
+    - OneKit/StartUp (>= 1.3.11)
   - TTSDK/Core (1.36.2.5):
     - RangersAppLog/Core (~> 6.13.0)
     - RangersAppLog/Host/CN (~> 6.13.0)
@@ -156,13 +156,12 @@ PODS:
   - YYCache (1.0.4)
 
 DEPENDENCIES:
-  - im-uikit-tob (= 1.11.0-alpha.0)
+  - im-uikit-tob (= 1.11.0)
   - JSONModel
   - Masonry
   - MBProgressHUD
   - MJRefresh
   - SDWebImage
-  - TTNetworkManager (= 5.0.29.26)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -197,8 +196,8 @@ SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   Godzippa: f438af100364a775ef0707d29ab152c356375fbf
   IGListDiffKit: 665d6cf43ce726e676013db9c7d6c4294259b6b2
-  im-uikit-tob: 612416293473fa0dcc04c7dc1f9d89aa198aae2c
-  imsdk-tob: ed88e1a5299fe11a22125fd6bfad8bf3f13d4f24
+  im-uikit-tob: b4bfdcb84af8bb88ca47c89a4861d594b26dae81
+  imsdk-tob: d923b82f2d7b9921a40f92f940f3632e6998bed1
   JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
@@ -214,12 +213,12 @@ SPEC CHECKSUMS:
   RSSwizzle: d561958f595028bfcef98c7d55c318b3878a61c6
   SDWebImage: 981fd7e860af070920f249fd092420006014c3eb
   SQLiteRepairKit: 35aaae5a8838adb85f5b1eb4d796055be6060a4b
-  TTNetworkManager: 499c35f6a64acc78b417c415a05ed7289443e4fa
+  TTNetworkManager: 28f5c1335c76bb43ed585b53087f9cdb338ee1cb
   TTSDK: 52ee1a9675e1f313fa9102475c7331268dca7524
   WCDB: 8e90babdeb7784c569353a4bd22a66c0a175a882
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: 3ac513af75ec816327da0e1896b40d26ff8776ca
+PODFILE CHECKSUM: 9c7e1d42ae463bdb004ec339ba8e011961ae23ce
 
 COCOAPODS: 1.15.2

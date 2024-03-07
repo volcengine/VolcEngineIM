@@ -9,7 +9,7 @@ target 'ByteBusiness' do
 
   # Pods for VEIMDemo
   
-  pod 'im-uikit-tob', '1.11.0-alpha.0'
+  pod 'im-uikit-tob', '1.11.0'
 #  pod 'im-uikit-tob', :path=>'../'
   
 #    三方库
@@ -18,7 +18,7 @@ target 'ByteBusiness' do
   pod 'SDWebImage'
   pod 'JSONModel'
   pod 'MBProgressHUD'
-  pod 'TTNetworkManager', '5.0.29.26'
+  pod 'TTNetworkManager', '5.0.29.27'
 
 
   target 'ByteBusinessTests' do
