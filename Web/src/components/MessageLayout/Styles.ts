@@ -121,6 +121,17 @@ export default styled.div`
     }
   }
 
+  .im-message-read-status {
+    position: absolute;
+    right: 4px;
+    bottom: -1px;
+    width: 40px;
+    display: flex;
+    justify-content: end;
+    color: #aaabaf;
+    font-size: 12px;
+  }
+
   .message-section {
     display: flex;
   }
@@ -186,5 +197,8 @@ export default styled.div`
     color: #298cff;
     cursor: pointer;
     font-size: 12px;
+  }
+
+  .message-read-state {
   }
 `;

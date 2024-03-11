@@ -152,6 +152,11 @@ const AccountsInfoVersion = atom<im_proto.MessagePriority>({
   dangerouslyAllowMutability: true,
 });
 
+const ReadReceiptVersion = atom({
+  key: 'ReadReceiptVersion',
+  default: 0,
+});
+
 export {
   UserId,
   DefaultUserIds,
@@ -176,4 +181,5 @@ export {
   LiveConversationOwner,
   SendMessagePriority,
   AccountsInfoVersion,
+  ReadReceiptVersion,
 };
