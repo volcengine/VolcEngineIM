@@ -2,14 +2,14 @@ PODS:
   - Bolts/Tasks (1.9.1)
   - Godzippa (2.1.1)
   - IGListDiffKit (4.0.0)
-  - im-uikit-tob (1.11.0):
-    - imsdk-tob (= 1.11.0)
+  - im-uikit-tob (1.11.1):
+    - imsdk-tob (= 1.11.1)
     - Masonry
     - MJRefresh
     - SDWebImage
-  - imsdk-tob (1.11.0):
-    - imsdk-tob/Core (= 1.11.0)
-  - imsdk-tob/Core (1.11.0):
+  - imsdk-tob (1.11.1):
+    - imsdk-tob/Core (= 1.11.1)
+  - imsdk-tob/Core (1.11.1):
     - Bolts/Tasks
     - IGListDiffKit
     - imsdk-tob/Feature_EssentialPB
@@ -30,7 +30,7 @@ PODS:
     - TTSDK/Uploader (> 1.28)
     - WCDB (~> 1.0.6)
     - YYCache
-  - imsdk-tob/Feature_EssentialPB (1.11.0):
+  - imsdk-tob/Feature_EssentialPB (1.11.1):
     - Protobuf (= 3.21.9)
   - JSONModel (1.8.0)
   - libextobjc (0.6):
@@ -156,12 +156,13 @@ PODS:
   - YYCache (1.0.4)
 
 DEPENDENCIES:
-  - im-uikit-tob (= 1.11.0)
+  - im-uikit-tob (= 1.11.1)
   - JSONModel
   - Masonry
   - MBProgressHUD
   - MJRefresh
   - SDWebImage
+  - TTNetworkManager (= 5.0.29.27)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -196,8 +197,8 @@ SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   Godzippa: f438af100364a775ef0707d29ab152c356375fbf
   IGListDiffKit: 665d6cf43ce726e676013db9c7d6c4294259b6b2
-  im-uikit-tob: b4bfdcb84af8bb88ca47c89a4861d594b26dae81
-  imsdk-tob: d923b82f2d7b9921a40f92f940f3632e6998bed1
+  im-uikit-tob: c73bf0b84b322654b368f62868b1217cbde4aef4
+  imsdk-tob: 2d36cc9448299666bf9a8cf54aba1cdf67e1f01b
   JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
@@ -219,6 +220,6 @@ SPEC CHECKSUMS:
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: 9c7e1d42ae463bdb004ec339ba8e011961ae23ce
+PODFILE CHECKSUM: 8c9d11dc9ae246b395098b3edb57ae98eb211baf
 
 COCOAPODS: 1.15.2
