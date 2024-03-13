@@ -1,4 +1,4 @@
-import React, { FC, CSSProperties, useMemo, useEffect, useState, useCallback } from 'react';
+import React, { FC, CSSProperties, useMemo, useEffect, useState, useCallback, useRef } from 'react';
 import classNames from 'classnames';
 import { useRecoilValue } from 'recoil';
 import { FlightStatus, im_proto, Message } from '@volcengine/im-web-sdk';
@@ -8,7 +8,7 @@ import { MessageItemType } from '../../../../types';
 import { MessageAvatar, MessageStatusCmp, MessageTime, Toolbar, MessageProperty } from './components';
 import { IconRevocation } from '../../../../components/Icon';
 import { getMessageComponent } from '../../../../components/MessageCards';
-import { useAccountsInfo, useInView } from '../../../../hooks';
+import { useAccountsInfo } from '../../../../hooks';
 import MessageWrap from './Styles';
 import { BytedIMInstance, CurrentConversation, Participants, UserId } from '../../../../store';
 import { getMessageTimeFormat, getMsgStatusIcon } from '../../../../utils';
@@ -79,10 +79,7 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
   const currentConversation = useRecoilValue(CurrentConversation);
   const participants = useRecoilValue(Participants);
   const userId = useRecoilValue(UserId);
-
-  const [messageItemRef, isInview] = useInView(null, { threshold: 0.7, disabled: isFromMe }, [
-    document.visibilityState,
-  ]);
+  const messageItemRef = useRef();
 
   useEffect(() => {
     (async () => {

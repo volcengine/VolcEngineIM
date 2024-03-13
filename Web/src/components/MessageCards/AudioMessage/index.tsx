@@ -6,6 +6,8 @@ import { IconPlay, IconPause } from '../../Icon';
 import { parseMessageContent } from '../../../utils';
 
 import AudioBox from './Styles';
+import { useRecoilValue } from 'recoil';
+import { BytedIMInstance, CurrentConversation } from '../../../store';
 
 type AudioMessageProps = React.HtmlHTMLAttributes<HTMLAudioElement> & {
   message: any;
@@ -287,6 +289,9 @@ const AudioMessage: FC<AudioMessageProps> = props => {
     setPaused(isAudioPaused());
     setOriginal(true);
   }, [setCurrentTime, setPaused, setOriginal]);
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
+
+  const currentConversation = useRecoilValue(CurrentConversation);
 
   const onAudioClick = useCallback(
     (evt: any, seconds: any) => {
@@ -295,6 +300,7 @@ const AudioMessage: FC<AudioMessageProps> = props => {
       // 传入seconds，代表该方法由onAudioProcessChange调用，则进入播放逻辑
       if (audioRef.current?.paused || seconds != null) {
         play(seconds);
+        bytedIMInstance.sendMessageReadReceipts({ conversation: currentConversation, messages: [message] });
       } else {
         try {
           // The play() request was interrupted by a call to pause(). https://goo.gl/LdLk22

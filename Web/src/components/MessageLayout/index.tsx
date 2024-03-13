@@ -1,7 +1,7 @@
-import React, { FC, CSSProperties, useMemo, useEffect, useState, useCallback } from 'react';
+import React, { FC, CSSProperties, useMemo, useEffect, useState, useCallback, useRef } from 'react';
 import classNames from 'classnames';
 import { useRecoilValue } from 'recoil';
-import { FlightStatus, im_proto, Message } from '@volcengine/im-web-sdk';
+import { Conversation, FlightStatus, im_proto, Message } from '@volcengine/im-web-sdk';
 import { Message as MessageToast, Modal, Tooltip } from '@arco-design/web-react';
 
 import { MessageItemType } from '../../types';
@@ -16,16 +16,17 @@ import {
 } from './components';
 import { IconReply, IconDelete, IconRevocation, IconFillPin, IconLike } from '../Icon';
 import { getMessageComponent } from '../MessageCards';
-import { useAccountsInfo, useInView } from '../../hooks';
+import { useAccountsInfo } from '../../hooks';
 import { getMessageTimeFormat } from '../../utils/formatTime';
 import MessageWrap from './Styles';
-import { BytedIMInstance, CurrentConversation } from '../../store';
+import { BytedIMInstance, CurrentConversation, UserId } from '../../store';
 import { getMsgStatusIcon } from '../../utils';
 import { IconEdit, IconEye } from '@arco-design/web-react/icon';
 import { ENABLE_MESSAGE_INSPECTOR } from '../../constant';
-import { useRequest } from 'ahooks';
+import { useInViewport, useRequest } from 'ahooks';
 import Row from '@arco-design/web-react/es/Grid/row';
 import Col from '@arco-design/web-react/es/Grid/col';
+import MessageReadReceiptState, { MessageReadBatchQuery } from './components/MessageReadReceiptState';
 
 interface MessageLayoutProps {
   className?: string;
@@ -108,6 +109,18 @@ export function MessageDetailModal({
     </Modal>
   );
 }
+class MessageSendReadBatch extends MessageReadBatchQuery {
+  async callApi({ conversation, messages }: { conversation: Conversation; messages: Message[] }): Promise<any> {
+    await this.bytedIMInstance.sendMessageReadReceipts({
+      conversation: conversation,
+      messages: messages,
+    });
+    for (let message of messages) this.cached[message.serverId] = true;
+    return messages.map(i => ({ messageId: i.serverId }));
+  }
+}
+
+const messageReadQuery = new MessageSendReadBatch();
 
 const MessageLayout: FC<MessageLayoutProps> = props => {
   const {
@@ -134,9 +147,8 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
   const currentConversation = useRecoilValue(CurrentConversation);
 
-  const [messageItemRef, isInview] = useInView(null, { threshold: 0.7, disabled: isFromMe }, [
-    document.visibilityState,
-  ]);
+  const messageItemRef = useRef();
+  const [isInview] = useInViewport(messageItemRef, { threshold: 0.7 });
 
   useEffect(() => {
     (async () => {
@@ -152,6 +164,17 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
   useEffect(() => {
     if (isInview && document.visibilityState === 'visible') {
       markMessageRead?.(message, index);
+    }
+    if (
+      isInview &&
+      !message.isFromMe &&
+      currentConversation.type === im_proto.ConversationType.ONE_TO_ONE_CHAT &&
+      ![im_proto.MessageType.MESSAGE_TYPE_VIDEO, im_proto.MessageType.MESSAGE_TYPE_AUDIO].includes(message.type)
+    ) {
+      messageReadQuery.get({
+        bytedIMInstance,
+        message: message,
+      });
     }
   }, [isInview, markMessageRead, index, message]);
 
@@ -254,9 +277,19 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
       </div>
     );
   };
+  const userId = useRecoilValue(UserId);
 
   /** 消息状态*/
   const renderMessageState = () => {
+    if (
+      !message.isOffline &&
+      !message.isRecalled &&
+      message.isFromMe &&
+      currentConversation.type === im_proto.ConversationType.ONE_TO_ONE_CHAT &&
+      currentConversation.toParticipantUserId !== userId
+    ) {
+      return <MessageReadReceiptState message={message} />;
+    }
     if (!MessageStatusEle) {
       return null;
     }
@@ -304,21 +337,28 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
           }
         },
       },
-      ENABLE_MESSAGE_INSPECTOR && {
-        name: '消息详情',
-        icon: <IconEye />,
-        onClick: async () => {
-          setDetailModalVisible(true);
-        },
-      },
-      message.type === im_proto.MessageType.MESSAGE_TYPE_TEXT &&
-        message.isFromMe && {
-          name: '编辑',
-          icon: <IconEdit />, // 编辑
-          onClick: () => {
-            editMessage(message);
-          },
-        },
+      ...(ENABLE_MESSAGE_INSPECTOR
+        ? [
+            {
+              name: '消息详情',
+              icon: <IconEye />,
+              onClick: async () => {
+                setDetailModalVisible(true);
+              },
+            },
+          ]
+        : []),
+      ...(message.type === im_proto.MessageType.MESSAGE_TYPE_TEXT && message.isFromMe
+        ? [
+            {
+              name: '编辑',
+              icon: <IconEdit />, // 编辑
+              onClick: () => {
+                editMessage(message);
+              },
+            },
+          ]
+        : []),
       {
         name: '删除',
         icon: <IconDelete />, // 删除

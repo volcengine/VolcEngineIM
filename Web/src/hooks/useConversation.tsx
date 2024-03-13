@@ -101,6 +101,8 @@ const useConversation = () => {
     const conv = getConversation(id);
     if (conv?.id) {
       setCurrentConversation(conv);
+      if (conv.type === im_proto.ConversationType.ONE_TO_ONE_CHAT)
+        void bytedIMInstance.markConversationMessagesRead({ conversation: conv });
       editMessage(null);
       replyMessage(null);
     }

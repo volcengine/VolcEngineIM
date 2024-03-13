@@ -53,12 +53,23 @@ export const IM_TOKEN_KEY = 'IM_TOKEN_KEY';
 
 export const IM_OVERSEA_KEY = 'IM_OVERSEA_KEY';
 
+export const IM_TOKEN_EXPIRED_SECONDS_KEY = 'IM_TOKEN_EXPIRED_SECONDS';
+
+export const IM_ENABLE_AUTO_REFRESH_TOKEN_KEY = 'IM_ENABLE_AUTO_REFRESH_TOKEN';
+
+export const ENABLE_AUTO_REFRESH_EXPIRED_TOKEN = Boolean(
+  localStorage.getItem(IM_ENABLE_AUTO_REFRESH_TOKEN_KEY) ?? false
+); /* 是否自动刷新 token */
+
+export const IM_TOKEN_EXPIRED_SECONDS = Number(localStorage.getItem(IM_TOKEN_EXPIRED_SECONDS_KEY) ?? 7 * 24 * 60 * 60);
+
 let SDK_CONFIG_ONLINE = {
   appId: APP_ID,
   authType: im_proto.AuthType.TOKEN_AUTH,
   debug: true,
   apiUrl: IS_OVERSEA ? 'https://imapi.bytepluses.com' : 'https://imapi.volcvideo.com',
   frontierUrl: IS_OVERSEA ? 'wss://frontier-myatob.byteoversea.com/ws/v2' : 'wss://frontier-sinftob.ivolces.com/ws/v2',
+  autoRefreshExpiredToken: ENABLE_AUTO_REFRESH_EXPIRED_TOKEN,
 };
 
 
