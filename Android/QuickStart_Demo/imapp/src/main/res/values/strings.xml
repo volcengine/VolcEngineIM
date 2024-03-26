@@ -1,5 +1,4 @@
 <resources tools:ignore="ExtraTranslation" xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">veIM demo</string>
     <string name="login_title_welcome">欢迎登录 IM Demo</string>
     <string name="login_title_des">请从以下账号中选择一个进行登录</string>
     <string name="login_agree_des">以阅读并同意 xx协议 和 xx协议</string>

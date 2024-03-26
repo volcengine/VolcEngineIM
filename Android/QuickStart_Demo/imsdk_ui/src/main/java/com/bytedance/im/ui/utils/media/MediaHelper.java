@@ -4,20 +4,17 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.support.annotation.RequiresApi;
-import android.support.v4.content.ContentResolverCompat;
-import android.support.v4.content.FileProvider;
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContentResolverCompat;
+import androidx.core.content.FileProvider;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 public class MediaHelper {
     public MediaHelper() {

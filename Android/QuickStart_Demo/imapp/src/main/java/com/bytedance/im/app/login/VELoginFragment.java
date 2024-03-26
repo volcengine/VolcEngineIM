@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -23,7 +23,6 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.interfaces.BIMAuthProvider;
 import com.bytedance.im.interfaces.BIMLoginListener;
-import com.bytedance.im.ui.api.BIMUIUser;
 
 public class VELoginFragment extends Fragment implements BIMAuthProvider {
     private static final String TAG = "VELoginFragment";

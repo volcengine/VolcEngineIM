@@ -1,7 +1,7 @@
 package com.bytedance.im.app.contact.inviteList;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,7 +11,6 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.utils.VENameUtils;
 import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
-import com.bytedance.im.user.api.model.BIMUserProfile;
 
 public class VEContactInviteViewHolder extends RecyclerView.ViewHolder {
     private final ImageView ivHead;

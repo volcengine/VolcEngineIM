@@ -7,10 +7,10 @@ import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_BLACK_MORE
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.VEIMApplication;
+import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.main.edit.VEUserProfileEditActivity;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -183,7 +183,7 @@ public class VEContactBlockListActivity extends Activity {
                     Toast.makeText(VEContactBlockListActivity.this, "请输入uid", Toast.LENGTH_SHORT).show();
                 } else {
                     long uid = Long.parseLong(et.getText().toString());
-                    VEIMApplication.accountProvider.createUserExistChecker().check(Collections.singletonList(uid), new BIMResultCallback<Map<Long, Boolean>>() {
+                    Constants.accountProvider.createUserExistChecker().check(Collections.singletonList(uid), new BIMResultCallback<Map<Long, Boolean>>() {
                         @Override
                         public void onSuccess(Map<Long, Boolean> longBooleanMap) {
                             if (!longBooleanMap.containsKey(uid) || !longBooleanMap.get(uid)) {

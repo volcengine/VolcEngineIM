@@ -7,11 +7,11 @@ import android.content.res.Configuration;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -162,6 +162,9 @@ public class BIMMessageListFragment extends Fragment {
                 sendMessageReadReceipt();
                 if (dy == 0) return;
                 boolean isSlideToBottom = isSlideToTop(recyclerView);
+                boolean isSideTop = isSlideToBottom(recyclerView);
+                BIMLog.i(TAG, "onScrolled() isSlideToBottom: " + isSlideToBottom + " olderHasMore:" + olderHasMore
+                        + " isSideTop: " + isSideTop + " newerHasMore:" + newerHasMore);
                 if (isSlideToBottom) {
                     if (olderHasMore) {
                         loadOlderData(null);
@@ -171,7 +174,6 @@ public class BIMMessageListFragment extends Fragment {
                         }
                     }
                 }
-                boolean isSideTop = isSlideToBottom(recyclerView);
                 if (isSideTop) {
                     if (newerHasMore) {
                         loadNewerData(null);
@@ -490,6 +492,7 @@ public class BIMMessageListFragment extends Fragment {
                 adapter.addAllMessageList(bimMessageListResult.getMessageList());
                 earliestMessage = bimMessageListResult.getAnchorMessage();
                 olderHasMore = bimMessageListResult.isHasMore();
+                BIMLog.i(TAG, "loadOlderData olderHasMore: " + olderHasMore);
                 isSyncingOlder = false;
                 if (loadOldCallback != null) {
                     loadOldCallback.onSuccess();

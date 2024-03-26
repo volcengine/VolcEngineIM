@@ -9,10 +9,10 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -45,6 +45,7 @@ import com.bytedance.im.live.api.enmus.BIMMessagePriority;
 import com.bytedance.im.live.api.model.BIMLiveJoinGroupResult;
 import com.bytedance.im.live.api.model.BIMLiveMessageListResult;
 import com.bytedance.im.live.api.model.MemberUpdateInfo;
+import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.BIMMessageRecyclerView;
@@ -464,7 +465,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
         BIMShareElement shareVEContent = new BIMShareElement();
         shareVEContent.setLink("https://www.volcengine.com/");
         shareVEContent.setText("欢迎体验火山引擎即时通信IM Demo");
-        BIMMessage customMessage = BIMClient.getInstance().createCustomMessage(BIMMessageManager.getInstance().encode(shareVEContent));
+        BIMMessage customMessage = BIMUIClient.getInstance().createCustomMessage(shareVEContent);
         sendMessage(customMessage);
     }
 
@@ -638,21 +639,16 @@ public class VELiveGroupMessageListFragment extends Fragment {
         PopupWindow popupWindow = new PopupWindow(getActivity());
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.ve_im_live_input_priority_window_layout, null,false);
         View.OnClickListener listener = v1 -> {
-            switch (v1.getId()) {
-                case R.id.high:
-                    messagePriority = BIMMessagePriority.HIGH;
-                    inPutView.getTvPriority().setText("高");
-                    break;
-                case R.id.normal:
-                    messagePriority = BIMMessagePriority.NORMAL;
-                    inPutView.getTvPriority().setText("普通");
-                    break;
-                case R.id.low:
-                    messagePriority = BIMMessagePriority.LOW;
-                    inPutView.getTvPriority().setText("低");
-                    break;
-                default:
-                    break;
+            int id = v1.getId();
+            if (id == R.id.high) {
+                messagePriority = BIMMessagePriority.HIGH;
+                inPutView.getTvPriority().setText("高");
+            } else if (id == R.id.normal) {
+                messagePriority = BIMMessagePriority.NORMAL;
+                inPutView.getTvPriority().setText("普通");
+            } else if (id == R.id.low) {
+                messagePriority = BIMMessagePriority.LOW;
+                inPutView.getTvPriority().setText("低");
             }
             popupWindow.dismiss();
         };

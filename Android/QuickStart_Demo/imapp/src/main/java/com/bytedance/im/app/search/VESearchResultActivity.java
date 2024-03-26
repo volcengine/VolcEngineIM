@@ -4,14 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,7 +28,6 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.search.api.BIMSearchExpandService;
-import com.bytedance.im.search.api.model.BIMSearchDetail;
 import com.bytedance.im.search.api.model.BIMSearchMsgInfo;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.user.BIMContactExpandService;
@@ -37,8 +35,10 @@ import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class VESearchResultActivity extends Activity {
 
@@ -120,33 +120,32 @@ public class VESearchResultActivity extends Activity {
                     recyclerView.setVisibility(View.VISIBLE);
                     emptyTextView.setVisibility(View.GONE);
                 }
-                List<Long> uidList = new ArrayList<>();
-                Map<Long, BIMSearchMsgInfo> map = new HashMap<>();
+
+                Set<Long> uidList = new HashSet<Long>();
                 for (BIMSearchMsgInfo info : bimSearchMsgInfos) {
-                    long uid = info.getMessage().getSenderUID();
-                    uidList.add(uid);
-                    map.put(uid, info);
+                    uidList.add(info.getMessage().getSenderUID());
                 }
-                BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfoList(uidList, new BIMResultCallback<List<BIMUserFullInfo>>() {
+                BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfoList(new ArrayList<>(uidList), new BIMResultCallback<List<BIMUserFullInfo>>() {
                     @Override
                     public void onSuccess(List<BIMUserFullInfo> bimUserFullInfos) {
-                        if(bimSearchMsgInfos!=null && !bimSearchMsgInfos.isEmpty()){
-                            List<VESearchWrapper> searchWrapperList = new ArrayList<>();
-                            searchWrapperList.add(new VESearchDivWrapper(R.layout.ve_im_item_search_div_layout, "消息记录"));
-                            for(BIMUserFullInfo info:bimUserFullInfos){
-                                BIMSearchMsgInfo searchMsgInfo = map.get(info.getUid());
-                                searchWrapperList.add(new VESearchMsgWrapper(R.layout.ve_im_item_search_msg_layout,new VESearchMsgInfo(searchMsgInfo,info)));
-                            }
-                            searchAdapter = new VESearchAdapter(searchWrapperList, new OnSearchMsgClickListener() {
-                                @Override
-                                public void onSearchMsgClick(BIMSearchMsgInfo searchDetail) {
-                                    onBackPressed();
-                                    BIMMessage bimMessage = searchDetail.getMessage();
-                                    VEMessageListActivity.start(VESearchResultActivity.this, bimMessage.getConversationID(), bimMessage.getUUId());
-                                }
-                            });
-                            recyclerView.setAdapter(searchAdapter);
+                        Map<Long, BIMUserFullInfo> map = new HashMap<>();
+                        for (BIMUserFullInfo fullInfo : bimUserFullInfos) {
+                            map.put(fullInfo.getUid(), fullInfo);
                         }
+                        List<VESearchWrapper> searchWrapperList = new ArrayList<>();
+                        searchWrapperList.add(new VESearchDivWrapper(R.layout.ve_im_item_search_div_layout, "消息记录"));
+                        for (BIMSearchMsgInfo searchMsgInfo : bimSearchMsgInfos) {
+                            searchWrapperList.add(new VESearchMsgWrapper(R.layout.ve_im_item_search_msg_layout, new VESearchMsgInfo(searchMsgInfo, map.get(searchMsgInfo.getMessage().getSenderUID()))));
+                        }
+                        searchAdapter = new VESearchAdapter(searchWrapperList, new OnSearchMsgClickListener() {
+                            @Override
+                            public void onSearchMsgClick(BIMSearchMsgInfo searchDetail) {
+                                onBackPressed();
+                                BIMMessage bimMessage = searchDetail.getMessage();
+                                VEMessageListActivity.start(VESearchResultActivity.this, bimMessage.getConversationID(), bimMessage.getUUId());
+                            }
+                        });
+                        recyclerView.setAdapter(searchAdapter);
                     }
 
                     @Override

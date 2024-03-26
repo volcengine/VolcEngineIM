@@ -1,7 +1,7 @@
 package com.bytedance.im.app.search.viewHolder;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.message.VEMessageListActivity;
 import com.bytedance.im.app.search.data.VESearchMsgInfo;
 import com.bytedance.im.app.search.data.VESearchMsgWrapper;
 import com.bytedance.im.app.search.interfaces.OnSearchMsgClickListener;
@@ -21,8 +20,6 @@ import com.bytedance.im.search.api.model.BIMSearchDetail;
 import com.bytedance.im.search.api.model.BIMSearchMsgInfo;
 import com.bytedance.im.search.api.model.BIMSearchPosition;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
-
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.List;

@@ -2,7 +2,7 @@ package com.bytedance.im.ui.utils.media;
 
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.content.FileProvider;
+import androidx.core.content.FileProvider;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
@@ -16,7 +16,7 @@ public class LoadIMageUtils {
         if (!TextUtils.isEmpty(localPath)) {
             Uri localUri = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                localUri = FileProvider.getUriForFile(imageView.getContext(), "com.bytedance.im.app.fileprovider", new File(localPath));
+                localUri = FileProvider.getUriForFile(imageView.getContext(), "com.bytedance.im.veapp.fileprovider", new File(localPath));
             } else {
                 localUri = Uri.fromFile(new File(localPath));
             }

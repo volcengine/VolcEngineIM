@@ -3,16 +3,13 @@ package com.bytedance.im.app.detail.member;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.widget.TextView;
 
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
 import com.bytedance.im.core.api.BIMClient;
-import com.bytedance.im.core.api.model.BIMMember;
-import com.bytedance.im.ui.BIMUIClient;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class VESingleMemberListActivity extends VEMemberListActivity {

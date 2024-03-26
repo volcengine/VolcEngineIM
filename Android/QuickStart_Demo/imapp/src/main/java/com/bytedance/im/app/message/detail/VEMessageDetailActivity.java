@@ -4,14 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.View;
+import androidx.annotation.Nullable;
+
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMessage;

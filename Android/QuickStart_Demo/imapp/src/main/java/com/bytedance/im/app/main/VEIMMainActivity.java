@@ -7,18 +7,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bytedance.im.app.BuildConfig;
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.contact.mainList.VEContactListFragment;
-import com.bytedance.im.app.user.VEDefaultAccountProvider;
 import com.bytedance.im.app.utils.VEUtils;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
 import com.bytedance.im.core.api.model.BIMConversation;
@@ -165,21 +162,14 @@ public class VEIMMainActivity extends Activity implements View.OnClickListener {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.hide(veMineFragment).hide(liveGroupFragment).hide(conversationListFragment).hide(contactFragment);
 
-        switch (id) {
-            case R.id.rl_conversation:
-                ft.show(conversationListFragment);
-                break;
-            case R.id.rl_mine:
-                ft.show(veMineFragment);
-                break;
-            case R.id.rl_live_group:
-                ft.show(liveGroupFragment);
-                break;
-            case R.id.rl_contact:
-                ft.show(contactFragment);
-                break;
-            default:
-                break;
+        if (id == R.id.rl_conversation) {
+            ft.show(conversationListFragment);
+        } else if (id == R.id.rl_mine) {
+            ft.show(veMineFragment);
+        } else if (id == R.id.rl_live_group) {
+            ft.show(liveGroupFragment);
+        } else if (id == R.id.rl_contact) {
+            ft.show(contactFragment);
         }
         ft.commit();
         setTagColor();

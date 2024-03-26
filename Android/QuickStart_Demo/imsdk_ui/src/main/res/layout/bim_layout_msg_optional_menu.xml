@@ -6,7 +6,7 @@
     android:background="@drawable/shape_im_create_chat_gb"
     android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_operation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -18,7 +18,7 @@
         android:layout_marginRight="10dp"
         android:background="@color/business_im_e8e8" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/flex_box_emoji"
         android:layout_width="wrap_content"
         android:layout_height="40dp" />

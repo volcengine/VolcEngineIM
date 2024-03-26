@@ -37,7 +37,7 @@
 
     </LinearLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -137,7 +137,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/tv_live_visitor"
@@ -159,11 +159,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone" />
-        <android.support.v4.view.ViewPager
+        <androidx.viewpager.widget.ViewPager
             android:id="@+id/cl_input_more_page"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone">
-        </android.support.v4.view.ViewPager>
+        </androidx.viewpager.widget.ViewPager>
     </FrameLayout>
 </LinearLayout>

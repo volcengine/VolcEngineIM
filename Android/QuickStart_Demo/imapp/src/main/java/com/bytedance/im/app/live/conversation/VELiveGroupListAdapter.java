@@ -1,8 +1,8 @@
 package com.bytedance.im.app.live.conversation;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import com.bytedance.im.app.R;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.conversation.adapter.VEConversationListAdapter;
-import com.bytedance.im.ui.conversation.adapter.viewhodler.VEConversationViewHolder;
 import com.bytedance.im.ui.conversation.model.VEConvBaseWrapper;
 import com.bytedance.im.ui.conversation.model.VEConversationWrapper;
 

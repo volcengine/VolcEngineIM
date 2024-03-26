@@ -22,11 +22,13 @@ public class VENameUtils {
     //好友场景 好友备注>用户资料>兜底uid
     public static String getShowName(BIMUserFullInfo fullInfo) {
         String name = "用户" + fullInfo.getUid();         //用户ID
-        if (!TextUtils.isEmpty(fullInfo.getNickName())) { //用户资料名
-            name = fullInfo.getNickName();
-        }
-        if (!TextUtils.isEmpty(fullInfo.getAlias())) {  //好友备注名
-            name = fullInfo.getAlias();
+        if (fullInfo != null) {
+            if (!TextUtils.isEmpty(fullInfo.getNickName())) { //用户资料名
+                name = fullInfo.getNickName();
+            }
+            if (!TextUtils.isEmpty(fullInfo.getAlias())) {  //好友备注名
+                name = fullInfo.getAlias();
+            }
         }
         return name;
     }

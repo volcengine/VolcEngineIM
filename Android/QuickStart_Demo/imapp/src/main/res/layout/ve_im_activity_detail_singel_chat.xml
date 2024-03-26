@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:background="@color/business_base_white">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_member"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -113,6 +113,23 @@
             android:text="搜索消息记录"
             android:textColor="@color/business_im_222"
             android:layout_gravity="start"
+            android:textSize="16sp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_custom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@color/business_base_white"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="自定义字段"
+            android:textColor="@color/business_im_222"
             android:textSize="16sp" />
     </FrameLayout>
 </LinearLayout>

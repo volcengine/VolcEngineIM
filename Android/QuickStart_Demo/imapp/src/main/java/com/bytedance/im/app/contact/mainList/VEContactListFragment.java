@@ -12,11 +12,12 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -32,7 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.VEIMApplication;
+import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.contact.blockList.VEContactBlockListActivity;
 import com.bytedance.im.app.contact.inviteList.VEContactInviteActivity;
 import com.bytedance.im.app.contact.mainList.item.ContactListActionItem;
@@ -43,13 +44,11 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
-import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.BIMFriendListener;
 import com.bytedance.im.user.api.model.BIMApplyInfo;
 import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
-import com.bytedance.im.user.api.model.BIMUserProfile;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -220,7 +219,7 @@ public class VEContactListFragment extends Fragment {
                     if (null != service) {
                         BIMApplyInfo apply = new BIMApplyInfo();
                         apply.setUid(Long.parseLong(et.getText().toString()));
-                        VEIMApplication.accountProvider.createUserExistChecker().check(Collections.singletonList(apply.getUid()), new BIMResultCallback<Map<Long, Boolean>>() {
+                        Constants.accountProvider.createUserExistChecker().check(Collections.singletonList(apply.getUid()), new BIMResultCallback<Map<Long, Boolean>>() {
                             @Override
                             public void onSuccess(Map<Long, Boolean> longBooleanMap) {
                                 if (!longBooleanMap.containsKey(apply.getUid()) || !longBooleanMap.get(apply.getUid())) {

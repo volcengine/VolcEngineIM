@@ -1,13 +1,11 @@
 package com.bytedance.im.app.utils;
 
 import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.bytedance.im.app.BuildConfig;
-import com.bytedance.im.app.VEIMApplication;
-import com.bytedance.im.app.login.VELoginActivity;
+import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.user.VEDefaultAccountProvider;
 
 import org.json.JSONObject;
@@ -29,7 +27,7 @@ public class VEUtils {
     }
 
     public static boolean isSourceCode(){
-        return VEIMApplication.accountProvider instanceof VEDefaultAccountProvider;
+        return Constants.accountProvider instanceof VEDefaultAccountProvider;
     }
 
 

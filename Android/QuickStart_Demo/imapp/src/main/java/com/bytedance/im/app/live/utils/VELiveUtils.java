@@ -1,6 +1,6 @@
 package com.bytedance.im.app.live.utils;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class VELiveUtils {
     private static final String TAG = "VELiveUtils";

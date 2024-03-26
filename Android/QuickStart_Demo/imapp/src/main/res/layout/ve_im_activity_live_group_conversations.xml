@@ -42,19 +42,19 @@
         android:layout_marginRight="10dp"
         android:hint="输入直播群 ID 或者群名"/>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_live_group_conversations"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -70,5 +70,5 @@
             app:layout_constraintTop_toTopOf="@id/cl_empty"
             app:layout_constraintBottom_toBottomOf="@id/cl_empty"/>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

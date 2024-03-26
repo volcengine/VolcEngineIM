@@ -1,6 +1,6 @@
 package com.bytedance.im.app.contact.mainList.viewHolder;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;

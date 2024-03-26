@@ -216,7 +216,9 @@ public class BIMUIClient {
      * @hidden
      */
     public BIMMessage createCustomMessage(BaseCustomElement content) {
-        return createCustomMessage(BIMMessageManager.getInstance().encode(content));
+        String data = BIMMessageManager.getInstance().encode(content);
+        content.setData(data);
+        return createCustomMessage(data);
     }
 
     /**

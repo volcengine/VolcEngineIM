@@ -1,20 +1,17 @@
 package com.bytedance.im.app.utils;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.view.Window;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.VEIMApplication;
+import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
 import com.bytedance.im.ui.api.interfaces.BIMCancelListener;
 
@@ -54,7 +51,7 @@ public class VECancelUtils {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
-        VEIMApplication.accountProvider.unregister(new BIMCancelListener() {
+        Constants.accountProvider.unregister(new BIMCancelListener() {
             @Override
             public void onSuccess() {
                 Log.i(TAG, "delete account success");

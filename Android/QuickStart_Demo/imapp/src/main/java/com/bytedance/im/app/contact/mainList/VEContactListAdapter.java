@@ -1,7 +1,7 @@
 package com.bytedance.im.app.contact.mainList;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +10,6 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.contact.mainList.viewHolder.VEContactListActionViewHolder;
 import com.bytedance.im.app.contact.mainList.viewHolder.VEContactListBaseViewHolder;
 import com.bytedance.im.app.contact.mainList.viewHolder.VEContactListViewHolder;
-import com.bytedance.im.user.api.model.BIMFriendInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;

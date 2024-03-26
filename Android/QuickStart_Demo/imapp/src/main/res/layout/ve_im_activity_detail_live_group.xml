@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:background="@color/business_base_white">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_member"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
             android:src="@drawable/icon_im_goto" />
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

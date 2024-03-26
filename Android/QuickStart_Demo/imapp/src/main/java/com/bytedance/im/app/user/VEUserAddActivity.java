@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.VEIMApplication;
+import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.user.adapter.VEUserHorizonAdapter;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -108,7 +108,7 @@ public class VEUserAddActivity extends Activity {
                     return;
                 }
                 //服务检查用户是否存在
-                BIMUserExistChecker checker = VEIMApplication.accountProvider.createUserExistChecker();
+                BIMUserExistChecker checker = Constants.accountProvider.createUserExistChecker();
                 if (checker != null) {
                     List<Long> uidList = new ArrayList<>();
                     uidList.add(uid);

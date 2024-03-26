@@ -10,8 +10,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +25,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bytedance.im.app.BuildConfig;
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
 import com.bytedance.im.app.detail.VEDetailController;
 import com.bytedance.im.app.login.VELoginActivity;
@@ -40,9 +39,7 @@ import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.BIMFriendListener;
-import com.bytedance.im.user.api.model.BIMBlackListFriendInfo;
 import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
-import com.bytedance.im.user.api.model.BIMFriendInfo;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 
@@ -85,7 +82,7 @@ public class VEMineFragment extends Fragment {
 
         tvUid.setText(String.valueOf(BIMClient.getInstance().getCurrentUserID()));
         tvAppId.setText(String.valueOf(BIMUIClient.getInstance().getAppId()));
-        tvAppVersionName.setText(BuildConfig.VERSION_NAME);
+//        tvAppVersionName.setText(BuildConfig.VERSION_NAME);
         tvSDKVersionName.setText(BIMUIClient.getInstance().getVersion());
         flLogout.setOnClickListener(v -> doLogout());
         topPanel.setOnClickListener(v -> VEUserProfileEditActivity.start(getActivity(), true, BIMClient.getInstance().getCurrentUserID(), null, null));

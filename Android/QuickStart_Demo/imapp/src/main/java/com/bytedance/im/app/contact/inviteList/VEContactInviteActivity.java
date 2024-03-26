@@ -5,11 +5,11 @@ import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_FROM_USER_
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -25,13 +25,10 @@ import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.BIMFriendListener;
 import com.bytedance.im.user.api.enums.BIMFriendReplyType;
-import com.bytedance.im.user.api.model.BIMBlackListFriendInfo;
 import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
 import com.bytedance.im.user.api.model.BIMFriendApplyListResult;
-import com.bytedance.im.user.api.model.BIMFriendInfo;
 import com.bytedance.im.user.api.model.BIMReplyInfo;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
-import com.bytedance.im.user.api.model.BIMUserProfile;
 
 public class VEContactInviteActivity extends Activity {
     private static int PAGE_SIZE = 20;

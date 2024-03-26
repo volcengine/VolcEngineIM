@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
@@ -79,7 +79,7 @@
                 android:textColor="@color/business_base_white"
                 android:visibility="gone" />
         </FrameLayout>
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <com.bytedance.im.ui.message.adapter.ui.widget.EmojiGroupView
         android:id="@+id/v_emoji_group"
         android:layout_width="match_parent"
