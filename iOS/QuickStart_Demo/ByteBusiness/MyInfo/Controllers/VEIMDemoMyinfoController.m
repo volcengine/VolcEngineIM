@@ -32,6 +32,7 @@ static NSString *const VEIMMyInfoIMSDKDid = @"Did";
 static NSString *const VEIMMyInfoLongConnectStauts = @"长连接状态";
 static NSString *const VEIMMyInfoPrivacy = @"隐私政策";
 static NSString *const VEIMMyInfoPermissionList = @"权限清单";
+static NSString *const VEIMMyInfoICP = @"ICP备案号：京ICP备20018813号-193A";
 
 @interface VEIMDemoMyinfoController ()<BIMFriendListener>
 
@@ -106,8 +107,9 @@ static NSString *const VEIMMyInfoPermissionList = @"权限清单";
                         VEIMMyInfoIMSDKDid,
                         VEIMMyInfoLongConnectStauts,
                         VEIMMyInfoPrivacy,
-                        VEIMMyInfoPermissionList];
-    
+                        VEIMMyInfoPermissionList,
+                        VEIMMyInfoICP];
+
     [self.tableview registerClass:[VEIMDemoMyinfoHeaderCell class] forCellReuseIdentifier:@"VEIMDemoMyinfoHeaderCell"];
     [self.tableview registerClass:[UITableViewCell class] forCellReuseIdentifier:@"UITableViewCell"];
     [self.tableview registerClass:[VEIMDemoAppInfoCell class] forCellReuseIdentifier:@"VEIMDemoAppInfoCell"];
@@ -144,6 +146,8 @@ static NSString *const VEIMMyInfoPermissionList = @"权限清单";
             } else if ([title isEqualToString:VEIMMyInfoPrivacy]) {
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             } else if ([title isEqualToString:VEIMMyInfoPermissionList]) {
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            } else if ([title isEqualToString:VEIMMyInfoICP]) {
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             }
             [cell configCellWithTitle:title info:info];
@@ -221,6 +225,8 @@ static NSString *const VEIMMyInfoPermissionList = @"权限清单";
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kVEIMDemoPrivacyAgreement] options:nil completionHandler:nil];
         } else if ([title isEqualToString:VEIMMyInfoPermissionList]) {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kVEIMDemoPermissionList] options:nil completionHandler:nil];
+        } else if ([title isEqualToString:VEIMMyInfoICP]) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kVEIMDemoICP] options:nil completionHandler:nil];
         } else if ([title isEqualToString:VEIMMyInfoIMSDKDid]) {
             if (!self.did.length) return;
             UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];

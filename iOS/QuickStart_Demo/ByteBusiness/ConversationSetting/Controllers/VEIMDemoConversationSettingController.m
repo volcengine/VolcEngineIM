@@ -21,6 +21,7 @@
 #import "VEIMDemoFTSViewController.h"
 #import "BIMUIClient.h"
 #import "VEIMDemoProfileEditViewController.h"
+#import "VEIMDemoConversationExtController.h"
 
 typedef enum : NSUInteger {
     VEIMDemoConversationActionTypeDefault = 0,
@@ -222,8 +223,13 @@ typedef enum : NSUInteger {
         [self.settings addObject:quit];
     }
 
-    
-    
+    VEIMDemoSettingModel *setExt = [VEIMDemoSettingModel settingWithTitle:@"自定义字段" detail:@"" isNeedSwitch:NO switchOn:NO];
+    setExt.clickHandler = ^() {
+        VEIMDemoConversationExtController *vc = [[VEIMDemoConversationExtController alloc] initWithConversation:self.conversation];
+        [weakself.navigationController pushViewController:vc animated:YES];
+    };
+    [self.settings addObject:setExt];
+
     [self.tableview reloadData];
 }
 

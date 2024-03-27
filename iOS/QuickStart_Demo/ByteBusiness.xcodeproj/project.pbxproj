@@ -25,6 +25,7 @@
 		2B3BE0102B0B3B4A007D3C61 /* VEIMDemoConversationListSelectionCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B3BE00F2B0B3B4A007D3C61 /* VEIMDemoConversationListSelectionCollectionCell.m */; };
 		2B4927842B0B313200957C27 /* VEIMDemoAvatarSettingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4927832B0B313200957C27 /* VEIMDemoAvatarSettingCell.m */; };
 		2B49278D2B0B327200957C27 /* VEIMDemoAvatarSettingModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B49278C2B0B327200957C27 /* VEIMDemoAvatarSettingModel.m */; };
+		2B4F43762BAFD371001639B5 /* VEIMDemoConversationExtController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4F43752BAFD371001639B5 /* VEIMDemoConversationExtController.m */; };
 		2B548E902A5D79E200FF7088 /* BIMFriendListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B548E8F2A5D79E200FF7088 /* BIMFriendListController.m */; };
 		2B548E952A5D7D9A00FF7088 /* BIMFriendListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B548E942A5D7D9A00FF7088 /* BIMFriendListDataSource.m */; };
 		2B548E9C2A5D905500FF7088 /* BIMFriendListHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B548E9B2A5D905500FF7088 /* BIMFriendListHeaderCell.m */; };
@@ -153,6 +154,8 @@
 		2B4927832B0B313200957C27 /* VEIMDemoAvatarSettingCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoAvatarSettingCell.m; sourceTree = "<group>"; };
 		2B49278B2B0B327200957C27 /* VEIMDemoAvatarSettingModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoAvatarSettingModel.h; sourceTree = "<group>"; };
 		2B49278C2B0B327200957C27 /* VEIMDemoAvatarSettingModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoAvatarSettingModel.m; sourceTree = "<group>"; };
+		2B4F43742BAFD371001639B5 /* VEIMDemoConversationExtController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoConversationExtController.h; sourceTree = "<group>"; };
+		2B4F43752BAFD371001639B5 /* VEIMDemoConversationExtController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoConversationExtController.m; sourceTree = "<group>"; };
 		2B548E8E2A5D79E200FF7088 /* BIMFriendListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BIMFriendListController.h; sourceTree = "<group>"; };
 		2B548E8F2A5D79E200FF7088 /* BIMFriendListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BIMFriendListController.m; sourceTree = "<group>"; };
 		2B548E932A5D7D9A00FF7088 /* BIMFriendListDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BIMFriendListDataSource.h; sourceTree = "<group>"; };
@@ -459,6 +462,8 @@
 				2B0CF806292E4E93007FC3DE /* VEIMDemoConversationSettingController.m */,
 				2B8E543F292E77A500A2A416 /* VEIMDemoInputController.h */,
 				2B8E5440292E77A500A2A416 /* VEIMDemoInputController.m */,
+				2B4F43742BAFD371001639B5 /* VEIMDemoConversationExtController.h */,
+				2B4F43752BAFD371001639B5 /* VEIMDemoConversationExtController.m */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -1212,6 +1217,7 @@
 				2BA90D972921EB2800154F35 /* VEIMDemoRouter.m in Sources */,
 				2B8E543E292E748D00A2A416 /* VEIMDemoSettingModel.m in Sources */,
 				2BA90D8A2921EB2800154F35 /* BDIMDebugNetworkRequest.m in Sources */,
+				2B4F43762BAFD371001639B5 /* VEIMDemoConversationExtController.m in Sources */,
 				2BD4DC902A4B02F400A08AA7 /* VEIMDemoAccountManager.m in Sources */,
 				2B0CF80B292E50B0007FC3DE /* VEIMDemoUserListCell.m in Sources */,
 				2BCB53A22AA0B65E00EFE6FB /* VEIMDemoBlackListUserCell.m in Sources */,
@@ -1362,7 +1368,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.11.1;
+				MARKETING_VERSION = 1.12.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1539,12 +1545,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusiness.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XXHND5J98K;
+				DEVELOPMENT_TEAM = H7T9JXDWCU;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1570,18 +1574,17 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.11.1;
+				MARKETING_VERSION = 1.12.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-ld64",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse.zj;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = comssiphoneucentercninhouse;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1596,9 +1599,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusiness.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 5HG673Y488;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1623,14 +1626,14 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.11.1;
+				MARKETING_VERSION = 1.12.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-ld64",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse.zj;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

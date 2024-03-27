@@ -2,14 +2,17 @@ PODS:
   - Bolts/Tasks (1.9.1)
   - Godzippa (2.1.1)
   - IGListDiffKit (4.0.0)
-  - im-uikit-tob (1.11.1):
-    - imsdk-tob (= 1.11.1)
+  - im-uikit-tob (1.12.0-alpha.0):
+    - imsdk-tob (= 1.12.0-alpha.0)
     - Masonry
     - MJRefresh
     - SDWebImage
-  - imsdk-tob (1.11.1):
-    - imsdk-tob/Core (= 1.11.1)
-  - imsdk-tob/Core (1.11.1):
+  - imsdk-tob (1.12.0-alpha.0):
+    - imsdk-tob/Core (= 1.12.0-alpha.0)
+  - imsdk-tob/Core (1.12.0-alpha.0):
+    - imsdk-tob/Core_Common
+    - TTSDK/Uploader (> 1.28)
+  - imsdk-tob/Core_Common (1.12.0-alpha.0):
     - Bolts/Tasks
     - IGListDiffKit
     - imsdk-tob/Feature_EssentialPB
@@ -27,10 +30,9 @@ PODS:
     - RangersAppLog/Host/CN
     - RSSwizzle
     - TTNetworkManager
-    - TTSDK/Uploader (> 1.28)
     - WCDB (~> 1.0.6)
     - YYCache
-  - imsdk-tob/Feature_EssentialPB (1.11.1):
+  - imsdk-tob/Feature_EssentialPB (1.12.0-alpha.0):
     - Protobuf (= 3.21.9)
   - JSONModel (1.8.0)
   - libextobjc (0.6):
@@ -74,9 +76,9 @@ PODS:
   - Masonry (1.1.0)
   - MBProgressHUD (1.2.0)
   - MJRefresh (3.7.6)
-  - MMKV (1.3.3):
-    - MMKVCore (~> 1.3.3)
-  - MMKVCore (1.3.3)
+  - MMKV (1.3.4):
+    - MMKVCore (~> 1.3.4)
+  - MMKVCore (1.3.4)
   - OneKit/BaseKit (1.4.2):
     - OneKit/Service
   - OneKit/boringssl (1.4.2):
@@ -101,28 +103,28 @@ PODS:
     - OneKit/Section
     - OneKit/Service
   - Protobuf (3.21.9)
-  - RangersAPM/Above (3.9.1)
-  - RangersAPM/APMLog (3.9.1):
+  - RangersAPM/Above (3.9.2)
+  - RangersAPM/APMLog (3.9.2):
     - RangersAPM/CloudCommand
     - RangersAPM/Core
     - RangersAPM/HMD
     - RangersAPM/Zip
-  - RangersAPM/CloudCommand (3.9.1):
+  - RangersAPM/CloudCommand (3.9.2):
     - RangersAPM/Core
     - RangersAPM/HMD
-  - RangersAPM/CN (3.9.1):
+  - RangersAPM/CN (3.9.2):
     - RangersAPM/Core
     - RangersAPM/Public
-  - RangersAPM/Core (3.9.1)
-  - RangersAPM/HMD (3.9.1):
+  - RangersAPM/Core (3.9.2)
+  - RangersAPM/HMD (3.9.2):
     - RangersAPM/Core
     - RangersAPM/Public
-  - RangersAPM/Public (3.9.1):
+  - RangersAPM/Public (3.9.2):
     - RangersAPM/Above
     - RangersAPM/Core
     - RangersAPM/Zyone
-  - RangersAPM/Zip (3.9.1)
-  - RangersAPM/Zyone (3.9.1)
+  - RangersAPM/Zip (3.9.2)
+  - RangersAPM/Zyone (3.9.2)
   - RangersAppLog/Core (6.13.2):
     - RangersAppLog/Encryptor
   - RangersAppLog/Encryptor (6.13.2):
@@ -156,7 +158,7 @@ PODS:
   - YYCache (1.0.4)
 
 DEPENDENCIES:
-  - im-uikit-tob (= 1.11.1)
+  - im-uikit-tob (= 1.12.0-alpha.0)
   - JSONModel
   - Masonry
   - MBProgressHUD
@@ -197,19 +199,19 @@ SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   Godzippa: f438af100364a775ef0707d29ab152c356375fbf
   IGListDiffKit: 665d6cf43ce726e676013db9c7d6c4294259b6b2
-  im-uikit-tob: c73bf0b84b322654b368f62868b1217cbde4aef4
-  imsdk-tob: 2d36cc9448299666bf9a8cf54aba1cdf67e1f01b
+  im-uikit-tob: 94477437f14065427c168e4c7bb5105f43986a65
+  imsdk-tob: e7a6a27b9a901797874c84d94387edf15839694a
   JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   MJRefresh: 2fe7fb43a5167ceda20bb7e63f130c04fd1814a5
-  MMKV: f902fb6719da13c2ab0965233d8963a59416f911
-  MMKVCore: d26e4d3edd5cb8588c2569222cbd8be4231374e9
+  MMKV: ed58ad794b3f88c24d604a5b74f3fba17fcbaf74
+  MMKVCore: a67a1cede26175c413176f404a7cedec43f96a0b
   OneKit: 05d59eb122e247640c35ceb28b300ae27e89cb88
   Protobuf: 02524ec14183fe08fb259741659e79683788158b
-  RangersAPM: 10c4129e65c700a7658597d70b608c67589686a3
+  RangersAPM: c3daf6db6c95233ccb1db1395a7242156895f8ae
   RangersAppLog: aca2ba1dd540ae001120f5fe1e391aafc82aa1c7
   RSSwizzle: d561958f595028bfcef98c7d55c318b3878a61c6
   SDWebImage: 981fd7e860af070920f249fd092420006014c3eb
@@ -220,6 +222,6 @@ SPEC CHECKSUMS:
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: 8c9d11dc9ae246b395098b3edb57ae98eb211baf
+PODFILE CHECKSUM: 5117ffaa5454ef7b0e39bbac962205bb6783376f
 
 COCOAPODS: 1.15.2

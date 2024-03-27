@@ -9,7 +9,7 @@ target 'ByteBusiness' do
 
   # Pods for VEIMDemo
   
-  pod 'im-uikit-tob', '1.11.1'
+  pod 'im-uikit-tob', '1.12.0-alpha.0'
 #  pod 'im-uikit-tob', :path=>'../'
   
 #    三方库

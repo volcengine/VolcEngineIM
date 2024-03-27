@@ -31,6 +31,7 @@
 #define kVEIMDemoUserAgreement @"https://www.volcengine.com/docs/6348/975891"
 #define kVEIMDemoPrivacyAgreement @"https://www.volcengine.com/docs/6348/975890"
 #define kVEIMDemoPermissionList @"https://www.volcengine.com/docs/6348/975909"
+#define kVEIMDemoICP @"https://beian.miit.gov.cn"
 
 #define kVEIMDemoUIDLength 19
 

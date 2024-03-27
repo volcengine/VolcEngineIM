@@ -132,17 +132,15 @@
     }
     self.nameLabel.hidden = self.isSelfMsg;
     
-    
-    if (message.referenceInfo.hint.length) {
+    self.referMessageLabel.text = nil;
+    if (message.referenceInfo) {
         if (message.referenceInfo.status == 3) {
             self.referMessageLabel.text = [NSString stringWithFormat:@"| %@",@"消息已被撤回"];
         } else if (message.referenceInfo.status == 4) {
             self.referMessageLabel.text = [NSString stringWithFormat:@"| %@",@"消息已被删除"];
-        } else {
+        } else if (message.referenceInfo.hint.length)  {
             self.referMessageLabel.text = [NSString stringWithFormat:@"| %@",message.referenceInfo.hint];
         }
-    }else{
-        self.referMessageLabel.text = nil;
     }
     
     if ([self.replyView containSticker:message] && !message.isRecalled) {
