@@ -11,6 +11,8 @@ android {
         targetSdkVersion TARGET_SDK_VERSION as int
         versionCode 101000
         versionName "1.11.2"
+        buildConfigField "String", "VERSION_NAME", "\"1.12.0\""
+        buildConfigField "Integer", "VERSION_CODE", "11200"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders.put("APPLOG_SCHEME", "rangersapplog.b674e0c0eec26787".toLowerCase())

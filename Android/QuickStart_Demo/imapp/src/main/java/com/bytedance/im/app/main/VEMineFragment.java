@@ -59,6 +59,7 @@ public class VEMineFragment extends Fragment {
     private View flPermission;
     private View topPanel;
     private View flDId;
+    private View govRecord;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -77,12 +78,13 @@ public class VEMineFragment extends Fragment {
         flPolicy = view.findViewById(R.id.fl_privacy_policy);
         flPermission = view.findViewById(R.id.fl_permission);
         flDId = view.findViewById(R.id.fl_sdk_did);
+        govRecord = view.findViewById(R.id.gov_record_number);
         Log.i(TAG, "uikit version: " + BIMUIClient.getInstance().getVersion());
         Log.i(TAG, " imSdk version: " + BIMClient.getInstance().getVersion());
 
         tvUid.setText(String.valueOf(BIMClient.getInstance().getCurrentUserID()));
         tvAppId.setText(String.valueOf(BIMUIClient.getInstance().getAppId()));
-//        tvAppVersionName.setText(BuildConfig.VERSION_NAME);
+        tvAppVersionName.setText(BuildConfig.VERSION_NAME);
         tvSDKVersionName.setText(BIMUIClient.getInstance().getVersion());
         flLogout.setOnClickListener(v -> doLogout());
         topPanel.setOnClickListener(v -> VEUserProfileEditActivity.start(getActivity(), true, BIMClient.getInstance().getCurrentUserID(), null, null));
@@ -97,6 +99,7 @@ public class VEMineFragment extends Fragment {
         flProto.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975891"));
         flPolicy.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975890"));
         flPermission.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975909"));
+        govRecord.setOnClickListener(v -> toProtocol("https://beian.miit.gov.cn/#/Integrated/index"));
         BIMClient.getInstance().getSDKDid(new BIMResultCallback<String>() {
             @Override
             public void onSuccess(String s) {
