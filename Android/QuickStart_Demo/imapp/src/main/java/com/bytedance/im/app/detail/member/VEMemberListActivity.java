@@ -3,20 +3,17 @@ package com.bytedance.im.app.detail.member;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.detail.VEDetailGroupConversationActivity;
 import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
 import com.bytedance.im.app.detail.member.adapter.VEMemberListAdapter;
 import com.bytedance.im.app.main.edit.VEUserProfileEditActivity;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.model.BIMMember;
-import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 
 import java.util.List;

@@ -3,22 +3,15 @@ package com.bytedance.im.app.live.create;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
+import androidx.annotation.Nullable;
+
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.live.chatRoom.VELiveGroupChatRoomActivity;
-import com.bytedance.im.app.utils.VENameUtils;
-import com.bytedance.im.core.api.BIMClient;
-import com.bytedance.im.core.api.enums.BIMErrorCode;
-import com.bytedance.im.core.api.interfaces.BIMResultCallback;
-import com.bytedance.im.user.BIMContactExpandService;
-import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 /**
  * 加入直播群时，修改个人资料

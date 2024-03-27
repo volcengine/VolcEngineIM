@@ -4,12 +4,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.widget.TextView;
 
 import com.bytedance.im.app.detail.member.VEMemberListActivity;
 import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
-import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.R;
 
 public class VEGroupOwnerConfigActivity extends VEMemberListActivity {

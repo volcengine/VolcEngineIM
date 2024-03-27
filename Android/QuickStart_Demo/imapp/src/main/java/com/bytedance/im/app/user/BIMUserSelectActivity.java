@@ -3,20 +3,18 @@ package com.bytedance.im.app.user;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
-import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
 

@@ -3,7 +3,7 @@ package com.bytedance.im.app.live.create;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.InputFilter;
 import android.view.View;
 import android.widget.EditText;

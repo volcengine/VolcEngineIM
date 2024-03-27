@@ -1,6 +1,6 @@
 package com.bytedance.im.app.live.conversation;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
-import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMember;

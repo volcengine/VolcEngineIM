@@ -1,5 +1,9 @@
 package com.bytedance.im.app.constants;
 
+import com.bytedance.im.app.user.VEDefaultAccountProvider;
+import com.bytedance.im.interfaces.BIMAccountProvider;
+
+
 public class Constants {
 
     public static final int APP_ID = 0; //国内appID
@@ -39,4 +43,11 @@ public class Constants {
      * 默认环境
      */
     public static final int ENV_DEFAULT = ENV_RELEASE;
+
+
+    /**
+     *
+     */
+    public static final BIMAccountProvider accountProvider = new VEDefaultAccountProvider();
+
 }

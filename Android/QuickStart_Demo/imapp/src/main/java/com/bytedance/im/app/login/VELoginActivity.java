@@ -8,12 +8,11 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.VEIMApplication;
 import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
 import com.bytedance.im.app.custom.data.BIMCouponElement;
@@ -55,7 +54,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         if (loginFragment == null) {
-            loginFragment = VEIMApplication.accountProvider.createLoginFragment();
+            loginFragment = Constants.accountProvider.createLoginFragment();
             if (loginFragment instanceof BIMAuthProvider) {
                 BIMAuthProvider provider = (BIMAuthProvider) loginFragment;
                 provider.setLoginListener(this);
@@ -149,6 +148,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
             return;
         }
         isInit = true;
+        SpUtils.getInstance().init(this);   //初始化sp
         //imsdk
         if (Constants.APP_ENV != -1) {  //以代码配置为准
             SpUtils.getInstance().setEnv(Constants.APP_ENV);
@@ -166,7 +166,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         config.setEnableAppLog(SpUtils.getInstance().isEnableALog());
         initCustom();
         BIMUIClient.getInstance().init(application,curAppId, env, config);
-        VEIMApplication.accountProvider.init(application, curAppId, env);
+        Constants.accountProvider.init(application, curAppId, env);
         BIMUIClient.getInstance().setUserProvider(new BIMDefaultUserProvider(500));
     }
 

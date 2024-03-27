@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/action_bar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize">
@@ -46,10 +46,12 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <EditText
         android:id="@+id/edit_text"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:background="@color/business_im_f8f8"
         android:textSize="20sp"
         android:textStyle="bold"

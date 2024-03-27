@@ -2,11 +2,9 @@ package com.bytedance.im.app.live;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;

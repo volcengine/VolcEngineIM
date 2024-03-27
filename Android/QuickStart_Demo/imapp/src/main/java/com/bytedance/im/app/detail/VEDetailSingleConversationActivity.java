@@ -4,13 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.view.View;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.detail.ext.VEDebugExtActivity;
 import com.bytedance.im.app.detail.member.VEMemberUtils;
 import com.bytedance.im.app.detail.member.VESingleMemberListActivity;
 import com.bytedance.im.app.detail.member.adapter.MemberWrapper;
@@ -30,6 +33,7 @@ public class VEDetailSingleConversationActivity extends Activity {
     private static final String TAG = "VEDetailSingleConversationActivity";
     private static final String CONVERSATION_ID = "conversation_id";
     private RecyclerView recyclerView;
+    private View customLayout;
 
     public static void start(Context context, String cid) {
         Intent intent = new Intent(context, VEDetailSingleConversationActivity.class);
@@ -43,6 +47,7 @@ public class VEDetailSingleConversationActivity extends Activity {
         setContentView(R.layout.ve_im_activity_detail_singel_chat);
         String conversationId = getIntent().getStringExtra(CONVERSATION_ID);
         recyclerView = findViewById(R.id.recycler_view_member);
+        customLayout = findViewById(R.id.fl_custom);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         VEMemberHozionAdapter adapter = new VEMemberHozionAdapter(this, new VEMemberHozionAdapter.OnClickListener() {
             @Override
@@ -64,6 +69,7 @@ public class VEDetailSingleConversationActivity extends Activity {
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
         findViewById(R.id.iv_goto_member).setOnClickListener(v -> VESingleMemberListActivity.start(VEDetailSingleConversationActivity.this, conversationId));
         findViewById(R.id.fl_search_msg).setOnClickListener(v -> VESearchResultActivity.start(VEDetailSingleConversationActivity.this, conversationId));
+        customLayout.setOnClickListener(v -> VEDebugExtActivity.start(VEDetailSingleConversationActivity.this, conversationId));
         BIMUIClient.getInstance().getConversation(conversationId, new BIMResultCallback<BIMConversation>() {
             @Override
             public void onSuccess(BIMConversation conversation) {

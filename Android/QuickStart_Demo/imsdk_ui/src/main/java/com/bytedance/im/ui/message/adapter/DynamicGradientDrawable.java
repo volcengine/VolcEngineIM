@@ -3,8 +3,8 @@ package com.bytedance.im.ui.message.adapter;
 import android.animation.ArgbEvaluator;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 public class DynamicGradientDrawable extends GradientDrawable {

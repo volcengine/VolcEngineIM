@@ -10,8 +10,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +25,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bytedance.im.app.BuildConfig;
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
 import com.bytedance.im.app.detail.VEDetailController;
 import com.bytedance.im.app.login.VELoginActivity;
@@ -40,9 +39,7 @@ import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.BIMFriendListener;
-import com.bytedance.im.user.api.model.BIMBlackListFriendInfo;
 import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
-import com.bytedance.im.user.api.model.BIMFriendInfo;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 
@@ -62,6 +59,7 @@ public class VEMineFragment extends Fragment {
     private View flPermission;
     private View topPanel;
     private View flDId;
+    private View govRecord;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,6 +78,7 @@ public class VEMineFragment extends Fragment {
         flPolicy = view.findViewById(R.id.fl_privacy_policy);
         flPermission = view.findViewById(R.id.fl_permission);
         flDId = view.findViewById(R.id.fl_sdk_did);
+        govRecord = view.findViewById(R.id.gov_record_number);
         Log.i(TAG, "uikit version: " + BIMUIClient.getInstance().getVersion());
         Log.i(TAG, " imSdk version: " + BIMClient.getInstance().getVersion());
 
@@ -100,6 +99,7 @@ public class VEMineFragment extends Fragment {
         flProto.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975891"));
         flPolicy.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975890"));
         flPermission.setOnClickListener(v -> toProtocol("https://www.volcengine.com/docs/6348/975909"));
+        govRecord.setOnClickListener(v -> toProtocol("https://beian.miit.gov.cn/#/Integrated/index"));
         BIMClient.getInstance().getSDKDid(new BIMResultCallback<String>() {
             @Override
             public void onSuccess(String s) {

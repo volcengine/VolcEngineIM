@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_user_item"
@@ -23,7 +23,7 @@
         app:layout_goneMarginLeft="0dp"
         tools:src="@drawable/icon_recommend_user_default" />
 
-    <android.support.constraint.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
             app:layout_constraintEnd_toEndOf="parent"/>
     </LinearLayout>
 
-    <android.support.constraint.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -97,4 +97,4 @@
         app:layout_constraintStart_toStartOf="@id/iv_head"
         app:layout_constraintTop_toBottomOf="@id/iv_head" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

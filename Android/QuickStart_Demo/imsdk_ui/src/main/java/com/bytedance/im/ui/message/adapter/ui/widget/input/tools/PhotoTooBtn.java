@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
+import androidx.core.content.FileProvider;
 import android.view.View;
 
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -16,8 +16,6 @@ import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.utils.BIMPermissionController;
-import com.bytedance.im.ui.utils.media.BIMMediaListActivity;
-import com.bytedance.im.ui.utils.media.MediaInfo;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -41,11 +39,10 @@ public class PhotoTooBtn extends BaseToolBtn<String> {
     public String getTitle(Context context) {
         return "拍照";
     }
-
     @Override
     public void onClick(Fragment fragment, View view, BIMConversation conversation) {
         BIMPermissionController.checkPermission(fragment.getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE}, (isAllGranted, permissions, grantResults) -> {
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, (isAllGranted, permissions, grantResults) -> {
             if (isAllGranted) {
                 startIntentToTakePhoto(fragment);
             }
@@ -70,7 +67,7 @@ public class PhotoTooBtn extends BaseToolBtn<String> {
         File storageDir = fragment.getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File tempFile = new File(storageDir, imageFileName);
         takePhotoPath = tempFile.getAbsolutePath();
-        Uri uri = FileProvider.getUriForFile(fragment.getActivity(), "com.bytedance.im.app.fileprovider", tempFile);
+        Uri uri = FileProvider.getUriForFile(fragment.getActivity(), "com.bytedance.im.veapp.fileprovider", tempFile);
         captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         captureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         fragment.startActivityForResult(captureIntent, REQUEST_CODE_TAKE_PHOTO);

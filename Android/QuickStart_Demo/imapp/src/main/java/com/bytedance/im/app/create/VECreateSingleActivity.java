@@ -4,21 +4,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.InputFilter;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.VEIMApplication;
+import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.message.VEMessageListActivity;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.interfaces.BIMUserExistChecker;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.api.BIMUIUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,7 @@ public class VECreateSingleActivity extends Activity {
                     return;
                 }
                 long uid = Long.parseLong(editText.getText().toString());
-                BIMUserExistChecker checker = VEIMApplication.accountProvider.createUserExistChecker();
+                BIMUserExistChecker checker = Constants.accountProvider.createUserExistChecker();
                 List<Long> uidList = new ArrayList<>();
                 uidList.add(uid);
                 checker.check(uidList, new BIMResultCallback<Map<Long, Boolean>>() {

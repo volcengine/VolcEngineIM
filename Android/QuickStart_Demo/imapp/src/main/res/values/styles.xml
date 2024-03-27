@@ -11,4 +11,11 @@
         <item name="android:windowEnterAnimation">@anim/anim_fade_in</item>
         <item name="android:windowExitAnimation">@anim/anim_fade_out</item>
     </style>
+    <style name="Theme.imApp" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_700</item>
+        <item name="colorAccent">@color/teal_200</item>
+        <!-- Customize your theme here. -->
+    </style>
 </resources>

@@ -11,7 +11,7 @@
     android:paddingRight="14dp"
     tools:ignore="MissingDefaultResource">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -38,7 +38,7 @@
             android:textColor="@color/business_base_white"
             android:background="@drawable/shape_im_conversation_unread_num_bg" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         tools:text="詹姆斯"

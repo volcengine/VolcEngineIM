@@ -2,7 +2,7 @@ package com.bytedance.im.app.custom.ui;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -11,7 +11,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -23,9 +22,7 @@ import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
 import com.bytedance.im.app.custom.data.BIMCouponElement;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
-import com.bytedance.im.ui.message.convert.base.model.BaseCustomElement;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
-import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
 
 import java.util.Map;
 

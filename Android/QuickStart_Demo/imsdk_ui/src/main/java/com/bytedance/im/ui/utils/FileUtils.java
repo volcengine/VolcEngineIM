@@ -9,7 +9,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
-import android.support.v4.content.FileProvider;
+import androidx.core.content.FileProvider;
 import android.text.TextUtils;
 
 import java.io.File;

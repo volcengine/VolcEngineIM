@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:background="@color/business_base_white">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_member"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
                 android:src="@drawable/icon_im_goto" />
         </RelativeLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_conversation_online_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,9 +102,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_conversation_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -150,9 +150,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_conversation_icon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -193,9 +193,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_conversation_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -241,9 +241,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_conversation_notice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -284,9 +284,9 @@
                 android:src="@drawable/icon_im_goto"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_mine_portrait"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -323,8 +323,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
-        <android.support.constraint.ConstraintLayout
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_conversation_my_nick_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -364,7 +364,7 @@
                 android:src="@drawable/icon_im_goto"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
             android:id="@+id/cl_conversation_silent_layout"
@@ -391,7 +391,7 @@
                 android:track="@drawable/switch_custom_track_selector" />
         </FrameLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_conversation_silent_wl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -417,9 +417,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_conversation_silent_bl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -446,9 +446,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_conversation_block_bl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -475,9 +475,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_mark_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -504,9 +504,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_conversation_owner_manage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -533,9 +533,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_conversation_master_config"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -562,7 +562,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
             android:id="@+id/fl_dissolve_group"

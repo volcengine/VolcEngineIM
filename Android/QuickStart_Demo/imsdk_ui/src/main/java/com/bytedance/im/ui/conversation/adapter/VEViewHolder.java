@@ -1,7 +1,7 @@
 package com.bytedance.im.ui.conversation.adapter;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 public class VEViewHolder<T> extends RecyclerView.ViewHolder {

@@ -4,9 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,6 +21,7 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageStatus;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
+import com.bytedance.im.core.model.inner.msg.image.BIMImage;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
@@ -70,9 +70,13 @@ public class VideoMessageUI extends BaseCustomElementUI {
             tvUploadStatus.setVisibility(View.GONE);
             videoPlayIcon.setVisibility(View.VISIBLE);
         }
-
-        int width = videoElement.getCoverImg().getWidth();
-        int height = videoElement.getCoverImg().getHeight();
+        BIMImage coverImage = videoElement.getCoverImg();
+        int width = 200;
+        int height = 200;
+        if (coverImage != null) {
+            width = coverImage.getWidth();
+            height = coverImage.getHeight();
+        }
         int maxWidth = BIMUIUtils.dpToPx(itemView.getContext(),120);
         ViewGroup.LayoutParams p = videoCover.getLayoutParams();
         if (width > 0 & height > 0) {
@@ -144,23 +148,29 @@ public class VideoMessageUI extends BaseCustomElementUI {
     private void showRemote(ImageView imageView, BIMMessage msg) {
         BIMVideoElement videoElement = (BIMVideoElement) msg.getElement();
         Drawable placeDrawable = imageView.getDrawable();
-        Glide.with(imageView.getContext())
-                .load(videoElement.getCoverImg().getURL())
-                .dontAnimate()
-                .placeholder(placeDrawable)
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        BIMLog.i(TAG, "load failed! " + " uuid: " + msg.getUuid());
-                        return true;
-                    }
+        BIMImage coverImg = videoElement.getCoverImg();
+        if (coverImg == null){
+            imageView.setImageResource(R.drawable.ic_default_imsdk_emoji_tab);
+        }else {
+            Glide.with(imageView.getContext())
+                    .load(coverImg.getURL())
+                    .dontAnimate()
+                    .placeholder(placeDrawable)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            BIMLog.i(TAG, "load failed! " + " uuid: " + msg.getUuid());
+                            return true;
+                        }
 
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        BIMLog.i(TAG, "load success!" + " uuid: " + msg.getUuid());
-                        return false;
-                    }
-                }).into(imageView);
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            BIMLog.i(TAG, "load success!" + " uuid: " + msg.getUuid());
+                            return false;
+                        }
+                    }).into(imageView);
+        }
+
     }
 
     @Override

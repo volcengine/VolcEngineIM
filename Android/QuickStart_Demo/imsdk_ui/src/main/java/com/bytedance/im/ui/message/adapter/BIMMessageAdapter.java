@@ -1,7 +1,9 @@
 package com.bytedance.im.ui.message.adapter;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -233,7 +235,14 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
         if (bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_CUSTOM) {
             //解析自定义消息
             BIMCustomElement customElement = (BIMCustomElement) bimMessage.getElement();
-            BIMBaseElement baseContent = BIMMessageManager.getInstance().decode(customElement.getData());
+            BIMCustomElement newCustomElement = BIMMessageManager.getInstance().decode(customElement.getData());//补全数据
+            if (newCustomElement != null) {
+                newCustomElement.setData(customElement.getData());
+                BIMLog.i(TAG, "newCustomElement newCustomElement: " + newCustomElement + " uuid:" + bimMessage.getUuid());
+            } else {
+                BIMLog.i(TAG, "newCustomElement newCustomElement: " + null + " uuid:" + bimMessage.getUuid());
+            }
+            BIMBaseElement baseContent = newCustomElement;
             if (baseContent == null) {
                 baseContent = new BIMBaseElement(); //兜底
             }

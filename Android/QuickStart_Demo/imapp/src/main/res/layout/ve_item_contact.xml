@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -37,7 +37,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 tools:src="@drawable/icon_recommend_user_default" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             tools:text="詹姆斯"

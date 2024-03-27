@@ -2,19 +2,18 @@ package com.bytedance.im.app.live.edit;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.text.InputFilter;
+import androidx.annotation.Nullable;
+
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.VEIMApplication;
+import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.user.VEUserAddActivity;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.interfaces.BIMUserExistChecker;
-import com.bytedance.im.ui.BIMUIClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +39,7 @@ public class VEEditLiveMemberActivity extends VEUserAddActivity {
                 long uid = Long.parseLong(editText.getText().toString());
 
                 //服务检查用户是否存在
-                BIMUserExistChecker checker = VEIMApplication.accountProvider.createUserExistChecker();
+                BIMUserExistChecker checker = Constants.accountProvider.createUserExistChecker();
                 if (checker != null) {
                     List<Long> uidList = new ArrayList<>();
                     uidList.add(uid);

@@ -1,7 +1,7 @@
 package com.bytedance.im.ui.message.adapter.ui.inner;
 
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +13,12 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageStatus;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.core.internal.utils.IMLog;
 import com.bytedance.im.core.model.inner.msg.BIMImageElement;
+import com.bytedance.im.core.model.inner.msg.image.BIMImage;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
@@ -60,8 +59,15 @@ public class ImageMessageUI extends BaseCustomElementUI {
             tvUploadStatus.setVisibility(View.GONE);
         }
         ViewGroup.LayoutParams p = imgContent.getLayoutParams();
-        p.width = imageElement.getThumbImg().getWidth();
-        p.height = imageElement.getThumbImg().getHeight();
+        BIMImage thumImg = imageElement.getThumbImg();
+        if (thumImg != null) {
+            p.width = thumImg.getWidth();
+            p.height = thumImg.getHeight();
+        } else {
+            p.width = 200;
+            p.height = 200;
+        }
+
         imgContent.setLayoutParams(p);
         if (bimMessage.isSelf() && LoadIMageUtils.loadLocal(imageElement.getLocalPath(), imgContent)) {
             BIMLog.i(TAG, "load use local path " + imageElement.getLocalPath() + " uuid: " + bimMessage.getUuid());
@@ -69,22 +75,27 @@ public class ImageMessageUI extends BaseCustomElementUI {
         }
         Drawable placeDrawable = imgContent.getDrawable();
         try {
-            Glide.with(imgContent.getContext())
-                    .load(imageElement.getThumbImg().getURL())
-                    .dontAnimate()
-                    .placeholder(placeDrawable)
-                    .listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            holder.getOnOutListener().refreshMediaMessage(bimMessage, null);
-                            return true;
-                        }
+            BIMImage bimImage = imageElement.getThumbImg();
+            if (thumImg != null) {
+                Glide.with(imgContent.getContext())
+                        .load(bimImage.getURL())
+                        .dontAnimate()
+                        .placeholder(placeDrawable)
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                holder.getOnOutListener().refreshMediaMessage(bimMessage, null);
+                                return true;
+                            }
 
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            return false;
-                        }
-                    }).into(imgContent);
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                return false;
+                            }
+                        }).into(imgContent);
+            } else {
+                imgContent.setImageResource(R.drawable.ic_default_imsdk_emoji_tab);
+            }
         } catch (Exception e) {
             Log.i(TAG, "load image exception " + Log.getStackTraceString(e));
             imgContent.setImageResource(R.drawable.bg_record_input_button_normal);

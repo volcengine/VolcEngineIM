@@ -4,12 +4,11 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.conversation.BIMConversationListFragment;
 import com.bytedance.im.core.api.model.BIMConversation;
-import com.bytedance.im.ui.message.BIMMessageListFragment;
 
 public class ForwardActivity extends Activity {
     public static final String FORWARD_CONVERSATION_ID = "forward_conversation_id";

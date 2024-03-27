@@ -3,7 +3,7 @@ package com.bytedance.im.app.live.create;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.live.chatRoom.VELiveGroupChatRoomActivity;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
