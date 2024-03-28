@@ -156,7 +156,6 @@ function ApplyList() {
   } = useRequest(async () => {
     await sleep(200);
     const resp = await bytedIMInstance.getFriendReceiveApplyListOnline({
-      direction: im_proto.MessageDirection.NEWER,
       limit: 500,
     });
     console.log(resp.list.map(i => i.fromUserId));
