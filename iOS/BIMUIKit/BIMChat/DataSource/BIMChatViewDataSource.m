@@ -307,7 +307,6 @@
     }
     
     [self p_insertMessage:message];
-    [self sendMessageReadReceipt:message];
 }
 
 /// 收到消息被删除
@@ -335,9 +334,9 @@
 }
 
 /// 收到消息已读回执
-- (void)onReceiveMessagesReadReceipt:(NSArray<BIMMessageReadReceipt *> *)receiptList;
+- (void)onReceiveReadReceipt:(NSArray<BIMReadReceipt *> *)receiptList
 {
-    [receiptList enumerateObjectsUsingBlock:^(BIMMessageReadReceipt * _Nonnull receipt, NSUInteger idx, BOOL * _Nonnull stop) {
+    [receiptList enumerateObjectsUsingBlock:^(BIMReadReceipt * _Nonnull receipt, NSUInteger idx, BOOL * _Nonnull stop) {
         [self p_updateMessage:receipt.message];
     }];
 }
@@ -402,37 +401,13 @@
     }
 }
 
-/// 发送消息已读回执
-- (void)sendMessageReadReceipt:(BIMMessage *)message
-{
-    if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_ONE_CHAT) {
-        return;
-    }
-    if (message.senderUID == [BIMClient sharedInstance].getCurrentUserID.longLongValue) {
-        return;
-    }
-    if (!message.serverMessageID || message.isReadAck || self.conversation.conversationType != BIM_CONVERSATION_TYPE_ONE_CHAT) {
-        return;
-    }
-    /// 语音和视频消息需要点开才发送已读回执，可以根据需求调整。
-    if (message.msgType == BIM_MESSAGE_TYPE_VIDEO || message.msgType == BIM_MESSAGE_TYPE_AUDIO) {
-        return;
-    }
-    [[BIMClient sharedInstance] sendMessageReadReceipts:@[message] completion:^(BIMError * _Nullable error) {}];
-}
-
 /// 获取消息已读回执
 - (void)getMessagesReadReceipt:(NSArray<BIMMessage *> *)messages
 {
-    if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_ONE_CHAT) {
-        return;
-    }
     NSMutableArray<BIMMessage *> *needGetReceiptMessages = [NSMutableArray array];
     [messages enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (message.isReadAck || message.isRecalled) {
-            return;
-        }
-        if (message.senderUID != [[BIMClient sharedInstance] getCurrentUserID].longLongValue) {
+        /// 群聊消息在有已读情况下且没人未读时，不需要获取已读回执
+        if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_GROUP_CHAT && message.readCount != 0 && message.unReadCount == 0) {
             return;
         }
         [needGetReceiptMessages addObject:message];
@@ -440,7 +415,16 @@
     if (BTD_isEmptyArray(needGetReceiptMessages)) {
         return;
     }
-    [[BIMClient sharedInstance] getMessagesReadReceipt:[needGetReceiptMessages copy] completion:^(NSArray<BIMMessageReadReceipt *> * _Nullable receiptList, BIMError * _Nullable error) {}];
+
+    @weakify(self);
+    [[BIMClient sharedInstance] getMessagesReadReceipt:[needGetReceiptMessages copy] completion:^(NSArray<BIMMessageReadReceipt *> * _Nullable receiptList, BIMError * _Nullable error) {
+        @strongify(self);
+        for (BIMMessageReadReceipt *receipt in receiptList) {
+            @autoreleasepool {
+                [self p_updateMessage:receipt.message];
+            }
+        }
+    }];
 }
 
 #pragma mark -

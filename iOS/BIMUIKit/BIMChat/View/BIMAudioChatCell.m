@@ -212,9 +212,7 @@
     [self.player replaceCurrentItemWithPlayerItem:item];
     [self.player play];
     [self startAnimation];
-    if (self.converstaion.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
-        [[BIMClient sharedInstance] sendMessageReadReceipts:@[self.message] completion:^(BIMError * _Nullable error) {}];
-    }
+    [[BIMClient sharedInstance] sendMessageReadReceipts:@[self.message] completion:^(BIMError * _Nullable error) {}];
 }
 
 - (void)refreshMediaMessage:(BIMMessage *)message completion:(BIMCompletion)completion

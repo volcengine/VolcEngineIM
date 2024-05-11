@@ -1,19 +1,22 @@
 //
-//  BIMMessageDetailDebugViewController.m
-//  im-uikit-tob
+//  BIMConversationDetailDebugViewController.m
+//  Bolts
 //
-//  Created by yangzhanjiang on 2024/1/31.
+//  Created by yangzhanjiang on 2024/4/17.
 //
 
-#import "BIMMessageDetailDebugViewController.h"
+#import "VEIMDemoConversationDetailDebugViewController.h"
+
 #import <imsdk-tob/BIMSDK.h>
 #import <Masonry/Masonry.h>
 #import <OneKit/BTDMacros.h>
 #import "BIMUIDefine.h"
 #import "BIMLableTextField.h"
+//#import "BIMConversation.h"
 
-@interface BIMMessageDetailDebugViewController ()
-@property (nonatomic, strong) BIMLableTextField *messageTextField;
+
+@interface VEIMDemoConversationDetailDebugViewController ()
+
 @property (nonatomic, strong) BIMLableTextField *convTextField;
 @property (nonatomic, strong) UIButton *queryButton;
 
@@ -24,10 +27,9 @@
 @property (nonatomic, strong) UILabel *remoteLabel;
 @property (nonatomic, strong) UILabel *localLabel;
 
-
 @end
 
-@implementation BIMMessageDetailDebugViewController
+@implementation VEIMDemoConversationDetailDebugViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -38,8 +40,7 @@
 - (void)setupUIElements
 {
     [super setupUIElements];
-    self.title = @"消息详情";
-    [self.view addSubview:self.messageTextField];
+    self.title = @"会话详情";
     [self.view addSubview:self.convTextField];
     [self.view addSubview:self.queryButton];
     [self.view addSubview:self.remoteMessageTextView];
@@ -49,24 +50,19 @@
     [self.view addSubview:self.localLabel];
     
     
-    [self.messageTextField mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.convTextField mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(CGRectGetMaxY(self.navigationController.navigationBar.frame) + 15);
         make.left.mas_equalTo(20);
         make.right.mas_equalTo(-20);
         make.height.mas_equalTo(40);
     }];
-    
-    [self.convTextField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.messageTextField.mas_bottom);
-        make.left.right.height.equalTo(self.messageTextField);
-    }];
-//    
+//
     [self.queryButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.convTextField.mas_bottom);
         make.height.width.mas_equalTo(60);
         make.centerX.equalTo(self.view);
     }];
-//    
+//
     [self.line mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.queryButton.mas_bottom);
         make.bottom.equalTo(self.view);
@@ -90,7 +86,7 @@
         make.top.equalTo(self.remoteLabel.mas_bottom);
         make.bottom.equalTo(self.view.mas_bottom);
     }];
-//    
+//
     [self.localMessageTextView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.line.mas_right);
         make.right.equalTo(self.view);
@@ -103,23 +99,65 @@
 
 - (void)queryButtonClick
 {
-    @weakify(self);
-    long long serverMsgID = self.messageTextField.textField.text.longLongValue;
-    long long convShortID = self.convTextField.textField.text.longLongValue;
     self.localMessageTextView.text = nil;
     self.remoteMessageTextView.text = nil;
-    [[BIMClient sharedInstance] getMessageByServerID:serverMsgID inConversationShortID:convShortID isServer:NO completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
-        @strongify(self);
-        NSString *msg = [[message valueForKey:@"message"] description];
-        self.localMessageTextView.text = msg;
-    }];
-    
-    [[BIMClient sharedInstance] getMessageByServerID:serverMsgID inConversationShortID:convShortID isServer:YES completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+    if ([self.convTextField.textField.text containsString:@","]) {
+        [self queryBatchConversation];
+    } else {
+        [self querySingleConversation];
+    }
+}
+
+// 单个会话请求
+- (void)querySingleConversation
+{
+    @weakify(self);
+    long long convShortID = self.convTextField.textField.text.longLongValue;
+    [[BIMClient sharedInstance] getConversationByShortID:convShortID isServer:NO completion:^(BIMConversation * _Nullable conversation, BIMError * _Nullable error) {
         @strongify(self);
         if (error) {
-            self.remoteMessageTextView.text = [NSString stringWithFormat:@"查询消息失败:\n%@", error.localizedDescription];
+            self.localMessageTextView.text = [NSString stringWithFormat:@"查询会话失败:\n%@", error.localizedDescription];
         } else {
-            NSString *msg = [[message valueForKey:@"message"] description];
+            NSString *msg = [[conversation valueForKey:@"conversation"] description];
+            self.localMessageTextView.text = msg;
+        }
+    }];
+    
+    [[BIMClient sharedInstance] getConversationByShortID:convShortID isServer:YES completion:^(BIMConversation * _Nullable conversation, BIMError * _Nullable error) {
+        @strongify(self);
+        if (error) {
+            self.remoteMessageTextView.text = [NSString stringWithFormat:@"查询会话失败:\n%@", error.localizedDescription];
+        } else {
+            NSString *msg = [[conversation valueForKey:@"conversation"] description];
+            self.remoteMessageTextView.text = msg;
+        }
+    }];
+}
+
+// 批量会话请求
+- (void)queryBatchConversation
+{
+    @weakify(self);
+    NSMutableArray *convShortIDs = [[self.convTextField.textField.text componentsSeparatedByString:@","] mutableCopy];
+    if ([[convShortIDs.lastObject stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] isEqualToString:@""]) {
+        [convShortIDs removeLastObject];
+    }
+    [[BIMClient sharedInstance] getConversationByShortIDList:convShortIDs isServer:NO completion:^(NSArray<BIMConversation *> * _Nullable conversations, BIMError * _Nullable error) {
+        @strongify(self);
+        if (error) {
+            self.localMessageTextView.text = [NSString stringWithFormat:@"查询会话失败:\n%@", error.localizedDescription];
+        } else {
+            NSString *msg = [[conversations valueForKey:@"conversation"] componentsJoinedByString:@"\n\n-------------------------------------------\n\n"];
+            self.localMessageTextView.text = msg;
+        }
+    }];
+    
+    [[BIMClient sharedInstance] getConversationByShortIDList:convShortIDs isServer:YES completion:^(NSArray<BIMConversation *> * _Nullable conversations, BIMError * _Nullable error) {
+        @strongify(self);
+        if (error) {
+            self.remoteMessageTextView.text = [NSString stringWithFormat:@"查询会话失败:\n%@", error.localizedDescription];
+        } else {
+            NSString *msg = [[conversations valueForKey:@"conversation"] componentsJoinedByString:@"\n\n-------------------------------------------\n\n"];
             self.remoteMessageTextView.text = msg;
         }
     }];
@@ -127,22 +165,12 @@
 
 #pragma mark - getter
 
-- (BIMLableTextField *)messageTextField
-{
-    if (!_messageTextField) {
-        _messageTextField = [[BIMLableTextField alloc] init];
-        _messageTextField.label.text = @"消息ID";
-        _messageTextField.textField.text = self.message.serverMessageID.stringValue;
-    }
-    return _messageTextField;
-}
-
 - (BIMLableTextField *)convTextField
 {
     if (!_convTextField) {
         _convTextField = [[BIMLableTextField alloc] init];
-        _convTextField.label.text = @"会话ID";
-        _convTextField.textField.text = @(self.conversationShortID).stringValue;
+        _convTextField.label.text = @"会话shortID";
+        _convTextField.textField.text = self.conversation.conversationShortID.stringValue;
     }
     return _convTextField;
 }
@@ -163,6 +191,7 @@
     if (!_remoteMessageTextView) {
         _remoteMessageTextView = [[UITextView alloc] init];
         _remoteMessageTextView.editable = NO;
+        _remoteMessageTextView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
     }
     return _remoteMessageTextView;
 }
@@ -181,6 +210,7 @@
     if (!_localMessageTextView) {
         _localMessageTextView = [[UITextView alloc] init];
         _localMessageTextView.editable = NO;
+        _localMessageTextView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
     }
     return _localMessageTextView;
 }
@@ -206,3 +236,4 @@
 }
 
 @end
+

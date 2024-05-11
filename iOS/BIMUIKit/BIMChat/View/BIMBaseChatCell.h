@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)chatCell:(BIMBaseChatCell *)cell didClickRetryBtnWithMessage:(BIMMessage *)message;
 - (void)chatCell:(BIMBaseChatCell *)cell didClickAvatarWithMessage:(BIMMessage *)message;
+- (void)chatCell:(BIMBaseChatCell *)cell didClickReadDetailWithMessage:(BIMMessage *)message;
 
 @end
 

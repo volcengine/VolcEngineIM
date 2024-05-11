@@ -11,6 +11,7 @@
 @protocol BIMChatViewControllerDelegate <NSObject>
 
 - (void)chatViewController:(BIMChatViewController *)controller didClickAvatar:(BIMMessage *)message;
+- (void)chatViewController:(BIMChatViewController *_Nonnull)controller didClickReadDetailWithMessage:(BIMMessage *_Nonnull)message;
 
 @end
 
@@ -21,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)chatVCWithConversation:(BIMConversation *)conversation;
 
 @property (nonatomic, strong) BIMMessage *anchorMessage;
-
+@property (nonatomic, strong) NSArray<NSNumber *> *inputToolMenuTypeArray;
 @property (nonatomic, weak) id<BIMChatViewControllerDelegate> delegate;
 
 @end

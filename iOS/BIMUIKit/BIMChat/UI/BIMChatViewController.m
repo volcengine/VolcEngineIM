@@ -201,8 +201,8 @@
 #pragma mark - private
 
 - (void)setupMsgs{
-    [[BIMClient sharedInstance] markConversationRead:self.conversation.conversationID completion:nil];
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
+        [[BIMClient sharedInstance] markConversationRead:self.conversation.conversationID completion:^(BIMError * _Nullable error) {}];
         [[BIMClient sharedInstance] markConversationMessagesRead:self.conversation.conversationID completion:^(BIMError * _Nullable error) {}];
     }
 
@@ -254,10 +254,18 @@
     self.view.backgroundColor = kIM_View_Background_Color;
 
     
-    self.inputTool = [[BIMInputToolView alloc] initWithConvType:self.conversation.conversationType];
+    self.inputTool = [[BIMInputToolView alloc] initWithConvType:self.conversation.conversationType conversationID:self.conversation.conversationID];
     self.inputTool.backgroundColor = kWhiteColor;
     self.inputTool.delegate = self;
     self.inputTool.maxWordLimit = 500;
+    if (!self.inputToolMenuTypeArray) {
+        self.inputTool.menuTypeArray = @[@(BIMInputToolMenuTypePhoto), @(BIMInputToolMenuTypeCamera), @(BIMInputToolMenuTypeFile)];
+#ifdef UI_INTERNAL
+        self.inputTool.menuTypeArray = @[@(BIMInputToolMenuTypePhoto), @(BIMInputToolMenuTypeCamera), @(BIMInputToolMenuTypeFile), @(BIMInputToolMenuTypeCustomMessage), @(BIMInputToolMenuTypeCoupon)];
+#endif
+    } else {
+        self.inputTool.menuTypeArray = self.inputToolMenuTypeArray;
+    }
     [self.view addSubview:self.inputTool];
     
     self.holderView = [[UIView alloc] init];
@@ -318,9 +326,7 @@
         [self.player replaceCurrentItemWithPlayerItem:playItem];
         [self.player play];
     }
-    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
-        [[BIMClient sharedInstance] sendMessageReadReceipts:@[message] completion:^(BIMError * _Nullable error) {}];
-    }
+    [[BIMClient sharedInstance] sendMessageReadReceipts:@[message] completion:^(BIMError * _Nullable error) {}];
 }
 
 
@@ -594,7 +600,11 @@
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
 //    BIMMessage *msg = [self.msgDataSource itemAtIndex:indexPath.row];
     BIMMessage *msg = [self.messageDataSource itemAtIndex:indexPath.row];
-    
+    /// 语音和视频消息需要点开才发送已读回执，可以根据需求调整。
+    if (msg.msgType != BIM_MESSAGE_TYPE_VIDEO && msg.msgType != BIM_MESSAGE_TYPE_AUDIO) {
+        [[BIMClient sharedInstance] sendMessageReadReceipts:@[msg] completion:^(BIMError * _Nullable error) {}];
+    }
+
     id<BIMMember> sender;
     for (id<BIMMember> participant in self.participantsDataSource.participants) {
         if (msg.senderUID == participant.userID) {
@@ -781,6 +791,13 @@
 {
     if ([self.delegate respondsToSelector:@selector(chatViewController:didClickAvatar:)]) {
         [self.delegate chatViewController:self didClickAvatar:message];
+    }
+}
+
+- (void)chatCell:(BIMBaseChatCell *)cell didClickReadDetailWithMessage:(BIMMessage *)message
+{
+    if ([self.delegate respondsToSelector:@selector(chatViewController:didClickReadDetailWithMessage:)]) {
+        [self.delegate chatViewController:self didClickReadDetailWithMessage:message];
     }
 }
 

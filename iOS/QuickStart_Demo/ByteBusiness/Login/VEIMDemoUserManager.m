@@ -221,13 +221,13 @@
         NSString *tokenUrl = [[BDIMDebugNetworkManager sharedManager] tokenUrl];
         NSString *URL = [NSString stringWithFormat:@"%@/get_token?appID=%@&userID=%lld",tokenUrl, kVEIMDemoAppID, user.userID];
         @weakify(self);
-        NSDate *date1 = [NSDate date];
         [TTNetworkManager.shareInstance requestForJSONWithResponse:URL params:nil method:@"GET" needCommonParams:YES callback:^(NSError *error, NSDictionary *obj, TTHttpResponse *response) {
+            @strongify(self);
             NSString *token = @"";
             if (error == nil && [obj isKindOfClass:[NSDictionary class]]) {
                 token = [obj objectForKey:@"Token"];
             }
-            
+
             if (token.length && user) {
                 self.currentUser = user;
                 self.currentUser.userToken = token;
@@ -248,6 +248,12 @@
     @weakify(self);
     [[BIMUIClient sharedInstance] login:@(userID).stringValue token:token completion:^(BIMError * _Nullable error) {
         @strongify(self);
+        if (error) {
+            if (completion) {
+                completion(error);
+            }
+            return;
+        }
         [self getUserFullInfo:userID syncServer:NO completion:^(BIMUserFullInfo * _Nullable info, BIMError * _Nullable error) {
             self.currentUserFullInfo = info;
             dispatch_async(dispatch_get_main_queue(), ^{

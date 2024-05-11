@@ -11,6 +11,7 @@
 #import "BIMUIClient.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <OneKit/BTDMacros.h>
+#import "BIMToastView.h"
 
 
 @interface BIMBaseChatCell ()
@@ -75,6 +76,8 @@
     self.readLabel.backgroundColor = kClearColor;
     self.readLabel.textColor = kIM_Main_Color_30;
     [self.contentView addSubview:self.readLabel];
+    UITapGestureRecognizer *tapReadStatus = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(readDetailClicked:)];
+    [self.readLabel addGestureRecognizer:tapReadStatus];
 }
 
 - (void)longPress: (UILongPressGestureRecognizer *)ges{
@@ -98,6 +101,12 @@
     }
 }
 
+- (void)readDetailClicked:(UILongPressGestureRecognizer *)ges
+{
+    if ([self.delegate respondsToSelector:@selector(chatCell:didClickReadDetailWithMessage:)]) {
+        [self.delegate chatCell:self didClickReadDetailWithMessage:self.message];
+    }
+}
 
 - (void)refreshWithMessage:(BIMMessage *)message inConversation:(BIMConversation *)conversation sender:(id<BIMMember>)sender {
     self.message = message;
@@ -363,18 +372,29 @@
 /// 展示消息已读回执文案
 - (void)refsershReadLabelText
 {
-    if (!self.isSelfMsg || self.converstaion.conversationType != BIM_CONVERSATION_TYPE_ONE_CHAT || self.message.msgStatus != BIM_MESSAGE_STATUS_SUCCESS) {
-        self.readLabel.hidden = YES;
+    self.readLabel.hidden = YES;
+    self.readLabel.userInteractionEnabled = NO;
+    if (!self.isSelfMsg || (self.message.msgStatus != BIM_MESSAGE_STATUS_SUCCESS && self.message.msgStatus != BIM_MESSAGE_STATUS_NORMAL) || !self.converstaion.isEnableReadReceipt) {
         return;
     }
     /// 和自己的单聊不展示已读回执文案
     if (self.converstaion.oppositeUserID == [BIMClient sharedInstance].getCurrentUserID.longLongValue) {
-        self.readLabel.hidden = YES;
         return;
     }
 
     self.readLabel.hidden = NO;
-    self.readLabel.text = self.message.isReadAck ? @"已读" : @"未读";
+    if (self.converstaion.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
+        self.readLabel.text = self.message.isReadAck ? @"已读" : @"未读";
+    } else if (self.converstaion.conversationType == BIM_CONVERSATION_TYPE_GROUP_CHAT) {
+        NSUInteger readCount = self.message.readCount;
+        NSUInteger unReadCount = self.message.unReadCount;
+        if (!readCount && !unReadCount) {
+            self.readLabel.text = @"未读";
+        } else {
+            self.readLabel.text = [NSString stringWithFormat:@"[%lu/%lu]", readCount, unReadCount];
+        }
+        self.readLabel.userInteractionEnabled = YES;
+    }
 }
 
 @end

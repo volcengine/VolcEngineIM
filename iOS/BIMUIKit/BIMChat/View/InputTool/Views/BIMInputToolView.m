@@ -64,7 +64,11 @@ typedef NS_ENUM(NSInteger, IMTextAudioType) {
 @property (nonatomic, strong) BIMAudioRecorder *audioRecorder;
 
 @property (nonatomic, assign) BIMConversationType convType;
+@property (nonatomic, strong) NSString *conversationID;
 
+@property (nonatomic, assign) BIMInputToolRecordStatus recordStatus;
+@property (nonatomic, assign) double audioReportInterval;
+@property (nonatomic, strong) NSTimer *audioReportTimer;
 @end
 
 
@@ -113,6 +117,7 @@ typedef NS_ENUM(NSInteger, IMTextAudioType) {
             
             self.tempTextView.hidden = YES;
             self.recordBtn.hidden = NO;
+            self.recordStatus = BIMInputToolRecordNormal;
             
             [self.tempTextView resignFirstResponder];
             [self makeSubViewsConstraints];
@@ -123,6 +128,7 @@ typedef NS_ENUM(NSInteger, IMTextAudioType) {
             
             self.tempTextView.hidden = NO;
             self.recordBtn.hidden = YES;
+            self.recordStatus = BIMInputToolRecordHiden;
             
             [self.tempTextView becomeFirstResponder];
         }
@@ -465,16 +471,31 @@ typedef NS_ENUM(NSInteger, IMTextAudioType) {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observeInputAction:) name:UITextViewTextDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleWillResignActiveNotification:) name:UIApplicationWillResignActiveNotification object:nil];
+    // 监听表情变化
+    [self.tempTextView addObserver:self forKeyPath:@"attributedText" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)removeObserver
 {
+    [self.tempTextView removeObserver:self forKeyPath:@"attributedText"];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if (object == self.tempTextView && [keyPath isEqualToString:@"attributedText"]) {
+        if (self.tempTextView.attributedText.length != 0) {
+            [self sendP2PMessage:BIM_MESSAGE_TYPE_TEXT];
+        }
+    }
 }
 
 - (void)dealloc
 {
     [self removeObserver];
+    [self p_clearTimer];
 }
 
 
@@ -528,6 +549,13 @@ static CGFloat textHei = 0;
     [self textViewDidChange:self.tempTextView];
 }
 
+- (void)observeInputAction:(NSNotification *)notify
+{
+    if (self.tempTextView.text.length > 0) {
+        [self sendP2PMessage:BIM_MESSAGE_TYPE_TEXT];
+    }
+}
+
 
 #pragma mark - Delegate
 
@@ -545,7 +573,6 @@ static CGFloat textHei = 0;
             textView.selectedTextRange = range;
         });
     }
-    
     
     CGRect textViewFrame = self.tempTextView.frame;
     CGSize textSize = [self.tempTextView sizeThatFits:CGSizeMake(CGRectGetWidth(textViewFrame), CGFLOAT_MAX)];
@@ -889,13 +916,18 @@ static CGFloat textHei = 0;
 {
     NSLog(@"onRecordStart");
     [self.recordBtn setTitle:@"正在录音，手指上移取消" forState:UIControlStateNormal];
-
     [self.audioRecorder startRecord];
+    
+    self.recordStatus = BIMInputToolRecordRecording;
+    [self setNeedsReportAudioState];
 }
 
 - (void)onRecordStop
 {
     NSLog(@"onRecordStop");
+    [self p_clearTimer];
+    self.recordStatus = BIMInputToolRecordNormal;
+    
     [self.audioRecorder stopRecord];
     [self.recordBtn setTitle:@"按住说话" forState:UIControlStateNormal];
 }
@@ -903,12 +935,16 @@ static CGFloat textHei = 0;
 - (void)onRecordPreCancel
 {
     NSLog(@"onRecordPreCancel");
+    self.recordStatus = BIMInputToolRecordPreCancel;
+    
     [self.recordBtn setTitle:@"松手取消" forState:UIControlStateNormal];
 }
 
 - (void)onRecordBack
 {
     NSLog(@"onRecordBack");
+    self.recordStatus = BIMInputToolRecordRecording;
+    
     [self.recordBtn setTitle:@"正在录音，手指上移取消" forState:UIControlStateNormal];
 }
 
@@ -918,6 +954,10 @@ static CGFloat textHei = 0;
     [BIMToastView toast:@"已取消"];
     [self.recordBtn setTitle:@"按住说话" forState:UIControlStateNormal];
 
+    if (self.recordStatus == BIMInputToolRecordRecording || self.recordStatus == BIMInputToolRecordPreCancel) {
+        self.recordStatus = BIMInputToolRecordNormal;
+    }
+    [self p_clearTimer];
     [self.audioRecorder cancelRecord];
 }
 
@@ -955,42 +995,75 @@ static CGFloat textHei = 0;
 {
     if (!_menuMAry) {
         _menuMAry = [NSMutableArray array];
-        
-        BIMInputMenuModel *phoneModel = [[BIMInputMenuModel alloc] init];
-        phoneModel.titleStr = @"照片";
-        phoneModel.iconStr = @"icon_photo";
-        phoneModel.type = BIMInputMenuTypeAlbum;
-        [_menuMAry btd_addObject:phoneModel];
-        
-        BIMInputMenuModel *cameraModel = [[BIMInputMenuModel alloc] init];
-        cameraModel.titleStr = @"拍摄";
-        cameraModel.iconStr = @"icon_camera";
-        cameraModel.type = BIMInputMenuTypeCamera;
-        [_menuMAry btd_addObject:cameraModel];
-        
-        BIMInputMenuModel *fileModel = [[BIMInputMenuModel alloc] init];
-        fileModel.titleStr = @"文件";
-        fileModel.iconStr = @"icon_send_file";
-        fileModel.type = BIMInputMenuTypeFile;
-        [_menuMAry btd_addObject:fileModel];
-#ifdef UI_INTERNAL
-        BIMInputMenuModel *customCoverModel = [[BIMInputMenuModel alloc] init];
-        customCoverModel.titleStr = @"自定义消息";
-        customCoverModel.iconStr = @"icon_photo";
-        customCoverModel.type = BIMInputMenuTypeCustomMessage;
-        [_menuMAry btd_addObject:customCoverModel];
-        
-        if (self.convType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
-            BIMInputMenuModel *couponModel = [[BIMInputMenuModel alloc] init];
-            couponModel.titleStr = @"优惠券";
-            couponModel.iconStr = @"icon_photo";
-            couponModel.type = BIMInputMenuTypeCoupon;
-            [_menuMAry btd_addObject:couponModel];
-        }
-#endif
+        [self refershMenuMAry];
     }
-
     return _menuMAry;
+}
+
+- (void)refershMenuMAry
+{
+    [_menuMAry removeAllObjects];
+    [_menuTypeArray enumerateObjectsUsingBlock:^(NSNumber * _Nonnull menuType, NSUInteger idx, BOOL * _Nonnull stop) {
+        switch (menuType.integerValue) {
+            case BIMInputToolMenuTypePhoto:
+            {
+                BIMInputMenuModel *phoneModel = [[BIMInputMenuModel alloc] init];
+                phoneModel.titleStr = @"照片";
+                phoneModel.iconStr = @"icon_photo";
+                phoneModel.type = BIMInputMenuTypeAlbum;
+                [_menuMAry btd_addObject:phoneModel];
+            }
+                break;
+            case BIMInputToolMenuTypeCamera:
+            {
+                BIMInputMenuModel *cameraModel = [[BIMInputMenuModel alloc] init];
+                cameraModel.titleStr = @"拍摄";
+                cameraModel.iconStr = @"icon_camera";
+                cameraModel.type = BIMInputMenuTypeCamera;
+                [_menuMAry btd_addObject:cameraModel];
+            }
+                break;
+            case BIMInputToolMenuTypeFile:
+            {
+                BIMInputMenuModel *fileModel = [[BIMInputMenuModel alloc] init];
+                fileModel.titleStr = @"文件";
+                fileModel.iconStr = @"icon_send_file";
+                fileModel.type = BIMInputMenuTypeFile;
+                [_menuMAry btd_addObject:fileModel];
+            }
+                break;
+            case BIMInputToolMenuTypeCustomMessage:
+            {
+                BIMInputMenuModel *customCoverModel = [[BIMInputMenuModel alloc] init];
+                customCoverModel.titleStr = @"自定义消息";
+                customCoverModel.iconStr = @"icon_photo";
+                customCoverModel.type = BIMInputMenuTypeCustomMessage;
+                [_menuMAry btd_addObject:customCoverModel];
+            }
+                break;
+            case BIMInputToolMenuTypeCoupon:
+            {
+                if (self.convType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+                    BIMInputMenuModel *couponModel = [[BIMInputMenuModel alloc] init];
+                    couponModel.titleStr = @"优惠券";
+                    couponModel.iconStr = @"icon_photo";
+                    couponModel.type = BIMInputMenuTypeCoupon;
+                    [_menuMAry btd_addObject:couponModel];
+                }
+            }
+                break;
+
+            default:
+                break;
+        }
+    }];
+}
+
+- (void)setMenuTypeArray:(NSArray<NSNumber *> *)menuTypeArray
+{
+    _menuTypeArray = menuTypeArray;
+    [self refershMenuMAry];
+    self.moreMenuView.listMAry = [NSMutableArray arrayWithArray:self.menuMAry];
 }
 
 
@@ -1005,10 +1078,13 @@ static CGFloat textHei = 0;
 
 #pragma mark - LifeCycle
 
-- (instancetype)initWithConvType:(BIMConversationType)type
+- (instancetype)initWithConvType:(BIMConversationType)type conversationID:(NSString *)conversationID
 {
     if (self = [super init]) {
         self.convType = type;
+        self.conversationID = conversationID;
+        self.audioReportInterval = 0.5;
+        self.recordStatus = BIMInputToolRecordHiden;
         [self addSubview:self.toolBgView];
         [self addSubview:self.referBg];
         [self.referBg addSubview:self.referCleanBtn];
@@ -1034,7 +1110,6 @@ static CGFloat textHei = 0;
 
     return self;
 }
-
 
 #pragma mark - Getter And Setter
 
@@ -1315,6 +1390,66 @@ static CGFloat textHei = 0;
     }
     
     [self layoutIfNeeded];
+    
+}
+
+#pragma mark - P2P消息
+- (void)handleWillResignActiveNotification:(NSNotification *)notify
+{
+    [self p_clearTimer];
+    if (self.recordStatus == BIMInputToolRecordRecording || self.recordStatus == BIMInputToolRecordPreCancel) {
+        [self onRecordCancel];
+    }
+}
+
+- (void)setNeedsReportAudioState
+{
+    if (self.audioReportTimer) {
+        [self p_clearTimer];
+    }
+    
+    // 立刻发一次P2P消息
+    [self sendP2PMessage:BIM_MESSAGE_TYPE_AUDIO];
+    @weakify(self);
+    self.audioReportTimer = [NSTimer scheduledTimerWithTimeInterval:self.audioReportInterval repeats:YES block:^(NSTimer * _Nonnull timer) {
+        @strongify(self);
+        [self sendP2PMessage:BIM_MESSAGE_TYPE_AUDIO];
+    }];
+    [[NSRunLoop currentRunLoop] addTimer:self.audioReportTimer forMode:NSRunLoopCommonModes];
+}
+
+- (void)p_clearTimer
+{
+    if (self.audioReportTimer) {
+        [self.audioReportTimer invalidate];
+        self.audioReportTimer = nil;
+    }
+}
+
+- (void)sendP2PMessage:(BIMMessageType)sendingMessageType
+{
+    if (self.convType != BIM_CONVERSATION_TYPE_ONE_CHAT) {
+        return;
+    }
+    NSDictionary *content = @{
+        @"type" : @(1000),
+        @"ext" : @{},
+        @"message_type" : @(sendingMessageType)
+    };
+    BIMMessage *p2pMessage = [[BIMClient sharedInstance] createP2PMessage:content];
+    if (sendingMessageType == BIM_MESSAGE_TYPE_TEXT) {
+        [[BIMClient sharedInstance] sendP2PMessage:p2pMessage conversationId:self.conversationID completion:^(BIMError * _Nullable error) {
+            if (error) {
+                
+            }
+        }];
+    } else if (sendingMessageType == BIM_MESSAGE_TYPE_AUDIO){
+        [[BIMClient sharedInstance] sendP2PMessage:p2pMessage conversationId:self.conversationID userIdList:nil completion:^(BIMError * _Nullable error) {
+            if (error) {
+                
+            }
+        }];
+    }
     
 }
 

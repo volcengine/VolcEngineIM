@@ -22,6 +22,7 @@
 #import "BIMUIClient.h"
 #import "VEIMDemoProfileEditViewController.h"
 #import "VEIMDemoConversationExtController.h"
+#import "VEIMDemoConversationDetailDebugViewController.h"
 
 typedef enum : NSUInteger {
     VEIMDemoConversationActionTypeDefault = 0,
@@ -58,15 +59,15 @@ typedef enum : NSUInteger {
 
 - (void)createSettingModels{
     self.settings = [NSMutableArray array];
-    kWeakSelf(self);
-    
+    @weakify(self);
     if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_ONE_CHAT) {
         //群聊名称
         NSString *detail = self.conversation.name.length ? self.conversation.name : @"未命名群聊";
         VEIMDemoSettingModel *nameSetting = [VEIMDemoSettingModel settingWithTitle:@"群聊名称" detail:detail isNeedSwitch:NO switchOn:NO];
         nameSetting.clickHandler = ^() {
-            VEIMDemoInputController *vc = [[VEIMDemoInputController alloc] initWithTitle:@"群聊名称" text:detail maxWordCount:10 editable:weakself.currentParticant.role == BIM_MEMBER_ROLE_OWNER handler:^(NSString * _Nonnull text) {
-                [[BIMClient sharedInstance] setGroupName:weakself.conversation.conversationID name:text completion:^(BIMError * _Nullable error) {
+            @strongify(self);
+            VEIMDemoInputController *vc = [[VEIMDemoInputController alloc] initWithTitle:@"群聊名称" text:detail maxWordCount:10 editable:self.currentParticant.role == BIM_MEMBER_ROLE_OWNER handler:^(NSString * _Nonnull text) {
+                [[BIMClient sharedInstance] setGroupName:self.conversation.conversationID name:text completion:^(BIMError * _Nullable error) {
                     if (error) {
                         if (error.code == BIM_SERVER_SET_GROUP_INFO_REJECT) {
                             [BIMToastView toast:@"文本中可能包含敏感词，请修改后重试"];
@@ -74,19 +75,20 @@ typedef enum : NSUInteger {
                             [BIMToastView toast:[NSString stringWithFormat:@"更改群聊名称失败: %@",error.localizedDescription]];
                         }
                     } else {
-                        [weakself createSettingModels];
+                        [self createSettingModels];
                     }
                 }];
             }];
-            [weakself.navigationController pushViewController:vc animated:YES];
+            [self.navigationController pushViewController:vc animated:YES];
         };
         [self.settings addObject:nameSetting];
         
         //群公告
-        VEIMDemoSettingModel *noticeSetting = [VEIMDemoSettingModel settingWithTitle:@"群公告" detail:weakself.conversation.notice.length?weakself.conversation.notice:@"未设置公告" isNeedSwitch:NO switchOn:NO];
+        VEIMDemoSettingModel *noticeSetting = [VEIMDemoSettingModel settingWithTitle:@"群公告" detail:self.conversation.notice.length?self.conversation.notice:@"未设置公告" isNeedSwitch:NO switchOn:NO];
         noticeSetting.clickHandler = ^() {
-            VEIMDemoInputController *vc = [[VEIMDemoInputController alloc] initWithTitle:@"群公告" text:weakself.conversation.notice maxWordCount:100 editable:self.currentParticant.role == BIM_MEMBER_ROLE_OWNER handler:^(NSString * _Nonnull text) {
-                [[BIMClient sharedInstance] setGroupNotice:weakself.conversation.conversationID notice:text completion:^(BIMError * _Nullable error) {
+            @strongify(self);
+            VEIMDemoInputController *vc = [[VEIMDemoInputController alloc] initWithTitle:@"群公告" text:self.conversation.notice maxWordCount:100 editable:self.currentParticant.role == BIM_MEMBER_ROLE_OWNER handler:^(NSString * _Nonnull text) {
+                [[BIMClient sharedInstance] setGroupNotice:self.conversation.conversationID notice:text completion:^(BIMError * _Nullable error) {
                     if (error) {
                         if (error.code == BIM_SERVER_SET_GROUP_INFO_REJECT) {
                             [BIMToastView toast:@"文本中可能包含敏感词，请修改后重试"];
@@ -94,11 +96,11 @@ typedef enum : NSUInteger {
                             [BIMToastView toast:[NSString stringWithFormat:@"更改群聊名称失败: %@",error.localizedDescription]];
                         }
                     } else {
-                        [weakself createSettingModels];
+                        [self createSettingModels];
                     }
                 }];
             }];
-            [weakself.navigationController pushViewController:vc animated:YES];
+            [self.navigationController pushViewController:vc animated:YES];
         };
         [self.settings addObject:noticeSetting];
         
@@ -106,8 +108,9 @@ typedef enum : NSUInteger {
         if (self.currentParticant.role == BIM_MEMBER_ROLE_OWNER) {
             VEIMDemoSettingModel *ownerSetting = [VEIMDemoSettingModel settingWithTitle:@"设置管理员" detail:@"" isNeedSwitch:NO switchOn:NO];
             ownerSetting.clickHandler = ^() {
-                weakself.actionType = VEIMDemoConversationActionTypeManageParticipants;
-                weakself.oldManagers = [NSMutableArray array];
+                @strongify(self);
+                self.actionType = VEIMDemoConversationActionTypeManageParticipants;
+                self.oldManagers = [NSMutableArray array];
                 NSMutableArray *users = [NSMutableArray array];
                 NSArray *participants = [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID];
                 for (id <BIMMember> participant in participants) {
@@ -123,7 +126,7 @@ typedef enum : NSUInteger {
                     if (participant.role == BIM_MEMBER_ROLE_ADMIN) {
                         user.role = @"管理员";
                         user.isSelected = YES;
-                        [weakself.oldManagers addObject:user];
+                        [self.oldManagers addObject:user];
                     }else if (participant.role == BIM_MEMBER_ROLE_OWNER){
                         user.role = @"群主";
                         user.isSelected = YES;
@@ -139,7 +142,7 @@ typedef enum : NSUInteger {
                 userController.style = VEIMDemoUserSelectionStyleMultiSelection;
                 userController.delegate = self;
                 userController.title = @"设置群管理员";
-                [weakself.navigationController pushViewController:userController animated:YES];
+                [self.navigationController pushViewController:userController animated:YES];
             };
             [self.settings addObject:ownerSetting];
         }
@@ -149,7 +152,8 @@ typedef enum : NSUInteger {
     //置顶
     VEIMDemoSettingModel *stickTop = [VEIMDemoSettingModel settingWithTitle:@"置顶聊天" detail:@"" isNeedSwitch:YES switchOn:self.conversation.isStickTop];
     stickTop.switchHandler = ^(UISwitch * _Nonnull swt) {
-        [[BIMClient sharedInstance] stickTopConversation:weakself.conversation.conversationID isStickTop:swt.on completion:^(BIMError * _Nullable error) {
+        @strongify(self);
+        [[BIMClient sharedInstance] stickTopConversation:self.conversation.conversationID isStickTop:swt.on completion:^(BIMError * _Nullable error) {
             if (error) {
                 [BIMToastView toast:[NSString stringWithFormat:@"置顶失败：%@",error.localizedDescription]];
             }
@@ -160,7 +164,8 @@ typedef enum : NSUInteger {
     //消息免打扰
     VEIMDemoSettingModel *mute = [VEIMDemoSettingModel settingWithTitle:@"消息免打扰" detail:@"" isNeedSwitch:YES switchOn:self.conversation.isMute];
     mute.switchHandler = ^(UISwitch * _Nonnull swt) {
-        [[BIMClient sharedInstance] muteConversation:weakself.conversation.conversationID mute:swt.on completion:^(BIMError * _Nullable error) {
+        @strongify(self);
+        [[BIMClient sharedInstance] muteConversation:self.conversation.conversationID mute:swt.on completion:^(BIMError * _Nullable error) {
                 if (error) {
                     [BIMToastView toast:[NSString stringWithFormat:@"设置失败：%@",error.localizedDescription]];
                 }
@@ -171,12 +176,13 @@ typedef enum : NSUInteger {
     //搜索消息记录
     VEIMDemoSettingModel *searchMessage = [VEIMDemoSettingModel settingWithTitle:@"搜索消息记录" detail:@"" isNeedSwitch:NO switchOn:NO];
     searchMessage.clickHandler = ^{
+        @strongify(self);
         VEIMDemoFTSViewController *vc = [VEIMDemoFTSViewController new];
-        vc.conversationID = weakself.conversation.conversationID;
-        [weakself.navigationController pushViewController:vc animated:YES];
-        NSMutableArray *controllers = [NSMutableArray arrayWithArray:weakself.navigationController.viewControllers];
+        vc.conversationID = self.conversation.conversationID;
+        [self.navigationController pushViewController:vc animated:YES];
+        NSMutableArray *controllers = [NSMutableArray arrayWithArray:self.navigationController.viewControllers];
         [controllers removeObjectAtIndex:1];
-        weakself.navigationController.viewControllers = controllers;
+        self.navigationController.viewControllers = controllers;
     };
     [self.settings addObject:searchMessage];
 
@@ -185,19 +191,20 @@ typedef enum : NSUInteger {
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_GROUP_CHAT && self.currentParticant.role == BIM_MEMBER_ROLE_OWNER) {
         VEIMDemoSettingModel *dismiss = [VEIMDemoSettingModel settingWithTitle:@"解散群聊" detail:@"" isNeedSwitch:NO switchOn:NO];
         dismiss.clickHandler = ^() {
+            @strongify(self);
             UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"解散群聊" message:@"确定要解散群聊吗？" preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *sure = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-                [[VEIMDemoIMManager sharedManager] dismissCon:weakself.conversation completion:^(NSError * _Nullable error) {
+                [[VEIMDemoIMManager sharedManager] dismissCon:self.conversation completion:^(NSError * _Nullable error) {
                     if (!error) {
-                        [[BIMClient sharedInstance] deleteConversation:weakself.conversation.conversationID completion:nil];
-                        [weakself.navigationController popToRootViewControllerAnimated:YES];
+                        [[BIMClient sharedInstance] deleteConversation:self.conversation.conversationID completion:nil];
+                        [self.navigationController popToRootViewControllerAnimated:YES];
                     }
                 }];
             }];
             [alertVC addAction:sure];
             UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
             [alertVC addAction:cancel];
-            [weakself presentViewController:alertVC animated:YES completion:nil];
+            [self presentViewController:alertVC animated:YES completion:nil];
         };
         [self.settings addObject:dismiss];
     }
@@ -205,11 +212,12 @@ typedef enum : NSUInteger {
         //退出群聊
         VEIMDemoSettingModel *quit = [VEIMDemoSettingModel settingWithTitle:@"退出群聊" detail:@"" isNeedSwitch:NO switchOn:NO];
         quit.clickHandler = ^() {
+            @strongify(self);
             UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"退出群聊" message:@"确定要退出群聊吗？" preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *sure = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
                 [[VEIMDemoIMManager sharedManager] quitCon:self.conversation completion:^(NSError * _Nullable error) {
                     if (!error) {
-                        [weakself.navigationController popToRootViewControllerAnimated:YES];
+                        [self.navigationController popToRootViewControllerAnimated:YES];
                     }else{
                         [BIMToastView toast:[NSString stringWithFormat:@"退出群聊失败：%@",error.localizedDescription]];
                     }
@@ -218,17 +226,31 @@ typedef enum : NSUInteger {
             [alertVC addAction:sure];
             UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
             [alertVC addAction:cancel];
-            [weakself presentViewController:alertVC animated:YES completion:nil];
+            [self presentViewController:alertVC animated:YES completion:nil];
         };
         [self.settings addObject:quit];
     }
 
     VEIMDemoSettingModel *setExt = [VEIMDemoSettingModel settingWithTitle:@"自定义字段" detail:@"" isNeedSwitch:NO switchOn:NO];
     setExt.clickHandler = ^() {
+        @strongify(self);
         VEIMDemoConversationExtController *vc = [[VEIMDemoConversationExtController alloc] initWithConversation:self.conversation];
-        [weakself.navigationController pushViewController:vc animated:YES];
+        [self.navigationController pushViewController:vc animated:YES];
     };
     [self.settings addObject:setExt];
+    
+    //#ifdef UI_INTERNAL_TEST
+        //搜索消息记录
+        VEIMDemoSettingModel *conversationDetail = [VEIMDemoSettingModel settingWithTitle:@"会话详情" detail:@"" isNeedSwitch:NO switchOn:NO];
+        conversationDetail.clickHandler = ^{
+            @strongify(self);
+            VEIMDemoConversationDetailDebugViewController *vc = [[VEIMDemoConversationDetailDebugViewController alloc] init];
+            vc.conversation = self.conversation;
+            [self.navigationController pushViewController:vc animated:YES];
+        };
+        [self.settings addObject:conversationDetail];
+        
+    //#endif
 
     [self.tableview reloadData];
 }

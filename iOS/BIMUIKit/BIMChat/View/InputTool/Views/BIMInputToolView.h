@@ -15,6 +15,22 @@ typedef NS_ENUM(NSUInteger, BIMInputToolPriority) {
     BIMInputToolPriorityNormal = 1,
     BIMInputToolPriorityHigh = 2,
 };
+
+typedef NS_ENUM(NSInteger, BIMInputToolMenuType) {
+    BIMInputToolMenuTypePhoto = 0,
+    BIMInputToolMenuTypeCamera = 1,
+    BIMInputToolMenuTypeFile = 2,
+    BIMInputToolMenuTypeCustomMessage = 3,
+    BIMInputToolMenuTypeCoupon = 4,
+};
+
+typedef NS_ENUM(NSUInteger, BIMInputToolRecordStatus) {
+    BIMInputToolRecordHiden = 0,
+    BIMInputToolRecordNormal = 1,
+    BIMInputToolRecordRecording = 2,
+    BIMInputToolRecordPreCancel = 3,
+};
+
 @class BIMMessage;
 @protocol BIMInputToolViewDelegate <NSObject>
 
@@ -37,8 +53,9 @@ typedef NS_ENUM(NSUInteger, BIMInputToolPriority) {
 @property (nonatomic, assign) BIMInputToolPriority priority;
 @property (nonatomic, assign) NSInteger maxWordLimit;
 @property (nonatomic, assign) BOOL isModifyMessage;
+@property (nonatomic, strong) NSArray<NSNumber *> *menuTypeArray;
 
-- (instancetype)initWithConvType:(BIMConversationType)type;
+- (instancetype)initWithConvType:(BIMConversationType)type conversationID:(NSString *)conversationID;
 
 /// 还原
 - (void)revertToTheOriginalType;

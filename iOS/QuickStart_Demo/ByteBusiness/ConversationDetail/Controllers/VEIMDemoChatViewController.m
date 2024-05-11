@@ -13,9 +13,13 @@
 #import "VEIMDemoUserManager.h"
 #import "BIMUIClient.h"
 #import "VEIMDemoProfileEditViewController.h"
+#import "VEIMDemoMessageReadDetailViewController.h"
 
-@interface VEIMDemoChatViewController ()<BIMChatViewControllerDelegate>
+NSString * const DEFAULT_CONV_TITLE = @"defaultTitle";
+
+@interface VEIMDemoChatViewController ()<BIMChatViewControllerDelegate, BIMP2PMessageListener, BIMMessageListener>
 @property (nonatomic, strong) BIMConversation *conversation;
+@property (nonatomic, strong) NSTimer *timer;
 @end
 
 @implementation VEIMDemoChatViewController
@@ -39,6 +43,30 @@
 {
     [super viewWillAppear:animated];
     
+    [self setConvTitle:DEFAULT_CONV_TITLE];
+}
+
++ (instancetype)chatVCWithConversation:(BIMConversation *)conversation
+{
+    VEIMDemoChatViewController *vc = [[VEIMDemoChatViewController alloc] init];
+    vc.conversation = conversation;
+    [vc addListener];
+    return vc;
+}
+
+- (void)dealloc
+{
+    [self removeLisener];
+    [self clearTimer];
+}
+
+- (void)setConvTitle:(NSString *)title
+{
+    if (title && title != DEFAULT_CONV_TITLE) {
+        self.title = title;
+        return;
+    }
+    
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
 //        self.title = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:self.conversation.oppositeUserID];
         BIMUser *user = [BIMUIClient sharedInstance].userProvider(self.conversation.oppositeUserID);
@@ -49,11 +77,12 @@
     }
 }
 
-+ (instancetype)chatVCWithConversation:(BIMConversation *)conversation
+- (void)clearTimer
 {
-    VEIMDemoChatViewController *vc = [[VEIMDemoChatViewController alloc] init];
-    vc.conversation = conversation;
-    return vc;
+    if(self.timer) {
+        [self.timer invalidate];
+        self.timer = nil;
+    }
 }
 
 #pragma mark - Interaction
@@ -89,6 +118,64 @@
     }
     VEIMDemoProfileEditViewController *vc = [[VEIMDemoProfileEditViewController alloc] initWithUserProfile:profile];
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)chatViewController:(BIMChatViewController *)controller didClickReadDetailWithMessage:(BIMMessage *)message
+{
+    VEIMDemoMessageReadDetailViewController *vc = [[VEIMDemoMessageReadDetailViewController alloc] initWithMessage:message];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+#pragma mark - 消息监听
+- (void)addListener
+{
+    [[BIMClient sharedInstance] addP2PMessageListener:self];
+    [[BIMClient sharedInstance] addMessageListener:self];
+}
+
+- (void)removeLisener
+{
+    [[BIMClient sharedInstance] removeP2PMessageListener:self];
+    [[BIMClient sharedInstance] removeMessageListener:self];
+}
+
+#pragma mark - 收发消息回调
+- (void)onSendP2PMessage:(BIMMessage *)p2pMessage
+{
+    
+}
+
+- (void)onReceiveP2PMessage:(BIMMessage *)p2pMessage
+{
+    if (![p2pMessage.conversationID isEqualToString:self.conversation.conversationID]) {
+        return;
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        BIMP2PElement *element = (BIMP2PElement *)p2pMessage.element;
+        BIMMessageType messageType = [[element.dataDict objectForKey:@"message_type"] longLongValue];
+        if (messageType == BIM_MESSAGE_TYPE_TEXT) {
+            [self setConvTitle:@"对方正在输入中"];
+        } else if (messageType == BIM_MESSAGE_TYPE_AUDIO) {
+            [self setConvTitle:@"对方正在讲话......"];
+        }
+        [self clearTimer];
+        @weakify(self);
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:3.0 repeats:NO block:^(NSTimer * _Nonnull timer) {
+            @strongify(self);
+            [self setConvTitle:DEFAULT_CONV_TITLE];
+        }];
+        [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
+    });
+}
+
+- (void)onReceiveMessage:(BIMMessage *)message
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.title != DEFAULT_CONV_TITLE) {
+            [self clearTimer];
+            [self setConvTitle:DEFAULT_CONV_TITLE];
+        }
+    });
 }
 
 @end
