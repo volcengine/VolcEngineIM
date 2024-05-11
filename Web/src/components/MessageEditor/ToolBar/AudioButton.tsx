@@ -6,6 +6,10 @@ import { register, MediaRecorder as ExtendableMediaRecorder, IMediaRecorder } fr
 
 import IconButtonMask from '../../IconButtonMask';
 import { ErrorType } from '../../../types';
+import { useRecoilValue } from 'recoil';
+import { BytedIMInstance, CurrentConversation } from '../../../store';
+import { im_proto } from '@volcengine/im-web-sdk';
+import { useInterval } from 'ahooks';
 
 let mediaRecord: IMediaRecorder;
 let chunks = [];
@@ -15,15 +19,39 @@ const AudioButton = props => {
   const { sendMessage } = props;
   const [isRecord, setIsRecord] = useState(false);
 
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
+  const currentConversation = useRecoilValue(CurrentConversation);
+
+  const [interval, setInterval] = useState<number | undefined>(500);
+
+  const clear = useInterval(() => {
+    console.log('p2p', currentConversation, currentConversation.toParticipantUserId);
+    if (currentConversation.type === im_proto.ConversationType.ONE_TO_ONE_CHAT) {
+      bytedIMInstance.sendP2PMessage({
+        conversation: currentConversation,
+        sendType: im_proto.SendType.BY_USER,
+        msgType: im_proto.MessageType.MESSAGE_TYPE_CUSTOM_P2P,
+        content: JSON.stringify({
+          type: 1000,
+          ext: '',
+          message_type: im_proto.MessageType.MESSAGE_TYPE_AUDIO,
+        }),
+        visibleUser: [currentConversation.toParticipantUserId],
+      });
+    }
+  }, interval);
+
   useEffect(() => {
     const setup = async () => {
       await register(await connect());
     };
     setup();
+    clear();
   }, []);
 
   const handleStartAudio = () => {
     setIsRecord(true);
+    setInterval(i => i + 1);
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then(stream => {
@@ -53,11 +81,13 @@ const AudioButton = props => {
       })
       .catch(err => {
         setIsRecord(false);
+        clear();
       });
   };
 
   const handleEndAudio = () => {
     setIsRecord(false);
+    clear();
     mediaRecord.stop();
   };
 

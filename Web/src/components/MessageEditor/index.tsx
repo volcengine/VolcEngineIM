@@ -21,6 +21,7 @@ interface ImEditorProps {
   onSubmit?: (richText?: IRichText) => void;
   changeReplyMessage?: (message) => void;
   onEditorStateChange?: (richText?: IRichText) => void;
+  onMessageTyping?: () => void;
   suggestions: any;
   toolBarList?: any;
   editorType?: EDITOR_TYPE;
@@ -39,6 +40,7 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
     suggestions,
     toolBarList,
     editorType = EDITOR_TYPE.SIMPLE,
+    onMessageTyping,
   } = props;
   const baseEditor = useRef<HTMLTextAreaElement>(null);
   const focusAnimationFrame = useRef<any>(null);
@@ -227,6 +229,7 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
       toolBarList={toolBarList || getToolBarList()}
       renderHeader={editingMessage || repliedMessage ? renderReplyTitle : null}
       suggestions={suggestions}
+      onMessageTyping={onMessageTyping}
     />
   );
 });

@@ -1,0 +1,21 @@
+.trigger-popup {
+  padding: 10px;
+  width: 300px;
+  background-color: var(--color-bg-popup);
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15);
+}
+
+.uid-list-col {
+  overflow-y: auto;
+
+  .user {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .uid-list-title {
+    font-size: 1.3em;
+  }
+}

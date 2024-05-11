@@ -39,11 +39,12 @@ interface ImEditorProps {
   renderExtra?: () => React.ReactNode;
   updateEditorType?: (editType: string) => void;
   editorContentChange?: (isEmpty?: boolean) => void;
+  onMessageTyping?: () => void;
   suggestions: any;
 }
 
 const BaseEditor: FC<ImEditorProps> = (props, ref) => {
-  const { style, editorType, className, toolBarList = [], editorContentChange, renderHeader } = props;
+  const { style, editorType, className, toolBarList = [], editorContentChange, renderHeader, onMessageTyping } = props;
 
   const editorWrapRef = useRef<HTMLDivElement>(null);
 
@@ -68,7 +69,13 @@ const BaseEditor: FC<ImEditorProps> = (props, ref) => {
       {renderToolBarList()}
       {renderHeader?.()}
       <div className="post-edit-zone" ref={editorWrapRef}>
-        <textarea className={'editor-textarea'} placeholder={'发送消息...'} ref={ref} maxLength={500}></textarea>
+        <textarea
+          className={'editor-textarea'}
+          placeholder={'发送消息...'}
+          ref={ref}
+          maxLength={500}
+          onChange={onMessageTyping}
+        ></textarea>
       </div>
     </EditorWrap>
   );

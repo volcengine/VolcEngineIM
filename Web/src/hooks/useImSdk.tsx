@@ -54,6 +54,7 @@ const init = ({ userId, deviceId }) => {
     deviceId: deviceId ?? userId, // 影响推送，
     userId,
     debug: true,
+    debugEnablePollRequestLog: true,
     timeCalibration: true,
     // @ts-ignore
     _teaOptionReportAll: Boolean(localStorage.getItem('tea_report_all')),

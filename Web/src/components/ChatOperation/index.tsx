@@ -4,8 +4,9 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import ImEditor, { IRichText } from '../MessageEditor';
 import { IMAccountInfoTypes } from '../../types';
 import Styles from './Styles';
-import { EditMessage, Participants, ReferenceMessage } from '../../store';
+import { BytedIMInstance, CurrentConversation, EditMessage, Participants, ReferenceMessage } from '../../store';
 import { useAccountsInfo, useMessage } from '../../hooks';
+import { im_proto } from '@volcengine/im-web-sdk';
 
 interface ChatOperationPropsType {
   userInfo?: IMAccountInfoTypes;
@@ -16,6 +17,9 @@ interface ChatOperationPropsType {
 const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
   const { userInfo, scrollRef } = props;
   const participants = useRecoilValue(Participants);
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
+  const currentConversation = useRecoilValue(CurrentConversation);
+
   const imEditorRef = useRef<any>(null);
   const { sendTextMessage } = useMessage();
   const [referenceMessage, setReferenceMessage] = useRecoilState(ReferenceMessage);
@@ -47,6 +51,21 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
     [sendTextMessage, scrollRef]
   );
 
+  const onMessageTyping = () => {
+    if (currentConversation.type === im_proto.ConversationType.ONE_TO_ONE_CHAT) {
+      bytedIMInstance.sendP2PMessage({
+        conversation: currentConversation,
+        sendType: im_proto.SendType.BY_CONVERSATION,
+        msgType: im_proto.MessageType.MESSAGE_TYPE_CUSTOM_P2P,
+        content: JSON.stringify({
+          type: 1000,
+          ext: '',
+          message_type: im_proto.MessageType.MESSAGE_TYPE_TEXT,
+        }),
+      });
+    }
+  };
+
   return (
     <Styles>
       <ImEditor
@@ -60,6 +79,7 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
         editingMessage={editingMessage}
         ref={imEditorRef}
         suggestions={suggestions}
+        onMessageTyping={onMessageTyping}
       />
 
       <div className="input-footer">
