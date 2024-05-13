@@ -1,9 +1,8 @@
 package com.bytedance.im.app.constants;
 
 
-import com.bytedance.im.app.VEDefaultAccountProvider;
 import com.bytedance.im.ui.api.interfaces.BIMAccountProvider;
-
+import com.bytedance.im.app.VEDefaultAccountProvider;
 public class Constants {
 
     public static final int APP_ID = 0; //国内appID
