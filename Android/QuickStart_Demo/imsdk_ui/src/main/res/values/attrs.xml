@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EmojiGroupView">
+        <attr name="extraIcon" format="integer">
+            <flag name="delete" value="0" />
+            <flag name="close" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="SSSeekBar">
+        <attr name="thumb_color" format="color|reference" />
+        <attr name="thumb_radius" format="dimension|reference" />
+        <attr name="thumb_radius_on_dragging" format="dimension|reference" />
+        <attr name="progress_height" format="dimension|reference" />
+        <attr name="track_color" format="color|reference" />
+        <attr name="secondary_progress_color" format="color|reference" />
+        <attr name="background_progress_color" format="color|reference" />
+        <attr name="round_point_style" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="circleProgress">
+        <attr name="circle_max" format="float" />
+        <attr name="circle_progress" format="float" />
+        <attr name="circle_width" format="dimension" />
+        <attr name="circle_progress_color" format="color" />
+        <attr name="circle_color" format="color" />
+        <attr name="circle_text_color" format="color" />
+        <attr name="circle_text_size" format="dimension" />
+        <attr name="circle_text_isBold" format="boolean" />
+        <attr name="circle_center_color" format="color" />
+    </declare-styleable>
+
+</resources>

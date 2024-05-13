@@ -1,0 +1,86 @@
+<resources tools:ignore="ExtraTranslation" xmlns:tools="http://schemas.android.com/tools">
+    <string name="login_title_welcome">欢迎登录 IM Demo</string>
+    <string name="login_title_des">请从以下账号中选择一个进行登录</string>
+    <string name="login_agree_des">以阅读并同意 xx协议 和 xx协议</string>
+    <string name="login_text">登录</string>
+    <string name="login_must_select_user">请选择用户登录</string>
+    <string name="login_must_agree_proto">请先同意协议</string>
+    <string name="login_get_token_error">获取token失败</string>
+    <string name="im_mine_env_title">配置 IM 环境</string>
+    <string name="im_connecting">[连接中]</string>
+    <string name="im_connected">[已连接]</string>
+    <string name="im_disconnected">[已断开]</string>
+
+    <string name="im_login_title">欢迎登录</string>
+    <string name="im_login_input_hint">请输入UID</string>
+    <string name="im_login_button_text">登录</string>
+    <string name="im_login_failed_token">获取Token失败\n请检查网络</string>
+    <string name="im_login_failed_net">网络异常\n请稍后再试</string>
+    <string name="im_login_applog_error">did 或 iid 未就绪\n请稍后重试</string>
+    <string name="im_login_uuid_empty">UUID 不能为空！</string>
+    <string name="im_ws_get_access_key_failed">长连接建立失败</string>
+
+    <string name="im_mine_setting_appid">AppId设置</string>
+    <string name="im_mine_setting_env">Boe环境切换设置</string>
+    <string name="im_mine_logout">退出登录</string>
+    <string name="im_mine_did">DeviceId</string>
+    <string name="im_mine_large_img_title">个人头像</string>
+    <string name="im_mine_setting_submit">完成</string>
+    <string name="im_mine_appid_title">AppId设置</string>
+    <string name="im_mine_env_formal">正式环境</string>
+    <string name="im_mine_env_boe">Boe环境</string>
+    <string name="im_mine_logout_title">确定要退出登录吗？</string>
+    <string name="im_mine_logout_true">退出登录</string>
+    <string name="cancel">取消</string>
+
+    <string name="im_create_conversation_title">选择用户</string>
+    <string name="im_search_uid">确认UID：%s</string>
+    <string name="im_create_conversation_recommend_uid">推荐Uid</string>
+    <string name="im_create_conversation_hint">UID4位数内是好友，5-11位数是陌生人</string>
+
+
+    <string name="im_conversation_detail_group_name">群聊名称</string>
+    <string name="im_conversation_detail_group_notice">群公告</string>
+    <string name="im_conversation_detail_group_master_manager">群主管理</string>
+    <string name="im_conversation_detail_group_member_manager">群成员管理</string>
+    <string name="im_conversation_detail_search_message">搜索聊天记录</string>
+    <string name="im_conversation_detail_mute">消息免打扰</string>
+    <string name="im_conversation_detail_mute_weak">消息低打扰</string>
+
+    <string name="im_conversation_detail_white_uid_list">仅提醒指定用户消息</string>
+    <string name="im_conversation_detail_white_type_list">仅提醒指定消息类型</string>
+    <string name="im_conversation_detail_white_msg_ban">屏蔽消息</string>
+    <string name="im_conversation_conv_silent">会话禁言</string>
+    <string name="im_conversation_members_silent">仅成员禁言</string>
+    <string name="im_conversation_detail_top">置顶聊天</string>
+    <string name="im_conversation_detail_audit">进群审核</string>
+    <string name="im_conversation_detail_group_nick_name">我的群昵称</string>
+    <string name="im_conversation_detail_clear_message">清空聊天记录</string>
+    <string name="im_conversation_detail_conversation_dissolve">解散群聊</string>
+    <string name="im_conversation_detail_conversation_leave">退出</string>
+    <string name="im_conversation_group_set_manager">设置管理员</string>
+    <string name="im_conversation_group_set_master">群主身份转让</string>
+    <string name="im_login_group_protocol_txt">已阅读并同意 用户协议 与 隐私政策</string>
+    <string name="im_video_chat">视频通话</string>
+    <string name="im_voice_chat">语音通话</string>
+    <string name="im_rtc_normal">普通模式</string>
+    <string name="im_rtc_upmic">上麦模式</string>
+
+    <string name="im_add_group_chat">你邀请%1$s</string>
+
+    <string name="im_set_member_title">设置游客身份</string>
+    <string name="im_change_group_master">群主成功转让给%1$s</string>
+
+    <string name="im_search_conversation_msg_title">搜索聊天记录</string>
+    <string name="im_search_conversation_msg_tips">搜索会话中的消息</string>
+    <string name="im_search_msg_empty_tips">没找到搜索结果</string>
+    <string name="play_speed">倍速</string>
+
+    <string name="im_push_message_channel_name">imDemo消息推送</string>
+    <string name="im_push_message_channel_description">imDemo消息推送</string>
+    <string name="unregister_description">注销后，当前账户的所有数据将会被删除且无法找回。\n注销后，当前账户所创建的群聊将自动转让群主后退出。\n注销一经开始将无法撤回。</string>
+    <string name="im_app_app_tag"> </string>
+    <string name="add_mark_type">标记</string>
+    <string name="add_user">用户</string>
+    <string name="mark_type_option">开启增加、关闭删除</string>
+</resources>

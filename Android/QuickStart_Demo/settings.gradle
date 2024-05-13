@@ -1,1 +1,26 @@
 
+//入口
+include ':veapp'    //壳工程
+
+//核心组件
+include ':imsdk_ui'//核心UI sdk
+
+include ':imapp_search'//ui搜索
+project(':imapp_search').projectDir = file('./tob_in_same/imapp_search')
+
+include ':imapp_profile'//个人页
+project(':imapp_profile').projectDir = file('./tob_in_same/imapp_profile')
+include ':imapp_member'//会话管理
+project(':imapp_member').projectDir = file('./tob_in_same/imapp_member')
+
+//外部组件
+include ':imapp'//外部app
+project(':imapp').projectDir = file('./tob/imapp')
+include ':imapp_live'//直播群ui
+project(':imapp_live').projectDir = file('./tob/imapp_live')
+include ':imapp_profile'//个人页ui
+project(':imapp_profile').projectDir = file('./tob/imapp_profile')
+include ':imapp_contact'//联系人ui
+project(':imapp_contact').projectDir = file('./tob/imapp_contact')
+include ':imapp_conversation'//会话列表
+project(':imapp_conversation').projectDir = file('./tob/imapp_conversation')

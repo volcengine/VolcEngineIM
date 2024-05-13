@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp">
+
+    <TextView
+        android:id="@+id/tv_common_msg_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="8dp"
+        android:paddingTop="12dp"
+        android:textColor="@color/business_im_222_p30"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/fl_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="10:20"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/head_container_receive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@+id/fl_content"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toTopOf="@+id/fl_content">
+
+        <ImageView
+            android:id="@+id/iv_msg_head_receive"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/icon_recommend_user_default"
+            tools:src="@drawable/icon_recommend_user_default" />
+
+        <TextView
+            android:id="@+id/tv_msg_head_name_receive"
+            android:layout_marginTop="2dp"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:textSize="8sp"
+            android:maxWidth="36dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fl_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/head_container_send"
+        app:layout_constraintStart_toEndOf="@+id/head_container_receive"
+        app:layout_constraintTop_toBottomOf="@+id/tv_common_msg_time">
+
+        <ImageView
+            android:id="@+id/iv_send_status"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/icon_send_msg_failed"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/container"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_send_status"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:textSize="12sp"
+            android:layout_marginEnd="10dp"
+            android:id="@+id/tv_read_receipt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@id/container"
+            app:layout_constraintBottom_toBottomOf="@id/container" />
+
+        <TextView
+            app:layout_constraintStart_toStartOf="@id/container"
+            app:layout_constraintTop_toBottomOf="@id/container"
+            android:id="@+id/tv_base_msg_property_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/shape_im_msg_property_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textColor="@color/business_im_999"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <TextView
+            app:layout_constraintEnd_toEndOf="@id/container"
+            app:layout_constraintTop_toBottomOf="@id/container"
+            android:id="@+id/tv_base_msg_property_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/shape_im_msg_property_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textColor="@color/business_im_999"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_recall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/business_im_222_p30"
+            android:gravity="center_horizontal"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/head_container_send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_horizontal"
+        app:layout_constraintStart_toEndOf="@+id/fl_content"
+        app:layout_constraintTop_toTopOf="@+id/fl_content">
+
+        <ImageView
+            android:id="@+id/iv_msg_head_send"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/icon_recommend_user_default"
+            tools:src="@drawable/icon_recommend_user_default" />
+
+        <TextView
+            android:id="@+id/tv_msg_head_name_send"
+            android:layout_marginTop="2dp"
+            android:maxWidth="36dp"
+            android:ellipsize="end"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

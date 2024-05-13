@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_video_content"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/black"
+    android:layout_marginRight="8dp">
+
+    <TextView
+        android:id="@+id/tv_upload_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="start"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/dark_gray"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="上传中……"
+        android:textSize="12sp"
+        android:layout_gravity="bottom" />
+
+    <ImageView
+        android:id="@+id/iv_video_cover"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:scaleType="centerCrop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"/>
+
+    <ImageView
+        android:id="@+id/iv_play"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:src="@drawable/icon_im_video_play" />
+
+    <com.bytedance.im.ui.message.adapter.ui.widget.custom.CircleProgressView
+        android:id="@+id/pv_circle_view"
+        app:circle_color="@color/dark_gray"
+        app:circle_max="100"
+        app:circle_progress_color="@color/white"
+        app:circle_text_color="@color/white"
+        app:circle_text_size="12sp"
+        app:circle_width="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_msg_property"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_video_cover"
+        tools:text="[大笑]詹姆斯"
+        tools:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/shape_im_msg_property_bg"
+        android:gravity="center"
+        android:padding="8dp"
+        android:textColor="@color/business_im_999"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

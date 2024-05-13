@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bytedance.im.app.profile">
+    <application>
+        <activity
+            android:name=".VEUserProfileEditActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.app.profile.VEUserProfileEditActivity" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VEMinePortraitEditActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity android:name=".VEProfileEditCommonActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+    </application>
+</manifest>

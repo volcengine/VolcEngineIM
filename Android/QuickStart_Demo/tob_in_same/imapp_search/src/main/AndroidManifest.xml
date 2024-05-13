@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bytedance.im.app.search">
+    <application>
+        <activity
+            android:name=".VESearchResultActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.app.search.VESearchResultActivity" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

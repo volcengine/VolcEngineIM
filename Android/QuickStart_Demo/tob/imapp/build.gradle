@@ -1,0 +1,53 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    compileSdkVersion im_compileSdkVersion
+    buildToolsVersion im_buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion im_minSdkVersion
+        targetSdkVersion im_targetSdkVersion
+        versionCode im_versionCode
+        versionName im_versionName
+        buildConfigField "String", "VERSION_NAME", "\"$im_versionName\""
+        buildConfigField "Integer", "VERSION_CODE", "$im_versionCode"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    packagingOptions {
+        exclude 'META-INF/aweme/source_info.json'
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+//    implementation 'com.bytedance.im:im-uikit-tob:1.3.0'
+//    implementation 'com.bytedance.im:imsdk-tob:1.3.0'
+    api project(':imapp_conversation')//会话列表
+    api project(':imapp_live')  //直播群
+    api project(':imapp_contact')//联系人
+    api project(':imsdk_ui')    //主ui库（会话、消息）
+    api project(':imapp_search') //搜索
+    api project(':imapp_profile')//个人页
+    api project(':imapp_member') //选人、会话成员
+}

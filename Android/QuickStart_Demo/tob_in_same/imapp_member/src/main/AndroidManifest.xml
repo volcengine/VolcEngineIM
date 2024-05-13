@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bytedance.im.app.member">
+
+    <application>
+        <activity
+            android:name=".user.BIMUserListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".user.BIMUserSelectActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".user.VEUserAddActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.app.member.user.VEUserAddActivity" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".group.VEMemberListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.app.member.group.VEMemberListActivity" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".group.VEMemberSelectListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.app.member.group.VEMemberSelectListActivity" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".user.VESelectSingleActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.app.member.user.VECreateSingleActivity" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".detail.VEDetailSingleConversationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp">
+
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.app.member.detail.VEDetailSingleConversationActivity" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".detail.VEDetailGroupConversationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.app.member.detail.VEDetailGroupConversationActivity" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".receipt.VEReadReceiptListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.app.member.receipt.VEReadReceiptListActivity" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".detail.VEMessageEditCommonActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".detail.edit.VEEditGroupNameActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".detail.edit.VEEditGroupNoticeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".group.VESingleMemberListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".detail.ext.VEDebugExtActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity android:name=".VEDebugConversationDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"/>
+
+    </application>
+</manifest>

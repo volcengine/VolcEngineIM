@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bytedance.im.app.live">
+    <application>
+        <activity
+            android:name=".chatRoom.VELiveGroupChatRoomActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".conversation.VELiveGroupListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".member.VELiveMemberBlockListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".create.VECreateLiveGroupActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".create.VEEditCommonActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".edit.VEEditLiveMemberActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".detail.VELiveDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".member.VELiveMemberListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".edit.VEEditLiveNameActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".edit.VEEditLiveDesActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".member.VELiveMemberRemoveActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".edit.VEEditLiveNoticeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".edit.VEEditLivePortraitActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".edit.VEEditLiveOwnerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".edit.VEEditLiveMemberMarkTypeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".edit.VEEditLiveMarkTypeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".member.VELiveMemberSilentListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".member.VELiveMemberSilentWhiteListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".member.VELiveMemberMasterListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".member.VELiveOnLineQueryActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".member.VELiveOnlineQueryResultActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".create.VECreateJoinLiveGroupActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".edit.VEEditLiveMemberPortraitActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".edit.VEEditLiveMemberNameActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity android:name=".member.VELiveUserAddActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+    </application>
+
+
+</manifest>

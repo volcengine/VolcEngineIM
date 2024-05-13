@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_msg_img_content"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:adjustViewBounds="true" />
+
+        <TextView
+            android:id="@+id/tv_msg_property"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/shape_im_msg_property_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textColor="@color/business_im_999"
+            android:textSize="12sp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <com.bytedance.im.ui.message.adapter.ui.widget.custom.CircleProgressView
+            android:id="@+id/pv_circle_view"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="2dp"
+            android:visibility="gone"
+            app:circle_color="@color/white"
+            app:circle_max="100"
+            app:circle_progress_color="@color/dark_gray"
+            app:circle_text_color="@color/dark_gray"
+            app:circle_text_size="12sp"
+            app:circle_width="2dp" />
+
+        <TextView
+            android:id="@+id/tv_upload_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pv_circle_view"
+            android:layout_marginTop="10dp"
+            android:gravity="start"
+            android:textColor="@color/dark_gray"
+            android:textSize="12sp"
+            android:visibility="gone" />
+    </RelativeLayout>
+</FrameLayout>

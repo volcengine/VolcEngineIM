@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bytedance.im.ui">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <application>
+        <activity
+            android:name="com.bytedance.im.ui.utils.media.BIMMediaListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.bytedance.im.ui.forward.ForwardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.bytedance.im.ui.utils.media.PicturePreviewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.bytedance.im.ui.member.BIMGroupMemberListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.bytedance.im.ui.message.BIMMessageListActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:exported="true"
+            android:theme="@style/Theme.imApp"
+            android:windowSoftInputMode="adjustNothing">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.page.message_list" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
