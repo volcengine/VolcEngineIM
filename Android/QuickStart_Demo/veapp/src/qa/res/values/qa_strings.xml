@@ -1,5 +1,0 @@
-<resources tools:ignore="ExtraTranslation"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <string name="im_app_app_tag">QA</string>
-</resources>
