@@ -1,12 +1,12 @@
 package com.bytedance.im.app.constants;
 
-import com.bytedance.im.app.BIMDefaultUserProvider;
+
 import com.bytedance.im.app.VEDefaultAccountProvider;
 import com.bytedance.im.ui.api.interfaces.BIMAccountProvider;
 
 public class Constants {
 
-    public static final int APP_ID = 666675; //国内appID
+    public static final int APP_ID = 0; //国内appID
 
     public static final String token = "";  //token
 
@@ -16,8 +16,8 @@ public class Constants {
     /**
      * 海外环境配置
      */
-    public static final int APP_ID_I18N = 889260;//海外appID
-    public static final int APP_ENV = -1;   //海外需要配置为 ENV_i18n //国内配置为 ENV_RELEASE
+    public static final int APP_ID_I18N = 0;//海外appID
+    public static final int APP_ENV = Constants.ENV_DEFAULT;   //海外需要配置为 ENV_i18n //国内配置为 ENV_RELEASE
 
     /**
      * 线上环境
