@@ -322,7 +322,7 @@ public class BIMUIClient {
     /**
      * @hidden
      */
-    public void getConversationByShortIDLIst(List<Long> conversationShortIdList, boolean isServer, BIMResultCallback<List<BIMConversation>> callback) {
+    public void getConversationByShortIDList(List<Long> conversationShortIdList, boolean isServer, BIMResultCallback<List<BIMConversation>> callback) {
         BIMClient.getInstance().getConversationByShortIDList(conversationShortIdList, isServer, callback);
     }
 

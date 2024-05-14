@@ -101,7 +101,7 @@ public class VEDebugConversationDetailActivity extends Activity {
     }
 
     private void queryConversationList(List<Long> shorIdList) {
-        BIMUIClient.getInstance().getConversationByShortIDLIst(shorIdList, true, new BIMResultCallback<List<BIMConversation>>() {
+        BIMUIClient.getInstance().getConversationByShortIDList(shorIdList, true, new BIMResultCallback<List<BIMConversation>>() {
             @Override
             public void onSuccess(List<BIMConversation> bimConversations) {
                 if (bimConversations == null) {
@@ -117,7 +117,7 @@ public class VEDebugConversationDetailActivity extends Activity {
             }
         });
 
-        BIMUIClient.getInstance().getConversationByShortIDLIst(shorIdList, false, new BIMResultCallback<List<BIMConversation>>() {
+        BIMUIClient.getInstance().getConversationByShortIDList(shorIdList, false, new BIMResultCallback<List<BIMConversation>>() {
             @Override
             public void onSuccess(List<BIMConversation> bimConversations) {
                 if (bimConversations == null) {
