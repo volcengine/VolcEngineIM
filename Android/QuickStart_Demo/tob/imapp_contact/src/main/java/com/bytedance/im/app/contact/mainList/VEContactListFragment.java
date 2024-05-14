@@ -9,7 +9,6 @@ import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_FRIEND_MOR
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -43,14 +42,13 @@ import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.ui.api.interfaces.BIMAccountProvider;
 import com.bytedance.im.ui.api.interfaces.BIMSupportUnread;
 import com.bytedance.im.ui.api.interfaces.BIMUnreadListener;
-import com.bytedance.im.imsdk.contact.user.BIMContactExpandService;
-import com.bytedance.im.imsdk.contact.user.api.BIMFriendListener;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMApplyInfo;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMFriendApplyInfo;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMUserFullInfo;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.BIMFriendListener;
+import com.bytedance.im.user.api.model.BIMApplyInfo;
+import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;

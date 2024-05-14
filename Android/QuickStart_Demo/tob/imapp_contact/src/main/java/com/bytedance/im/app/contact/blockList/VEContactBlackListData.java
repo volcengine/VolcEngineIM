@@ -1,6 +1,6 @@
 package com.bytedance.im.app.contact.blockList;
 
-import com.bytedance.im.imsdk.contact.user.api.model.BIMUserFullInfo;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.Locale;
 

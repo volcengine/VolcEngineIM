@@ -16,9 +16,9 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.BIMUIClient;
-import com.bytedance.im.imsdk.contact.user.BIMContactExpandService;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMUserFullInfo;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMUserProfile;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
+import com.bytedance.im.user.api.model.BIMUserProfile;
 import com.bytedance.im.ui.starter.ModuleStarter;
 
 import java.util.HashMap;

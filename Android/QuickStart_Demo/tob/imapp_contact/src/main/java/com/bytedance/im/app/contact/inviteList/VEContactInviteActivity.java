@@ -22,13 +22,13 @@ import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSendCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.imsdk.contact.user.BIMContactExpandService;
-import com.bytedance.im.imsdk.contact.user.api.BIMFriendListener;
-import com.bytedance.im.imsdk.contact.user.api.enums.BIMFriendReplyType;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMFriendApplyInfo;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMFriendApplyListResult;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMReplyInfo;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMUserFullInfo;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.BIMFriendListener;
+import com.bytedance.im.user.api.enums.BIMFriendReplyType;
+import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
+import com.bytedance.im.user.api.model.BIMFriendApplyListResult;
+import com.bytedance.im.user.api.model.BIMReplyInfo;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 import com.bytedance.im.ui.BIMUIClient;
 
 public class VEContactInviteActivity extends Activity {

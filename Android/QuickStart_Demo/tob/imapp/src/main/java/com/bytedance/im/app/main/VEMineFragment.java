@@ -36,12 +36,7 @@ import com.bytedance.im.core.api.interfaces.BIMConnectListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUIUser;
-import com.bytedance.im.ui.user.OnUserInfoUpdateListener;
 import com.bytedance.im.ui.utils.BIMUINameUtils;
-import com.bytedance.im.imsdk.contact.user.BIMContactExpandService;
-import com.bytedance.im.imsdk.contact.user.api.BIMFriendListener;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMFriendApplyInfo;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMUserFullInfo;
 
 
 public class VEMineFragment extends Fragment {

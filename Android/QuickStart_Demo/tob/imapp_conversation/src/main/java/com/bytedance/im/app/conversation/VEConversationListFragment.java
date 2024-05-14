@@ -27,7 +27,6 @@ import com.bytedance.im.core.api.interfaces.BIMSendCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMGroupInfo;
 import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.imsdk.contact.user.BIMContactExpandService;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.api.interfaces.BIMSupportUnread;
@@ -37,6 +36,7 @@ import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
 import com.bytedance.im.ui.starter.ModuleStarter;
 import com.bytedance.im.ui.user.OnUserInfoUpdateListener;
 import com.bytedance.im.ui.utils.BIMUINameUtils;
+import com.bytedance.im.user.BIMContactExpandService;
 
 import java.util.ArrayList;
 import java.util.Iterator;

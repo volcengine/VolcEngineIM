@@ -12,8 +12,7 @@ import com.bytedance.im.app.contact.mainList.item.ContactListActionItem;
 
 
 import com.bytedance.im.app.contact.utils.ContactNameUtils;
-import com.bytedance.im.ui.utils.BIMUINameUtils;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMUserFullInfo;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.Locale;
 

@@ -23,16 +23,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.app.contact.R;
-import com.bytedance.im.app.contact.mainList.VEContactListFragment;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
-import com.bytedance.im.imsdk.contact.user.BIMContactExpandService;
-import com.bytedance.im.imsdk.contact.user.api.BIMFriendListener;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMBlackListFriendInfo;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMFriendApplyInfo;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMUserFullInfo;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.BIMFriendListener;
+import com.bytedance.im.user.api.model.BIMBlackListFriendInfo;
+import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 import com.bytedance.im.ui.BIMUIClient;
 
 import java.util.ArrayList;

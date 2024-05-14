@@ -11,9 +11,8 @@ import com.bumptech.glide.Glide;
 
 import com.bytedance.im.app.contact.R;
 import com.bytedance.im.app.contact.utils.ContactNameUtils;
-import com.bytedance.im.ui.utils.BIMUINameUtils;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMFriendApplyInfo;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMUserFullInfo;
+import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 public class VEContactInviteViewHolder extends RecyclerView.ViewHolder {
     private final ImageView ivHead;

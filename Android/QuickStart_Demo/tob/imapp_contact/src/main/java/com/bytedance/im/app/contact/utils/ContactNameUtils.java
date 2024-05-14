@@ -2,7 +2,7 @@ package com.bytedance.im.app.contact.utils;
 
 import android.text.TextUtils;
 
-import com.bytedance.im.imsdk.contact.user.api.model.BIMUserFullInfo;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 public class ContactNameUtils {
 

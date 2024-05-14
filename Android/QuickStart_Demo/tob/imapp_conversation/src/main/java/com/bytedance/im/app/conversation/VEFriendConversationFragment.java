@@ -23,13 +23,14 @@ import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMConversationListResult;
-import com.bytedance.im.imsdk.contact.user.BIMContactExpandService;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.conversation.adapter.VEConversationListAdapter;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.BIMMessageListFragment;
 import com.bytedance.im.ui.user.OnUserInfoUpdateListener;
+import com.bytedance.im.user.BIMContactExpandService;
+
 import java.util.ArrayList;
 import java.util.List;
 

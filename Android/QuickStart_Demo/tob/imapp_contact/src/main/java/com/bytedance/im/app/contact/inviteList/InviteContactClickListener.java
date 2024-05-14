@@ -1,6 +1,6 @@
 package com.bytedance.im.app.contact.inviteList;
 
-import com.bytedance.im.imsdk.contact.user.api.model.BIMFriendApplyInfo;
+import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
 
 public interface InviteContactClickListener {
     void onAgree(BIMFriendApplyInfo dataWrapper);

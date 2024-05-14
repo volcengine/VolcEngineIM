@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bytedance.im.app.contact.R;
-import com.bytedance.im.imsdk.contact.user.api.model.BIMFriendApplyInfo;
+import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
