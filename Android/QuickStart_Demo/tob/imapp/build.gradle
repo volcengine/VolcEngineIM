@@ -46,8 +46,12 @@ dependencies {
     api project(':imapp_conversation')//会话列表
     api project(':imapp_live')  //直播群
     api project(':imapp_contact')//联系人
-    api project(':imsdk_ui')    //主ui库（会话、消息）
     api project(':imapp_search') //搜索
     api project(':imapp_profile')//个人页
     api project(':imapp_member') //选人、会话成员
+    if (remoteUIkit.toBoolean()) {
+        api(im_ui_sdk_remote)
+    } else {
+        api project(':imsdk_ui')    //主ui库（会话、消息）
+    }
 }

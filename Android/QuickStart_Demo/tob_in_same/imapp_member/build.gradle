@@ -35,5 +35,10 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    api project(':imsdk_ui')
+    if (remoteUIkit.toBoolean()) {
+        api(im_ui_sdk_remote)
+        api(im_sdk_remote)
+    } else {
+        api project(':imsdk_ui')    //主ui库（会话、消息）
+    }
 }
