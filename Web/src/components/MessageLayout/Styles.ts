@@ -125,7 +125,7 @@ export default styled.div`
     position: absolute;
     right: 4px;
     bottom: -1px;
-    width: 40px;
+    width: 60px;
     display: flex;
     justify-content: end;
     color: #aaabaf;

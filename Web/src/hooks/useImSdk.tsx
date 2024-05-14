@@ -54,11 +54,8 @@ const init = ({ userId, deviceId }) => {
     deviceId: deviceId ?? userId, // 影响推送，
     userId,
     debug: true,
-    timeCalibration: true,
-    // @ts-ignore
-    _teaOptionReportAll: Boolean(localStorage.getItem('tea_report_all')),
-    // @ts-ignore
-    _teaOptionLog: Boolean(localStorage.getItem('tea_log')),
+    debugEnablePollRequestLog: true,
+    
     disableAppLog: Boolean(localStorage.getItem('im_option_disable_app_log')),
     disableApmLog: Boolean(localStorage.getItem('im_option_disable_apm_log')),
     token: () =>
