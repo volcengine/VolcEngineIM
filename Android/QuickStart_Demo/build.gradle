@@ -9,7 +9,7 @@ buildscript {
         im_versionCode = 11300
         im_versionName = "1.13.0"
         im_ui_sdk_remote = "com.bytedance.im:im-uikit-tob:1.13.0"
-        im_sdk_remote = "com.bytedance.im:imsdk-tob:1.13.0"
+        im_sdk_remote = "com.bytedance.im:imsdk-tob:1.13.3"
     }
     repositories {
         maven {
