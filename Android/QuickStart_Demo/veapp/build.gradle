@@ -20,10 +20,7 @@ android {
 
         }
         release {
-            storeFile file('.\\key\\keys.jks')
-            keyAlias 'bytedanceim'
-            storePassword 'bytedanceim'
-            keyPassword 'bytedanceim'
+
         }
     }
     buildTypes {
