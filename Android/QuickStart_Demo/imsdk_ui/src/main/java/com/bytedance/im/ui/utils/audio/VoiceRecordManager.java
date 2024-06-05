@@ -1,8 +1,12 @@
 package com.bytedance.im.ui.utils.audio;
 
 import android.media.MediaRecorder;
+import android.util.Log;
 
 import com.bytedance.im.ui.log.BIMLog;
+
+import java.io.File;
+import java.io.IOException;
 
 
 public class VoiceRecordManager {
@@ -25,12 +29,21 @@ public class VoiceRecordManager {
         try {
             mMediaRecorder = new MediaRecorder();
         } catch (Exception e) {
-            BIMLog.e(TAG, "VoiceRecordManager() e:"+e);
+            BIMLog.e(TAG, "VoiceRecordManager() e:"+ Log.getStackTraceString(e));
         }
     }
 
     public boolean reset(String path) {
         BIMLog.i(TAG, "reset() path:" + path);
+        File temp = new File(path);
+        if (!temp.exists()) {
+            try {
+                temp.createNewFile();
+            } catch (IOException e) {
+                BIMLog.i(TAG, "reset() e.getMessage(): " + e.getMessage() + " e.getCause():" + e.getCause());
+                e.printStackTrace();
+            }
+        }
         this.path = path;
         if (mMediaRecorder != null) {
             try {
@@ -61,7 +74,10 @@ public class VoiceRecordManager {
                 mCurrentRecordState = RecordState.START;
                 return true;
             } catch (Exception e) {
-                BIMLog.e(TAG, "start() e: "+e);
+                e.printStackTrace();
+                BIMLog.e(TAG, "start() e message:"+ e.getMessage());
+                BIMLog.e(TAG, "start() e cause:"+ e.getCause());
+                BIMLog.e(TAG, "start() e:"+ Log.getStackTraceString(e));
             }
         } else {
             BIMLog.w(TAG , "start:mMediaRecorder = null");

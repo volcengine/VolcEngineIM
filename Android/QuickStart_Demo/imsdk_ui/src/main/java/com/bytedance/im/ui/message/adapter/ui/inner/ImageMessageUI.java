@@ -69,8 +69,8 @@ public class ImageMessageUI extends BaseCustomElementUI {
         }
 
         imgContent.setLayoutParams(p);
-        if (bimMessage.isSelf() && LoadIMageUtils.loadLocal(imageElement.getLocalPath(), imgContent)) {
-            BIMLog.i(TAG, "load use local path " + imageElement.getLocalPath() + " uuid: " + bimMessage.getUuid());
+        if (bimMessage.isSelf() && LoadIMageUtils.loadLocal(imageElement.getLocalPath(), imageElement.getLocalUri(),imgContent)) {
+            BIMLog.i(TAG, "load use local path " + imageElement.getLocalPath() + " uri: " + imageElement.getLocalUri() + " uuid: " + bimMessage.getUuid());
             return;
         }
         Drawable placeDrawable = imgContent.getDrawable();

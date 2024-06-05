@@ -22,5 +22,17 @@
         <activity
             android:name="com.bytedance.im.ui.member.BIMGroupMemberListActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.bytedance.im.ui.message.BIMMessageListActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:exported="true"
+            android:theme="@style/Theme.imApp"
+            android:windowSoftInputMode="adjustNothing">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.page.message_list" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest>

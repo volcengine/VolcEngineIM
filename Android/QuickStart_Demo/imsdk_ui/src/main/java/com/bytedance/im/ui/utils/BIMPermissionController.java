@@ -8,7 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.bytedance.im.ui.log.BIMLog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +20,7 @@ import java.util.Map;
 
 
 public class BIMPermissionController {
+    private static final String TAG = "BIMPermissionController";
 
     public interface IPermissionReqListener {
         /**
@@ -67,6 +71,7 @@ public class BIMPermissionController {
 
     public static void checkPermission(Activity activity, String[] permissions, IPermissionReqListener listener) {
         if (activity == null || permissions == null || permissions.length <= 0) {
+            BIMLog.i(TAG, "checkPermission return activity: " + activity + " permissions: " + permissions);
             return;
         }
         List<String> unauthorizedPermissions = new ArrayList<>();
@@ -81,6 +86,7 @@ public class BIMPermissionController {
                 }
             } catch (Exception e) {
                 unauthorizedPermissions.add(permission);
+                BIMLog.i(TAG, "checkPermission e: " + Log.getStackTraceString(e));
             }
         }
         if (!unauthorizedPermissions.isEmpty()) {
@@ -92,7 +98,9 @@ public class BIMPermissionController {
             ActivityCompat
                     .requestPermissions(activity, unauthorizedPermissions.toArray(new String[unauthorizedPermissions.size()]),
                             sIncRequestCode);
+            BIMLog.i(TAG, "checkPermission request" );
         } else {
+            BIMLog.i(TAG, "checkPermission success all" );
             if (listener != null) {
                 int[] result = new int[permissions.length];
                 listener.onPermissionRequest(true, permissions, result);

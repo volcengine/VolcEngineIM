@@ -91,7 +91,7 @@ public class VideoMessageUI extends BaseCustomElementUI {
             p.height = 300;
         }
         videoCover.setLayoutParams(p);
-        if (msg.isSelf() && LoadIMageUtils.loadLocal(videoElement.getLocalPath(), videoCover)) {
+        if (msg.isSelf() && LoadIMageUtils.loadLocal(videoElement.getLocalPath(),videoElement.getLocalUri(), videoCover)) {
             return;
         }
         showRemote(videoCover, msg);

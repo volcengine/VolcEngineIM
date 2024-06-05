@@ -98,4 +98,14 @@ public abstract class BaseCustomElementUI {
     public boolean isEnableEdit(BIMMessage bimMessage) {
         return false;
     }
+
+    /**
+     * 是否支持消息回执展示
+     *
+     * @param bimMessage
+     * @return
+     */
+    public boolean isEnableReceipt(BIMMessage bimMessage) {
+        return true;
+    }
 }

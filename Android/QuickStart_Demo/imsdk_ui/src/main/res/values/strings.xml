@@ -52,7 +52,7 @@
     <string name="im_conversation_detail_white_type_list">仅提醒指定消息类型</string>
     <string name="im_conversation_detail_white_msg_ban">屏蔽消息</string>
     <string name="im_conversation_conv_silent">会话禁言</string>
-    <string name="im_conversation_members_silent">仅成员禁言</string>
+    <string name="im_conversation_members_silent">成员禁言</string>
     <string name="im_conversation_detail_top">置顶聊天</string>
     <string name="im_conversation_detail_audit">进群审核</string>
     <string name="im_conversation_detail_group_nick_name">我的群昵称</string>
@@ -79,4 +79,5 @@
 
     <string name="im_push_message_channel_name">imDemo消息推送</string>
     <string name="im_push_message_channel_description">imDemo消息推送</string>
+    <string name="im_conversation_detail_change_conv_tag">自定义标签</string>
 </resources>

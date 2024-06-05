@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import androidx.core.content.FileProvider;
@@ -15,18 +16,22 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.utils.BIMPermissionController;
+import com.bytedance.im.ui.utils.media.MediaInfo;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class PhotoTooBtn extends BaseToolBtn<String> {
+public class PhotoTooBtn extends BaseToolBtn<MediaInfo> {
+    private static final String TAG = "PhotoTooBtn";
     private int REQUEST_CODE_TAKE_PHOTO = 2002;
     private String takePhotoPath = "";
+    private Uri uri = null;
 
-    public PhotoTooBtn(BIMResultCallback<String> callback) {
+    public PhotoTooBtn(BIMResultCallback<MediaInfo> callback) {
         super(callback);
     }
 
@@ -53,7 +58,9 @@ public class PhotoTooBtn extends BaseToolBtn<String> {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CODE_TAKE_PHOTO) {
-                resultCallback.onSuccess(takePhotoPath);
+                //todo 计算文件大小
+                MediaInfo mediaInfo = new MediaInfo(takePhotoPath, takePhotoPath, 0, 0, "", "", MediaInfo.MEDIA_TYPE_IMAGE, uri);
+                resultCallback.onSuccess(mediaInfo);
             }
         } else {
             resultCallback.onFailed(BIMErrorCode.UNKNOWN);
@@ -65,9 +72,16 @@ public class PhotoTooBtn extends BaseToolBtn<String> {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = String.format("JPEG_%s.jpg", timeStamp);
         File storageDir = fragment.getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
         File tempFile = new File(storageDir, imageFileName);
         takePhotoPath = tempFile.getAbsolutePath();
-        Uri uri = FileProvider.getUriForFile(fragment.getActivity(), "com.bytedance.im.veapp.fileprovider", tempFile);
+        if(Build.VERSION.SDK_INT>=24){
+            uri = FileProvider.getUriForFile(fragment.getActivity(), "com.bytedance.im.veapp.fileprovider", tempFile);
+        } else {    //  Android 7 以前可以直接在intent中向其他应用分享文件
+            uri = Uri.fromFile(tempFile);
+        }
+
+        BIMLog.i(TAG, "startIntentToTakePhoto takePhotoPath: " + takePhotoPath + " uri:" + uri);
         captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         captureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         fragment.startActivityForResult(captureIntent, REQUEST_CODE_TAKE_PHOTO);

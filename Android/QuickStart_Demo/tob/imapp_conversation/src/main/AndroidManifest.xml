@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bytedance.im.app.conversation">
+
+    <application>
+        <activity
+            android:name="com.bytedance.im.app.member.user.VESelectSingleActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".VECreateGroupActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+    </application>
+</manifest>

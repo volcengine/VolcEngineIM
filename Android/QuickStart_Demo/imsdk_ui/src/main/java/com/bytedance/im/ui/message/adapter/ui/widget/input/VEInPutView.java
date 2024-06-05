@@ -280,6 +280,9 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
                 BIMGroupMemberListActivity.startForResult(fragment, conversationId, REQUEST_CODE_SELECT_USER_FOR_AT);
             }
             last = s.toString();
+            if (listener != null) {
+                listener.onEditTextChanged(last);
+            }
         }
 
         @Override
@@ -296,6 +299,8 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
         void onSendClick(String text, BIMMessage refMessage, List<Long> mentionIdList);
 
         void onSendEditClick(String text, BIMMessage editMessage, List<Long> mentionIdList);
+
+        void onEditTextChanged(String text);
     }
 
     public void setListener(OnInputListener listener) {

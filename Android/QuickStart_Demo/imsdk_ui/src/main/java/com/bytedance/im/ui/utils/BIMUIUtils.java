@@ -30,19 +30,4 @@ public class BIMUIUtils {
         }
         return processName;
     }
-
-
-    public static String getShowName(BIMUIUser bimuiUser) {
-        String name = "用户" + bimuiUser.getUid();         //用户ID
-        if (!TextUtils.isEmpty(bimuiUser.getNickName())) { //用户资料名
-            name = bimuiUser.getNickName();
-        }
-        if (!TextUtils.isEmpty(bimuiUser.getMemberAlias())) {
-            name = bimuiUser.getMemberAlias();             //群内备注
-        }
-        if (!TextUtils.isEmpty(bimuiUser.getAlias())) {  //好友备注名
-            name = bimuiUser.getAlias();
-        }
-        return name;
-    }
 }

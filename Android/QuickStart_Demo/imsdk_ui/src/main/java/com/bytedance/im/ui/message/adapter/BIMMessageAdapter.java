@@ -3,22 +3,20 @@ package com.bytedance.im.ui.message.adapter;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+
+import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.model.inner.msg.BIMCustomElement;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
-import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.core.model.inner.msg.BIMBaseElement;
 import com.bytedance.im.ui.user.BIMUserProvider;
 
 import java.util.ArrayList;
@@ -40,7 +38,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
     private OnRefreshListener onRefreshListener;
     private BIMUserProvider userProvider;
     private RecyclerView recyclerView;
-    private Boolean showReadStatus = false;
+    private BIMConversation bimConversation;
 
     public interface OnRefreshListener {
         void refreshMediaMessage(BIMMessage bimMessage, BIMResultCallback<BIMMessage> callback);
@@ -72,7 +70,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
         if (position + 1 < data.size()) {
             preWrapper = data.get(position + 1);
         }
-        holder.update(wrapper, preWrapper, showReadStatus);
+        holder.update(wrapper, preWrapper, bimConversation);
         BIMMessageUIManager.getInstance().getMessageUI(wrapper.getContentClass()).onBindView(holder, holder.itemView, wrapper, preWrapper);
     }
 
@@ -85,6 +83,13 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    public BIMMessage getMessage(int position){
+        if (position < 0 || position > data.size()) {
+            return null;
+        }
+        return data.get(position).getBimMessage();
     }
 
     /**
@@ -232,22 +237,6 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
 
 
     private BIMMessageWrapper wrapper(BIMMessage bimMessage) {
-        if (bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_CUSTOM) {
-            //解析自定义消息
-            BIMCustomElement customElement = (BIMCustomElement) bimMessage.getElement();
-            BIMCustomElement newCustomElement = BIMMessageManager.getInstance().decode(customElement.getData());//补全数据
-            if (newCustomElement != null) {
-                newCustomElement.setData(customElement.getData());
-                BIMLog.i(TAG, "newCustomElement newCustomElement: " + newCustomElement + " uuid:" + bimMessage.getUuid());
-            } else {
-                BIMLog.i(TAG, "newCustomElement newCustomElement: " + null + " uuid:" + bimMessage.getUuid());
-            }
-            BIMBaseElement baseContent = newCustomElement;
-            if (baseContent == null) {
-                baseContent = new BIMBaseElement(); //兜底
-            }
-            bimMessage.setContent(baseContent);
-        }
         return new BIMMessageWrapper(bimMessage);
     }
 
@@ -265,17 +254,17 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
         return ret;
     }
 
-    public void needShowReadReceipt(boolean needShow) {
-        if (this.showReadStatus != needShow) {
-            this.showReadStatus = needShow;
-            this.notifyDataSetChanged();
-        }
+    public void updateConversation(BIMConversation conversation){
+        bimConversation = conversation;
+        notifyDataSetChanged();
     }
 
     public interface OnMessageItemClickListener {
         void onPortraitClick(BIMMessage message);
 
         void onResentClick(BIMMessage message);
+
+        void onReadReceiptClick(BIMMessage message);
     }
 
     public interface OnMessageItemLongClickListener {

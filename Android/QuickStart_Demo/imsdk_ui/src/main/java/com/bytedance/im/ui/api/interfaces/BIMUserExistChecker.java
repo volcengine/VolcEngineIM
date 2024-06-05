@@ -1,7 +1,6 @@
 package com.bytedance.im.ui.api.interfaces;
 
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
-import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 
 import java.util.List;
 import java.util.Map;

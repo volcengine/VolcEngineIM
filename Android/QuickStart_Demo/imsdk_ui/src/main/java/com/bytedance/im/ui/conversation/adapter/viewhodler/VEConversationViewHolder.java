@@ -23,8 +23,8 @@ import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.conversation.adapter.VEViewHolder;
 import com.bytedance.im.ui.conversation.model.VEConvBaseWrapper;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
-import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
-import com.bytedance.im.ui.utils.BIMUIUtils;
+import com.bytedance.im.core.service.manager.BIMMessageManager;
+import com.bytedance.im.ui.utils.BIMUINameUtils;
 import com.bytedance.im.ui.utils.BIMUtils;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMessage;
@@ -70,7 +70,7 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
             if (user == null) {
                 return;
             }
-            name = BIMUIUtils.getShowName(user);
+            name = BIMUINameUtils.getShowName(user);
             if (!TextUtils.isEmpty(user.getPortraitUrl())) {
                 Glide.with(userHeadImg.getContext()).load(user.getPortraitUrl())
                         .placeholder(R.drawable.icon_recommend_user_default)
@@ -80,7 +80,6 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
                 userHeadImg.setImageResource(R.drawable.icon_recommend_user_default);
             }
         } else {
-            //todo 组件化
             if (!TextUtils.isEmpty(bimConversation.getName())) {
                 name = bimConversation.getName();
             } else {
@@ -160,7 +159,7 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
                 } else {
                     content = lastMessage.getElement();
                 }
-                String prefix = BIMUIUtils.getShowName(user) + ": ";
+                String prefix = BIMUINameUtils.getShowName(user) + ": ";
                 if (content instanceof BIMGroupNotifyElement) {
                     prefix = "";
                 }

@@ -3,6 +3,7 @@ package com.bytedance.im.ui.message.convert.manager;
 import android.util.Log;
 
 import com.bytedance.im.core.model.inner.msg.BIMBaseElement;
+import com.bytedance.im.ui.message.adapter.ui.inner.CustomMessageDefaultUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.DefaultMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.FileMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.ImageMessageUI;
@@ -46,6 +47,7 @@ public class BIMMessageUIManager {
         registerMessageUI(new FileMessageUI());
         registerMessageUI(new PoiMessageUI());
         registerMessageUI(new DefaultMessageUI());
+        registerMessageUI(new CustomMessageDefaultUI());
     }
 
     private final HashMap<Class<?>, BaseCustomElementUI> uiMap = new HashMap<>();

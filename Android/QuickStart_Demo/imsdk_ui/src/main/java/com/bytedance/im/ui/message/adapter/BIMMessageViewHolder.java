@@ -5,6 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,6 +17,7 @@ import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageStatus;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMessagePropertyItem;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.emoji.EmojiManager;
@@ -25,7 +27,7 @@ import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.user.BIMUserProvider;
-import com.bytedance.im.ui.utils.BIMUIUtils;
+import com.bytedance.im.ui.utils.BIMUINameUtils;
 import com.bytedance.im.ui.utils.BIMUtils;
 import com.bytedance.im.core.api.model.BIMMessage;
 
@@ -78,8 +80,8 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         tvPropertyRight = itemView.findViewById(R.id.tv_base_msg_property_right);
         tvReadReceipt = itemView.findViewById(R.id.tv_read_receipt);
     }
-
-    public void update(BIMMessageWrapper wrapper, BIMMessageWrapper preWrapper, boolean showReadStatus) {
+    //conversation 是异步设置的因此可能为 null
+    public void update(BIMMessageWrapper wrapper, BIMMessageWrapper preWrapper, BIMConversation bimConversation) {
         BIMMessage bimMessage = wrapper.getBimMessage();
         long sendUID = bimMessage.getSenderUID();
         BIMUIUser user = userProvider.getUserInfo(sendUID);
@@ -88,7 +90,7 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         String userName = "";
         if (user != null) {
             portraitUrl = user.getPortraitUrl();
-            userName = BIMUIUtils.getShowName(user);
+            userName = BIMUINameUtils.getShowName(user);
         }
         //撤回
         if (bimMessage.isRecalled()) {
@@ -103,24 +105,44 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
             tvReadReceipt.setVisibility(View.GONE);
             return;
         }
-        if (showReadStatus && bimMessage.isSelf()
-                && (bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS || bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL)) {
-            tvReadReceipt.setVisibility(View.VISIBLE);
-            if (bimMessage.isReadAck()) {
-                tvReadReceipt.setText("已读");
-            } else {
-                tvReadReceipt.setText("未读");
-            }
-        } else {
-            tvReadReceipt.setVisibility(View.GONE);
-        }
         recall.setVisibility(View.GONE);
         msgContainer.setVisibility(View.VISIBLE);
         BaseCustomElementUI ui = BIMMessageUIManager.getInstance().getMessageUI(wrapper.getContentClass());
         BIMLog.i(TAG, "update() contentCls: " + wrapper.getContentClass() + "ui: " + ui);
         boolean isSelf = bimMessage.isSelf();
+        if (getAdapterPosition() == 0) {
+            BIMLog.i(TAG, "last msg uuid:" + bimMessage.getUuid() + " status: " + bimMessage.getMsgStatus());
+        }
+        //已读/未读
+        boolean isMemberOutLimit = bimConversation != null && bimConversation.isEnableReadReceipt();
+        if (isMemberOutLimit && ui.isEnableReceipt(bimMessage) && (bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS
+                || bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL)) {
+            tvReadReceipt.setVisibility(View.VISIBLE);
+            if (bimMessage.getSenderUID() != bimMessage.getTargetUID() && bimMessage.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
+                if (isSelf && (bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS || bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL)) {
+                    if (bimMessage.isReadAck()) {
+                        tvReadReceipt.setText("已读");
+                    } else {
+                        tvReadReceipt.setText("未读");
+                    }
+                } else {
+                    tvReadReceipt.setVisibility(View.GONE);
+                }
+            } else if (bimMessage.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT) {
+                int readCount = bimMessage.getReadCount();
+                int unReadCount = bimMessage.getUnReadCount();
+                if (readCount == 0 && unReadCount == 0) {
+                    tvReadReceipt.setText("未读");
+                } else {
+                    tvReadReceipt.setText("[" + readCount + "/" + unReadCount + "]");
+                }
+            } else {
+                tvReadReceipt.setVisibility(View.GONE);
+            }
+        } else {
+            tvReadReceipt.setVisibility(View.GONE);
+        }
         ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) senStatus.getLayoutParams();
-
         if (ui.needHorizonCenterParent()) {
             lp.horizontalBias = 0.5f;
         } else if (isSelf) {
@@ -209,6 +231,10 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
                     }
                 } else if (id == R.id.container) {
                     ui.onClick(BIMMessageViewHolder.this,itemView, wrapper);
+                } else if (id == R.id.tv_read_receipt) {
+                    if (listener != null) {
+                        listener.onReadReceiptClick(wrapper.getBimMessage());
+                    }
                 }
             }
         };
@@ -217,6 +243,7 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         senStatus.setOnClickListener(onClickListener);
         portraitLeft.setOnClickListener(onClickListener);
         portraitRight.setOnClickListener(onClickListener);
+        tvReadReceipt.setOnClickListener(onClickListener);
         msgContainer.setOnLongClickListener(v -> {
             performLongClick(v, wrapper);
             return true;
@@ -236,7 +263,6 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         }
         bindProperty(bimMessage, curPropertyView);
     }
-
     /**
      * 展示点赞等property元素
      * @param bimMessage
@@ -280,7 +306,7 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
                 if (item != null) {
                     BIMUIUser user = userProvider.getUserInfo(item.getSender());
                     if (user != null) {
-                        sb.append(BIMUIUtils.getShowName(user)).append(",");
+                        sb.append(BIMUINameUtils.getShowName(user)).append(",");
                     } else {
                         sb.append("用户").append(item.getSender()).append(",");
                     }

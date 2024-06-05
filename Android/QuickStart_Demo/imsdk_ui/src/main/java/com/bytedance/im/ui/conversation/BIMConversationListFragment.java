@@ -284,6 +284,4 @@ public class BIMConversationListFragment extends Fragment {
             BIMUIClient.getInstance().getUserProvider().removeUserUpdateListener(listener);
         }
     }
-
-
 }

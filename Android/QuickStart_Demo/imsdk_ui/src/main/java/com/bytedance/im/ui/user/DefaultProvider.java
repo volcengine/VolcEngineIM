@@ -1,5 +1,7 @@
 package com.bytedance.im.ui.user;
 
+import android.app.Application;
+
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.ui.api.BIMUIUser;
 
@@ -47,6 +49,11 @@ public class DefaultProvider implements BIMUserProvider{
 
     @Override
     public void removeUserUpdateListener(OnUserInfoUpdateListener listener) {
+
+    }
+
+    @Override
+    public void init(Application application) {
 
     }
 }

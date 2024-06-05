@@ -1,6 +1,6 @@
 package com.bytedance.im.ui.message.adapter.ui.custom;
 
-import com.bytedance.im.ui.message.convert.base.model.BaseCustomElement;
+import com.bytedance.im.core.model.inner.msg.BaseCustomElement;
 
 import org.json.JSONException;
 import org.json.JSONObject;

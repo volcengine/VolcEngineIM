@@ -7,24 +7,21 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bytedance.im.ui.log.BIMLog;
 
 import java.io.File;
 
 public class LoadIMageUtils {
 
-    public static boolean loadLocal(String localPath, ImageView imageView) {
+    public static boolean loadLocal(String localPath,Uri uri, ImageView imageView) {
+        BIMLog.i("LoadIMageUtils", "loadLocal path:" + localPath + " uri: " + uri);
         if (!TextUtils.isEmpty(localPath)) {
-            Uri localUri = null;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                localUri = FileProvider.getUriForFile(imageView.getContext(), "com.bytedance.im.veapp.fileprovider", new File(localPath));
-            } else {
-                localUri = Uri.fromFile(new File(localPath));
-            }
-            if (localUri != null) {
                 //优先加载本地
-                Glide.with(imageView.getContext()).load(localUri).into(imageView);
-                return true;
-            }
+            Glide.with(imageView.getContext()).load(localPath).into(imageView);
+            return true;
+        } else if (uri != null) {
+            Glide.with(imageView.getContext()).load(uri).into(imageView);
+            return true;
         }
         return false;
     }

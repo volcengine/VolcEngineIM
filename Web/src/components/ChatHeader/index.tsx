@@ -1,6 +1,6 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, Tooltip } from '@arco-design/web-react';
-import { Conversation, im_proto } from '@volcengine/im-web-sdk';
+import { Conversation, IMEvent, im_proto } from '@volcengine/im-web-sdk';
 import { IconClose, IconUserAdd } from '@arco-design/web-react/icon';
 import { useRecoilValue } from 'recoil';
 
@@ -10,9 +10,10 @@ import GroupMemberAddModal from '../GroupMemberAddModal';
 
 import Styles from './Styles';
 import { useParticipant } from '../../hooks/useParticipant';
-import { Participants, UserId } from '../../store';
+import { BytedIMInstance, Participants, UserId } from '../../store';
 import { ROLE } from '../../constant';
 import { useAccountsInfo } from '../../hooks';
+import { useDebounceFn } from 'ahooks';
 
 interface ChatInfoPropsTypes {
   conversation?: Conversation;
@@ -49,6 +50,61 @@ const ChatHeader: React.FC<ChatInfoPropsTypes> = memo(props => {
   }, [conversation.id, selectedParticipant]);
 
   useAccountsInfo();
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
+
+  const [isInputtingText, setIsInputtingText] = useState(false);
+  const [isInputtingVoice, setIsInputtingVoice] = useState(false);
+
+  const { run: delaySetNoInputting } = useDebounceFn(
+    () => {
+      setIsInputtingText(false);
+      setIsInputtingVoice(false);
+    },
+    {
+      wait: 3000,
+    }
+  );
+
+  useEffect(() => {
+    const sub = bytedIMInstance.event.subscribe(IMEvent.ReceiveNewP2PMessage, msg => {
+      if (
+        msg.conversationId === conversation.id &&
+        msg.sender !== userId &&
+        msg.type === im_proto.MessageType.MESSAGE_TYPE_CUSTOM_P2P &&
+        String(msg.contentJson.type) === '1000' &&
+        msg.contentJson.message_type === im_proto.MessageType.MESSAGE_TYPE_TEXT
+      ) {
+        setIsInputtingText(true);
+        delaySetNoInputting();
+      }
+      if (
+        msg.conversationId === conversation.id &&
+        msg.sender !== userId &&
+        msg.type === im_proto.MessageType.MESSAGE_TYPE_CUSTOM_P2P &&
+        String(msg.contentJson.type) === '1000' &&
+        msg.contentJson.message_type === im_proto.MessageType.MESSAGE_TYPE_AUDIO
+      ) {
+        setIsInputtingVoice(true);
+        delaySetNoInputting();
+      }
+    });
+
+    const sub2 = bytedIMInstance.event.subscribe(IMEvent.ReceiveNewMessage, msg => {
+      if (msg.conversationId === conversation.id) {
+        setIsInputtingText(false);
+        setIsInputtingVoice(false);
+      }
+    });
+
+    return () => {
+      bytedIMInstance?.event.unsubscribe(IMEvent.ReceiveNewP2PMessage, sub);
+      bytedIMInstance?.event.unsubscribe(IMEvent.ReceiveNewMessage, sub2);
+
+      setIsInputtingText(false);
+      setIsInputtingVoice(false);
+    };
+  }, [conversation.id]);
+
   return (
     <Styles>
       <div className="chat-info">
@@ -62,7 +118,9 @@ const ChatHeader: React.FC<ChatInfoPropsTypes> = memo(props => {
           )}
         </div>
         <div className="info">
-          <div className="name">{getConversationName(conversation)}</div>
+          <div className="name">
+            {isInputtingText ? '对方正在输入中' : isInputtingVoice ? '对方正在讲话' : getConversationName(conversation)}
+          </div>
         </div>
       </div>
       <div className="operate-button-group">

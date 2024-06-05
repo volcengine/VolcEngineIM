@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize">
+
+        <TextView
+            android:id="@+id/tv_conversation_list_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:text="IMDemo"
+            android:textColor="@color/business_im_222"
+            android:textSize="22sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_create"
+            android:layout_width="38dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="8dp"
+            android:padding="8dp"
+            android:src="@drawable/icon_im_add"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:padding="1dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="20dp"
+        android:layout_width="match_parent">
+        <TextView
+            android:text="全部"
+            android:padding="0dp"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_margin="0dp"
+            android:layout_width="66dp"
+            android:textAlignment="center"
+            android:id="@+id/btn_all_conv"
+            android:layout_height="match_parent"/>
+        <TextView
+            android:text="好友"
+            android:padding="0dp"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_margin="0dp"
+            android:layout_width="66dp"
+            android:id="@+id/btn_friend_conv"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/conversation_list_container" />
+</LinearLayout>

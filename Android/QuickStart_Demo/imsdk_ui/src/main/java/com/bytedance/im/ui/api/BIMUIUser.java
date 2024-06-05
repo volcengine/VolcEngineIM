@@ -30,6 +30,10 @@ public class BIMUIUser {
     /**
      * @hidden
      */
+    private String memberPortraitUrl;//群成员备注头像
+    /**
+     * @hidden
+     */
     private boolean isBlock;
     /**
      * @hidden
@@ -73,6 +77,19 @@ public class BIMUIUser {
      */
     public void setPortraitUrl(String portraitUrl) {
         this.portraitUrl = portraitUrl;
+    }
+
+    /**
+     * @hidden
+     */
+    public String getMemberPortraitUrl() {
+        return memberPortraitUrl;
+    }
+    /**
+     * @hidden
+     */
+    public void setMemberPortraitUrl(String memberPortraitUrl) {
+        this.memberPortraitUrl = memberPortraitUrl;
     }
 
     /**
@@ -126,6 +143,7 @@ public class BIMUIUser {
         user.setFriend(this.isFriend());
         user.setBlock(this.isBlock());
         user.setMemberAlias(this.getMemberAlias());
+        user.setMemberPortraitUrl(this.getMemberPortraitUrl());
         return user;
     }
 }

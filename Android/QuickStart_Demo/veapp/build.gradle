@@ -3,26 +3,32 @@ plugins {
 }
 
 android {
-    compileSdkVersion 28 as int
-    buildToolsVersion "28.0.3"
+    compileSdkVersion im_compileSdkVersion
+    buildToolsVersion im_buildToolsVersion
 
     defaultConfig {
         applicationId "com.bytedance.im.veapp"
-        minSdkVersion 19 as int
-        targetSdkVersion 28 as int
-        versionCode 11200
-        versionName "1.12.0"
+        minSdkVersion im_minSdkVersion
+        targetSdkVersion im_targetSdkVersion
+        versionCode im_versionCode
+        versionName im_versionName
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders.put("APPLOG_SCHEME", "rangersapplog.b674e0c0eec26787".toLowerCase())
-
     }
-
-    buildTypes {
+    signingConfigs {
         debug {
 
         }
         release {
+
+        }
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+        }
+        release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -30,6 +36,29 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    flavorDimensions "testForQA"
+    productFlavors {
+        //发布到外部
+        Out {
+
+        }
+        //QA测试用
+        QATest {
+
+        }
+    }
+
+    sourceSets {
+        main {
+
+        }
+        Out {
+        }
+        QATest {
+            res.srcDirs('src/qa/res')
+        }
     }
 }
 

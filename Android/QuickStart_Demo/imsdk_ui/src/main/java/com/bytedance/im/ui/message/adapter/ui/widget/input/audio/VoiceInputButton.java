@@ -72,8 +72,11 @@ public class VoiceInputButton extends TextView {
                 if (voiceRecordManager == null) {
                     voiceRecordManager = new VoiceRecordManager();
                 }
-                voiceRecordManager.reset(FileUtils.getAudioPath() + File.separator + System.currentTimeMillis() + ".aac");
+                voiceRecordManager.reset(getContext().getFilesDir()+ File.separator + System.currentTimeMillis() + ".aac");
                 voiceRecordManager.start();
+                if (listener != null) {
+                    listener.onStart();
+                }
             }
         });
     }
@@ -95,9 +98,14 @@ public class VoiceInputButton extends TextView {
             voiceRecordManager.stop();
             voiceRecordManager.release();
         }
+        if (listener != null) {
+            listener.onCancel();
+        }
     }
 
     public interface OnAudioRecordListener {
+        void onStart();
+        void onCancel();
         void onSuccess(String path);
     }
 }

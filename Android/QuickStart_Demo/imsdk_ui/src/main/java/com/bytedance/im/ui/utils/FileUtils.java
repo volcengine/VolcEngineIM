@@ -3,6 +3,8 @@ package com.bytedance.im.ui.utils;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -11,6 +13,7 @@ import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import androidx.core.content.FileProvider;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -29,54 +32,12 @@ public class FileUtils {
     public static final String TEMP_DIR_NAME = "temp";
     public static final String FILE_DIR_NAME = "file";
 
-    private static String sRootPath;
-    private static String sExternalRootPath;
-    private static String sImagePath;
-    private static String sAudioPath;
-    private static String sFilePath;
-    private static String sTempDir;
     private static Context mContext;
     public static void initDir(Context context) {
         if (context == null) {
             return;
         }
         mContext = context;
-        sRootPath = context.getDir(ROOT_DIR_NAME, Context.MODE_PRIVATE).getAbsolutePath();
-        if (hasSDCard()) {
-            sExternalRootPath = getExternalRootPath() + File.separator + ROOT_DIR_NAME;
-        } else {
-            sExternalRootPath = "";
-        }
-        String mediaStoreRootPath = TextUtils.isEmpty(sExternalRootPath) ? sRootPath : sExternalRootPath;
-        sImagePath = mediaStoreRootPath + File.separator + IMAGE_DIR_NAME;
-        sAudioPath = mediaStoreRootPath + File.separator + AUDIO_DIR_NAME;
-        sFilePath = mediaStoreRootPath + File.separator + FILE_DIR_NAME;
-        sTempDir = mediaStoreRootPath + File.separator + TEMP_DIR_NAME;
-
-        File rootDir = new File(sRootPath);
-        if (!rootDir.exists()) {
-            rootDir.mkdirs();
-        }
-        File externalRootDir = new File(sExternalRootPath);
-        if (!externalRootDir.exists()) {
-            externalRootDir.mkdirs();
-        }
-        File imageDir = new File(sImagePath);
-        if (!imageDir.exists()) {
-            imageDir.mkdirs();
-        }
-        File audioDir = new File(sAudioPath);
-        if (!audioDir.exists()) {
-            audioDir.mkdirs();
-        }
-        File tempDir = new File(sTempDir);
-        if (!tempDir.exists()) {
-            tempDir.mkdirs();
-        }
-        File fileDir = new File(sFilePath);
-        if (!fileDir.exists()) {
-            fileDir.mkdirs();
-        }
     }
 
     public static boolean hasSDCard() {
@@ -84,33 +45,6 @@ public class FileUtils {
         return status.equals(Environment.MEDIA_MOUNTED);
     }
 
-    public static String getExternalRootPath() {
-        if (hasSDCard()) {
-            return Environment.getExternalStorageDirectory().getAbsolutePath(); // filePath:  /sdcard/
-        } else {
-            return Environment.getDataDirectory().getAbsolutePath() + "/data"; // filePath:  /data/data/
-        }
-    }
-
-    public static String getAudioPath() {
-        return sAudioPath;
-    }
-
-    public static String getImagePath() {
-        return sImagePath;
-    }
-
-    public static String getFilePath() {
-        return sFilePath;
-    }
-
-    public static String getTempDir() {
-        return sTempDir;
-    }
-
-    public static String getRootDir() {
-        return sRootPath;
-    }
 
     public static boolean makeFile(String path, String name) {
         File file = new File(path + "/" + name);
@@ -328,6 +262,18 @@ public class FileUtils {
         }
         ContentResolver resolver = context.getContentResolver();
         return resolver.getType(uri);
+    }
+
+    public static Bitmap getVideoFirstframe(String path) {
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();//实例化MediaMetadataRetriever对象
+        File file = new File(path);//实例化File对象，文件路径为/storage/emulated/0/shipin.mp4 （手机根目录）
+        if (!file.exists()) {
+            return null;
+        }
+        mmr.setDataSource(path);
+        Bitmap bitmap = mmr.getFrameAtTime(0); //0表示首帧图片
+        mmr.release(); //释放MediaMetadataRetriever对象
+        return bitmap;
     }
 
 }

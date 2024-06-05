@@ -11,6 +11,8 @@ import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.api.interfaces.BIMConnectListener;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
+import com.bytedance.im.core.api.interfaces.BIMMessageListener;
+import com.bytedance.im.core.api.interfaces.BIMP2PMessageListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSendCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
@@ -22,24 +24,29 @@ import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.core.api.model.BIMUnReadInfo;
 import com.bytedance.im.core.internal.utils.IMLog;
 import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
+import com.bytedance.im.ui.api.interfaces.BIMUserExistChecker;
 import com.bytedance.im.ui.message.BIMMessageListFragment;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyMessageUI;
+import com.bytedance.im.ui.message.adapter.ui.custom.BIMP2PTypingElement;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareCustomMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.BaseToolBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.pop.BIMMessageOptionPopupWindow;
-import com.bytedance.im.ui.message.convert.base.model.BaseCustomElement;
+import com.bytedance.im.core.model.inner.msg.BaseCustomElement;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
-import com.bytedance.im.ui.message.convert.manager.BIMMessageManager;
+import com.bytedance.im.core.service.manager.BIMMessageManager;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
+import com.bytedance.im.ui.starter.ModuleStarter;
 import com.bytedance.im.ui.user.BIMUserProvider;
 import com.bytedance.im.ui.user.DefaultProvider;
 import com.bytedance.im.ui.utils.FileUtils;
 import com.bytedance.im.ui.utils.BIMUIUtils;
 import com.bytedance.im.ui.utils.media.AudioHelper;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @type api
@@ -47,6 +54,8 @@ import java.util.List;
  */
 public class BIMUIClient {
     private static final String TAG = "BIMUIClient";
+    private ModuleStarter moduleStarter;
+    private BIMUserExistChecker userExistChecker;
 
     /**
      * @hidden
@@ -59,6 +68,7 @@ public class BIMUIClient {
      * @hidden
      */
     private BIMUIClient() {
+        moduleStarter = new ModuleStarter();
     }
 
     /**
@@ -71,10 +81,10 @@ public class BIMUIClient {
     }
 
     /**
-     * @param application    应用 Application 实例。
-     * @param appId  从[控制台](https://console.volcengine.com/rtc/im/appManage)获取的应用 ID。
-     *               不同应用 ID 无法进行互通。
-     * @param config 配置信息，参看 BIMSDKConfig{@link #BIMSDKConfig}。
+     * @param application 应用 Application 实例。
+     * @param appId       从[控制台](https://console.volcengine.com/rtc/im/appManage)获取的应用 ID。
+     *                    不同应用 ID 无法进行互通。
+     * @param config      配置信息，参看 BIMSDKConfig{@link #BIMSDKConfig}。
      * @type api
      * @brief 初始化 SDK。
      */
@@ -102,6 +112,8 @@ public class BIMUIClient {
             registerMessageUI(new BIMGroupNotifyMessageUI());
             registerMessageElement("1", BIMShareElement.class);
             registerMessageElement("2", BIMGroupNotifyElement.class);
+            registerMessageElement("1000", BIMP2PTypingElement.class);
+            getUserProvider().init(application);
         }
         IMLog.i(TAG, "initUISDK end initVersion: " + getVersion() + " imSDK initVersion: " + BIMClient.getInstance().getVersion());
     }
@@ -117,24 +129,26 @@ public class BIMUIClient {
      * @hidden
      */
     public void registerMessageElement(String type, Class<? extends BaseCustomElement> cls) {
-        BIMMessageManager.getInstance().register(type, cls);
+        BIMClient.getInstance().registerMessageElement(type,cls);
     }
+
     /**
      * @hidden
      */
-    public void registerMessageOperation(BIMMessageOperation operation){
+    public void registerMessageOperation(BIMMessageOperation operation) {
         BIMMessageOptionPopupWindow.registerOperation(operation);
     }
+
     /**
      * @hidden
      */
-    public void registerToolBtn(BaseToolBtn toolBtn){
+    public void registerToolBtn(BaseToolBtn toolBtn) {
         BIMMessageListFragment.registerCustomToolBtn(toolBtn);
     }
 
-        /**
-         * @hidden
-         */
+    /**
+     * @hidden
+     */
     private BIMUserProvider provider;
 
     /**
@@ -143,13 +157,14 @@ public class BIMUIClient {
      * @brief 设置用户信息 provider。
      */
     public void setUserProvider(BIMUserProvider provider) {
-       this.provider = provider;
+        this.provider = provider;
     }
+
     /**
      * @hidden
      */
     public BIMUserProvider getUserProvider() {
-        if(provider == null){
+        if (provider == null) {
             provider = new DefaultProvider();
         }
         return provider;
@@ -201,6 +216,20 @@ public class BIMUIClient {
     /**
      * @hidden
      */
+    public void addMessageListener(BIMMessageListener listener) {
+        BIMClient.getInstance().addMessageListener(listener);
+    }
+
+    /**
+     * @hidden
+     */
+    public void removeMessageListener(BIMMessageListener listener) {
+        BIMClient.getInstance().removeMessageListener(listener);
+    }
+
+    /**
+     * @hidden
+     */
     public BIMMessage createTextMessage(String text) {
         return BIMClient.getInstance().createTextMessage(text);
     }
@@ -224,6 +253,54 @@ public class BIMUIClient {
     /**
      * @hidden
      */
+    public BIMMessage createP2PMessage(BaseCustomElement content) {
+        String data = BIMMessageManager.getInstance().encode(content);
+        content.setData(data);
+        return createP2PMessage(data);
+    }
+
+    /**
+     * @hidden
+     */
+    public BIMMessage createP2PMessage(String content) {
+        return BIMClient.getInstance().createP2PMessage(content);
+    }
+
+    /**
+     * @hidden
+     */
+    public void sendP2PMessage(final BIMMessage message, String conversationId, BIMSimpleCallback callback) {
+        BIMClient.getInstance().sendP2PMessage(message, conversationId, callback);
+    }
+
+
+    /**
+     * @hidden
+     */
+    public void sendP2PMessage(final BIMMessage message, String conversationId, List<Long> userIdList, BIMSimpleCallback callback) {
+        BIMClient.getInstance().sendP2PMessage(message, conversationId, userIdList, callback);
+    }
+
+
+    /**
+     * @hidden
+     */
+    public void addP2PMessageListener(BIMP2PMessageListener listener){
+        BIMClient.getInstance().addP2PMessageListener(listener);
+    }
+
+
+    /**
+     * @hidden
+     */
+    public void removeP2PMessageListener(BIMP2PMessageListener listener){
+       BIMClient.getInstance().removeP2PMessageListener(listener);
+    }
+
+
+    /**
+     * @hidden
+     */
     public void sendMessage(final BIMMessage message, String conversationId, BIMSendCallback callback) {
         BIMClient.getInstance().sendMessage(message, conversationId, callback);
     }
@@ -233,6 +310,20 @@ public class BIMUIClient {
      */
     public void getConversation(String conversationId, BIMResultCallback<BIMConversation> callback) {
         BIMClient.getInstance().getConversation(conversationId, callback);
+    }
+
+    /**
+     * @hidden
+     */
+    public void getConversationByShortID(long conversationShortId, boolean isServer, BIMResultCallback<BIMConversation> callback) {
+        BIMClient.getInstance().getConversationByShortID(conversationShortId, isServer, callback);
+    }
+
+    /**
+     * @hidden
+     */
+    public void getConversationByShortIDList(List<Long> conversationShortIdList, boolean isServer, BIMResultCallback<List<BIMConversation>> callback) {
+        BIMClient.getInstance().getConversationByShortIDList(conversationShortIdList, isServer, callback);
     }
 
     /**
@@ -396,6 +487,30 @@ public class BIMUIClient {
         }
     }
 
+    public ModuleStarter getModuleStarter() {
+        return moduleStarter;
+    }
 
+    public BIMUserExistChecker getUserExistChecker() {
+        if (userExistChecker == null) {
+            return new BIMUserExistChecker() {
+                @Override
+                public void check(List<Long> uidList, BIMResultCallback<Map<Long, Boolean>> callback) {
+                    Map<Long, Boolean> map = new HashMap<>();
+                    if (uidList != null && !uidList.isEmpty()) {
+                        for (Long uid : uidList) {
+                            map.put(uid, true); //默认全部认为账号存在
+                        }
+                    }
+                    callback.onSuccess(map);
+                }
+            };
+        }
+        return userExistChecker;
+    }
+
+    public void setUserExistChecker(BIMUserExistChecker userExistChecker) {
+        this.userExistChecker = userExistChecker;
+    }
 }
 

@@ -57,5 +57,10 @@ public class BIMGroupNotifyMessageUI extends BaseCustomElementUI {
     public boolean isEnableRecall(BIMMessage bimMessage) {
         return false;
     }
+
+    @Override
+    public boolean isEnableReceipt(BIMMessage bimMessage) {
+        return false;
+    }
 }
 

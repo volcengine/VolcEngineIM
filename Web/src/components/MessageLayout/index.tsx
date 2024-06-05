@@ -26,7 +26,7 @@ import { ENABLE_MESSAGE_INSPECTOR } from '../../constant';
 import { useInViewport, useRequest } from 'ahooks';
 import Row from '@arco-design/web-react/es/Grid/row';
 import Col from '@arco-design/web-react/es/Grid/col';
-import MessageReadReceiptState, { MessageReadBatchQuery } from './components/MessageReadReceiptState';
+import MessageReadReceiptState, { AbstractMessageReadBatchQuery } from './components/MessageReadReceiptState';
 
 interface MessageLayoutProps {
   className?: string;
@@ -109,13 +109,13 @@ export function MessageDetailModal({
     </Modal>
   );
 }
-class MessageSendReadBatch extends MessageReadBatchQuery {
-  async callApi({ conversation, messages }: { conversation: Conversation; messages: Message[] }): Promise<any> {
+class MessageSendReadBatch extends AbstractMessageReadBatchQuery<{ messageId: string }> {
+  async callApi({ conversation, messages }: { conversation: Conversation; messages: Message[] }) {
     await this.bytedIMInstance.sendMessageReadReceipts({
       conversation: conversation,
       messages: messages,
     });
-    for (let message of messages) this.cached[message.serverId] = true;
+    for (let message of messages) this.cached[message.serverId] = { messageId: message.serverId };
     return messages.map(i => ({ messageId: i.serverId }));
   }
 }
@@ -168,7 +168,6 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
     if (
       isInview &&
       !message.isFromMe &&
-      currentConversation.type === im_proto.ConversationType.ONE_TO_ONE_CHAT &&
       ![im_proto.MessageType.MESSAGE_TYPE_VIDEO, im_proto.MessageType.MESSAGE_TYPE_AUDIO].includes(message.type)
     ) {
       messageReadQuery.get({
@@ -285,8 +284,8 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
       !message.isOffline &&
       !message.isRecalled &&
       message.isFromMe &&
-      currentConversation.type === im_proto.ConversationType.ONE_TO_ONE_CHAT &&
-      currentConversation.toParticipantUserId !== userId
+      currentConversation.toParticipantUserId !== userId &&
+      currentConversation.isEnableReadReceipt
     ) {
       return <MessageReadReceiptState message={message} />;
     }
