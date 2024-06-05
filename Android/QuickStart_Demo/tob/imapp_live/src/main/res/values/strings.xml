@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_mark_type">标记</string>
+    <string name="add_user">用户</string>
+    <string name="mark_type_option">开启增加、关闭删除</string>
+</resources>

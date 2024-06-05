@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -100,6 +101,11 @@ public class VideoMessageUI extends BaseCustomElementUI {
     @Override
     public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         BIMVideoElement videoElement = (BIMVideoElement) messageWrapper.getBimMessage().getElement();
+        if (TextUtils.isEmpty(videoElement.getURL())) {
+            Toast.makeText(v.getContext(), "图片URL为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         BIMClient.getInstance().sendMessageReadReceipts(Collections.singletonList(messageWrapper.getBimMessage()), new BIMSimpleCallback() {
             @Override
             public void onSuccess() {

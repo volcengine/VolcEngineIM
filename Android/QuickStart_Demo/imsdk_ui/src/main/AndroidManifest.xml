@@ -12,16 +12,20 @@
     <application>
         <activity
             android:name="com.bytedance.im.ui.utils.media.BIMMediaListActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"/>
         <activity
             android:name="com.bytedance.im.ui.forward.ForwardActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"/>
         <activity
             android:name="com.bytedance.im.ui.utils.media.PicturePreviewActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"/>
         <activity
             android:name="com.bytedance.im.ui.member.BIMGroupMemberListActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"/>
         <activity
             android:name="com.bytedance.im.ui.message.BIMMessageListActivity"
             android:launchMode="singleTask"

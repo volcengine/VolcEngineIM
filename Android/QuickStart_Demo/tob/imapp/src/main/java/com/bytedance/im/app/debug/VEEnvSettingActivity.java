@@ -60,6 +60,8 @@ public class VEEnvSettingActivity extends Activity {
                     curEnv = Constants.ENV_BOEi18n;
                 } else if (checkedId == R.id.env_i18n) {
                     curEnv = Constants.ENV_i18n;
+                } else if (checkedId == R.id.env_ppe) {
+                    curEnv = Constants.ENV_PPE;
                 }
                 updateSwimLane();
             }
@@ -83,6 +85,8 @@ public class VEEnvSettingActivity extends Activity {
             mEnvGroup.check(R.id.env_boei18n);
         } else if (curEnv == Constants.ENV_i18n) {
             mEnvGroup.check(R.id.env_i18n);
+        } else if (curEnv == Constants.ENV_PPE) {
+            mEnvGroup.check(R.id.env_ppe);
         }
     }
 
