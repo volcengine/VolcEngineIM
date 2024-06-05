@@ -3,6 +3,8 @@ package com.bytedance.im.ui.utils;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.ui.api.BIMUIUser;

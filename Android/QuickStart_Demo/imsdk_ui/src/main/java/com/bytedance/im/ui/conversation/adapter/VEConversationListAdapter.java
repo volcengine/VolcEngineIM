@@ -3,12 +3,17 @@ package com.bytedance.im.ui.conversation.adapter;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bytedance.im.core.api.enums.BIMPushStatus;
+import com.bytedance.im.core.api.model.BIMUnReadInfo;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.conversation.adapter.viewhodler.VEConversationViewHolder;
 import com.bytedance.im.ui.conversation.model.VEConvBaseWrapper;
@@ -31,7 +36,8 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
     private ConversationInsertListener conversationInsertListener;
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private RecyclerView recyclerView;
-    public VEConversationListAdapter(Context context,RecyclerView recyclerView) {
+
+    public VEConversationListAdapter(Context context, RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
         mContext = context;
         data = new ArrayList<>();
@@ -55,18 +61,19 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
     public VEViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         int layout = data.get(i).getType();
         View v = LayoutInflater.from(mContext).inflate(layout, viewGroup, false);
-        return new VEConversationViewHolder(v,recyclerView);
+        return new VEConversationViewHolder(v, recyclerView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VEViewHolder veViewHolder, int i) {
-        veViewHolder.bind(data.get(i));
+    public void onBindViewHolder(@NonNull VEViewHolder veViewHolder, int position) {
+        veViewHolder.bind(data.get(position));
         veViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (onItemClickListener != null) {
+                    int p = veViewHolder.getAdapterPosition();
                     mHandler.post(() -> veViewHolder.bind(veViewHolder.getWrapperInfo()));
-                    onItemClickListener.onItemClick(data.get(i), veViewHolder.getAdapterPosition());
+                    onItemClickListener.onItemClick(data.get(p), p);
                 }
             }
         });
@@ -74,7 +81,8 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
             @Override
             public boolean onLongClick(View v) {
                 if (onItemLongClickListener != null) {
-                    return onItemLongClickListener.onItemLongClick(data.get(i), veViewHolder.getAdapterPosition());
+                    int p = veViewHolder.getAdapterPosition();
+                    return onItemLongClickListener.onItemLongClick(data.get(p), veViewHolder.getAdapterPosition());
                 }
                 return false;
             }
@@ -88,6 +96,7 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
 
     /**
      * 去重
+     *
      * @param cid
      * @return
      */
@@ -142,7 +151,6 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
             insertIndex(findInsertIndex(wrapper), wrapper);
         }
     }
-
 
 
     /**
@@ -202,6 +210,7 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
 
     /**
      * 插入位置
+     *
      * @param wrapper
      * @return
      */
@@ -235,6 +244,19 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
         return -1;
     }
 
+    public BIMConversation getConversation(String conversationId){
+        if(data != null){
+            for(VEConvBaseWrapper wrapper:data){
+                if (wrapper.getType() == R.layout.bim_im_item_conversation) {
+                    BIMConversation bimConversation = (BIMConversation) wrapper.getInfo();
+                    if (bimConversation.getConversationID().equals(conversationId)) {
+                        return bimConversation;
+                    }
+                }
+            }
+        }
+        return null;
+    }
     /**
      * 包装 Conversation 便于 UI 处理
      *

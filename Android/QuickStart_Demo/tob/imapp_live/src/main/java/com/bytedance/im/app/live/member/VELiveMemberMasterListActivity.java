@@ -78,12 +78,12 @@ public class VELiveMemberMasterListActivity extends Activity {
         List dialogInfo = new ArrayList<Pair<String, VELiveGroupDialogUtils.BottomInputDialogListener>>();
         dialogInfo.add(new android.util.Pair("移出管理员", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> BIMClient.getInstance().getService(BIMLiveExpandService.class).removeLiveGroupAdmin(conversationShortId, Collections.singletonList(memberWrapper.getMember().getUserID()), new BIMSimpleCallback() {
             public void onSuccess() {
-                Toast.makeText(VELiveMemberMasterListActivity.this, "移出管理员成功 " + BIMUINameUtils.getPortraitUrl(memberWrapper.getMember(),memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
+                Toast.makeText(VELiveMemberMasterListActivity.this, "移出管理员成功 ", Toast.LENGTH_SHORT).show();
                 adapter.remove(memberWrapper.getMember().getUserID());
             }
 
             public void onFailed(BIMErrorCode code) {
-                Toast.makeText(VELiveMemberMasterListActivity.this, "移出管理员失败 " + BIMUINameUtils.getPortraitUrl(memberWrapper.getMember(),memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
+                Toast.makeText(VELiveMemberMasterListActivity.this, "移出管理员失败 ", Toast.LENGTH_SHORT).show();
             }
 
         })));

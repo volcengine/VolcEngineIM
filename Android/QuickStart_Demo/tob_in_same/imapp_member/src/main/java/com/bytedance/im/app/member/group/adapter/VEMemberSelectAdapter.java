@@ -23,6 +23,7 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
     private List<MemberWrapper> data;
     private boolean selectSingle = false;
     private boolean isShowTag = true;
+    private boolean isOwnerSelectable = false;
 
     /**
      * 普通群是全量
@@ -31,10 +32,11 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
      * @param memberList
      * @param checkedList
      */
-    public VEMemberSelectAdapter(Context mContext, List<MemberWrapper> memberWrapperList, List<Long> checkedIdList, boolean isTag) {
+    public VEMemberSelectAdapter(Context mContext, List<MemberWrapper> memberWrapperList, List<Long> checkedIdList, boolean isTag,boolean isOwnerEnable) {
         this.mContext = mContext;
         data = new ArrayList<>();
         this.isShowTag = isTag;
+        this.isOwnerSelectable = isOwnerEnable;
         if (memberWrapperList != null && !memberWrapperList.isEmpty()) {
             for (MemberWrapper wrapper : memberWrapperList) {
                 wrapper.setShowTag(isShowTag);
@@ -52,7 +54,7 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
 
 
     public VEMemberSelectAdapter(Context mContext) {
-        this(mContext, new ArrayList<>(), new ArrayList<>(), true);
+        this(mContext, new ArrayList<>(), new ArrayList<>(), true,false);
     }
 
     @NonNull
@@ -71,7 +73,7 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
 
 
     private void itemCheckChanged(int position) {
-        if (data.get(position).isOwner()) {
+        if (data.get(position).isOwner() && !isOwnerSelectable) {
             return;
         }
         if (selectSingle) {

@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,6 +33,8 @@ import com.bytedance.im.core.api.interfaces.BIMMessageListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSendCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
+import com.bytedance.im.core.api.interfaces.BIMStreamMessageListener;
+import com.bytedance.im.core.api.model.BIMConvTag;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMGetMessageOption;
 import com.bytedance.im.core.api.model.BIMMessage;
@@ -39,8 +43,11 @@ import com.bytedance.im.core.api.model.BIMMessageNewPropertyModify;
 import com.bytedance.im.core.api.model.BIMMessageReadReceipt;
 import com.bytedance.im.core.api.model.BIMReadReceipt;
 import com.bytedance.im.core.model.LocalPropertyItem;
+import com.bytedance.im.core.model.Message;
 import com.bytedance.im.core.model.inner.msg.BIMTextElement;
+import com.bytedance.im.core.service.BIMINService;
 import com.bytedance.im.core.service.manager.BIMMessageManager;
+import com.bytedance.im.core.stream.interfaces.StreamMessageListener;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.api.BIMUIUser;
@@ -50,6 +57,7 @@ import com.bytedance.im.ui.message.adapter.BIMMessageAdapter;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.VEInPutView;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.audio.VoiceInputButton;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.measure.KeyBoardHeightHelper;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.BaseToolBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.CustomToolBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.FileToolBtn;
@@ -58,6 +66,7 @@ import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.PhotoTooBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.pop.BIMMessageOptionPopupWindow;
 import com.bytedance.im.ui.user.BIMUserProvider;
 import com.bytedance.im.ui.user.OnUserInfoUpdateListener;
+import com.bytedance.im.ui.utils.BIMUIUtils;
 import com.bytedance.im.ui.utils.media.MediaInfo;
 
 import java.io.File;
@@ -93,6 +102,7 @@ public class BIMMessageListFragment extends Fragment {
     private BIMMessageOptionPopupWindow msgOptionMenu;
     private String startMsgId;
     private BIMUserProvider userProvider;
+    private boolean isShowKeyBoard = false;
     public interface OnPortraitClickListener{
         void onClick(long uid);
     }
@@ -110,6 +120,12 @@ public class BIMMessageListFragment extends Fragment {
         BIMLog.i(TAG, "onCreate() conversationId: " + conversationId + " startMsgId: " + startMsgId);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -119,6 +135,17 @@ public class BIMMessageListFragment extends Fragment {
         View v = inflater.inflate(R.layout.bim_im_fragment_message_list, container, false);
         recyclerView = v.findViewById(R.id.message_list);
         inPutView = v.findViewById(R.id.inputView);
+        inPutView.setOnKeyboardListener(new KeyBoardHeightHelper.OnMeasureCompleteListener() {
+            @Override
+            public void onKeyBoardShow(int keyBoardHeight) {
+                isShowKeyBoard = true;
+            }
+
+            @Override
+            public void onKeyBoardHide() {
+                isShowKeyBoard = false;
+            }
+        });
         userProvider = BIMUIClient.getInstance().getUserProvider(); //单聊
         adapter = new BIMMessageAdapter(recyclerView,userProvider,new BIMMessageAdapter.OnMessageItemClickListener() {
             @Override
@@ -217,6 +244,7 @@ public class BIMMessageListFragment extends Fragment {
 
         BIMUIClient.getInstance().addMessageListener(receiveMessageListener);
         BIMClient.getInstance().addConversationListener(conversationListListener);
+        BIMClient.getInstance().getService(BIMINService.class).subscribeConversationStreamMessage(conversationId, streamMessageListener);
         if (!TextUtils.isEmpty(startMsgId)) {
             newerHasMore = true;
             BIMClient.getInstance().getMessage(startMsgId, new BIMResultCallback<BIMMessage>() {
@@ -328,6 +356,12 @@ public class BIMMessageListFragment extends Fragment {
         super.onResume();
         refreshConversation();
         BIMClient.getInstance().markConversationRead(conversationId, null);
+        if (isShowKeyBoard) {
+            inPutView.postDelayed(() -> {
+                EditText editText = inPutView.getmInputEt();
+                BIMUIUtils.showKeyBoard(editText);
+            }, 500);
+        }
     }
 
     @Override
@@ -343,6 +377,10 @@ public class BIMMessageListFragment extends Fragment {
         super.onDestroy();
         BIMUIClient.getInstance().removeMessageListener(receiveMessageListener);
         BIMClient.getInstance().removeConversationListener(conversationListListener);
+        BIMINService biminService = BIMClient.getInstance().getService(BIMINService.class);
+        if (biminService != null) {
+            biminService.unSubscribeConversationStreamMessage(conversationId);
+        }
     }
 
 
@@ -747,8 +785,11 @@ public class BIMMessageListFragment extends Fragment {
         public void onReceiveMessage(BIMMessage message) {
             BIMLog.i(TAG, "onReceiveMessage() uuid: " + message.getUuid() + " thread:" + Thread.currentThread());
             if (message.getConversationID().equals(bimConversation.getConversationID())) {
-                if (adapter.insertOrUpdateMessage(message) == BIMMessageAdapter.APPEND) {
+                int r = adapter.insertOrUpdateMessage(message);
+                if (r == BIMMessageAdapter.APPEND) {
                     scrollBottom();
+                } else if (r == BIMMessageAdapter.UPDATE) {
+                    Toast.makeText(getActivity(), "出现错误，重复收到消息！", Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -800,6 +841,37 @@ public class BIMMessageListFragment extends Fragment {
                 if (bimMessage != null && bimMessage.getConversationID().equals(bimConversation.getConversationID())) {
                     adapter.insertOrUpdateMessage(receipt.getMessage());
                 }
+            }
+        }
+    };
+
+    //tob 无法使用此功能[流式消息]
+    private BIMStreamMessageListener streamMessageListener = new BIMStreamMessageListener() {
+
+        @Override
+        public void onStreamAppend(BIMMessage msg) {
+            adapter.insertOrUpdateMessage(msg);
+        }
+
+        @Override
+        public void onStreamComplete(BIMMessage msg) {
+            adapter.insertOrUpdateMessage(msg);
+        }
+
+        @Override
+        public void onStreamInterrupt(BIMMessage msg) {
+            adapter.insertOrUpdateMessage(msg);
+        }
+
+        @Override
+        public void onReceiveStreamMsg(BIMMessage msg) {
+            adapter.insertOrUpdateMessage(msg);
+        }
+
+        @Override
+        public void onError(BIMMessage message, int code, String msg, Exception e) {
+            if (message != null) {
+                adapter.insertOrUpdateMessage(message);
             }
         }
     };

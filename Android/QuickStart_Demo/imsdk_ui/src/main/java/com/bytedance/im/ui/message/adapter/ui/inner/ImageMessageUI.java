@@ -2,11 +2,14 @@ package com.bytedance.im.ui.message.adapter.ui.inner;
 
 import android.graphics.drawable.Drawable;
 import androidx.annotation.Nullable;
+
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -105,6 +108,10 @@ public class ImageMessageUI extends BaseCustomElementUI {
     @Override
     public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         BIMImageElement imageElement = (BIMImageElement) messageWrapper.getBimMessage().getElement();
+        if (TextUtils.isEmpty(imageElement.getOriginImg().getURL())) {
+            Toast.makeText(v.getContext(), "图片URL为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
         holder.getOnOutListener().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
             @Override
             public void onSuccess(BIMMessage bimMessage) {

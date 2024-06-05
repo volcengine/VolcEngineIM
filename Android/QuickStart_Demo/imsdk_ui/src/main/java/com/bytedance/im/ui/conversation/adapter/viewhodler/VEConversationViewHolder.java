@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageType;
+import com.bytedance.im.core.api.enums.BIMPushStatus;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.model.inner.msg.BIMCustomElement;
 import com.bytedance.im.ui.BIMUIClient;
@@ -94,27 +95,33 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
         }
         nickName.setTextColor(itemView.getContext().getResources().getColor(textColor));
         //会话未读数
-        if (bimConversation.getUnReadCount() > 0) {
-            long realCount = bimConversation.getUnReadCount();
-            //会话静音但有未读
-            if (bimConversation.isMute()) {//免打扰
+        long realCount = 0;
+        if (bimConversation.isMute()) { //免打扰
+            unReadIcon.setBackground(itemView.getResources().getDrawable(R.drawable.shape_im_conversation_mute_unread_num_bg));
+            realCount = bimConversation.getUnReadCount();
+
+        } else if (bimConversation.getPushStatus() == BIMPushStatus.BIM_PUSH_STATUS_PART_ALLOW) { //部分免打扰【tob无此功能】
+            if (bimConversation.getUnreadCountWL() == 0) {
+                realCount = bimConversation.getUnReadCount() - bimConversation.getUnreadCountWL();
                 unReadIcon.setBackground(itemView.getResources().getDrawable(R.drawable.shape_im_conversation_mute_unread_num_bg));
-            } else { //正常
+            } else {
+                realCount = bimConversation.getUnreadCountWL();
                 unReadIcon.setBackground(itemView.getResources().getDrawable(R.drawable.shape_im_conversation_unread_num_bg));
             }
-            if (realCount > 99) {
-                unReadIcon.setText("99+");
-            } else {
-                unReadIcon.setText("" + realCount);
-            }
-            if (realCount > 0) {
-                unReadIcon.setVisibility(View.VISIBLE);
-            } else {
-                unReadIcon.setVisibility(View.GONE);
-            }
+        } else {
+            realCount = bimConversation.getUnReadCount();
+        }
+        if (realCount > 99) {
+            unReadIcon.setText("99+");
+        } else {
+            unReadIcon.setText("" + realCount);
+        }
+        if (realCount > 0) {
+            unReadIcon.setVisibility(View.VISIBLE);
         } else {
             unReadIcon.setVisibility(View.GONE);
         }
+
         //会话静音
         if (bimConversation.isMute()) {
             conversationMute.setVisibility(View.VISIBLE);
