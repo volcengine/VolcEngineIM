@@ -11,7 +11,7 @@ target 'ByteBusiness' do
   
 #  pod 'im-uikit-tob', '1.14.0'
   pod 'im-uikit-tob', :path=>'../'
-pod 'imsdk-tob', '1.14.0-alpha.0'
+pod 'imsdk-tob', '1.14.0-alpha.1'
   
 #    三方库
   pod 'Masonry'
