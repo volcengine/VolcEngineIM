@@ -6,21 +6,20 @@
 //
 
 #import "VEIMDemoTabbarController.h"
-#import "VEIMDemoNavigationViewController.h"
 #import "BDIMDebugManager.h"
+#if __has_include("VEIMDemoLiveGroupListController.h")
+#import "VEIMDemoLiveGroupListController.h"
+#endif
+
+#import "VEIMDemoDefine.h"
 #import "VEIMDemoUserManager.h"
+
+#import "VEIMDemoNavigationViewController.h"
 #import "VEIMDemoConversationListController.h"
 #import "VEIMDemoMyinfoController.h"
-#import "VEIMDemoDefine.h"
-#import "BIMUnreadLabel.h"
-//#import "VEIMDemoLiveGroupListController.h"
 #import "VEIMDemoFriendListController.h"
 
-#import <Masonry/Masonry.h>
-
 @interface VEIMDemoTabbarController ()
-
-@property (nonatomic, strong) BIMUnreadLabel *totalUnread;
 
 @end
 
@@ -58,35 +57,25 @@
 - (void)setupTabBarItems
 {
     self.tabBar.backgroundColor = [UIColor whiteColor];
-    //    IM_PagingConversationViewController *pagingConversationVC = [[IM_PagingConversationViewController alloc] init];
-    //    [self addChildVc:pagingConversationVC title:@"分页会话" image:@"tabbar_conversation_normal" selectedImage:@"buhuangtabbar_conversation_sel"];
     
     VEIMDemoConversationListController *conversationVC = [[VEIMDemoConversationListController alloc] init];
     [self addChildVc:conversationVC title:@"消息" image:@"tabbar_conversation_normal" selectedImage:@"tabbar_conversation_sel"];
-    
-//    VEIMDemoLiveGroupListController *liveGroupVC = [[VEIMDemoLiveGroupListController alloc] init];
-//    [self addChildVc:liveGroupVC title:@"直播群" image:@"tabbar_livegroup_normal" selectedImage:@"tabbar_livegroup_sel"];
+    #if __has_include("VEIMDemoLiveGroupListController.h")
+        VEIMDemoLiveGroupListController *liveGroupVC = [[VEIMDemoLiveGroupListController alloc] init];
+        [self addChildVc:liveGroupVC title:@"直播群" image:@"tabbar_livegroup_normal" selectedImage:@"tabbar_livegroup_sel"];
+    #endif
     
     VEIMDemoFriendListController *friendListVC = [[VEIMDemoFriendListController alloc] init];
     [self addChildVc:friendListVC title:@"通讯录" image:@"tabbar_friendlist_normal" selectedImage:@"tabbar_friendlist_sel"];
-//    friendListVC.tabBarItem.badgeColor = [UIColor redColor];
-//    friendListVC.tabBarItem.badgeValue = @"99+";
     
     VEIMDemoMyinfoController *myInfo = [[VEIMDemoMyinfoController alloc] init];
     [self addChildVc:myInfo title:@"我的" image:@"tabbar_me_normal" selectedImage:@"tabbar_me_sel"];
-//
-//    IM_FriendViewController *friendVC = [[IM_FriendViewController alloc] init];
-//    [self addChildVc:friendVC title:@"好友" image:@"tabbar_conversation_normal" selectedImage:@"tabbar_conversation_sel"];
-//
-//    IM_MineViewController *meVC = [[IM_MineViewController alloc] init];
-//    [self addChildVc:meVC title:@"我的" image:@"tabbar_me_normal" selectedImage:@"tabbar_me_sel"];
 
     self.selectedIndex = 0;
 }
 
 - (void)addChildVc:(UIViewController *)childVc title:(NSString *)title image:(NSString *)image selectedImage:(NSString *)selectedImage
 {
-    ////    childVc.title = title;
     UIImage *img = [[UIImage imageNamed:image] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     UIImage *selectImg = [[UIImage imageNamed:selectedImage] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     if (childVc.tabBarItem) {
@@ -96,7 +85,6 @@
     } else {
         childVc.tabBarItem = [[UITabBarItem alloc] initWithTitle:title image:img selectedImage:selectImg];
     }
-    //    childVc.tabBarItem.imageInsets = UIEdgeInsetsMake(5, 0, 0, 0);
     VEIMDemoNavigationViewController *navController = [[VEIMDemoNavigationViewController alloc] initWithRootViewController:childVc];
     [self addChildViewController:navController];
 }

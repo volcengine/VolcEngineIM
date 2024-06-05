@@ -85,7 +85,7 @@
                 }
             }];
         }
-    }else if(message.msgType == BIM_MESSAGE_TYPE_VIDEO){
+    } else if (message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
         BIMVideoElement *file = (BIMVideoElement *)message.element;
         self.playBtn.hidden = NO;
         
@@ -94,7 +94,7 @@
             self.imageContent.image = img;
         } else {
             [self.imageContent sd_setImageWithURL:[NSURL URLWithString:file.coverImg.url] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                if (error) {
+                if (error && error.code != SDWebImageErrorInvalidURL) {
                     [BIMToastView toast:error.localizedDescription];
                 }
             }];

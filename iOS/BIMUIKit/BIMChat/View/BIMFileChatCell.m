@@ -88,9 +88,11 @@
         CGFloat mbSize = self.file.fileSize/1000.0/1000.0;
         CGFloat kbSize = self.file.fileSize/1000.0;
         if (mbSize > 1){
-            self.fileSizeLabel.text = [NSString stringWithFormat:@"%.2fMB",mbSize];
-        }else{
-            self.fileSizeLabel.text = [NSString stringWithFormat:@"%.2fKB",kbSize];
+            self.fileSizeLabel.text = [NSString stringWithFormat:@"%.2f MB", mbSize];
+        } else if (kbSize > 1) {
+            self.fileSizeLabel.text = [NSString stringWithFormat:@"%.2f KB", kbSize];
+        } else {
+            self.fileSizeLabel.text = [NSString stringWithFormat:@"%lld B", self.file.fileSize];
         }
         
         [self.imageContent setImage:[kIMAGE_IN_BUNDLE_NAMED(@"icon_msg_file") imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];

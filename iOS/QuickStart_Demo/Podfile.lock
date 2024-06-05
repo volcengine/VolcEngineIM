@@ -1,17 +1,17 @@
 PODS:
   - Bolts/Tasks (1.9.1)
   - Godzippa (2.1.1)
-  - IGListDiffKit (4.0.0)
-  - im-uikit-tob (1.13.0):
+  - IGListDiffKit (5.0.0)
+  - im-uikit-tob (1.14.0):
     - Masonry
     - MJRefresh
     - SDWebImage
-  - imsdk-tob (1.13.0-alpha.0):
-    - imsdk-tob/Core (= 1.13.0-alpha.0)
-  - imsdk-tob/Core (1.13.0-alpha.0):
+  - imsdk-tob (1.14.0-alpha.0):
+    - imsdk-tob/Core (= 1.14.0-alpha.0)
+  - imsdk-tob/Core (1.14.0-alpha.0):
     - imsdk-tob/Core_Common
     - TTSDK/Uploader (> 1.28)
-  - imsdk-tob/Core_Common (1.13.0-alpha.0):
+  - imsdk-tob/Core_Common (1.14.0-alpha.0):
     - Bolts/Tasks
     - IGListDiffKit
     - imsdk-tob/Feature_EssentialPB
@@ -31,9 +31,8 @@ PODS:
     - TTNetworkManager
     - WCDB (~> 1.0.6)
     - YYCache
-  - imsdk-tob/Feature_EssentialPB (1.13.0-alpha.0):
+  - imsdk-tob/Feature_EssentialPB (1.14.0-alpha.0):
     - Protobuf (= 3.21.9)
-  - JSONModel (1.8.0)
   - libextobjc (0.6):
     - libextobjc/EXTADT (= 0.6)
     - libextobjc/EXTConcreteProtocol (= 0.6)
@@ -102,28 +101,28 @@ PODS:
     - OneKit/Section
     - OneKit/Service
   - Protobuf (3.21.9)
-  - RangersAPM/Above (3.10.4)
-  - RangersAPM/APMLog (3.10.4):
+  - RangersAPM/Above (3.10.6)
+  - RangersAPM/APMLog (3.10.6):
     - RangersAPM/CloudCommand
     - RangersAPM/Core
     - RangersAPM/HMD
     - RangersAPM/Zip
-  - RangersAPM/CloudCommand (3.10.4):
+  - RangersAPM/CloudCommand (3.10.6):
     - RangersAPM/Core
     - RangersAPM/HMD
-  - RangersAPM/CN (3.10.4):
+  - RangersAPM/CN (3.10.6):
     - RangersAPM/Core
     - RangersAPM/Public
-  - RangersAPM/Core (3.10.4)
-  - RangersAPM/HMD (3.10.4):
+  - RangersAPM/Core (3.10.6)
+  - RangersAPM/HMD (3.10.6):
     - RangersAPM/Core
     - RangersAPM/Public
-  - RangersAPM/Public (3.10.4):
+  - RangersAPM/Public (3.10.6):
     - RangersAPM/Above
     - RangersAPM/Core
     - RangersAPM/Zyone
-  - RangersAPM/Zip (3.10.4)
-  - RangersAPM/Zyone (3.10.4)
+  - RangersAPM/Zip (3.10.6)
+  - RangersAPM/Zyone (3.10.6)
   - RangersAppLog/Core (6.13.2):
     - RangersAppLog/Encryptor
   - RangersAppLog/Encryptor (6.13.2):
@@ -158,8 +157,7 @@ PODS:
 
 DEPENDENCIES:
   - im-uikit-tob (from `../`)
-  - imsdk-tob (= 1.13.0-alpha.0)
-  - JSONModel
+  - imsdk-tob (= 1.14.0-alpha.0)
   - Masonry
   - MBProgressHUD
   - MJRefresh
@@ -171,7 +169,6 @@ SPEC REPOS:
     - Bolts
     - Godzippa
     - IGListDiffKit
-    - JSONModel
     - libextobjc
     - Mantle
     - Masonry
@@ -201,10 +198,9 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   Godzippa: f438af100364a775ef0707d29ab152c356375fbf
-  IGListDiffKit: 665d6cf43ce726e676013db9c7d6c4294259b6b2
-  im-uikit-tob: 6bbdc242757dcd1e3380e9d6125cb958858d56f7
-  imsdk-tob: 9ad3f8da6c3f62e73328bde3952bf7eb7a5c6739
-  JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
+  IGListDiffKit: 02d937d7e714d6f558771f284ed80668d483b522
+  im-uikit-tob: 4a3bb0168efb05b4bf839b8cc7f16c2127d7498e
+  imsdk-tob: e50dbd9a36edb1d9a3c4a9f2ba7bddf6a36151fe
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
@@ -214,7 +210,7 @@ SPEC CHECKSUMS:
   MMKVCore: a67a1cede26175c413176f404a7cedec43f96a0b
   OneKit: 05d59eb122e247640c35ceb28b300ae27e89cb88
   Protobuf: 02524ec14183fe08fb259741659e79683788158b
-  RangersAPM: 3a87d9f5c2867da85955bd752ebc06b9ff1b07be
+  RangersAPM: 3f614f92db45297ae6999ca407f014fb279940d2
   RangersAppLog: aca2ba1dd540ae001120f5fe1e391aafc82aa1c7
   RSSwizzle: d561958f595028bfcef98c7d55c318b3878a61c6
   SDWebImage: dfe95b2466a9823cf9f0c6d01217c06550d7b29a
@@ -225,6 +221,6 @@ SPEC CHECKSUMS:
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: b809b66f9c28b0a048ca6a036eb4e5e650118398
+PODFILE CHECKSUM: 7611416a640060db2f7ccfdb0882a1ce38dbf5f2
 
 COCOAPODS: 1.15.2

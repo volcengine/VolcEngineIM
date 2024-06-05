@@ -9,7 +9,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "im-uikit-tob"
-  spec.version      = "1.13.0"
+  spec.version      = "1.14.0"
   spec.summary      = "IM UIKit"
   spec.description  = <<-DESC
        TODO: Add long description of the pod here.

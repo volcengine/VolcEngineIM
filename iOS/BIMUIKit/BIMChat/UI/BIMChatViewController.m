@@ -760,6 +760,10 @@
             [self playVideoWithMessage:message];
         } else if (message.msgType == BIM_MESSAGE_TYPE_IMAGE) {
             BIMImageElement *file = (BIMImageElement *)message.element;
+            if (![NSURL URLWithString:file.originImg.url]) {
+                [BIMToastView toast:@"图片URL为空"];
+            }
+            
             BOOL hasLocalImage = [[NSFileManager defaultManager] fileExistsAtPath:file.localPath];
             if (hasLocalImage && cell.imageContent.image) {
                 [BIMScanImage scanBigImageWithImageView:cell.imageContent originImage:cell.imageContent.image];
@@ -782,6 +786,8 @@
                     }
                 }];
             }
+        } else if (message.msgType == BIM_MESSAGE_TYPE_FILE) {
+            [BIMToastView toast:@"暂不支持文件预览"];
         }
         [self.inputTool revertToTheOriginalType];
     });
@@ -830,6 +836,8 @@
         }];
     } else if (error.code == SDWebImageErrorCancelled) {
         
+    } else if (error.code == SDWebImageErrorInvalidURL) {
+        // error延迟到点击时处理
     } else {
         [BIMToastView toast:error.localizedDescription];
     }
