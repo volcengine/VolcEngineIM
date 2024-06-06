@@ -21,6 +21,7 @@ public class ModuleStarter {
     public static final String MODULE_KEY_UID_LIST_REMOVED = "uid_list_removed";
     public static final String MODULE_KEY_UID_LIST_CHECKED = "uid_list_checked";
     public static final String MODULE_KEY_SHOW_OWNER = "uid_list_is_show_owner";
+    public static final String MODULE_KEY_OWNER_SELECTABLE = "uid_list_is_owner_selectable";
     public static final String MODULE_KEY_SHOW_TAG = "uid_list_is_show_tag";
     public static final String MODULE_KEY_UID_LIST = "uid_list";
     public static final String MODULE_KEY_TITLE = "title";
@@ -118,15 +119,17 @@ public class ModuleStarter {
                                            ArrayList<Long> removedList,
                                            ArrayList<Long> checkedList,
                                            boolean isShowOwner,
+                                           boolean isOwnerSelectable,
                                            boolean isShowTag,
                                            int requestCode) {
         Intent intent = new Intent();
         intent.putExtra(MODULE_KEY_TITLE, title);
         intent.putExtra(MODULE_KEY_CID, conversationId);
-        intent.putExtra(MODULE_KEY_UID_LIST_INVALID, removedList);
+        intent.putExtra(MODULE_KEY_UID_LIST_REMOVED, removedList);
         intent.putExtra(MODULE_KEY_UID_LIST_CHECKED, checkedList);
         intent.putExtra(MODULE_KEY_SHOW_OWNER, isShowOwner);
         intent.putExtra(MODULE_KEY_SHOW_TAG, isShowTag);
+        intent.putExtra(MODULE_KEY_OWNER_SELECTABLE,isOwnerSelectable);
         intent.setAction("com.bytedance.im.app.member.group.VEMemberSelectListActivity");
         intent.addCategory("android.intent.category.DEFAULT");
         if (intent.resolveActivity(activity.getPackageManager()) != null) {

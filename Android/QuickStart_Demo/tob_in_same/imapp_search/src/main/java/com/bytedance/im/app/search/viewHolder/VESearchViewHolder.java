@@ -2,10 +2,13 @@ package com.bytedance.im.app.search.viewHolder;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 
-public class VESearchViewHolder<T> extends RecyclerView.ViewHolder {
+import com.bytedance.im.app.search.interfaces.OnSearchMsgClickListener;
 
+public class VESearchViewHolder<T> extends RecyclerView.ViewHolder {
+    protected OnSearchMsgClickListener onSearchMsgClickListener;
 
     public VESearchViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -13,5 +16,9 @@ public class VESearchViewHolder<T> extends RecyclerView.ViewHolder {
 
     public void bind(T t) {
 
+    }
+
+    public void setOnSearchMsgClickListener(OnSearchMsgClickListener onSearchMsgClickListener) {
+        this.onSearchMsgClickListener = onSearchMsgClickListener;
     }
 }

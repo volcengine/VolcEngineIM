@@ -17,10 +17,13 @@
 #import <OneKit/BTDMacros.h>
 #import <im-uikit-tob/BIMToastView.h>
 
+static const NSInteger kTimeout = 60;
+
 @interface VEIMDemoAccountCancellationManager ()
 
 @property (nonatomic, strong) dispatch_group_t group;
 @property (nonatomic, assign) NSTimeInterval startTime;
+@property (nonatomic, strong) dispatch_semaphore_t sema;
 
 @end
 
@@ -42,6 +45,7 @@
 {
     if (self = [super init]) {
         self.group = dispatch_group_create();
+        _sema = dispatch_semaphore_create(5);
     }
     return self;
 }
@@ -90,26 +94,33 @@
 {
     dispatch_group_enter(self.group);
     [[BIMClient sharedInstance] getConversationList:cursor count:100 completion:^(NSArray<BIMConversation *> * _Nullable conversations, BOOL hasMore, long long nextCursor, BIMError * _Nullable error) {
-        // 超时
-        if ([[NSDate date] timeIntervalSince1970] - self.startTime > 60) {
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            // 超时
+            if ([[NSDate date] timeIntervalSince1970] - self.startTime > kTimeout) {
+                dispatch_group_leave(self.group);
+                return;
+            }
+            // 失败重试
+            if (error) {
+                [self quitAllConversationWithUid:uid cursor:cursor];
+                dispatch_group_leave(self.group);
+                return;
+            }
+            
+            // 遍历会话，退出
+            for (BIMConversation *conv in conversations) {
+                @autoreleasepool {
+                    [self quitConversation:conv withUid:uid];
+                }
+            }
+            
+            // hasMore拉取
+            if (hasMore) {
+                [self quitAllConversationWithUid:uid cursor:nextCursor];
+            }
+            
             dispatch_group_leave(self.group);
-            return;
-        }
-        // 失败重试
-        if (error) {
-            [self quitAllConversationWithUid:uid cursor:cursor];
-            dispatch_group_leave(self.group);
-            return;
-        }
-        // hasMore拉取
-        if (hasMore) {
-            [self quitAllConversationWithUid:uid cursor:nextCursor];
-        }
-        // 遍历会话，退出
-        for (BIMConversation *conv in conversations) {
-            [self quitConversation:conv withUid:uid];
-        }
-        dispatch_group_leave(self.group);
+        });
     }];
 }
 
@@ -117,10 +128,11 @@
 - (void)quitConversation:(BIMConversation *)conv withUid:(NSString *)uid
 {
     // 超时直接返回
-    if ([[NSDate date] timeIntervalSince1970] - self.startTime > 60) {
+    if ([[NSDate date] timeIntervalSince1970] - self.startTime > kTimeout) {
         return;
     }
-    dispatch_group_enter(self.group);
+//    dispatch_group_enter(self.group);
+    dispatch_semaphore_wait(self.sema, DISPATCH_TIME_FOREVER);
     // 单聊
     if (conv.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
         NSDictionary *dic = @{
@@ -131,20 +143,22 @@
         @weakify(self);
         [self setConversationCoreInfoWithExt:dic conversationId:convId completion:^(id extraInfo, NSError *error) {
             @strongify(self);
+            dispatch_semaphore_signal(self.sema);
             if (error) {
-                   [self quitConversation:conv withUid:uid];
-               }
-               dispatch_group_leave(self.group);
+                [self quitConversation:conv withUid:uid];
+            }
+//               dispatch_group_leave(self.group);
         }];
         
     } else if (conv.conversationType == 2) {  // 群聊
         @weakify(self);
         [[BIMClient sharedInstance] leaveGroup:conv.conversationID completion:^(BIMError * _Nullable error) {
             @strongify(self);
+            dispatch_semaphore_signal(self.sema);
             if (error) {
                 [self quitConversation:conv withUid:uid];
             }
-            dispatch_group_leave(self.group);
+//            dispatch_group_leave(self.group);
         }];
     }
 }

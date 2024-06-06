@@ -23,6 +23,7 @@
 #import "VEIMDemoProfileEditViewController.h"
 #import "VEIMDemoConversationExtController.h"
 #import "VEIMDemoConversationDetailDebugViewController.h"
+#import "VEIMDemoSearchResultContainer.h"
 
 typedef enum : NSUInteger {
     VEIMDemoConversationActionTypeDefault = 0,
@@ -177,12 +178,14 @@ typedef enum : NSUInteger {
     VEIMDemoSettingModel *searchMessage = [VEIMDemoSettingModel settingWithTitle:@"搜索消息记录" detail:@"" isNeedSwitch:NO switchOn:NO];
     searchMessage.clickHandler = ^{
         @strongify(self);
-        VEIMDemoFTSViewController *vc = [VEIMDemoFTSViewController new];
-        vc.conversationID = self.conversation.conversationID;
+        
+        VEIMDemoSearchResultContainer *vc = [[VEIMDemoSearchResultContainer alloc] initWithConversationID:self.conversation.conversationID conversationType:self.conversation.conversationType direction:BIM_PULL_DIRECTION_DESC];
         [self.navigationController pushViewController:vc animated:YES];
+        
         NSMutableArray *controllers = [NSMutableArray arrayWithArray:self.navigationController.viewControllers];
         [controllers removeObjectAtIndex:1];
         self.navigationController.viewControllers = controllers;
+        
     };
     [self.settings addObject:searchMessage];
 

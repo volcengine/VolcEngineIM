@@ -31,8 +31,6 @@ public class VESearchMsgViewHolder extends VESearchViewHolder<VESearchMsgWrapper
     private TextView title;
     private TextView des;
     private TextView time;
-    private OnSearchMsgClickListener listener;
-
 
     public VESearchMsgViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -42,36 +40,33 @@ public class VESearchMsgViewHolder extends VESearchViewHolder<VESearchMsgWrapper
         time = itemView.findViewById(R.id.tv_time);
     }
 
-    public void setListener(OnSearchMsgClickListener listener) {
-        this.listener = listener;
-    }
-
     @Override
     public void bind(VESearchMsgWrapper t) {
         super.bind(t);
         VESearchMsgInfo veSearchMsgInfo = t.getInfo();
         BIMUIUser user = veSearchMsgInfo.getUser();
+
         BIMSearchMsgInfo searchMsgInfo = veSearchMsgInfo.getSearchMsgInfo();
+        BIMMessage bimMessage = searchMsgInfo.getMessage();
         BIMSearchDetail searchDetail = searchMsgInfo.getSearchDetail();
         String searchKey = searchDetail.getSearchKey();
         List<BIMSearchPosition> positionList = searchDetail.getKeyPositions();
         String searchContent = searchDetail.getSearchContent();
-        BIMMessage bimMessage = searchMsgInfo.getMessage();
         SpannableString spannableString = new SpannableString(searchContent);
         for (BIMSearchPosition pos : positionList) {
             spannableString.setSpan(new ForegroundColorSpan(Color.GREEN), pos.getStart(), pos.getEnd(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         des.setText(spannableString);
         title.setText(BIMUINameUtils.getShowName(user));
-        itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onSearchMsgClick(searchMsgInfo);
-            }
-        });
         Glide.with(imageView.getContext()).load(user.getPortraitUrl())
                 .placeholder(R.drawable.icon_recommend_user_default)
                 .error(R.drawable.icon_recommend_user_default)
                 .into(imageView);
         time.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(bimMessage.getCreatedTime()));
+        itemView.setOnClickListener(v -> {
+            if (onSearchMsgClickListener != null) {
+                onSearchMsgClickListener.onSearchMsgClick(searchMsgInfo);
+            }
+        });
     }
 }

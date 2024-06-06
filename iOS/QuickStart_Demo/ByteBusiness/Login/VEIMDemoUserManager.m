@@ -14,11 +14,14 @@
 #import <MBProgressHUD/MBProgressHUD.h>
 #import <imsdk-tob/BIMSDK.h>
 #import <OneKit/ByteDanceKit.h>
-//#import <imsdk-tob/BIMDebugManager.h>
+#if __has_include(<imsdk-tob/BIMDebugManager.h>)
+#import <imsdk-tob/BIMDebugManager.h>
+#endif
 #import "BIMUIClient.h"
 #import "VEIMDemoIMManager.h"
 #import <imsdk-tob/BIMClient+Friend.h>
 #import "BIMToastView.h"
+
 
 @interface VEIMDemoUserManager ()<BIMConnectListener, BIMFriendListener, BIMUIClientUserInfoDataSource>
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
@@ -79,6 +82,15 @@
 
 - (void)initSDK
 {
+    // debug
+#if __has_include(<imsdk-tob/BIMDebugManager.h>)
+    [BIMDebugManager sharedInstance].imServerBaseURL = [[BDIMDebugNetworkManager sharedManager] apiUrl];
+    [BIMDebugManager sharedInstance].env = [BDIMDebugNetworkManager sharedManager].env == BDIMDebugNetworkEnvTypePPE ? @"ppe" : @"boe";
+    [BIMDebugManager sharedInstance].netLane = [BDIMDebugNetworkManager sharedManager].netLane;
+    [[BIMDebugManager sharedInstance] configNetwork];
+#endif
+    
+    
     BIMSDKConfig *config = [[BIMSDKConfig alloc] init];
 //    config.enableAPM = ![BDIMDebugNetworkManager sharedManager].disableApm;
 //    config.enableAppLog = ![BDIMDebugNetworkManager sharedManager].disableApplog;
@@ -86,7 +98,6 @@
             // 日志 输出
         NSLog(@"TIM--%@", logContent);
     }];
-    // env 国内：BIM_ENV_DEFAULT_ZH 海外：BIM_ENV_I18N
     [[BIMUIClient sharedInstance] initSDK:[kVEIMDemoAppID integerValue] config:config env:kVEIMDemoEnv];
     
     [[BIMUIClient sharedInstance] setUserProvider:^BIMUser * _Nullable(long long userID) {
@@ -346,7 +357,9 @@
                 @strongify(self);
                 [[BIMUIClient sharedInstance] unInitSDK];
                 [self initSDK];
-//                [[BIMDebugManager sharedInstance] removeAllData];
+#if __has_include(<imsdk-tob/BIMDebugManager.h>)
+                [[BIMDebugManager sharedInstance] removeAllData];
+#endif
             }];
         }];
     }

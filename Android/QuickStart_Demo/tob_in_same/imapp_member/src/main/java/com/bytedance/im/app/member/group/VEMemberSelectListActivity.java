@@ -37,6 +37,7 @@ public class VEMemberSelectListActivity extends Activity {
     private List<Long> removedList;
     private List<Long> checkedList;
     private boolean isShowOwner;
+    private boolean isOwnerSelectable;
     private boolean isShowTag;
     private TextView tvTitle;
 
@@ -46,6 +47,7 @@ public class VEMemberSelectListActivity extends Activity {
         removedList = (List<Long>) getIntent().getSerializableExtra(ModuleStarter.MODULE_KEY_UID_LIST_REMOVED);
         checkedList = (List<Long>) getIntent().getSerializableExtra(ModuleStarter.MODULE_KEY_UID_LIST_CHECKED);
         isShowOwner = getIntent().getBooleanExtra(ModuleStarter.MODULE_KEY_SHOW_OWNER, false);
+        isOwnerSelectable = getIntent().getBooleanExtra(ModuleStarter.MODULE_KEY_OWNER_SELECTABLE,false);
         isShowTag = getIntent().getBooleanExtra(ModuleStarter.MODULE_KEY_SHOW_TAG,false);
         String title = getIntent().getStringExtra(ModuleStarter.MODULE_KEY_TITLE);
         setContentView(R.layout.ve_im_activity_member_list_select_layout);
@@ -71,7 +73,7 @@ public class VEMemberSelectListActivity extends Activity {
                     adapter = new VEMemberSelectAdapter(VEMemberSelectListActivity.this,
                             filter(memberWrappers),
                             checkedList,
-                            isShowTag);
+                            isShowTag,isOwnerSelectable);
                     memberListV.setAdapter(adapter);
                 }
             }

@@ -27,66 +27,27 @@
             android:textColor="@color/business_im_222"
             android:textSize="18sp"
             android:textStyle="bold" />
+        <TextView
+            android:id="@+id/order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:text="逆序"
+            android:textColor="@color/business_im_222"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
     </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/tab_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="13dp"
-        android:background="@drawable/shape_im_seach_bg"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="5dp">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:padding="4dp"
-            android:src="@drawable/icon_im_search" />
-
-        <EditText
-            android:id="@+id/et_input_search_msg"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
-            android:layout_weight="1"
-            android:background="@null"
-            android:hint="搜索"
-            android:inputType="text"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:textColor="@color/business_im_222"
-            android:textColorHint="@color/business_im_222_p30"
-            android:textSize="14sp" />
-
-        <ImageView
-            android:id="@+id/iv_search_clear"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:padding="4dp"
-            android:src="@drawable/icon_im_search_clear"
-            android:visibility="gone" />
-    </LinearLayout>
+        android:layout_height="48dp"
+        android:orientation="horizontal" />
 
     <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/empty_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="160dp"
-            android:text="未搜索到相关结果"
-            android:visibility="gone"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/search_result"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
+        android:layout_height="match_parent" />
 </LinearLayout>

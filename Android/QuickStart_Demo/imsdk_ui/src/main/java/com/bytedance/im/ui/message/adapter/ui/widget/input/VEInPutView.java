@@ -75,6 +75,7 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
     private KeyBoardHeightHelper keyBoardHeightHelper;
     private StateMachine stateMachine;
     private boolean isInit = false;
+    private KeyBoardHeightHelper.OnMeasureCompleteListener onKeyboardListener;
 
     public VEInPutView(@NonNull Context context) {
         this(context, null);
@@ -133,11 +134,17 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
                 layoutParams.height = keyBoardHeight;
                 functionLayout.setLayoutParams(layoutParams);
                 stateMachine.sendMsg(StateMachine.MSG_KEY_BOARD_SHOW);
+                if(onKeyboardListener!=null){
+                    onKeyboardListener.onKeyBoardShow(keyBoardHeight);
+                }
             }
 
             @Override
             public void onKeyBoardHide() {
                 stateMachine.sendMsg(StateMachine.MSG_KEY_BOARD_HIDE);
+                if (onKeyboardListener != null) {
+                    onKeyboardListener.onKeyBoardHide();
+                }
             }
         });
     }
@@ -358,6 +365,10 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
                 toolBtn.onActivityResult(requestCode, resultCode, data);
             }
         }
+    }
+
+    public void setOnKeyboardListener(KeyBoardHeightHelper.OnMeasureCompleteListener onKeyboardListener) {
+        this.onKeyboardListener = onKeyboardListener;
     }
 
     private String getNickName(BIMUIUser fullInfo) {

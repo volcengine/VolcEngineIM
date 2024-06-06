@@ -14,18 +14,13 @@ android {
         versionName im_versionName
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders.put("APPLOG_SCHEME", "rangersapplog.b674e0c0eec26787".toLowerCase())
-
     }
     signingConfigs {
         debug {
 
         }
         release {
-            storeFile file('.\\key\\keys.jks')
-            keyAlias 'bytedanceim'
-            storePassword 'bytedanceim'
-            keyPassword 'bytedanceim'
+
         }
     }
     buildTypes {

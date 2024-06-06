@@ -74,6 +74,12 @@
             android:text="boe环境" />
 
         <RadioButton
+            android:id="@+id/env_ppe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ppe环境" />
+
+        <RadioButton
             android:id="@+id/env_boei18n"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

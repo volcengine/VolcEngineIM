@@ -122,7 +122,7 @@ public class VEDetailGroupConversationActivity extends Activity {
             @Override
             public void onDeleteClick() {
                 BIMUIClient.getInstance().getModuleStarter().startMemberModuleSelect(VEDetailGroupConversationActivity.this, "移除群成员",
-                        conversationId, null, null, false, false, REQUEST_CODE_REMOVE_USER);
+                        conversationId, null, null, false, false,false, REQUEST_CODE_REMOVE_USER);
             }
 
             @Override
@@ -137,7 +137,7 @@ public class VEDetailGroupConversationActivity extends Activity {
         optionNoticeLayout.setOnClickListener(v -> VEEditGroupNoticeActivity.start(VEDetailGroupConversationActivity.this, conversationId));
         optionManager.setOnClickListener(v ->
                 BIMUIClient.getInstance().getModuleStarter().startMemberModuleSelect(VEDetailGroupConversationActivity.this, "设置管理员",
-                        conversationId, null, adminIdList, true, true, REQUEST_CODE_SET_ADMIN));
+                        conversationId, null, adminIdList, true, false,true, REQUEST_CODE_SET_ADMIN));
         flSearch.setOnClickListener(v ->
                 BIMUIClient.getInstance().getModuleStarter().startSearchModule(VEDetailGroupConversationActivity.this, conversationId)
         );

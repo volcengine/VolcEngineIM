@@ -3,6 +3,7 @@ package com.bytedance.im.ui.message.adapter.ui.inner;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -68,22 +69,24 @@ public class FileMessageUI extends BaseCustomElementUI {
 
     @Override
     public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
-        BIMFileElement fileElement = (BIMFileElement) messageWrapper.getBimMessage().getElement();
-        if (fileElement.isExpired()) {
-            holder.getOnOutListener().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
-                @Override
-                public void onSuccess(BIMMessage bimMessage) {
-                    //todo download
-                }
-
-                @Override
-                public void onFailed(BIMErrorCode code) {
-
-                }
-            });
-        } else {
-            //todo download
-        }
+        Toast.makeText(v.getContext(), "暂不支持文件预览", Toast.LENGTH_SHORT).show();
+        return;
+//        BIMFileElement fileElement = (BIMFileElement) messageWrapper.getBimMessage().getElement();
+//        if (fileElement.isExpired()) {
+//            holder.getOnOutListener().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
+//                @Override
+//                public void onSuccess(BIMMessage bimMessage) {
+//                    //todo download
+//                }
+//
+//                @Override
+//                public void onFailed(BIMErrorCode code) {
+//
+//                }
+//            });
+//        } else {
+//            //todo download
+//        }
     }
 
     public static String getFileSizeDescription(long size) {
