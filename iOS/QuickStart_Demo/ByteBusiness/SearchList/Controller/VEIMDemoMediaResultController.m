@@ -80,11 +80,13 @@
     self.collectionResult.mj_footer = [MJRefreshBackStateFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerPulled)];
 }
 
+
 - (void)setupMsgs
 {
-    BIMGetMessageByTypeOption *option = [[BIMGetMessageByTypeOption alloc] initWithAnchorMessage:nil limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
+    
+    BIMGetMessageByTypeOption *option = [self createOptionWithAnchorMessage:nil limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
     @weakify(self);
-    [[BIMClient sharedInstance] getLocalMessageListByType:self.conversationID getMessageByTypeOption:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable anchorMessage, BIMError * _Nullable error) {
+    [[BIMClient sharedInstance] getLocalMessageListByType:self.conversationID option:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable anchorMessage, BIMError * _Nullable error) {
         @strongify(self);
         if (error) {
             [BIMToastView toast:error.localizedDescription];
@@ -211,7 +213,7 @@
         UIImage *img;
         if (videoElement.localPath) {
             img = [self thumbnailImageForVideo:[NSURL fileURLWithPath:videoElement.localPath] atTime:1];
-        } 
+        }
         
         if (img) {
             cell.imageContent.image = img;
@@ -414,9 +416,9 @@
         return;
     }
     
-    BIMGetMessageByTypeOption *option = [[BIMGetMessageByTypeOption alloc] initWithAnchorMessage:self.anchorMessage.anchorMessage.message limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
+    BIMGetMessageByTypeOption *option = [self createOptionWithAnchorMessage:self.anchorMessage.anchorMessage.message limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
     @weakify(self);
-    [[BIMClient sharedInstance] getLocalMessageListByType:self.conversationID getMessageByTypeOption:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable anchorMessage, BIMError * _Nullable error) {
+    [[BIMClient sharedInstance] getLocalMessageListByType:self.conversationID option:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable anchorMessage, BIMError * _Nullable error) {
         @strongify(self);
         if (error) {
             /// TODO: error发生时的弹窗
@@ -442,6 +444,20 @@
     
     [self.collectionResult.mj_footer endRefreshing];
 }
+
+#pragma mark -
+
+- (BIMGetMessageByTypeOption *)createOptionWithAnchorMessage:(BIMMessage *)message limit:(NSInteger)limit messageTypeList:(NSArray<NSNumber *> *)messageTypeList direction:(BIMPullDirection)direction
+{
+    BIMGetMessageByTypeOption *option = [[BIMGetMessageByTypeOption alloc] init];
+    option.anchorMessage = message;
+    option.limit = limit;
+    option.messageTypeList = messageTypeList;
+    option.direction = direction;
+    
+    return option;
+}
+
 
 @end
 

@@ -107,9 +107,9 @@ typedef NS_ENUM(NSInteger, VEIMDemoSearchDataSourceMode) {
 - (void)setupMsgs
 {
     if (self.msgType == BIM_MESSAGE_TYPE_FILE) {
-        BIMGetMessageByTypeOption *option = [[BIMGetMessageByTypeOption alloc] initWithAnchorMessage:nil limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
+        BIMGetMessageByTypeOption *option = [self createOptionWithAnchorMessage:nil limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
         @weakify(self);
-        [[BIMClient sharedInstance] getLocalMessageListByType:self.conversationID getMessageByTypeOption:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable anchorMessage, BIMError * _Nullable error) {
+        [[BIMClient sharedInstance] getLocalMessageListByType:self.conversationID option:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable anchorMessage, BIMError * _Nullable error) {
             @strongify(self);
             if (error) {
                 [BIMToastView toast:error.localizedDescription];
@@ -206,7 +206,7 @@ typedef NS_ENUM(NSInteger, VEIMDemoSearchDataSourceMode) {
     [self.tblResult.mj_footer resetNoMoreData];
     self.currentDataSourceMode = VEIM_DEMO_FTS_MODE;
     @weakify(self);
-    BIMGetMessageByTypeOption *option = [[BIMGetMessageByTypeOption alloc] initWithAnchorMessage:nil limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
+    BIMGetMessageByTypeOption *option = [self createOptionWithAnchorMessage:nil limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
     [[BIMClient sharedInstance] searchLocalMessage:self.conversationID key:word option:option completion:^(NSArray<BIMSearchMsgInfo *> * _Nullable infos, BOOL hasMore, BIMSearchMsgInfo * _Nullable anchorMessage, BIMError * _Nullable error) {
         @strongify(self);
         if (![self.txtfSearch.text isEqualToString:word]) {
@@ -417,7 +417,7 @@ typedef NS_ENUM(NSInteger, VEIMDemoSearchDataSourceMode) {
         }
         
         @weakify(self);
-        BIMGetMessageByTypeOption *option = [[BIMGetMessageByTypeOption alloc] initWithAnchorMessage:self.FTSAnchorMessage.anchorMessage.message limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
+        BIMGetMessageByTypeOption *option = [self createOptionWithAnchorMessage:self.FTSAnchorMessage.anchorMessage.message limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
         
         NSString *word = self.key;
         [[BIMClient sharedInstance] searchLocalMessage:self.conversationID key:word option:option completion:^(NSArray<BIMSearchMsgInfo *> * _Nullable infos, BOOL hasMore, BIMSearchMsgInfo * _Nullable anchorMessage, BIMError * _Nullable error) {
@@ -447,9 +447,9 @@ typedef NS_ENUM(NSInteger, VEIMDemoSearchDataSourceMode) {
                 return;
             }
             
-            BIMGetMessageByTypeOption *option = [[BIMGetMessageByTypeOption alloc] initWithAnchorMessage:self.defaultAnchorMessage.anchorMessage.message limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
+            BIMGetMessageByTypeOption *option = [self createOptionWithAnchorMessage:self.defaultAnchorMessage.anchorMessage.message limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
             @weakify(self);
-            [[BIMClient sharedInstance] getLocalMessageListByType:self.conversationID getMessageByTypeOption:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable anchorMessage, BIMError * _Nullable error) {
+            [[BIMClient sharedInstance] getLocalMessageListByType:self.conversationID option:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable anchorMessage, BIMError * _Nullable error) {
                 @strongify(self);
                 if (error) {
                     [BIMToastView toast:error.localizedDescription];
@@ -495,5 +495,19 @@ typedef NS_ENUM(NSInteger, VEIMDemoSearchDataSourceMode) {
     
     return formattedFileSize;
 }
+
+#pragma mark -
+
+- (BIMGetMessageByTypeOption *)createOptionWithAnchorMessage:(BIMMessage *)message limit:(NSInteger)limit messageTypeList:(NSArray<NSNumber *> *)messageTypeList direction:(BIMPullDirection)direction
+{
+    BIMGetMessageByTypeOption *option = [[BIMGetMessageByTypeOption alloc] init];
+    option.anchorMessage = message;
+    option.limit = limit;
+    option.messageTypeList = messageTypeList;
+    option.direction = direction;
+    
+    return option;
+}
 @end
+
 
