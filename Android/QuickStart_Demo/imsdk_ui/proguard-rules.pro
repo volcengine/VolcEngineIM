@@ -19,11 +19,12 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
--keep class com.bytedance.im.ui.BIMUIClient{ *; }
--keep class com.bytedance.im.ui.user.** { *; }
--keep class com.bytedance.im.ui.api.** { *; }
--keep class com.bytedance.im.ui.message.** { *; }
--keep class com.bytedance.im.ui.conversation.** { *; }
--keep class com.bytedance.im.ui.utils.** { *; }
--keep class com.bytedance.im.ui.log.BIMLog{ *; }
--keep class com.bytedance.im.ui.emoji.**{*;}
+-keep class com.bytedance.**{*;}
+#-keep class com.bytedance.im.ui.BIMUIClient{ *; }
+#-keep class com.bytedance.im.ui.user.** { *; }
+#-keep class com.bytedance.im.ui.api.** { *; }
+#-keep class com.bytedance.im.ui.message.** { *; }
+#-keep class com.bytedance.im.ui.conversation.** { *; }
+#-keep class com.bytedance.im.ui.utils.** { *; }
+#-keep class com.bytedance.im.ui.log.BIMLog{ *; }
+#-keep class com.bytedance.im.ui.emoji.**{*;}
