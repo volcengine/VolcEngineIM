@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.bytedance.im.core.api.interfaces.BIMDownloadCallback;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 
 import com.bytedance.im.core.api.model.BIMConversation;
@@ -39,17 +40,24 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
     private BIMUserProvider userProvider;
     private RecyclerView recyclerView;
     private BIMConversation bimConversation;
-
+    private OnDownloadListener onDownloadListener;
     public interface OnRefreshListener {
         void refreshMediaMessage(BIMMessage bimMessage, BIMResultCallback<BIMMessage> callback);
     }
 
-    public BIMMessageAdapter(RecyclerView recyclerView, BIMUserProvider provider, OnMessageItemClickListener listener, OnMessageItemLongClickListener longClickListener, OnRefreshListener onRefreshListener) {
+    public interface OnDownloadListener {
+        void downLoadMessage(BIMMessage bimMessage, String url, boolean needNotify, BIMDownloadCallback callback);
+    }
+
+    public BIMMessageAdapter(RecyclerView recyclerView, BIMUserProvider provider, OnMessageItemClickListener listener, OnMessageItemLongClickListener longClickListener,
+                             OnRefreshListener onRefreshListener,
+                             OnDownloadListener onDownloadListener) {
         this.recyclerView = recyclerView;
         this.userProvider = provider;
         onMessageItemClickListener = listener;
         onMessageItemLongClickListener = longClickListener;
         this.onRefreshListener = onRefreshListener;
+        this.onDownloadListener = onDownloadListener;
     }
 
     @NonNull
@@ -60,7 +68,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
         FrameLayout messageContainer = root.findViewById(R.id.container);
 //        messageContainer.setBackground(new DynamicGradientDrawable((RecyclerView) parent, root, messageContainer));
         layoutInflater.inflate(viewType, messageContainer, true);
-        return new BIMMessageViewHolder(root, recyclerView, userProvider, onMessageItemClickListener, onMessageItemLongClickListener, onRefreshListener);
+        return new BIMMessageViewHolder(root, recyclerView, userProvider, onMessageItemClickListener, onMessageItemLongClickListener, onRefreshListener,onDownloadListener);
     }
 
     @Override

@@ -111,7 +111,8 @@ public class BIMMessageListActivity extends Activity {
             if (bimConversation != null) {
                 if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
                     BIMUIClient.getInstance().getModuleStarter().startDetailSingleActivity(BIMMessageListActivity.this, conversationId);
-                } else if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT) {
+                } else if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT
+                        || bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_LITE_LIVE_CHAT) {
                     BIMUIClient.getInstance().getModuleStarter().startDetailGroupActivity(BIMMessageListActivity.this, conversationId);
                 }
             } else {
@@ -318,7 +319,8 @@ public class BIMMessageListActivity extends Activity {
 
                         }
                     });
-                } else if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT) {
+                } else if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT
+                        || bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_LITE_LIVE_CHAT) {
                     titleName = getGroupName(conversation);
                     tvTitle.setText(titleName);
                 }

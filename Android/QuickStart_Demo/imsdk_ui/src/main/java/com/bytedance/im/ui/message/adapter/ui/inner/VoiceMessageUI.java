@@ -6,11 +6,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bytedance.im.core.api.BIMClient;
+import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.interfaces.BIMDownloadCallback;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
+import com.bytedance.im.download.api.BIMDownloadExpandService;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
@@ -22,6 +26,7 @@ import com.bytedance.im.ui.utils.BIMUtils;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.model.inner.msg.BIMAudioElement;
 
+import java.io.File;
 import java.util.Collections;
 
 
@@ -81,26 +86,55 @@ public class VoiceMessageUI extends BaseCustomElementUI {
                 BIMLog.e("VoiceMessageUI", "sendMessageReadReceipts failed: " + code);
             }
         });
-        if (audioElement != null) {
-            if (audioElement.isExpired()) {
-                holder.getOnOutListener().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
-                    @Override
-                    public void onSuccess(BIMMessage bimMessage) {
-                        AudioHelper.getInstance().play(audioElement.getURL());
+
+        BIMMessage bimMessage = messageWrapper.getBimMessage();
+        if (bimMessage.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_LIVE_CHAT) {
+            if (audioElement != null) {
+                if (audioElement.isExpired()) {
+                    holder.getOnOutListener().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
+                        @Override
+                        public void onSuccess(BIMMessage bimMessage) {
+                            AudioHelper.getInstance().play(audioElement.getURL());
+                        }
+
+                        @Override
+                        public void onFailed(BIMErrorCode code) {
+
+                        }
+
+                    });
+                } else {
+                    String url = audioElement.getLocalPath();
+                    if (TextUtils.isEmpty(url)) {
+                        url = audioElement.getURL();
                     }
-
-                    @Override
-                    public void onFailed(BIMErrorCode code) {
-
-                    }
-
-                });
-            } else {
-                String url = audioElement.getLocalPath();
-                if (TextUtils.isEmpty(url)) {
-                    url = audioElement.getURL();
+                    AudioHelper.getInstance().play(url);
                 }
-                AudioHelper.getInstance().play(url);
+            }
+        } else {
+            if (audioElement != null) {
+                String localPath = audioElement.getDownloadPath();
+                boolean localFileExist = new File(localPath).exists();
+                if (!localFileExist) {
+                    BIMClient.getInstance().downloadFile(bimMessage, audioElement.getURL(), new BIMDownloadCallback() {
+                        @Override
+                        public void onSuccess(BIMMessage bimMessage) {
+                            Toast.makeText(v.getContext(), "下载成功", Toast.LENGTH_SHORT).show();
+                            AudioHelper.getInstance().play(audioElement.getDownloadPath());
+                        }
+
+                        @Override
+                        public void onError(BIMMessage bimMessage, BIMErrorCode code) {
+                            if (code == BIMErrorCode.BIM_DOWNLOAD_FILE_DUPLICATE) {
+                                Toast.makeText(v.getContext(), "下载中", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(v.getContext(), "下载失败，请重试", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    AudioHelper.getInstance().play(audioElement.getDownloadPath());
+                }
             }
         }
     }

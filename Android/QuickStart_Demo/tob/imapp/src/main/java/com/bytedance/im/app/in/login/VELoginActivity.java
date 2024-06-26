@@ -26,6 +26,8 @@ import com.bytedance.im.app.custom.operations.VEMessageDetailOperationInfo;
 import com.bytedance.im.app.utils.VEUtils;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.enums.BIMLogLevel;
+import com.bytedance.im.core.api.interfaces.BIMLogListener;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 
 import com.bytedance.im.ui.BIMUIClient;
@@ -175,6 +177,12 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
         BIMSDKConfig config = new BIMSDKConfig();
         config.setEnableAPM(SpUtils.getInstance().isEnableAPM());
         config.setEnableAppLog(SpUtils.getInstance().isEnableALog());
+//        config.setLogListener(new BIMLogListener() {
+//            @Override
+//            public void onLog(BIMLogLevel logLevel, String content) {
+//                Log.i("customLog","content: "+content);
+//            }
+//        });
         initCustom();
         BIMUIClient.getInstance().setUserProvider(new BIMDefaultUserProvider(500)); //需要先设置
         BIMUIClient.getInstance().init(application,curAppId, env, swimLean, config);

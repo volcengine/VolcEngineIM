@@ -51,7 +51,7 @@ public class VoiceRecordManager {
                     mMediaRecorder = new MediaRecorder();
                 }
                 mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);//设置录音来源
-                mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);//设置输出格式
+                mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);//设置输出格式
                 mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);//设置编码格式
                 mMediaRecorder.setOutputFile(path);//设置输出路径
                 mMediaRecorder.prepare();//准备

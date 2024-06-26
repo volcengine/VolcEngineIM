@@ -16,9 +16,11 @@ import com.bumptech.glide.Glide;
 import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageStatus;
+import com.bytedance.im.core.api.interfaces.BIMDownloadCallback;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMessagePropertyItem;
+import com.bytedance.im.core.internal.utils.IMLog;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.emoji.EmojiManager;
 import com.bytedance.im.ui.log.BIMLog;
@@ -50,6 +52,7 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
     private BIMMessageAdapter.OnMessageItemClickListener listener;
     private BIMMessageAdapter.OnMessageItemLongClickListener onMessageItemLongClickListener;
     private BIMMessageAdapter.OnRefreshListener onRefreshListener;
+    private BIMMessageAdapter.OnDownloadListener onDownloadListener;
     private ViewGroup msgContainer;
     private TextView recall;
     private View headContainerRight;
@@ -59,13 +62,17 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
     private TextView tvPropertyLeft, tvPropertyRight;
     private TextView tvReadReceipt;
 
-    public BIMMessageViewHolder(@NonNull View itemView,RecyclerView recyclerView, BIMUserProvider provider, BIMMessageAdapter.OnMessageItemClickListener l, BIMMessageAdapter.OnMessageItemLongClickListener longClickListener, BIMMessageAdapter.OnRefreshListener mediaMessageLoadListener) {
+    public BIMMessageViewHolder(@NonNull View itemView,RecyclerView recyclerView, BIMUserProvider provider, BIMMessageAdapter.OnMessageItemClickListener l,
+                                BIMMessageAdapter.OnMessageItemLongClickListener longClickListener,
+                                BIMMessageAdapter.OnRefreshListener mediaMessageLoadListener,
+                                BIMMessageAdapter.OnDownloadListener downloadListener) {
         super(itemView);
         this.recyclerView = recyclerView;
         this.userProvider = provider;
         listener = l;
         onMessageItemLongClickListener = longClickListener;
         onRefreshListener = mediaMessageLoadListener;
+        onDownloadListener = downloadListener;
         portraitLeft = itemView.findViewById(R.id.iv_msg_head_receive);
         portraitRight = itemView.findViewById(R.id.iv_msg_head_send);
         mTime = itemView.findViewById(R.id.tv_common_msg_time);
@@ -90,7 +97,7 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         String userName = "";
         if (user != null) {
             portraitUrl = user.getPortraitUrl();
-            userName = BIMUINameUtils.getShowName(user);
+            userName = BIMUINameUtils.getShowNameInGroup(null, user);
         }
         //撤回
         if (bimMessage.isRecalled()) {
@@ -326,7 +333,28 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
     }
 
     public BIMMessageAdapter.OnRefreshListener getOnOutListener() {
+        if (onRefreshListener == null) {
+            return new BIMMessageAdapter.OnRefreshListener() {
+                @Override
+                public void refreshMediaMessage(BIMMessage bimMessage, BIMResultCallback<BIMMessage> callback) {
+                    IMLog.i(TAG, "refreshMediaMessage default do nothing");
+                }
+            };
+        }
         return onRefreshListener;
+    }
+
+    public BIMMessageAdapter.OnDownloadListener getDownloadListener(){
+        if (onDownloadListener == null) {
+            return new BIMMessageAdapter.OnDownloadListener() {
+                @Override
+                public void downLoadMessage(BIMMessage bimMessage, String url, boolean needNotify, BIMDownloadCallback callback) {
+                    //默认啥也不做
+                    IMLog.i(TAG, "downLoadMessage default do nothing");
+                }
+            };
+        }
+        return onDownloadListener;
     }
 
     public boolean performLongClick(View v,BIMMessageWrapper bimMessageWrapper){

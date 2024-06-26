@@ -324,7 +324,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
             public void refreshMediaMessage(BIMMessage bimMessage, BIMResultCallback<BIMMessage> callback) {
                 BIMClient.getInstance().getService(BIMLiveExpandService.class).refreshLiveGroupMediaMessage(bimMessage, callback);
             }
-        });
+        },null);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, true));
         recyclerView.setItemAnimator(null);
         recyclerView.setAdapter(adapter);
@@ -373,10 +373,10 @@ public class VELiveGroupMessageListFragment extends Fragment {
             return;
         }
         BIMLog.i(TAG, "sendVoiceMessage() length: " + file.length() + " path: " + path);
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(path);
         long duration = 0;
         try {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(path);
             duration = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / 1000;
         } catch (Exception e) {
             BIMLog.i(TAG, "e: " + Log.getStackTraceString(e));

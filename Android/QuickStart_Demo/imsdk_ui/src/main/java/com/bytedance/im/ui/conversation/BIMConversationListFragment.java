@@ -91,7 +91,8 @@ public class BIMConversationListFragment extends Fragment {
                     } else {
                         //内部默认处理
                         if (conversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT
-                                || conversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT) {
+                                || conversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT
+                                || conversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_LITE_LIVE_CHAT) {
                             startChat(conversation.getConversationID());
                         }
                     }

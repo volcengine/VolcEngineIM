@@ -38,6 +38,7 @@ import com.bytedance.im.core.model.inner.msg.image.BIMImage;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.utils.BIMUINameUtils;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -174,13 +175,23 @@ public class VESearchMediaAdapter extends RecyclerView.Adapter<VEMediaBaseViewHo
             BIMVideoElement videoElement = (BIMVideoElement) bimMessage.getElement();
             BIMImage bimImage = videoElement.getCoverImg();
             if (bimImage != null) {
-                url = bimImage.getURL();
+                String localFile = bimImage.getDownloadPath();
+                if (new File(localFile).exists()) {
+                    url = localFile;
+                } else {
+                    url = bimImage.getURL();
+                }
             }
         } else if (bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_IMAGE) {
             BIMImageElement imageElement = (BIMImageElement) bimMessage.getElement();
             BIMImage bimImage = imageElement.getThumbImg();
             if (bimImage != null) {
-                url = bimImage.getURL();
+                String localFile = bimImage.getDownloadPath();
+                if (new File(localFile).exists()) {
+                    url = localFile;
+                } else {
+                    url = bimImage.getURL();
+                }
             }
         }
         Glide.with(imageView.getContext()).load(url).listener(new RequestListener<Drawable>() {

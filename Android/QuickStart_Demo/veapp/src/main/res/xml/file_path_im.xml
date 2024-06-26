@@ -3,4 +3,10 @@
     <external-path
         name="im_files"
         path="Android/data/com.bytedance.im.veapp/files/Pictures" />
+    <external-path
+        name="im_local_files"
+        path="Android/data/com.bytedance.im.veapp/files/" />
+    <external-path
+        name="external_files"
+        path="." />
 </paths>

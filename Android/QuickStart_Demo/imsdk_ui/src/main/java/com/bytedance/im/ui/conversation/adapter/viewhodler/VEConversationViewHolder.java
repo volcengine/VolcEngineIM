@@ -109,6 +109,7 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
                 unReadIcon.setBackground(itemView.getResources().getDrawable(R.drawable.shape_im_conversation_unread_num_bg));
             }
         } else {
+            unReadIcon.setBackground(itemView.getResources().getDrawable(R.drawable.shape_im_conversation_unread_num_bg));
             realCount = bimConversation.getUnReadCount();
         }
         if (realCount > 99) {

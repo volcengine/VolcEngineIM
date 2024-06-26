@@ -29,6 +29,7 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageNewPropertyModifyType;
 import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
+import com.bytedance.im.core.api.interfaces.BIMDownloadCallback;
 import com.bytedance.im.core.api.interfaces.BIMMessageListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSendCallback;
@@ -147,7 +148,7 @@ public class BIMMessageListFragment extends Fragment {
             }
         });
         userProvider = BIMUIClient.getInstance().getUserProvider(); //单聊
-        adapter = new BIMMessageAdapter(recyclerView,userProvider,new BIMMessageAdapter.OnMessageItemClickListener() {
+        adapter = new BIMMessageAdapter(recyclerView, userProvider, new BIMMessageAdapter.OnMessageItemClickListener() {
             @Override
             public void onPortraitClick(BIMMessage message) {
                 if (onPortraitClickListener != null) {
@@ -181,7 +182,34 @@ public class BIMMessageListFragment extends Fragment {
         }, new BIMMessageAdapter.OnRefreshListener() {
             @Override
             public void refreshMediaMessage(BIMMessage bimMessage, BIMResultCallback<BIMMessage> callback) {
-                BIMClient.getInstance().refreshMediaMessage(bimMessage,callback);
+                BIMClient.getInstance().refreshMediaMessage(bimMessage, callback);
+            }
+        }, new BIMMessageAdapter.OnDownloadListener() {
+            @Override
+            public void downLoadMessage(BIMMessage bimMessage, String url, boolean needNotify, BIMDownloadCallback callback) {
+                BIMClient.getInstance().downloadFile(bimMessage, url, new BIMDownloadCallback() {
+                    @Override
+                    public void onSuccess(BIMMessage bimMessage) {
+                        adapter.insertOrUpdateMessage(bimMessage);
+                        if (callback != null) {
+                            callback.onSuccess(bimMessage);
+                        }
+                    }
+
+                    @Override
+                    public void onError(BIMMessage bimMessage, BIMErrorCode code) {
+                        if (needNotify) {
+                            if (code == BIMErrorCode.BIM_DOWNLOAD_FILE_DUPLICATE) {
+                                Toast.makeText(getActivity(), "下载中", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity(), "下载失败，请重试", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        if (callback != null) {
+                            callback.onError(bimMessage, code);
+                        }
+                    }
+                });
             }
         });
         refreshConversation();
@@ -592,9 +620,9 @@ public class BIMMessageListFragment extends Fragment {
         }
         BIMLog.i(TAG, "sendVoiceMessage() length: " + file.length() + " path: " + path);
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(path);
         long duration = 0;
         try {
+            retriever.setDataSource(path);
             duration = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / 1000;
         } catch (Exception e) {
             BIMLog.i(TAG, "e: " + Log.getStackTraceString(e));
@@ -807,7 +835,7 @@ public class BIMMessageListFragment extends Fragment {
         @Override
         public void onDeleteMessage(BIMMessage message) {
             BIMLog.i(TAG, "onDeleteMessage() uuid: " + message.getUuid() + " thread:" + Thread.currentThread());
-            if (message.getConversationID().equals(bimConversation.getConversationID())) {
+            if (bimConversation != null && message.getConversationID().equals(bimConversation.getConversationID())) {
                 adapter.deleteMessage(message);
             }
         }
@@ -896,7 +924,7 @@ public class BIMMessageListFragment extends Fragment {
 
         @Override
         public void onConversationDelete(List<BIMConversation> conversationList) {
-
+            getActivity().finish();
         }
 
         @Override

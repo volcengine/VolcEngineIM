@@ -249,11 +249,11 @@ public class VEDetailGroupConversationActivity extends Activity {
                     for (MemberWrapper wrapper : wrapperList) {
                         if (wrapper.getMember().getUserID() == BIMUIClient.getInstance().getCurUserId()) {
                             curMember = wrapper;
-                            memberMap.put(wrapper.getMember().getUserID(), wrapper);
                         }
                         if (wrapper.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
                             adminIdList.add(wrapper.getMember().getUserID());
                         }
+                        memberMap.put(wrapper.getMember().getUserID(), wrapper);
                     }
                 }
                 boolean isShowAdd = curMember != null && (curMember.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER);
@@ -444,7 +444,8 @@ public class VEDetailGroupConversationActivity extends Activity {
     private void removeMember(List<Long> selectList) {
         for (Long uid : selectList) {
             MemberWrapper wrapper = memberMap.get(uid);
-            if (curMember.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN && wrapper.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
+            if (wrapper != null && curMember.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN
+                    && wrapper.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
                 //管理员不可以移出管理员
                 Toast.makeText(VEDetailGroupConversationActivity.this, "移出失败", Toast.LENGTH_SHORT).show();
                 return;

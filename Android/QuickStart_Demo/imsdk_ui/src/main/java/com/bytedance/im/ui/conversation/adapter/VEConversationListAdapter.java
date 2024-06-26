@@ -73,7 +73,9 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
                 if (onItemClickListener != null) {
                     int p = veViewHolder.getAdapterPosition();
                     mHandler.post(() -> veViewHolder.bind(veViewHolder.getWrapperInfo()));
-                    onItemClickListener.onItemClick(data.get(p), p);
+                    if (p >= 0) {
+                        onItemClickListener.onItemClick(data.get(p), p);
+                    }
                 }
             }
         });

@@ -1,9 +1,13 @@
 package com.bytedance.im.ui.message.adapter.ui.widget.pop;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,6 +16,35 @@ import com.bytedance.im.ui.R;
 
 
 public class DialogUtil {
+
+    public static void showFileInfoDialog(Context context, String fileType, String fileSize) {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setCancelable(false);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+            if (null != dialog.getWindow()) {
+                Window window = dialog.getWindow();
+
+                window.setGravity(Gravity.CENTER);
+                window.setContentView(R.layout.bim_im_file_info_dialog);
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                TextView tvType = window.findViewById(R.id.tv_type);
+                TextView tvSize = window.findViewById(R.id.tv_size);
+                TextView tvAgree = window.findViewById(R.id.tv_agree);
+
+                tvType.setText("文件格式: " + fileType);
+                tvSize.setText("文件大小: " + fileSize);
+                tvAgree.setOnClickListener(v -> {
+                    dialog.dismiss();
+                });
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+    }
 
     public static void showBottomConfirmDialog(Context context, String title, String firstBtnText, ConfirmDialogClickListener listener) {
         View view = View.inflate(context, R.layout.bim_bottom_dialog_confirm, null);

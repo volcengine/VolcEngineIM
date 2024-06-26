@@ -2,9 +2,14 @@ package com.bytedance.im.ui.message.adapter.ui.inner;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ProviderInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
+
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +23,10 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.bytedance.im.core.api.BIMClient;
+import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageStatus;
+import com.bytedance.im.core.api.interfaces.BIMDownloadCallback;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.model.inner.msg.image.BIMImage;
@@ -35,6 +42,7 @@ import com.bytedance.im.core.model.inner.msg.BIMVideoElement;
 import com.bytedance.im.ui.utils.BIMUIUtils;
 import com.bytedance.im.ui.utils.media.LoadIMageUtils;
 
+import java.io.File;
 import java.util.Collections;
 
 @CustomUIType(contentCls = BIMVideoElement.class)
@@ -95,17 +103,30 @@ public class VideoMessageUI extends BaseCustomElementUI {
         if (msg.isSelf() && LoadIMageUtils.loadLocal(videoElement.getLocalPath(),videoElement.getLocalUri(), videoCover)) {
             return;
         }
-        showRemote(videoCover, msg);
+        if (msg.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_LIVE_CHAT) {
+            showRemote(videoCover, msg);
+        } else {
+            showByDownload(holder,videoCover, msg);
+        }
+    }
+
+    private void showByDownload(BIMMessageViewHolder holder,ImageView imageView, BIMMessage msg) {
+        BIMVideoElement videoElement = (BIMVideoElement) msg.getElement();
+        BIMImage coverImg = videoElement.getCoverImg();
+
+        if (coverImg != null && new File(coverImg.getDownloadPath()).exists()) {
+            Drawable placeDrawable = imageView.getDrawable();
+            Glide.with(imageView.getContext()).load(coverImg.getDownloadPath()).dontAnimate().placeholder(placeDrawable).into(imageView);   //加载本地文件
+        } else {
+            if (coverImg != null) {
+                holder.getDownloadListener().downLoadMessage(msg, coverImg.getURL(), false, null);   //下载
+            }
+        }
     }
 
     @Override
     public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
         BIMVideoElement videoElement = (BIMVideoElement) messageWrapper.getBimMessage().getElement();
-        if (TextUtils.isEmpty(videoElement.getURL())) {
-            Toast.makeText(v.getContext(), "图片URL为空", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         BIMClient.getInstance().sendMessageReadReceipts(Collections.singletonList(messageWrapper.getBimMessage()), new BIMSimpleCallback() {
             @Override
             public void onSuccess() {
@@ -117,32 +138,84 @@ public class VideoMessageUI extends BaseCustomElementUI {
                 BIMLog.e(TAG, "sendMessageReadReceipts failed: " + code);
             }
         });
+
+        BIMMessage bimMessage = messageWrapper.getBimMessage();
+        boolean hasLocalFile = new File(videoElement.getSavePath()).exists();
         if (messageWrapper.getBimMessage().isSelf() && !TextUtils.isEmpty(videoElement.getLocalPath())) {
-            startPlay(v.getContext(), videoElement.getLocalPath());
+            Uri uri = convertUri(v.getContext(), videoElement.getLocalPath());
+            startPlay(v.getContext(), uri);
         } else {
-            if (videoElement.isExpired()) {
-                holder.getOnOutListener().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
-                    @Override
-                    public void onSuccess(BIMMessage bimMessage) {
-                        startPlay(v.getContext(),videoElement.getURL());
-                    }
+            if (bimMessage.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_LIVE_CHAT) {
+                if (videoElement.isExpired()) {
+                    holder.getOnOutListener().refreshMediaMessage(messageWrapper.getBimMessage(), new BIMResultCallback<BIMMessage>() {
+                        @Override
+                        public void onSuccess(BIMMessage bimMessage) {
+                            startPlay(v.getContext(),videoElement.getURL());
+                        }
 
-                    @Override
-                    public void onFailed(BIMErrorCode code) {
+                        @Override
+                        public void onFailed(BIMErrorCode code) {
 
-                    }
-                });
+                        }
+                    });
+                } else {
+                    startPlay(v.getContext(), videoElement.getURL());
+                }
             } else {
-                startPlay(v.getContext(), videoElement.getURL());
+                if (!hasLocalFile) {
+                    startPlay(v.getContext(), videoElement.getURL());
+                    BIMClient.getInstance().downloadFile(bimMessage, videoElement.getURL(), new BIMDownloadCallback() {
+                        @Override
+                        public void onSuccess(BIMMessage bimMessage) {
+                            Toast.makeText(v.getContext(), "下载成功", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onError(BIMMessage bimMessage, BIMErrorCode code) {
+                            if (code == BIMErrorCode.BIM_DOWNLOAD_FILE_DUPLICATE) {
+                                Toast.makeText(v.getContext(), "下载中", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(v.getContext(), "下载失败，请重试", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    Uri contentUri = convertUri(v.getContext(), videoElement.getSavePath());
+                    startPlay(v.getContext(), contentUri);
+                }
             }
         }
     }
 
+    private Uri convertUri(Context context, String filePath) {
+        String packageName = context.getPackageName();
+        Uri contentUri = null;
+        try {
+            PackageInfo packageInfo = context.getPackageManager().getPackageInfo(packageName, PackageManager.GET_PROVIDERS);
+            ProviderInfo[] providers = packageInfo.providers;
+            for (ProviderInfo providerInfo: providers) {
+                try {
+                    contentUri = FileProvider.getUriForFile(context, providerInfo.authority, new File(filePath));
+                    context.getContentResolver().openInputStream(contentUri);
+                    break;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return contentUri;
+    }
 
     private void startPlay(Context context, String playUrl) {
-        Uri uri = Uri.parse(playUrl);
+        startPlay(context, Uri.parse(playUrl));
+    }
+
+    private void startPlay(Context context, Uri uri) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(uri, "video/*");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         try {
             context.startActivity(intent);
         } catch (Exception e) {

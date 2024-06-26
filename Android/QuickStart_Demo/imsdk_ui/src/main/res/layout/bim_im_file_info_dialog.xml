@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:textSize="20sp"
+        android:id="@+id/tv_title"
+        android:textColor="#282828"
+        android:text="暂不支持文件预览"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:gravity="center"
+        android:paddingTop="16dp"
+        android:id="@+id/tv_size"
+        android:textColor="#282828"
+        android:text="文件大小: 25MB"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:lineSpacingMultiplier="1.1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_type"
+        android:paddingTop="16dp"
+        android:textColor="#282828"
+        android:text="文件格式: wav"
+        android:textAlignment="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:paddingTop="18dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="OK"
+            android:gravity="center"
+            android:id="@+id/tv_agree"
+            android:textColor="#282828"
+            android:layout_width="140dp"
+            android:layout_height="26dp"
+            android:background="#999999"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+
+</LinearLayout>
