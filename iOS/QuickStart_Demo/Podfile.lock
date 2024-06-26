@@ -5,12 +5,12 @@ PODS:
     - Masonry
     - MJRefresh
     - SDWebImage
-  - imsdk-tob (1.15.0-alpha.0):
-    - imsdk-tob/Core (= 1.15.0-alpha.0)
-  - imsdk-tob/Core (1.15.0-alpha.0):
+  - imsdk-tob (1.15.0):
+    - imsdk-tob/Core (= 1.15.0)
+  - imsdk-tob/Core (1.15.0):
     - imsdk-tob/Core_Common
     - TTSDK/Uploader (> 1.28)
-  - imsdk-tob/Core_Common (1.15.0-alpha.0):
+  - imsdk-tob/Core_Common (1.15.0):
     - Bolts/Tasks
     - IGListDiffKit
     - imsdk-tob/Feature_EssentialPB
@@ -30,7 +30,7 @@ PODS:
     - TTNetworkManager (~> 4.1)
     - WCDB (~> 1.0.6)
     - YYCache
-  - imsdk-tob/Feature_EssentialPB (1.15.0-alpha.0):
+  - imsdk-tob/Feature_EssentialPB (1.15.0):
     - Protobuf (= 3.21.9)
   - libextobjc (0.6):
     - libextobjc/EXTADT (= 0.6)
@@ -73,9 +73,9 @@ PODS:
   - Masonry (1.1.0)
   - MBProgressHUD (1.2.0)
   - MJRefresh (3.7.6)
-  - MMKV (1.3.4):
-    - MMKVCore (~> 1.3.4)
-  - MMKVCore (1.3.4)
+  - MMKV (1.3.5):
+    - MMKVCore (~> 1.3.5)
+  - MMKVCore (1.3.5)
   - OneKit (1.4.2):
     - OneKit/BaseKit (= 1.4.2)
     - OneKit/Core (= 1.4.2)
@@ -173,7 +173,7 @@ PODS:
 
 DEPENDENCIES:
   - im-uikit-tob (from `../`)
-  - imsdk-tob (= 1.15.0-alpha.0)
+  - imsdk-tob (= 1.15.0)
   - Masonry
   - MBProgressHUD
   - MJRefresh
@@ -214,14 +214,14 @@ SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   IGListDiffKit: 02d937d7e714d6f558771f284ed80668d483b522
   im-uikit-tob: bd24579f314523ac1e3d71bb857d98a41f1e071e
-  imsdk-tob: a3571fdafe79974825960c335b93b272ce0f860a
+  imsdk-tob: c807a93cc1517cf349f12de323f5f508c1e51ca4
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   MJRefresh: 2fe7fb43a5167ceda20bb7e63f130c04fd1814a5
-  MMKV: ed58ad794b3f88c24d604a5b74f3fba17fcbaf74
-  MMKVCore: a67a1cede26175c413176f404a7cedec43f96a0b
+  MMKV: 506311d0494023c2f7e0b62cc1f31b7370fa3cfb
+  MMKVCore: 9e2e5fd529b64a9fe15f1a7afb3d73b2e27b4db9
   OneKit: 05d59eb122e247640c35ceb28b300ae27e89cb88
   Protobuf: 02524ec14183fe08fb259741659e79683788158b
   RangersAPM: 0a213dcacd9b922eb5ffa70c39e2c3b405348659
@@ -235,6 +235,6 @@ SPEC CHECKSUMS:
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: c73256470fb7434ea3d1f18e5e81f25943036c7f
+PODFILE CHECKSUM: c8e6d1de3398d1884e022ab7a5641d8919415ff5
 
 COCOAPODS: 1.15.2
