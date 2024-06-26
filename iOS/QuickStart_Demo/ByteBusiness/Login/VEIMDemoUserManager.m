@@ -10,7 +10,7 @@
 #import "VEIMDemoRouter.h"
 #import "VEIMDemoLoginViewController.h"
 #import "VEIMDemoDefine.h"
-#import <TTNetworkManager/TTNetworkManager.h>
+#import "VEIMDemoNetworkManager.h"
 #import <MBProgressHUD/MBProgressHUD.h>
 #import <imsdk-tob/BIMSDK.h>
 #import <OneKit/ByteDanceKit.h>
@@ -41,13 +41,6 @@
     return _sharedInstance;
 }
 
-
-//- (NSMutableArray<VEIMDemoUser *> *)testUsers{
-//    if (!_testUsers) {
-//        _testUsers = [NSMutableArray array];
-//    }
-//    return _testUsers;
-//}
 
 - (MBProgressHUD *)progressHUD{
     if (!_progressHUD) {
@@ -232,8 +225,7 @@
         NSString *tokenUrl = [[BDIMDebugNetworkManager sharedManager] tokenUrl];
         NSString *URL = [NSString stringWithFormat:@"%@/get_token?appID=%@&userID=%lld",tokenUrl, kVEIMDemoAppID, user.userID];
         @weakify(self);
-        [TTNetworkManager.shareInstance requestForJSONWithResponse:URL params:nil method:@"GET" needCommonParams:YES callback:^(NSError *error, NSDictionary *obj, TTHttpResponse *response) {
-            @strongify(self);
+        [[VEIMDemoNetworkManager sharedInstance] requestForJSONWithResponse:URL params:nil method:@"GET" callback:^(NSError *error, id obj) {
             NSString *token = @"";
             if (error == nil && [obj isKindOfClass:[NSDictionary class]]) {
                 token = [obj objectForKey:@"Token"];

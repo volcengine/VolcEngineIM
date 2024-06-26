@@ -85,15 +85,7 @@
 
     if (message.msgType == BIM_MESSAGE_TYPE_FILE) {
         self.fileNameLabel.text = self.file.fileName;
-        CGFloat mbSize = self.file.fileSize/1000.0/1000.0;
-        CGFloat kbSize = self.file.fileSize/1000.0;
-        if (mbSize > 1){
-            self.fileSizeLabel.text = [NSString stringWithFormat:@"%.2f MB", mbSize];
-        } else if (kbSize > 1) {
-            self.fileSizeLabel.text = [NSString stringWithFormat:@"%.2f KB", kbSize];
-        } else {
-            self.fileSizeLabel.text = [NSString stringWithFormat:@"%lld B", self.file.fileSize];
-        }
+        self.fileSizeLabel.text = [self convertByteSize:self.file.fileSize];
         
         [self.imageContent setImage:[kIMAGE_IN_BUNDLE_NAMED(@"icon_msg_file") imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
         
@@ -155,6 +147,33 @@
             }];
         }
     }
+}
+
+- (NSString *)fileSize
+{
+    if (!_fileSize) {
+        NSString *fileSize = [self convertByteSize:self.file.fileSize];
+        _fileSize = fileSize;
+    }
+    
+    return _fileSize;
+}
+
+- (NSString *)convertByteSize:(unsigned long long)byteSize
+{
+    CGFloat mbSize = byteSize/1000.0/1000.0;
+    CGFloat kbSize = byteSize/1000.0;
+    
+    NSString *formattedFileSize;
+    if (mbSize > 1){
+        formattedFileSize = [NSString stringWithFormat:@"%.2f MB",mbSize];
+    } else if (kbSize > 1) {
+        formattedFileSize = [NSString stringWithFormat:@"%.2f KB",kbSize];
+    } else {
+        formattedFileSize = [NSString stringWithFormat:@"%llu B", byteSize];
+    }
+    
+    return formattedFileSize;
 }
 
 @end

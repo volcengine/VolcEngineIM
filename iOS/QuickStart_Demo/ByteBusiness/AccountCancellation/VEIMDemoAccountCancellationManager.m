@@ -8,7 +8,7 @@
 
 #import "VEIMDemoAccountCancellationManager.h"
 
-#import <TTNetworkManager/TTNetworkManager.h>
+#import "VEIMDemoNetworkManager.h"
 #import <imsdk-tob/BIMClient.h>
 #import <imsdk-tob/BIMClient+conversation.h>
 #import <imsdk-tob/BIMClient+liveGroup.h>
@@ -77,16 +77,15 @@ static const NSInteger kTimeout = 60;
     };
     
     NSData *httpBody = [NSJSONSerialization dataWithJSONObject:params options:0 error:nil];
-    TTHttpTask *task = [[TTNetworkManager shareInstance] requestForJSONWithResponse:URL params:nil method:@"POST" needCommonParams:YES callback:^(NSError *error, id obj, TTHttpResponse *response) {
+    
+    [[VEIMDemoNetworkManager sharedInstance] requestForJSONWithResponse:URL params:nil method:@"POST" headerField:@{
+        @"Content-Type" : @"application/json",
+        @"Accept" : @"application/json",
+    } httpBody:httpBody callback:^(NSError *error, id obj) {
         if (completion) {
             completion(error ? NO : YES);
         }
     }];
-    task.request.HTTPBody = httpBody;
-    task.request.allHTTPHeaderFields = @{
-        @"Content-Type" : @"application/json",
-        @"Accept" : @"application/json",
-    };
 }
 
 // 退出所有群聊

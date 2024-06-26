@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <SDWebImage/SDWebImageManager.h>
 
+@class BIMMessage;
+@class BIMImage;
+@class BIMError;
 
 @interface BIMScanImage : NSObject
 
@@ -19,6 +22,7 @@
 
 + (void)scanBigImageWithImageView:(UIImageView *)currentImageview originImage:(id)originImage secretKey:(NSString *)secretKey completion:(SDExternalCompletionBlock)completion;
 
++ (void)scanBigImageWithImageView:(UIImageView *)currentImageview message:(BIMMessage *)message image:(BIMImage *)image completion:(void (^)(BIMError *error))completion;
 
 /// 刷新URL
 /// @param imageUrl 请求的URL

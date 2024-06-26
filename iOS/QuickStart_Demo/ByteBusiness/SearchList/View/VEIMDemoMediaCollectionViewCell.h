@@ -10,11 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class BIMMessage;
+
 @interface VEIMDemoMediaCollectionViewCell : UICollectionViewCell
 
 @property (nonatomic, strong) UIImageView *playBtn;
 
 @property (nonatomic, strong) UIImageView *imageContent;
+
+@property (nonatomic, strong) BIMMessage *message;
 
 @end
 

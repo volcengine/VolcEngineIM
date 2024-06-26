@@ -9,16 +9,15 @@ target 'ByteBusiness' do
 
   # Pods for VEIMDemo
   
-#  pod 'im-uikit-tob', '1.14.0'
+#  pod 'im-uikit-tob', '1.15.0'
   pod 'im-uikit-tob', :path=>'../'
-pod 'imsdk-tob', '1.14.0'
+pod 'imsdk-tob', '1.15.0-alpha.0'
   
 #    三方库
   pod 'Masonry'
   pod 'MJRefresh'
   pod 'SDWebImage'
   pod 'MBProgressHUD'
-  pod 'TTNetworkManager', '5.0.29.27'
 
 
   target 'ByteBusinessTests' do

@@ -738,7 +738,7 @@ static CGFloat textHei = 0;
         sendMsg = [[BIMClient sharedInstance] createVideoMessage:url.absoluteString];
     } else {
         UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
-        NSString *path = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%d", (int)([[NSDate date] timeIntervalSince1970] * 1000)]];
+        NSString *path = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%lld", (long long)([[NSDate date] timeIntervalSince1970] * 1000)]];
         [UIImageJPEGRepresentation(image, 1) writeToFile:path atomically:YES];
         sendMsg = [[BIMClient sharedInstance] createImageMessage:path];
     }

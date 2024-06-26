@@ -26,10 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIImageView *imageContent;
 @property (nonatomic, strong) UILabel *fileNameLabel;
 @property (nonatomic, strong) UILabel *fileSizeLabel;
+// 文件大小，Byte，KB，MB为单位
+@property (nonatomic, strong) NSString *fileSize;
 
 @property (nonatomic, strong) NSString *localFilePath;
-
-
 
 @end
 

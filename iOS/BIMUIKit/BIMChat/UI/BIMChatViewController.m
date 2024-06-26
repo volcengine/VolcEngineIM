@@ -317,9 +317,41 @@
     return playerItem;
 }
 
+- (AVPlayerItem *)playItemWithMessage:(BIMMessage *)message{
+    NSURL *playURL = nil;
+    
+    BIMVideoElement *element = BTD_DYNAMIC_CAST(BIMVideoElement, message.element);
+    if ([[NSFileManager defaultManager] fileExistsAtPath:element.localPath]) {
+        playURL = [NSURL fileURLWithPath:element.localPath];
+    } else if ([[NSFileManager defaultManager] fileExistsAtPath:element.downloadPath]) {
+        playURL = [NSURL fileURLWithPath:element.downloadPath];
+    } else {
+        playURL = [NSURL URLWithString:element.url];
+        [[BIMClient sharedInstance] downloadFile:message remoteURL:element.url progressBlock:nil completion:^(BIMError * _Nullable error) {
+            if (error) {
+                if (error.code != BIM_DOWNLOAD_FILE_DUPLICATE) {
+                    [BIMToastView toast:@"下载失败，请重试"];
+                }
+            } else {
+                [BIMToastView toast:@"下载成功"];
+            }
+        }];
+    }
+    
+    AVPlayerItem *playerItem = [[AVPlayerItem alloc] initWithURL:playURL];
+    
+    return playerItem;
+}
+
 - (void)playElementWithMessage:(BIMMessage *)message
 {
-    AVPlayerItem *playItem = [self playItemWithFile:(BIMVideoElement *)message.element];
+    AVPlayerItem *playItem;
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        playItem = [self playItemWithFile:(BIMVideoElement *)message.element];
+    } else {
+        playItem = [self playItemWithMessage:message];
+    }
+    
     if (!playItem) {
         [BIMToastView toast:@"播放链接错误，无法播放"];
     } else {
@@ -336,21 +368,24 @@
     playerVC.player = self.player;
     [self presentViewController:playerVC animated:YES completion:nil];
     
-    BIMVideoElement *element = message.element;
-    if (element.isExpired) {
-        @weakify(self);
-        [self refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
-            @strongify(self);
-            if (error) {
-                [BIMToastView toast:@"播放链接错误，无法播放"];
-            } else {
-                [self playElementWithMessage:message];
-            }
-        }];
-    } else {
+    BIMVideoElement *element = BTD_DYNAMIC_CAST(BIMVideoElement, message.element);
+    if ([[NSFileManager defaultManager] fileExistsAtPath:element.downloadPath]) {
         [self playElementWithMessage:message];
+    } else {
+        if (element.isExpired) {
+            @weakify(self);
+            [self refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
+                @strongify(self);
+                if (error) {
+                    [BIMToastView toast:@"播放链接错误，无法播放"];
+                } else {
+                    [self playElementWithMessage:message];
+                }
+            }];
+        } else {
+            [self playElementWithMessage:message];
+        }
     }
-    
 }
 
 #pragma mark - lazy
@@ -690,7 +725,8 @@
 }
 
 #pragma mark - BIMConversationListListener
-- (void)onConversationChanged:(NSArray<BIMConversation *> *)conversationList{
+- (void)onConversationChanged:(NSArray<BIMConversation *> *)conversationList
+{
     for (BIMConversation *con in conversationList) {
         if ([self.conversation.conversationID isEqualToString:con.conversationID]) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -709,7 +745,8 @@
 }
 
 #pragma mark - User Selection
-- (void)userSelectVC:(BIMUserSelectionController *)vc didChooseUser:(BIMUser *)user{
+- (void)userSelectVC:(BIMUserSelectionController *)vc didChooseUser:(BIMUser *)user 
+{
     [self.inputTool addMentionUser:@(user.userID)];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -717,6 +754,7 @@
     });
     
 }
+
 - (void)userSelectVCDidClickClose:(BIMUserSelectionController *)vc{
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.inputTool becomeFirstResponder];
@@ -725,7 +763,8 @@
 }
 
 #pragma mark - Cell delegate
-- (void)chatCell:(BIMBaseChatCell *)cell didClickRetryBtnWithMessage:(BIMMessage *)sendMessage{
+- (void)chatCell:(BIMBaseChatCell *)cell didClickRetryBtnWithMessage:(BIMMessage *)sendMessage
+{
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
         [self setExtWithSendMessage:sendMessage];
         
@@ -753,43 +792,106 @@
     
 }
 
-- (void)cell:(BIMFileChatCell *)cell didClickImageContent:(BIMMessage *)message{
-    self.currentPlayingIndex = nil;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
-            [self playVideoWithMessage:message];
-        } else if (message.msgType == BIM_MESSAGE_TYPE_IMAGE) {
-            BIMImageElement *file = (BIMImageElement *)message.element;
-            if (![NSURL URLWithString:file.originImg.url]) {
-                [BIMToastView toast:@"图片URL为空"];
-            }
-            
-            BOOL hasLocalImage = [[NSFileManager defaultManager] fileExistsAtPath:file.localPath];
-            if (hasLocalImage && cell.imageContent.image) {
-                [BIMScanImage scanBigImageWithImageView:cell.imageContent originImage:cell.imageContent.image];
-            } else {
-                @weakify(self);
-                [BIMScanImage scanBigImageWithImageView:cell.imageContent originImage:file.originImg.url secretKey:nil completion:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                    @strongify(self);
-                    if (error) {
-                        [self refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
-                            if (error) {
-                                [BIMToastView toast:[NSString stringWithFormat:@"加载图片失败：%@",error.localizedDescription]];
-                            } else {
-                                [BIMScanImage scanBigImageRefreshWithImageUrl:file.originImg.url completion:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                                    if (error) {
-                                        [BIMToastView toast:[NSString stringWithFormat:@"加载图片失败：%@",error.localizedDescription]];
-                                    }
-                                }];
-                            }
-                        }];
-                    }
-                }];
-            }
-        } else if (message.msgType == BIM_MESSAGE_TYPE_FILE) {
-            [BIMToastView toast:@"暂不支持文件预览"];
+- (void)cell:(BIMFileChatCell *)cell didClickLiveGroupImageContent:(BIMMessage *)message
+{
+    if (message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
+        [self playVideoWithMessage:message];
+    } else if (message.msgType == BIM_MESSAGE_TYPE_IMAGE) {
+        BIMImageElement *file = (BIMImageElement *)message.element;
+        if (![NSURL URLWithString:file.originImg.url]) {
+            [BIMToastView toast:@"图片URL为空"];
         }
-        [self.inputTool revertToTheOriginalType];
+        
+        BOOL hasLocalImage = [[NSFileManager defaultManager] fileExistsAtPath:file.localPath];
+        if (hasLocalImage && cell.imageContent.image) {
+            [BIMScanImage scanBigImageWithImageView:cell.imageContent originImage:cell.imageContent.image];
+        } else {
+            @weakify(self);
+            [BIMScanImage scanBigImageWithImageView:cell.imageContent originImage:file.originImg.url secretKey:nil completion:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                @strongify(self);
+                if (error) {
+                    [self refreshMediaMessage:message completion:^(BIMError * _Nullable error) {
+                        if (error) {
+                            [BIMToastView toast:[NSString stringWithFormat:@"加载图片失败：%@",error.localizedDescription]];
+                        } else {
+                            [BIMScanImage scanBigImageRefreshWithImageUrl:file.originImg.url completion:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                                if (error) {
+                                    [BIMToastView toast:[NSString stringWithFormat:@"加载图片失败：%@",error.localizedDescription]];
+                                }
+                            }];
+                        }
+                    }];
+                }
+            }];
+        }
+    } else if (message.msgType == BIM_MESSAGE_TYPE_FILE) {
+        [BIMToastView toast:@"暂不支持文件预览"];
+    }
+    [self.inputTool revertToTheOriginalType];
+}
+
+- (void)cell:(BIMFileChatCell *)cell didClickNormalConvImageContent:(BIMMessage *)message
+{
+    if (message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
+        [self playVideoWithMessage:message];
+    } else if (message.msgType == BIM_MESSAGE_TYPE_IMAGE) {
+        BIMImageElement *element = BTD_DYNAMIC_CAST(BIMImageElement, message.element);
+        if (![NSURL URLWithString:element.originImg.url]) {
+            [BIMToastView toast:@"图片URL为空"];
+        }
+        
+        BOOL hasLocalImage = [[NSFileManager defaultManager] fileExistsAtPath:element.localPath];
+        if (hasLocalImage && cell.imageContent.image) {
+            UIImage *image = [UIImage imageWithContentsOfFile:element.localPath];
+            [BIMScanImage scanBigImageWithImageView:cell.imageContent originImage:image];
+        } else if ([[NSFileManager defaultManager] fileExistsAtPath:element.originImg.downloadPath]) {
+            UIImage *image = [UIImage imageWithContentsOfFile:element.originImg.downloadPath];
+            [BIMScanImage scanBigImageWithImageView:cell.imageContent originImage:image];
+        } else {
+            BIMImageElement *element = BTD_DYNAMIC_CAST(BIMImageElement, message.element);
+            [BIMScanImage scanBigImageWithImageView:cell.imageContent message:message image:element.originImg completion:^(BIMError *error) {
+                NSString *toastText = error ? @"下载失败，请重试" : @"下载成功";
+                [BIMToastView toast:toastText];
+            }];
+        }
+    } else if (message.msgType == BIM_MESSAGE_TYPE_FILE) {
+        BIMFileElement *element = BTD_DYNAMIC_CAST(BIMFileElement, message.element);
+        if (![[NSFileManager defaultManager] fileExistsAtPath:element.downloadPath]) {
+            [BIMToastView toast:@"下载中"];
+            [[BIMClient sharedInstance] downloadFile:message remoteURL:element.url progressBlock:nil completion:^(BIMError * _Nullable error) {
+                if (error) {
+                    if (error.code != BIM_DOWNLOAD_FILE_DUPLICATE) {
+                        [BIMToastView toast:@"下载失败，请重试"];
+                    }
+                } else {
+                    [BIMToastView toast:@"下载成功"];
+                }
+            }];
+        } else {
+            kWeakSelf(self);
+            NSString *fileSize = cell.fileSize;
+            NSRange range = [element.fileName rangeOfString:@"." options:NSBackwardsSearch];
+            NSString *fileType = range.length == 0 ? @"" : [element.fileName substringFromIndex:range.location + 1];
+            NSString *fileInfo = [NSString stringWithFormat:@"文件大小：%@\n文件格式：%@", fileSize, fileType];
+            UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"暂不支持文件预览" message:fileInfo preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *sure = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
+            [alertVC addAction:sure];
+            [weakself presentViewController:alertVC animated:YES completion:nil];
+        }
+    }
+    [self.inputTool revertToTheOriginalType];
+}
+
+- (void)cell:(BIMFileChatCell *)cell didClickImageContent:(BIMMessage *)message
+{
+    self.currentPlayingIndex = nil;
+    BIMConversationType convType = self.conversation.conversationType;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (convType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+            [self cell:cell didClickLiveGroupImageContent:message];
+        } else {
+            [self cell:cell didClickNormalConvImageContent:message];
+        }
     });
 }
 
@@ -838,6 +940,8 @@
         
     } else if (error.code == SDWebImageErrorInvalidURL) {
         // error延迟到点击时处理
+    } else if (error.code == BIM_DOWNLOAD_FILE_DUPLICATE) {
+        // 重复URL下载
     } else {
         [BIMToastView toast:error.localizedDescription];
     }

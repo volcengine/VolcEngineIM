@@ -8,6 +8,7 @@
 
 #import "BIMScanImage.h"
 #import "BIMUIDefine.h"
+#import <imsdk-tob/BIMSDK.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 
 #define kTag 2020
@@ -47,6 +48,72 @@ static CGRect oldframe;
         [imageView sd_setImageWithURL:imageUrl placeholderImage:nil options:0 completed:completion];
     } else {
         [imageView setImage:image];
+    }
+    [imageView setTag:kTag];
+    [backgroundView addSubview:imageView];
+    //将原始视图添加到背景视图中
+    [kAppWindow addSubview:backgroundView];
+
+    //添加点击事件同样是类方法 -> 作用是再次点击回到初始大小
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideImageView:)];
+    [backgroundView addGestureRecognizer:tapGestureRecognizer];
+
+    //动画放大所展示的ImageView
+    [UIView animateWithDuration:0.3 animations:^{
+        imageView.frame = [UIScreen mainScreen].bounds;
+        //重要！ 将视图显示出来
+        [backgroundView setAlpha:1];
+    } completion:^(BOOL finished) {
+//        if (imageUrl) {
+//            [BIMToastView toast:imageUrl.absoluteString withDuration:3];
+//        }
+    }];
+}
+
++ (void)scanBigImageWithImageView:(UIImageView *)currentImageview message:(BIMMessage *)message image:(BIMImage *)image completion:(void (^)(BIMError *))completion
+{
+    oldframe = [currentImageview convertRect:currentImageview.bounds toView:kAppWindow];;
+    //背景
+    UIView *backgroundView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    backgroundView.backgroundColor = [UIColor blackColor];
+    //此时视图不会显示
+    [backgroundView setAlpha:0];
+    //将所展示的imageView重新绘制在Window中
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:oldframe];
+    imageView.contentMode = UIViewContentModeScaleAspectFit;
+    if (image.url) {
+        BIMImageElement *element = (BIMImageElement *)message.element;
+        NSString *fileType;
+        if (image == element.thumbImg) {
+            fileType = @"thumb";
+        } else if (image == element.largeImg) {
+            fileType = @"large";
+        } else {
+            fileType = @"origin";
+        }
+        
+        [[BIMClient sharedInstance] downloadFile:message remoteURL:image.url progressBlock:nil completion:^(BIMError * _Nullable error) {
+            if (completion) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completion(error);
+                });
+                
+                if (error) {
+                    return;
+                }
+            }
+            
+            BIMImageElement *newElement = (BIMImageElement *)message.element;
+            UIImage *localImage;
+            if ([fileType isEqualToString:@"thumb"]) {
+                localImage = [UIImage imageWithContentsOfFile:newElement.thumbImg.downloadPath];
+            } else if ([fileType isEqualToString:@"large"]) {
+                localImage = [UIImage imageWithContentsOfFile:newElement.largeImg.downloadPath];
+            } else if ([fileType isEqualToString:@"origin"]) {
+                localImage = [UIImage imageWithContentsOfFile:newElement.originImg.downloadPath];
+            }
+            [imageView setImage:localImage];
+        }];
     }
     [imageView setTag:kTag];
     [backgroundView addSubview:imageView];

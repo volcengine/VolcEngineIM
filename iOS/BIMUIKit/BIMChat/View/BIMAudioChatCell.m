@@ -12,6 +12,7 @@
 #import <AVFoundation/AVPlayer.h>
 #import <AVFoundation/AVPlayerItem.h>
 #import <AVFoundation/AVAsset.h>
+#import <OneKit/BTDMacros.h>
 
 @interface BIMAudioChatCell ()
 
@@ -67,11 +68,14 @@
         int duration = file.duration;
         if (file.duration == 0) {
             NSURL *fileURL;
-            if (self.file.localPath.length) {
+            if (file.localPath.length) {
                 fileURL = [NSURL fileURLWithPath:file.localPath];
+            } else if (file.downloadPath) {
+                fileURL = [NSURL URLWithString:file.downloadPath];
             } else {
                 fileURL = [NSURL URLWithString:file.url];
             }
+            
             if (fileURL) {
                 AVURLAsset *audioAsset = [AVURLAsset URLAssetWithURL:fileURL options:nil];
                 duration = (int)CMTimeGetSeconds(audioAsset.duration);
@@ -167,38 +171,60 @@
     }
 }
 
-- (void)bgDidClicked: (id)sender{
+- (void)bgDidClicked: (id)sender
+{
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:AVPlayerItemDidPlayToEndTimeNotification object:nil];
-        NSURL *fileURL;
-        if (self.localFilePath) {
-            fileURL = [NSURL fileURLWithPath:self.localFilePath];
-        } else {
-            fileURL = [NSURL URLWithString:self.file.url];
-        }
         
-        if (fileURL) {
-            AVPlayerItem *item = [AVPlayerItem playerItemWithURL:fileURL];
-            if (item != nil) {
-                if (self.file.isExpired) {
-                    kWeakSelf(self);
-                    [self refreshMediaMessage:self.message completion:^(BIMError * _Nullable error) {
-                        kStrongSelf(self);
-                        if (error) {
-                            [BIMToastView toast:[NSString stringWithFormat:@"无法播放，URL错误:%@",self.file.url]];
-                        } else {
-                            [self playItem:item];
+        AVPlayerItem *item;
+        NSURL *fileURL;
+        BIMAudioElement *element = BTD_DYNAMIC_CAST(BIMAudioElement, self.message.element);
+        if ([[NSFileManager defaultManager] fileExistsAtPath:element.downloadPath]) {
+            item = [AVPlayerItem playerItemWithURL:[NSURL fileURLWithPath:element.downloadPath]];
+            [self playItem:item];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
+        } else {
+            if (self.converstaion.conversationType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+                [[BIMClient sharedInstance] downloadFile:self.message remoteURL:element.url progressBlock:nil completion:^(BIMError * _Nullable error) {
+                    if (error) {
+                        if (error.code != BIM_DOWNLOAD_FILE_DUPLICATE) {
+                            [BIMToastView toast:@"下载失败，请重试"];
                         }
-                    }];
-                } else {
-                    [self playItem:item];
-                }
-                
-                
-                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
+                    } else {
+                        [BIMToastView toast:@"下载成功"];
+                    }
+                }];
             }
-        }else{
-            [BIMToastView toast:[NSString stringWithFormat:@"无法播放，URL错误:%@",self.file.url]];
+            
+            // 下载不能影响在线播放
+            if (self.localFilePath) {
+                fileURL = [NSURL fileURLWithPath:self.localFilePath];
+            } else {
+                fileURL = [NSURL URLWithString:self.file.url];
+            }
+            
+            if (fileURL) {
+                item = [AVPlayerItem playerItemWithURL:fileURL];
+                if (item != nil) {
+                    if (self.file.isExpired) {
+                        kWeakSelf(self);
+                        [self refreshMediaMessage:self.message completion:^(BIMError * _Nullable error) {
+                            kStrongSelf(self);
+                            if (error) {
+                                [BIMToastView toast:[NSString stringWithFormat:@"无法播放，URL错误:%@",self.file.url]];
+                            } else {
+                                [self playItem:item];
+                            }
+                        }];
+                    } else {
+                        [self playItem:item];
+                    }
+                    
+                    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
+                }
+            } else {
+                [BIMToastView toast:[NSString stringWithFormat:@"无法播放，URL错误:%@",self.file.url]];
+            }
         }
         
         if ([self.delegate respondsToSelector:@selector(cell:didClickImageContent:)]) {

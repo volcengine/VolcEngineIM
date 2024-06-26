@@ -315,9 +315,9 @@ typedef NS_ENUM(NSInteger, VEIMDemoSearchDataSourceMode) {
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-
+    
+    BIMSearchMsgInfo *msg = [self.currentArrMessageResult btd_objectAtIndex:indexPath.row];
     if (self.msgType == BIM_MESSAGE_TYPE_TEXT) {
-        BIMSearchMsgInfo *msg = [self.currentArrMessageResult btd_objectAtIndex:indexPath.row];
         @weakify(self);
         [[BIMClient sharedInstance] getConversation:msg.message.conversationID completion:^(BIMConversation * _Nonnull conversation, BIMError * _Nullable error) {
             @strongify(self);
@@ -326,7 +326,29 @@ typedef NS_ENUM(NSInteger, VEIMDemoSearchDataSourceMode) {
             [self.navigationController pushViewController:nVC animated:YES];
         }];
     } else {
-        [BIMToastView toast:@"暂不支持文件预览"];
+        BIMFileElement *element = BTD_DYNAMIC_CAST(BIMFileElement, msg.message.element);
+        if (![[NSFileManager defaultManager] fileExistsAtPath:element.downloadPath]) {
+            [BIMToastView toast:@"下载中"];
+            [[BIMClient sharedInstance] downloadFile:msg.message remoteURL:element.url progressBlock:nil completion:^(BIMError * _Nullable error) {
+                if (error) {
+                    if (error.code != BIM_DOWNLOAD_FILE_DUPLICATE) {
+                        [BIMToastView toast:@"下载失败，请重试"];
+                    }
+                } else {
+                    [BIMToastView toast:@"下载成功"];
+                }
+            }];
+        } else {
+            kWeakSelf(self);
+            NSString *fileSize = [self formattedFileSize:element.fileSize];
+            NSRange range = [element.fileName rangeOfString:@"." options:NSBackwardsSearch];
+            NSString *fileType = range.length == 0 ? @"" : [element.fileName substringFromIndex:range.location + 1];
+            NSString *fileInfo = [NSString stringWithFormat:@"文件大小：%@\n文件格式：%@", fileSize, fileType];
+            UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"暂不支持文件预览" message:fileInfo preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *sure = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
+            [alertVC addAction:sure];
+            [weakself presentViewController:alertVC animated:YES completion:nil];
+        }
     }
 }
 
@@ -496,7 +518,7 @@ typedef NS_ENUM(NSInteger, VEIMDemoSearchDataSourceMode) {
     return formattedFileSize;
 }
 
-#pragma mark -
+#pragma mark - 创建锚点消息信息
 
 - (BIMGetMessageByTypeOption *)createOptionWithAnchorMessage:(BIMMessage *)message limit:(NSInteger)limit messageTypeList:(NSArray<NSNumber *> *)messageTypeList direction:(BIMPullDirection)direction
 {

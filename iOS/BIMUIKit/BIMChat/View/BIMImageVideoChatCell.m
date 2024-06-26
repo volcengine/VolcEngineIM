@@ -9,11 +9,12 @@
 #import "BIMToastView.h"
 #import "BIMUIDefine.h"
 
-//#import <BDWebImage/UIImageView+BDWebImage.h>
 #import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVAssetImageGenerator.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/SDWebImageError.h>
+#import <SDWebImage/UIImageView+WebCache.h>
+#import <OneKit/BTDMacros.h>
 
 @interface BIMImageVideoChatCell ()
 @property (nonatomic, assign) BOOL isShowingLocalImage;
@@ -54,51 +55,10 @@
     self.imageContent.image = nil;
     self.playBtn.hidden = YES;
     
-    if (message.msgType == BIM_MESSAGE_TYPE_IMAGE) {
-        BIMImageElement *file = (BIMImageElement *)message.element;
-        if (self.message.msgStatus != BIM_MESSAGE_STATUS_SUCCESS && file.localPath.length > 0) {
-            NSString *localStr = file.localPath;
-            NSString *str = [localStr stringByReplacingOccurrencesOfString:@"%20" withString:@" "];
-            NSString *str2 = [str stringByReplacingOccurrencesOfString:@"file://" withString:@""];
-            if ([[NSFileManager defaultManager] fileExistsAtPath:str2]) {
-                UIImage *image = [UIImage imageWithContentsOfFile:str2];
-                if (image) {
-                    self.imageContent.image = image;
-                }
-            }
-        }
-        if (!self.imageContent.image) {
-            NSString *imageURL;
-            NSString *previewImageURL = file.largeImg.url;
-            NSString *thumbImageURL = file.largeImg.url;
-            if (thumbImageURL.length > 0 && ![thumbImageURL isEqualToString:@"(null)"]) {
-                imageURL = previewImageURL;
-            } else if (previewImageURL.length > 0 && ![previewImageURL isEqualToString:@"(null)"]) {
-                imageURL = previewImageURL;
-            } else if (file.originImg.url.length > 0 && ![file.originImg.url isEqualToString:@"(null)"]) {
-                imageURL = file.originImg.url;
-            }
-            
-            [self.imageContent sd_setImageWithURL:[NSURL URLWithString:imageURL] placeholderImage:nil options:0 completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                if ([self.delegate respondsToSelector:@selector(cell:fileLoadFinish:error:)]) {
-                    [self.delegate cell:self fileLoadFinish:message error:error];
-                }
-            }];
-        }
-    } else if (message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
-        BIMVideoElement *file = (BIMVideoElement *)message.element;
-        self.playBtn.hidden = NO;
-        
-        if (self.localFilePath.length) {
-            UIImage *img = [self thumbnailImageForVideo:[NSURL fileURLWithPath:self.localFilePath] atTime:1];
-            self.imageContent.image = img;
-        } else {
-            [self.imageContent sd_setImageWithURL:[NSURL URLWithString:file.coverImg.url] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                if (error && error.code != SDWebImageErrorInvalidURL) {
-                    [BIMToastView toast:error.localizedDescription];
-                }
-            }];
-        }
+    if (conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        [self refreshWithLiveGroupMessage:message sender:sender];
+    } else {
+        [self refreshWithNormalConvMessage:message sender:sender];
     }
 }
 
@@ -205,5 +165,125 @@
     
 }
 
+- (void)refreshWithNormalConvMessage:(BIMMessage *)message sender:(id<BIMMember>)sender
+{
+    if (message.msgType == BIM_MESSAGE_TYPE_IMAGE) {
+        BIMImageElement *element = BTD_DYNAMIC_CAST(BIMImageElement, message.element);
+        if (element.localPath.length > 0) {
+            NSString *localStr = element.localPath;
+            NSString *str = [localStr stringByReplacingOccurrencesOfString:@"%20" withString:@" "];
+            NSString *str2 = [str stringByReplacingOccurrencesOfString:@"file://" withString:@""];
+            if ([[NSFileManager defaultManager] fileExistsAtPath:str2]) {
+                UIImage *image = [UIImage imageWithContentsOfFile:str2];
+                if (image) {
+                    self.imageContent.image = image;
+                }
+            }
+        }
+        
+        if (!self.imageContent.image) {
+            NSString *downloadFilePath = element.thumbImg.downloadPath;
+            if ([[NSFileManager defaultManager] fileExistsAtPath:downloadFilePath]) {
+                UIImage *image = [UIImage imageWithContentsOfFile:downloadFilePath];
+                if (image) {
+                    self.imageContent.image = image;
+                }
+                if ([self.delegate respondsToSelector:@selector(cell:fileLoadFinish:error:)]) {
+                    [self.delegate cell:self fileLoadFinish:message error:nil];
+                }
+            } else {
+                [[BIMClient sharedInstance] downloadFile:message remoteURL:element.thumbImg.url progressBlock:nil completion:^(BIMError * _Nullable error) {
+                    if (![self.message.uuid isEqualToString:message.uuid]) {
+                        return;
+                    }
+                    
+                    if (!error) {
+                        BIMImageElement *newElement = BTD_DYNAMIC_CAST(BIMImageElement, message.element);
+                        UIImage *image = [UIImage imageWithContentsOfFile:newElement.thumbImg.downloadPath];
+                        self.imageContent.image = image;
+                    }
+                    
+                    if ([self.delegate respondsToSelector:@selector(cell:fileLoadFinish:error:)]) {
+                        [self.delegate cell:self fileLoadFinish:message error:error];
+                    }
+                }];
+            };
+        }
+    } else if (message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
+        BIMVideoElement *element = BTD_DYNAMIC_CAST(BIMVideoElement, message.element);
+        self.playBtn.hidden = NO;
+        
+        if ([[NSFileManager defaultManager] fileExistsAtPath:element.coverImg.downloadPath]) {
+            self.imageContent.image = [UIImage imageWithContentsOfFile:element.coverImg.downloadPath];
+        } else if ([[NSFileManager defaultManager] fileExistsAtPath:element.downloadPath]) {
+            self.imageContent.image = [self thumbnailImageForVideo:[NSURL fileURLWithPath:element.downloadPath] atTime:1];
+        } else if ([[NSFileManager defaultManager] fileExistsAtPath:element.localPath]) {
+            self.imageContent.image = [self thumbnailImageForVideo:[NSURL fileURLWithPath:element.localPath] atTime:1];
+        } else if (element.coverImg.url) {
+            [[BIMClient sharedInstance] downloadFile:message remoteURL:element.coverImg.url progressBlock:nil completion:^(BIMError * _Nullable error) {
+                if (![self.message.uuid isEqualToString:message.uuid]) {
+                    return;
+                }
+                
+                if (!error) {
+                    BIMVideoElement *newElement = BTD_DYNAMIC_CAST(BIMVideoElement, message.element);
+                    self.imageContent.image = [UIImage imageWithContentsOfFile:newElement.coverImg.downloadPath];
+                }
+            }];
+        }
+    }
+}
+
+- (void)refreshWithLiveGroupMessage:(BIMMessage *)message sender:(id<BIMMember>)sender
+{
+    if (message.msgType == BIM_MESSAGE_TYPE_IMAGE) {
+        BIMImageElement *file = (BIMImageElement *)message.element;
+        if (self.message.msgStatus != BIM_MESSAGE_STATUS_SUCCESS && file.localPath.length > 0) {
+            NSString *localStr = file.localPath;
+            NSString *str = [localStr stringByReplacingOccurrencesOfString:@"%20" withString:@" "];
+            NSString *str2 = [str stringByReplacingOccurrencesOfString:@"file://" withString:@""];
+            if ([[NSFileManager defaultManager] fileExistsAtPath:str2]) {
+                UIImage *image = [UIImage imageWithContentsOfFile:str2];
+                if (image) {
+                    self.imageContent.image = image;
+                }
+            }
+        }
+        if (!self.imageContent.image) {
+            NSString *imageURL;
+            NSString *previewImageURL = file.largeImg.url;
+            NSString *thumbImageURL = file.largeImg.url;
+            if (thumbImageURL.length > 0 && ![thumbImageURL isEqualToString:@"(null)"]) {
+                imageURL = previewImageURL;
+            } else if (previewImageURL.length > 0 && ![previewImageURL isEqualToString:@"(null)"]) {
+                imageURL = previewImageURL;
+            } else if (file.originImg.url.length > 0 && ![file.originImg.url isEqualToString:@"(null)"]) {
+                imageURL = file.originImg.url;
+            }
+            
+            [self.imageContent sd_setImageWithURL:[NSURL URLWithString:imageURL] placeholderImage:nil options:0 completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                if ([self.delegate respondsToSelector:@selector(cell:fileLoadFinish:error:)]) {
+                    [self.delegate cell:self fileLoadFinish:message error:error];
+                }
+            }];
+        } else {
+            [self.imageContent sd_cancelCurrentImageLoad];
+        }
+    } else if (message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
+        BIMVideoElement *file = (BIMVideoElement *)message.element;
+        self.playBtn.hidden = NO;
+        
+        if (self.localFilePath.length) {
+            UIImage *img = [self thumbnailImageForVideo:[NSURL fileURLWithPath:self.localFilePath] atTime:1];
+            self.imageContent.image = img;
+        } else {
+            [self.imageContent sd_setImageWithURL:[NSURL URLWithString:file.coverImg.url] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                if (error && error.code != SDWebImageErrorInvalidURL) {
+                    [BIMToastView toast:error.localizedDescription];
+                }
+            }];
+        }
+    }
+}
 
 @end

@@ -11,7 +11,6 @@
 #import "VEIMDemoUserManager.h"
 
 #import <OneKit/UIDevice+BTDAdditions.h>
-#import <TTNetworkManager/TTNetworkManager.h>
 
 @interface VEIMDemoIMManager ()
 
