@@ -76,7 +76,14 @@ PODS:
   - MMKV (1.3.4):
     - MMKVCore (~> 1.3.4)
   - MMKVCore (1.3.4)
+  - OneKit (1.4.2):
+    - OneKit/BaseKit (= 1.4.2)
+    - OneKit/Core (= 1.4.2)
+    - OneKit/MARS/Auth (= 1.4.2)
+    - OneKit/Service (= 1.4.2)
   - OneKit/BaseKit (1.4.2):
+    - OneKit/Service
+  - OneKit/boringssl (1.4.2):
     - OneKit/Service
   - OneKit/ByteDanceKit (1.4.2):
     - OneKit/ByteDanceKit/Foundation (= 1.4.2)
@@ -87,11 +94,32 @@ PODS:
   - OneKit/ByteDanceKit/UIKit (1.4.2):
     - OneKit/ByteDanceKit/Foundation
     - OneKit/Service
+  - OneKit/Core (1.4.2):
+    - OneKit/BaseKit
+    - OneKit/MARS
+    - OneKit/Network
+    - OneKit/Registar
+  - OneKit/MARS (1.4.2):
+    - OneKit/MARS/Auth (= 1.4.2)
+  - OneKit/MARS/Auth (1.4.2):
+    - OneKit/BaseKit
+    - OneKit/StartUp
+  - OneKit/Network (1.4.2):
+    - OneKit/MARS/Auth
+    - OneKit/OKModel
+    - OneKit/Service
   - OneKit/OKModel (1.4.2):
     - OneKit/Service
   - OneKit/Reachability (1.4.2):
     - OneKit/Service
+  - OneKit/Registar (1.4.2):
+    - OneKit/boringssl
+  - OneKit/Section (1.4.2)
   - OneKit/Service (1.4.2)
+  - OneKit/StartUp (1.4.2):
+    - OneKit/Reachability
+    - OneKit/Section
+    - OneKit/Service
   - Protobuf (3.21.9)
   - RangersAPM/Above (4.0.0)
   - RangersAPM/APMLog (4.0.0):
@@ -149,6 +177,7 @@ DEPENDENCIES:
   - Masonry
   - MBProgressHUD
   - MJRefresh
+  - OneKit
   - SDWebImage
 
 SPEC REPOS:
@@ -206,6 +235,6 @@ SPEC CHECKSUMS:
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: 2df9ce051931369186b16c3d3d5f58772ef25a79
+PODFILE CHECKSUM: c73256470fb7434ea3d1f18e5e81f25943036c7f
 
 COCOAPODS: 1.15.2
