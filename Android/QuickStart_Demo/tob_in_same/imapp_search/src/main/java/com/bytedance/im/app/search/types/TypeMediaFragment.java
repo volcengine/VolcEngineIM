@@ -119,7 +119,7 @@ public class TypeMediaFragment extends Fragment {
                 }
             }else if(bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO){
                 BIMVideoElement videoElement = (BIMVideoElement) bimMessage.getElement();
-                String localFile = videoElement.getSavePath();
+                String localFile = videoElement.getDownloadPath();
                 Uri uri = null;
                 if (new File(localFile).exists()) {
                     uri = convertUri(view.getContext(), localFile);

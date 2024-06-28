@@ -140,7 +140,7 @@ public class VideoMessageUI extends BaseCustomElementUI {
         });
 
         BIMMessage bimMessage = messageWrapper.getBimMessage();
-        boolean hasLocalFile = new File(videoElement.getSavePath()).exists();
+        boolean hasLocalFile = new File(videoElement.getDownloadPath()).exists();
         if (messageWrapper.getBimMessage().isSelf() && !TextUtils.isEmpty(videoElement.getLocalPath())) {
             Uri uri = convertUri(v.getContext(), videoElement.getLocalPath());
             startPlay(v.getContext(), uri);
@@ -180,7 +180,7 @@ public class VideoMessageUI extends BaseCustomElementUI {
                         }
                     });
                 } else {
-                    Uri contentUri = convertUri(v.getContext(), videoElement.getSavePath());
+                    Uri contentUri = convertUri(v.getContext(), videoElement.getDownloadPath());
                     startPlay(v.getContext(), contentUri);
                 }
             }
