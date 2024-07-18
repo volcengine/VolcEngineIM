@@ -18,6 +18,7 @@ import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
 import com.bytedance.im.app.custom.data.BIMCouponElement;
 import com.bytedance.im.app.custom.data.BIMP2PTypingElement;
+import com.bytedance.im.app.custom.operations.VEUnreadMessageDetailOperationInfo;
 import com.bytedance.im.app.custom.toolbtn.CouponToolBtn;
 import com.bytedance.im.app.custom.ui.BIMCouponMessageUI;
 import com.bytedance.im.app.debug.VEEnvSettingActivity;
@@ -207,6 +208,7 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
     private void initMessageOperationList(){
         if (!VEUtils.isShield()) {  //查看消息详情， debug 功能屏蔽
             BIMUIClient.getInstance().registerMessageOperation(new VEMessageDetailOperationInfo());
+            BIMUIClient.getInstance().registerMessageOperation(new VEUnreadMessageDetailOperationInfo());
         }
     }
     //输入工具栏

@@ -63,10 +63,22 @@ public class VideoMessageUI extends BaseCustomElementUI {
         BIMVideoElement videoElement = (BIMVideoElement) msg.getElement();
         CircleProgressView circleProgressView = itemView.findViewById(R.id.pv_circle_view);
         if (msg.isSelf()) {
-            if (videoElement.getProgress() > 0 && (msg.getMsgStatus() != BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS
-                    || msg.getMsgStatus() != BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL)) {
+            if (msg.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_PENDING
+                    || (videoElement.getProgress() >= 0
+                    && msg.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_SENDING_FILE_PARTS)) {
                 circleProgressView.setVisibility(View.VISIBLE);
                 circleProgressView.setProgress(videoElement.getProgress());
+                circleProgressView.setOnClickListener(v -> BIMClient.getInstance().cancelMediaFileMessageUpload(msg, new BIMSimpleCallback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onFailed(BIMErrorCode code) {
+
+                    }
+                }));
                 tvUploadStatus.setVisibility(View.VISIBLE);
                 videoPlayIcon.setVisibility(View.GONE);
             } else {

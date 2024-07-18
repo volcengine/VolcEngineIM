@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.enums.BIMMessageStatus;
 import com.bytedance.im.core.api.interfaces.BIMDownloadCallback;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
@@ -18,6 +19,7 @@ import com.bytedance.im.download.api.BIMDownloadExpandService;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
+import com.bytedance.im.ui.message.adapter.ui.widget.custom.CircleProgressView;
 import com.bytedance.im.ui.utils.media.AudioHelper;
 import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
@@ -46,6 +48,8 @@ public class VoiceMessageUI extends BaseCustomElementUI {
         View sendContent = itemView.findViewById(R.id.ll_voice_content_send);
         View receiveContent = itemView.findViewById(R.id.ll_voice_content_receive);
 
+        CircleProgressView circleProgressView = itemView.findViewById(R.id.pv_circle_view);
+        circleProgressView.setVisibility(View.GONE);
         if (bimMessage.isSelf()) {
             sendContent.setVisibility(View.VISIBLE);
             receiveContent.setVisibility(View.GONE);
@@ -55,6 +59,17 @@ public class VoiceMessageUI extends BaseCustomElementUI {
             sendContent.setBackgroundResource(R.drawable.shape_im_conversation_msg_send_bg);
             voiceDuration.setTextColor(itemView.getContext().getResources().getColor(R.color.business_base_white));
             updateDuration(voiceDuration, audioElement);
+            if (bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_PENDING
+                    || (audioElement.getProgress() >= 0 && bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_SENDING_FILE_PARTS)) {
+                circleProgressView.setVisibility(View.VISIBLE);
+                circleProgressView.setProgress(audioElement.getProgress());
+                circleProgressView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        BIMClient.getInstance().cancelMediaFileMessageUpload(bimMessage, null);
+                    }
+                });
+            }
         } else {
             sendContent.setVisibility(View.GONE);
             receiveContent.setVisibility(View.VISIBLE);
