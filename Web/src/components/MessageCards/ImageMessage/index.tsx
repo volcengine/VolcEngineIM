@@ -1,14 +1,10 @@
-import React, { memo, FC, useState, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import React, { FC, useState, useEffect } from 'react';
 import { FileExtKey, Message } from '@volcengine/im-web-sdk';
-import { Progress } from '@arco-design/web-react';
-
-import { BytedIMInstance } from '../../../store';
 import { Image } from '../..';
 import { IconDownload } from '../../Icon';
 import { download, debounce, parseMessageContent } from '../../../utils';
 import ImgBox from './Styles';
-import { useUploadProcessText } from '../../../hooks';
+import FileProgress from '../../FileProgress';
 
 interface ImageMessagePropsTypes {
   message: Message;
@@ -21,7 +17,6 @@ const HeightKey = 'file_ext_key_original_height';
 
 const ImageMessage: FC<ImageMessagePropsTypes> = props => {
   const { message } = props;
-  const bytedIMInstance = useRecoilValue(BytedIMInstance);
   let thumbUrl = '';
   const [previewUrl, setPreviewUrl] = useState('');
   const [remoteURL, setRemoteURL] = useState('');
@@ -32,8 +27,6 @@ const ImageMessage: FC<ImageMessagePropsTypes> = props => {
 
   const files = content?.__files;
   const url = content?.url;
-
-  const { percent } = useUploadProcessText(message);
 
   useEffect(() => {
     const getImg = async () => {
@@ -86,7 +79,7 @@ const ImageMessage: FC<ImageMessagePropsTypes> = props => {
       />
     </ImgBox>
   ) : (
-    <Progress percent={percent} type="circle" />
+    <FileProgress message={message} />
   );
 };
 
