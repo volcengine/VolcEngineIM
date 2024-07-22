@@ -105,6 +105,8 @@ public class FilePathUtils {
                     contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
                 } else if ("audio".equals(type)) {
                     contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                } else if ("document".equals(type)) {
+                    contentUri = MediaStore.Files.getContentUri("external");
                 }
                 selection = "_id=?";
                 selectionArgs = new String[]{split[1]};

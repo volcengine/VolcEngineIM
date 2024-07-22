@@ -33,6 +33,9 @@
         <activity android:name=".custom.operations.VEMessageDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.imApp"/>
+        <activity android:name=".custom.operations.VEUnreadMessageDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"/>
     </application>
 
 </manifest>

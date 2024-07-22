@@ -119,7 +119,7 @@ public class TypeMediaFragment extends Fragment {
                 }
             }else if(bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO){
                 BIMVideoElement videoElement = (BIMVideoElement) bimMessage.getElement();
-                String localFile = videoElement.getSavePath();
+                String localFile = videoElement.getDownloadPath();
                 Uri uri = null;
                 if (new File(localFile).exists()) {
                     uri = convertUri(view.getContext(), localFile);
@@ -131,15 +131,19 @@ public class TypeMediaFragment extends Fragment {
                         BIMClient.getInstance().downloadFile(bimMessage, videoElement.getURL(), new BIMDownloadCallback() {
                             @Override
                             public void onSuccess(BIMMessage bimMessage) {
-                                Toast.makeText(getActivity(), "下载成功", Toast.LENGTH_SHORT).show();
+                                if (null != getActivity()) {
+                                    Toast.makeText(getActivity(), "下载成功", Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                             @Override
                             public void onError(BIMMessage bimMessage, BIMErrorCode code) {
-                                if (code == BIMErrorCode.BIM_DOWNLOAD_FILE_DUPLICATE) {
-                                    Toast.makeText(getActivity(), "下载中", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(getActivity(), "下载失败，请重试", Toast.LENGTH_SHORT).show();
+                                if (null != getActivity()) {
+                                    if (code == BIMErrorCode.BIM_DOWNLOAD_FILE_DUPLICATE) {
+                                        Toast.makeText(getActivity(), "下载中", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getActivity(), "下载失败，请重试", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             }
                         });

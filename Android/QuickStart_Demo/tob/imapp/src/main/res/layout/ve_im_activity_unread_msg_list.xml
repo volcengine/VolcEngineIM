@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:ignore="MissingDefaultResource">
+
+    <FrameLayout
+        android:id="@+id/action_bar"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_height="?android:actionBarSize">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginTop="5dp"
+            android:padding="10dp"
+            android:src="@drawable/icon_im_back_black" />
+
+        <TextView
+            android:id="@+id/unread_msg_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:maxEms="10"
+            android:maxLines="1"
+            android:text="未读消息列表"
+            android:textColor="@color/business_im_222"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <TextView
+        android:text="消息ID: "
+        android:id="@+id/tv_msg_id"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/action_bar"/>
+
+    <TextView
+        android:text="会话ID: "
+        android:id="@+id/tv_conv_id"
+        android:layout_marginTop="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_msg_id"/>
+
+    <EditText
+        android:hint="输入消息ID"
+        android:layout_width="300dp"
+        android:id="@+id/et_msg_container"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/tv_msg_id"
+        app:layout_constraintLeft_toRightOf="@id/tv_msg_id"
+        app:layout_constraintBottom_toBottomOf="@id/tv_msg_id"/>
+
+    <EditText
+        android:hint="输入会话ID"
+        android:layout_width="300dp"
+        android:id="@+id/et_conv_container"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/tv_conv_id"
+        app:layout_constraintLeft_toRightOf="@id/tv_conv_id"
+        app:layout_constraintBottom_toBottomOf="@id/tv_conv_id"/>
+
+    <TextView
+        android:text="查询"
+        android:id="@+id/tv_query"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="200dp"
+        android:textColor="@color/blue1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_conv_id" />
+
+    <TextView
+        android:text="清未读数"
+        android:layout_marginLeft="50dp"
+        android:textColor="@color/blue1"
+        android:id="@+id/tv_clear_unread"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/tv_query"
+        app:layout_constraintLeft_toRightOf="@id/tv_query"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/rv_msg_container"
+        android:layout_width="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_query" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -63,10 +63,22 @@ public class VideoMessageUI extends BaseCustomElementUI {
         BIMVideoElement videoElement = (BIMVideoElement) msg.getElement();
         CircleProgressView circleProgressView = itemView.findViewById(R.id.pv_circle_view);
         if (msg.isSelf()) {
-            if (videoElement.getProgress() > 0 && (msg.getMsgStatus() != BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS
-                    || msg.getMsgStatus() != BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL)) {
+            if (msg.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_PENDING
+                    || (videoElement.getProgress() >= 0
+                    && msg.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_SENDING_FILE_PARTS)) {
                 circleProgressView.setVisibility(View.VISIBLE);
                 circleProgressView.setProgress(videoElement.getProgress());
+                circleProgressView.setOnClickListener(v -> BIMClient.getInstance().cancelMediaFileMessageUpload(msg, new BIMSimpleCallback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onFailed(BIMErrorCode code) {
+
+                    }
+                }));
                 tvUploadStatus.setVisibility(View.VISIBLE);
                 videoPlayIcon.setVisibility(View.GONE);
             } else {
@@ -140,7 +152,7 @@ public class VideoMessageUI extends BaseCustomElementUI {
         });
 
         BIMMessage bimMessage = messageWrapper.getBimMessage();
-        boolean hasLocalFile = new File(videoElement.getSavePath()).exists();
+        boolean hasLocalFile = new File(videoElement.getDownloadPath()).exists();
         if (messageWrapper.getBimMessage().isSelf() && !TextUtils.isEmpty(videoElement.getLocalPath())) {
             Uri uri = convertUri(v.getContext(), videoElement.getLocalPath());
             startPlay(v.getContext(), uri);
@@ -180,7 +192,7 @@ public class VideoMessageUI extends BaseCustomElementUI {
                         }
                     });
                 } else {
-                    Uri contentUri = convertUri(v.getContext(), videoElement.getSavePath());
+                    Uri contentUri = convertUri(v.getContext(), videoElement.getDownloadPath());
                     startPlay(v.getContext(), contentUri);
                 }
             }

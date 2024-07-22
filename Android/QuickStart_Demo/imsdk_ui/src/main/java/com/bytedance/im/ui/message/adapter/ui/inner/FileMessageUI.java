@@ -11,9 +11,9 @@ import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageStatus;
 import com.bytedance.im.core.api.interfaces.BIMDownloadCallback;
+import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.model.inner.msg.BIMFileElement;
-import com.bytedance.im.download.api.BIMDownloadExpandService;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
@@ -60,9 +60,21 @@ public class FileMessageUI extends BaseCustomElementUI {
             tvUploadStatus.setVisibility(View.GONE);
             //do something
         } else {
-            if (fileElement.getProgress() > 0 && (bimMessage.getMsgStatus() != BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS
-                    || bimMessage.getMsgStatus() != BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL)) {
+            if (bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_PENDING
+                    || (fileElement.getProgress() >= 0
+                    && bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_SENDING_FILE_PARTS)) {
                 circleProgressView.setVisibility(View.VISIBLE);
+                circleProgressView.setOnClickListener(v -> BIMClient.getInstance().cancelMediaFileMessageUpload(bimMessage, new BIMSimpleCallback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onFailed(BIMErrorCode code) {
+
+                    }
+                }));
                 tvUploadStatus.setVisibility(View.VISIBLE);
                 circleProgressView.setProgress(fileElement.getProgress());
             } else {

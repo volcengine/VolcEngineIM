@@ -56,11 +56,16 @@ public class ImageMessageUI extends BaseCustomElementUI {
         CircleProgressView circleProgressView = itemView.findViewById(R.id.pv_circle_view);
         TextView tvUploadStatus = itemView.findViewById(R.id.tv_upload_status);
         if (bimMessage.isSelf()) {
-            if (bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS || bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL) {
+            if (bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS
+                    || bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL
+                    || bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_FAILED) {
                 circleProgressView.setVisibility(View.GONE);
                 tvUploadStatus.setVisibility(View.GONE);
             } else {
                 circleProgressView.setVisibility(View.VISIBLE);
+                circleProgressView.setOnClickListener(v -> {
+                    BIMClient.getInstance().cancelMediaFileMessageUpload(bimMessage, null);
+                });
                 tvUploadStatus.setVisibility(View.VISIBLE);
                 circleProgressView.setProgress(imageElement.getProgress());
             }
