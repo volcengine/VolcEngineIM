@@ -1,13 +1,13 @@
 import React, { memo, FC, useRef, useState, useMemo } from 'react';
 import classNames from 'classnames';
-import { Message, FileExtKey, BytedIM } from '@volcengine/im-web-sdk';
-import { Progress } from '@arco-design/web-react';
+import { FileExtKey } from '@volcengine/im-web-sdk';
 
 import VideoBox from './Styles';
 import { useUploadProcessText } from '../../../hooks';
 import { parseMessageContent } from '../../../utils';
 import { BytedIMInstance, CurrentConversation } from '../../../store';
 import { useRecoilValue } from 'recoil';
+import FileProgress from '../../FileProgress';
 
 type VideoMessageContentProps = React.HtmlHTMLAttributes<HTMLVideoElement> & {
   className?: string;
@@ -108,7 +108,6 @@ const VideoMessage: FC<VideoMessageProps> = props => {
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
   const currentConversation = useRecoilValue(CurrentConversation);
   const { message } = props;
-  const { percent } = useUploadProcessText(message);
 
   let duration = 0;
   let previewUrl = '';
@@ -159,7 +158,7 @@ const VideoMessage: FC<VideoMessageProps> = props => {
           }}
         />
       ) : (
-        <Progress percent={percent} type="circle" />
+        <FileProgress message={message} />
       )}
     </>
   );
