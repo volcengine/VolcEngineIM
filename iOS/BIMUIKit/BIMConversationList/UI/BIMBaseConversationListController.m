@@ -6,6 +6,7 @@
 //
 
 #import "BIMBaseConversationListController.h"
+#import "BIMUnreadMessageListViewController.h"
 
 #import "BIMUIDefine.h"
 #import "BIMToastView.h"
@@ -14,6 +15,7 @@
 #import "BIMConversationListDataSourceProtocol.h"
 #import "BIMBaseConversationListController+Private.h"
 #import "BIMUIClient.h"
+//#import "BIMClient.h"
 
 #import <imsdk-tob/BIMSDK.h>
 
@@ -184,6 +186,17 @@
         }
     }];
     [alertVC addAction:delete];
+#ifdef UI_INTERNAL_TEST
+    UIAlertAction *queryUnreadMessage = [UIAlertAction actionWithTitle:@"查询未读消息" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        if (cell.conversation.conversationID.length) {
+            kWeakSelf(self);
+            BIMUnreadMessageListViewController *vc = [[BIMUnreadMessageListViewController alloc] init];
+            vc.conversation = cell.conversation;
+            [self.navigationController pushViewController:vc animated:YES];
+        }
+    }];
+    [alertVC addAction:queryUnreadMessage];
+#endif
 
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
     [alertVC addAction:cancel];

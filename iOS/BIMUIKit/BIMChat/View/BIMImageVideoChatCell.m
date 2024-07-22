@@ -16,10 +16,13 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <OneKit/BTDMacros.h>
 
-@interface BIMImageVideoChatCell ()
-@property (nonatomic, assign) BOOL isShowingLocalImage;
+#import "UIImage+IMUtils.h"
 
+@interface BIMImageVideoChatCell ()
+
+@property (nonatomic, assign) BOOL isShowingLocalImage;
 @property (nonatomic, strong) UIImageView *playBtn;
+
 @end
 
 @implementation BIMImageVideoChatCell
@@ -56,33 +59,11 @@
     self.playBtn.hidden = YES;
     
     if (conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
-        [self refreshWithLiveGroupMessage:message sender:sender];
+        [self refreshWithLiveGroupMessage:message];
     } else {
-        [self refreshWithNormalConvMessage:message sender:sender];
+        [self refreshWithNormalConvMessage:message];
     }
 }
-
-- (UIImage *)thumbnailImageForVideo:(NSURL *)videoURL atTime:(NSTimeInterval)time
-{
-    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:videoURL options:nil];
-    NSParameterAssert(asset);
-    AVAssetImageGenerator *assetImageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
-    assetImageGenerator.appliesPreferredTrackTransform = YES;
-    assetImageGenerator.apertureMode = AVAssetImageGeneratorApertureModeEncodedPixels;
-    
-    CGImageRef thumbnailImageRef = NULL;
-    CFTimeInterval thumbnailImageTime = time;
-    NSError *thumbnailImageGenerationError = nil;
-    thumbnailImageRef = [assetImageGenerator copyCGImageAtTime:CMTimeMake(thumbnailImageTime, 60) actualTime:NULL error:&thumbnailImageGenerationError];
-    
-    if (!thumbnailImageRef)
-        NSLog(@"thumbnailImageGenerationError %@", thumbnailImageGenerationError);
-    
-    UIImage *thumbnailImage = thumbnailImageRef ? [[UIImage alloc] initWithCGImage:thumbnailImageRef] : nil;
-    
-    return thumbnailImage;
-}
-
 
 //- (CGFloat)heightForMessage:(TIMOMessage *)message inConversation:(TIMOConversation *)conversation sender:(id<TIMOConversationParticipant>)sender{
 //    [self refreshWithMessage:message inConversation:conversation sender:sender];
@@ -120,7 +101,7 @@
         if (width > maxWidth) {
             height = height/width * maxWidth;
             width = maxWidth;
-        }else if (width == 0 || height == 0){
+        } else if (width == 0 || height == 0){
             width = maxWidth;
             height = maxWidth;
         }
@@ -137,7 +118,26 @@
                 make.width.mas_equalTo(width);
                 make.height.mas_equalTo(height);
             }];
-        }else{
+            
+            CGFloat progressViewWidth = width / 2.0f;
+            CGFloat progressViewHeight = height / 4.0f;
+            if (progressViewHeight < 40) {
+                progressViewHeight = height < 40 ? height / 2.0f : height - 20;
+            }
+            CGFloat progressViewWidthHeight = MIN(progressViewHeight, progressViewWidth);
+            
+            [self.progressView mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.width.height.mas_equalTo(progressViewWidthHeight);
+                make.centerX.mas_equalTo(self.imageContent);
+                make.centerY.mas_equalTo(self.imageContent);
+            }];
+            
+            [self.cancelBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.center.equalTo(self.imageContent);
+                make.width.height.equalTo(self.progressView);
+            }];
+            
+        } else {
             [self.imageContent mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.left.equalTo(self.portrait.mas_right).offset(margin*2);
                 if (self.referMessageLabel.text.length) {
@@ -154,6 +154,7 @@
             make.center.equalTo(self.imageContent);
             make.width.height.mas_equalTo(playWH);
         }];
+        
 //        [self.imageBg mas_remakeConstraints:^(MASConstraintMaker *make) {
 //            make.left.equalTo(self.imageContent).offset(-margin);
 //            make.top.equalTo(self.imageContent).offset(-margin);
@@ -165,8 +166,12 @@
     
 }
 
-- (void)refreshWithNormalConvMessage:(BIMMessage *)message sender:(id<BIMMember>)sender
+- (void)refreshWithNormalConvMessage:(BIMMessage *)message
 {
+    if (self.imageContent.image) {
+        return;
+    }
+    
     if (message.msgType == BIM_MESSAGE_TYPE_IMAGE) {
         BIMImageElement *element = BTD_DYNAMIC_CAST(BIMImageElement, message.element);
         if (element.localPath.length > 0) {
@@ -211,14 +216,14 @@
         }
     } else if (message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
         BIMVideoElement *element = BTD_DYNAMIC_CAST(BIMVideoElement, message.element);
-        self.playBtn.hidden = NO;
+        self.playBtn.hidden = message.msgStatus == BIM_MESSAGE_STATUS_SENDING_FILE_PARTS;
         
         if ([[NSFileManager defaultManager] fileExistsAtPath:element.coverImg.downloadPath]) {
             self.imageContent.image = [UIImage imageWithContentsOfFile:element.coverImg.downloadPath];
         } else if ([[NSFileManager defaultManager] fileExistsAtPath:element.downloadPath]) {
-            self.imageContent.image = [self thumbnailImageForVideo:[NSURL fileURLWithPath:element.downloadPath] atTime:1];
+            self.imageContent.image = [UIImage thumbnailImageForVideo:[NSURL fileURLWithPath:element.downloadPath] atTime:1];
         } else if ([[NSFileManager defaultManager] fileExistsAtPath:element.localPath]) {
-            self.imageContent.image = [self thumbnailImageForVideo:[NSURL fileURLWithPath:element.localPath] atTime:1];
+            self.imageContent.image = [UIImage thumbnailImageForVideo:[NSURL fileURLWithPath:element.localPath] atTime:1];
         } else if (element.coverImg.url) {
             [[BIMClient sharedInstance] downloadFile:message remoteURL:element.coverImg.url progressBlock:nil completion:^(BIMError * _Nullable error) {
                 if (![self.message.uuid isEqualToString:message.uuid]) {
@@ -234,7 +239,7 @@
     }
 }
 
-- (void)refreshWithLiveGroupMessage:(BIMMessage *)message sender:(id<BIMMember>)sender
+- (void)refreshWithLiveGroupMessage:(BIMMessage *)message
 {
     if (message.msgType == BIM_MESSAGE_TYPE_IMAGE) {
         BIMImageElement *file = (BIMImageElement *)message.element;
@@ -249,6 +254,7 @@
                 }
             }
         }
+        
         if (!self.imageContent.image) {
             NSString *imageURL;
             NSString *previewImageURL = file.largeImg.url;
@@ -271,10 +277,10 @@
         }
     } else if (message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
         BIMVideoElement *file = (BIMVideoElement *)message.element;
-        self.playBtn.hidden = NO;
+        self.playBtn.hidden = message.msgStatus == BIM_MESSAGE_STATUS_SENDING_FILE_PARTS;
         
         if (self.localFilePath.length) {
-            UIImage *img = [self thumbnailImageForVideo:[NSURL fileURLWithPath:self.localFilePath] atTime:1];
+            UIImage *img = [UIImage thumbnailImageForVideo:[NSURL fileURLWithPath:self.localFilePath] atTime:1];
             self.imageContent.image = img;
         } else {
             [self.imageContent sd_setImageWithURL:[NSURL URLWithString:file.coverImg.url] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {

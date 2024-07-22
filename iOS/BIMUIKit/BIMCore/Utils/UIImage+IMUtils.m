@@ -107,7 +107,11 @@
     if (!thumbnailImageRef)
         NSLog(@"thumbnailImageGenerationError %@", thumbnailImageGenerationError);
 
-    UIImage *thumbnailImage = thumbnailImageRef ? [[UIImage alloc] initWithCGImage:thumbnailImageRef] : nil;
+    UIImage *thumbnailImage = nil;
+    if (thumbnailImageRef) {
+        thumbnailImage = [[UIImage alloc] initWithCGImage:thumbnailImageRef];
+        CGImageRelease(thumbnailImageRef);
+    }
 
     return thumbnailImage;
 }

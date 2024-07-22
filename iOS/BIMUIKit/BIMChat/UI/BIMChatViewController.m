@@ -24,6 +24,7 @@
 #import "BIMUIClient.h"
 #import "BIMMessageDetailDebugViewController.h"
 #import "BIMCouponChatCell.h"
+#import "BIMMessageProgressManager.h"
 
 #import <Masonry/Masonry.h>
 #import <AVFoundation/AVPlayer.h>
@@ -529,18 +530,24 @@
     // 目前仅限制了输入，仍然可以发送property表情和消息发送重试，但是会发送失败，仅自见
     [self.inputTool disableInputWithReason:reason];
 }
-- (void)inputToolViewSendMessage:(BIMMessage *)sendMessage{
+
+- (void)inputToolViewSendMessage:(BIMMessage *)sendMessage
+{
+    NSString *msgID = sendMessage.uuid;
+    BIMProgress progress = ^(int progress) {
+        [[BIMMessageProgressManager sharedInstance] updateProgress:msgID progress:progress];
+    };
+    
+    @weakify(self);
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
         [self setExtWithSendMessage:sendMessage];
         
-        @weakify(self);
-        [[BIMClient sharedInstance] sendLiveGroupMessage:sendMessage                       conversation:self.conversation.conversationID priority:self.inputTool.priority completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+        [[BIMClient sharedInstance] sendLiveGroupMessage:sendMessage conversation:self.conversation.conversationID priority:self.inputTool.priority progress:progress completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
             @strongify(self);
             if (error) {
                 [self sendMessageToastWithError:error];
             }
         }];
-        return;
     } else {
         // 普通群聊 单聊
         // 发送消息前判断用户是否在会话中
@@ -548,10 +555,9 @@
             [BIMToastView toast:[NSString stringWithFormat:@"不在会话中"]];
             return;
         }
-        
-        [[BIMClient sharedInstance] sendMessage:sendMessage conversationId:self.conversation.conversationID saved:nil progress:^(int progress) {
-            
-        } completion:^(BIMMessage * _Nonnull message, BIMError * _Nullable error) {
+                
+        [[BIMClient sharedInstance] sendMessage:sendMessage conversationId:self.conversation.conversationID saved:nil progress:progress completion:^(BIMMessage * _Nonnull message, BIMError * _Nullable error) {
+            @strongify(self);
             if (error) {
                 [self sendMessageToastWithError:error];
             }
@@ -578,7 +584,8 @@
     }];
 }
 
-- (void)inputToolDidTriggerMention{
+- (void)inputToolDidTriggerMention
+{
     BIMUserSelectionController *selectionVC = [[BIMUserSelectionController alloc] initWithConversationID:self.conversation.conversationID];
     selectionVC.isNeedLeftBack = NO;
     selectionVC.isNeedCloseBtn = YES;
@@ -618,13 +625,13 @@
     if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_ONE_CHAT) {
         NSString *participantCount = [NSString stringWithFormat:@"%lu", (unsigned long)self.conversation.memberCount];
         self.title = [NSString stringWithFormat:@"%@(%@)", self.conversation.name.length ? self.conversation.name : self.conversation.conversationID, participantCount];
-    }else{
+    } else {
         long long conversationParticipant = self.conversation.oppositeUserID;
         if (conversationParticipant>0) {
             BIMUser *user = [BIMUIClient sharedInstance].userProvider(conversationParticipant);
             self.title = user.alias && user.alias.length ? user.alias : user.nickName;
 //            self.title = [BIMUIClient sharedInstance].userProvider(conversationParticipant).nickName;
-        }else{
+        } else {
             self.title = @"私聊";
         }
     }
@@ -632,7 +639,8 @@
 
 #pragma mark - TableView Delegate & Datasource
 
-- (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
+- (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
+{
 //    BIMMessage *msg = [self.msgDataSource itemAtIndex:indexPath.row];
     BIMMessage *msg = [self.messageDataSource itemAtIndex:indexPath.row];
     /// 语音和视频消息需要点开才发送已读回执，可以根据需求调整。
@@ -670,7 +678,8 @@
     return cell;
 }
 
-- (BIMBaseChatCell *)dequestCellForMessage: (BIMMessage *)msg tableView: (UITableView *)tableView{
+- (BIMBaseChatCell *)dequestCellForMessage:(BIMMessage *)msg tableView:(UITableView *)tableView
+{
     BIMBaseChatCell *cell;
     if (msg.isRecalled) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"BIMSystemMsgChatCell"];
@@ -686,11 +695,11 @@
         } else {
             cell = [tableView dequeueReusableCellWithIdentifier:@"BIMTextChatCell"];
         }
-    } else if (msg.msgType == BIM_MESSAGE_TYPE_TEXT){
+    } else if (msg.msgType == BIM_MESSAGE_TYPE_TEXT) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"BIMTextChatCell"];
-    } else if (msg.msgType == BIM_MESSAGE_TYPE_IMAGE || msg.msgType ==     BIM_MESSAGE_TYPE_VIDEO){
+    } else if (msg.msgType == BIM_MESSAGE_TYPE_IMAGE || msg.msgType == BIM_MESSAGE_TYPE_VIDEO){
         cell = [tableView dequeueReusableCellWithIdentifier:@"BIMImageVideoChatCell"];
-    } else if (msg.msgType == BIM_MESSAGE_TYPE_FILE){
+    } else if (msg.msgType == BIM_MESSAGE_TYPE_FILE) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"BIMFileChatCell"];
     } else if (msg.msgType == BIM_MESSAGE_TYPE_AUDIO) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"BIMAudioChatCell"];
@@ -716,11 +725,13 @@
     return cell;
 }
 
-- (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
     return self.messageDataSource.numberOfItems;
 }
 
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
     [self.inputTool revertToTheOriginalType];
 }
 
@@ -755,7 +766,8 @@
     
 }
 
-- (void)userSelectVCDidClickClose:(BIMUserSelectionController *)vc{
+- (void)userSelectVCDidClickClose:(BIMUserSelectionController *)vc
+{
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.inputTool becomeFirstResponder];
         [self.inputTool inputText:@"@"];
@@ -765,30 +777,34 @@
 #pragma mark - Cell delegate
 - (void)chatCell:(BIMBaseChatCell *)cell didClickRetryBtnWithMessage:(BIMMessage *)sendMessage
 {
+    NSString *msgID = sendMessage.uuid;
+    BIMProgress progressBlock = ^(int progress) {
+        [[BIMMessageProgressManager sharedInstance] updateProgress:msgID progress:progress];
+    };
+    
+    @weakify(self);
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
         [self setExtWithSendMessage:sendMessage];
-        
-        @weakify(self);
-        [[BIMClient sharedInstance] sendLiveGroupMessage:sendMessage                       conversation:self.conversation.conversationID priority:self.inputTool.priority completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+
+        [[BIMClient sharedInstance] sendLiveGroupMessage:sendMessage conversation:self.conversation.conversationID priority:self.inputTool.priority progress:progressBlock completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
             @strongify(self);
             if (error) {
                 [self sendMessageToastWithError:error];
             }
         }];
-        return;
     } else {
-        @weakify(self);
         [[BIMClient sharedInstance] sendMessage:sendMessage conversationId:self.conversation.conversationID saved:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
                 if (error) {
                     [BIMToastView toast:[NSString stringWithFormat:@"消息储存失败:%@",error.localizedDescription]];
                 }
-            } progress:nil completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+            } progress:progressBlock completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
                 @strongify(self);
                 if (error) {
                     [self sendMessageToastWithError:error];
                 }
             }];
     }
+    
     
 }
 
@@ -955,6 +971,17 @@
     message.ext = @{@"a:coupon_status": @"1"};
     [[BIMClient sharedInstance] modifyMessage:message completion:^(BIMError * _Nullable error) {
         
+    }];
+}
+
+- (void)cell:(BIMFileChatCell *)cell didClickCancelBtnWithMessage:(BIMMessage *)message
+{
+    [[BIMClient sharedInstance] cancelUploadFile:message completion:^(BIMError *error){
+        if (error) {
+            
+        }
+        
+        [self.tableview reloadData];
     }];
 }
 

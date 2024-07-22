@@ -141,9 +141,24 @@
             make.centerY.equalTo(self.portrait);
             make.width.height.mas_equalTo(20);
         }];
+        
         [self.durationLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.centerY.equalTo(self.imageContent);
             make.right.equalTo(self.imageContent.mas_left).offset(-4);
+        }];
+        
+        [self.progressView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(30);
+            make.width.mas_equalTo(30);
+            make.right.equalTo(self.chatBg.mas_left).offset(-8);
+            make.centerY.mas_equalTo(self.chatBg);
+        }];
+        
+        [self.cancelBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(20);
+            make.width.mas_equalTo(20);
+            make.centerY.mas_equalTo(self.progressView);
+            make.centerX.mas_equalTo(self.progressView);
         }];
 //        [self.imageBg mas_remakeConstraints:^(MASConstraintMaker *make) {
 //            make.top.equalTo(self.imageContent).offset(-margin*0.5);
@@ -151,7 +166,7 @@
 //            make.right.equalTo(self.imageContent).offset(margin*0.5);
 //            make.bottom.mas_equalTo(-margin);
 //        }];
-    }else{
+    } else {
         [self.imageContent mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.nameLabel).offset(margin);
             make.top.equalTo(self.nameLabel.mas_bottom).offset(margin);

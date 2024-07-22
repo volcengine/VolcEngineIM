@@ -6,6 +6,8 @@
 //
 
 #import "BIMBaseChatCell.h"
+#import "BIMProgressView.h"
+#import "BIMMessageProgressManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,9 +19,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)cell:(BIMFileChatCell *)cell fileLoadFinish:(BIMMessage *)message error:(NSError *)error;
 
+- (void)cell:(BIMFileChatCell *)cell didClickCancelBtnWithMessage:(BIMMessage *)message;
+
 @end
 
-@interface BIMFileChatCell : BIMBaseChatCell
+@interface BIMFileChatCell : BIMBaseChatCell <BIMMessageProgressManagerDelegate>
+
+@property (nonatomic, strong) UIButton *cancelBtn;
+@property (nonatomic, strong) BIMProgressView *progressView;
 
 @property (nonatomic, assign) id <BIMFileChatCellDelegate> delegate;
 

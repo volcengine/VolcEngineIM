@@ -7,11 +7,11 @@
 
 #import "BIMBaseChatCell.h"
 #import "BIMUIDefine.h"
-#import "UIImage+IMUtils.h"
 #import "BIMUIClient.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <OneKit/BTDMacros.h>
 #import "BIMToastView.h"
+#import "UIImage+IMUtils.h"
 
 
 @interface BIMBaseChatCell ()

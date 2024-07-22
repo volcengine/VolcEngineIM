@@ -16,6 +16,7 @@
 #import <im-uikit-tob/BIMUIDefine.h>
 #import <im-uikit-tob/BIMToastView.h>
 #import "NSArray+BTDAdditions.h"
+#import <im-uikit-tob/UIImage+IMUtils.h>
 
 #import <AVFoundation/AVPlayer.h>
 #import <AVKit/AVPlayerViewController.h>
@@ -204,9 +205,9 @@
         if ([[NSFileManager defaultManager] fileExistsAtPath:element.coverImg.downloadPath]) {
             cell.imageContent.image = [UIImage imageWithContentsOfFile:element.coverImg.downloadPath];
         } else if ([[NSFileManager defaultManager] fileExistsAtPath:element.downloadPath]) {
-            cell.imageContent.image = [self thumbnailImageForVideo:[NSURL fileURLWithPath:element.downloadPath] atTime:1];
+            cell.imageContent.image = [UIImage thumbnailImageForVideo:[NSURL fileURLWithPath:element.downloadPath] atTime:1];
         } else if ([[NSFileManager defaultManager] fileExistsAtPath:element.localPath]) {
-            cell.imageContent.image = [self thumbnailImageForVideo:[NSURL fileURLWithPath:element.localPath] atTime:1];
+            cell.imageContent.image = [UIImage thumbnailImageForVideo:[NSURL fileURLWithPath:element.localPath] atTime:1];
         } else if (element.coverImg.url) {
             kWeakSelf(self);
             [[BIMClient sharedInstance] downloadFile:message remoteURL:element.coverImg.url progressBlock:nil completion:^(BIMError * _Nullable error) {
@@ -337,27 +338,6 @@
     } else {
         [[BIMClient sharedInstance] refreshMediaMessage:message completion:completion];
     }
-}
-
-- (UIImage *)thumbnailImageForVideo:(NSURL *)videoURL atTime:(NSTimeInterval)time
-{
-    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:videoURL options:nil];
-    NSParameterAssert(asset);
-    AVAssetImageGenerator *assetImageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
-    assetImageGenerator.appliesPreferredTrackTransform = YES;
-    assetImageGenerator.apertureMode = AVAssetImageGeneratorApertureModeEncodedPixels;
-    
-    CGImageRef thumbnailImageRef = NULL;
-    CFTimeInterval thumbnailImageTime = time;
-    NSError *thumbnailImageGenerationError = nil;
-    thumbnailImageRef = [assetImageGenerator copyCGImageAtTime:CMTimeMake(thumbnailImageTime, 60) actualTime:NULL error:&thumbnailImageGenerationError];
-    
-    if (!thumbnailImageRef)
-        NSLog(@"thumbnailImageGenerationError %@", thumbnailImageGenerationError);
-    
-    UIImage *thumbnailImage = thumbnailImageRef ? [[UIImage alloc] initWithCGImage:thumbnailImageRef] : nil;
-    
-    return thumbnailImage;
 }
 
 # pragma mark - footer refresh
