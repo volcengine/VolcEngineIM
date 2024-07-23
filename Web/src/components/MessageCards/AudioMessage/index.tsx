@@ -4,6 +4,7 @@ import { FileExtKey } from '@volcengine/im-web-sdk';
 
 import { IconPlay, IconPause } from '../../Icon';
 import { parseMessageContent } from '../../../utils';
+import FileProgress from '../../FileProgress';
 
 import AudioBox from './Styles';
 import { useRecoilValue } from 'recoil';
@@ -321,7 +322,13 @@ const AudioMessage: FC<AudioMessageProps> = props => {
 
   return (
     <div className="im-audio-message">
-      {remoteURL && <audio ref={audioRef} src={remoteURL}></audio>}
+      {remoteURL ? (
+        <>
+          <audio ref={audioRef} src={remoteURL}></audio>
+        </>
+      ) : (
+        <FileProgress message={message} />
+      )}
       <AudioContent
         duration={duration}
         currentSeconds={currentTime}

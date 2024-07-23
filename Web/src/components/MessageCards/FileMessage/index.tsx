@@ -1,8 +1,7 @@
 import React, { memo, useMemo } from 'react';
 import { FileExtKey, Message } from '@volcengine/im-web-sdk';
-import { Progress } from '@arco-design/web-react';
+import FileProgress from '../../FileProgress';
 
-import { useUploadProcessText } from '../../../hooks';
 interface IObjectMessage {
   message: Message;
 }
@@ -23,7 +22,6 @@ function parseContent(message: Message) {
 
 const ObjectMessage = memo((props: IObjectMessage) => {
   const { message } = props;
-  const { percent } = useUploadProcessText(message);
   const content = parseContent(message);
 
   const fileName = content?.fileName || content?.ext?.[FileExtKey.FileName] || `file.${content?.type}`;
@@ -45,7 +43,7 @@ const ObjectMessage = memo((props: IObjectMessage) => {
           {fileName}
         </span>
       ) : (
-        <Progress percent={percent} type="circle" />
+        <FileProgress message={message} />
       )}
     </div>
   );

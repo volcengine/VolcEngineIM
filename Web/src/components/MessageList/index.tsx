@@ -278,7 +278,7 @@ const MessageList = (props: MessageListProps<any>, ref: any) => {
             </div>
           )}
           {dataSource.map((messageItem: Message, index: number) => {
-            const { ext = {}, sender } = messageItem || {};
+            const { ext = {}, sender, flightStatus } = messageItem || {};
             const messageId = ext['s:client_message_id'] || '';
 
             if (messageItem.type === 1999) {
@@ -293,7 +293,7 @@ const MessageList = (props: MessageListProps<any>, ref: any) => {
 
             return (
               <MessageLayout
-                key={String(messageId) + JSON.stringify(ext)}
+                key={String(messageId) + JSON.stringify(ext) + String(flightStatus)}
                 message={messageItem}
                 index={index}
                 isLast={dataSource.length - 1 === index}
