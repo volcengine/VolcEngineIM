@@ -976,7 +976,7 @@
 
 - (void)cell:(BIMFileChatCell *)cell didClickCancelBtnWithMessage:(BIMMessage *)message
 {
-    [[BIMClient sharedInstance] cancelUploadFile:message completion:^(BIMError *error){
+    [[BIMClient sharedInstance] cancelMediaFileMessageUpload:message completion:^(BIMError *error){
         if (error) {
             
         }
