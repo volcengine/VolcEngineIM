@@ -16,12 +16,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bytedance.im.app.R;
-import com.bytedance.im.app.live.utils.VELiveUtils;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
+import com.bytedance.im.core.api.model.BIMGetMessageOption;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.api.model.BIMMessageListResult;
 import com.bytedance.im.core.model.inner.msg.BIMTextElement;
@@ -42,7 +42,7 @@ public class VEUnreadMessageDetailActivity extends Activity implements View.OnCl
     private EditText etMsgId, etConvId;
     private RecyclerView msgContainer;
 
-    private int pageSize = 20;
+    private int pageSize = 5;
     private boolean isQuery = false;
     private String conversationId = "";
 
@@ -156,7 +156,8 @@ public class VEUnreadMessageDetailActivity extends Activity implements View.OnCl
                 BIMClient.getInstance().getMessageByServerID(msgServerId, 0, false, new BIMResultCallback<BIMMessage>() {
                     @Override
                     public void onSuccess(BIMMessage bimMessage) {
-                        BIMClient.getInstance().getConversationUnreadMessageList(conversationId, bimMessage, pageSize, new BIMResultCallback<BIMMessageListResult>() {
+                        BIMGetMessageOption option = new BIMGetMessageOption.Builder().isNeedServer(true).limit(pageSize).anchorMessage(bimMessage).build();
+                        BIMClient.getInstance().getConversationUnReadMessageList(conversationId, option, new BIMResultCallback<BIMMessageListResult>() {
                             @Override
                             public void onSuccess(BIMMessageListResult bimMessageListResult) {
                                 adapter.add(bimMessageListResult.getMessageList());
@@ -177,7 +178,8 @@ public class VEUnreadMessageDetailActivity extends Activity implements View.OnCl
                         if (msgId.length() != 0) {
                             Toast.makeText(VEUnreadMessageDetailActivity.this, "无效消息，请检查输入参数：" + code, Toast.LENGTH_SHORT).show();
                         }
-                        BIMClient.getInstance().getConversationUnreadMessageList(conversationId, null, pageSize, new BIMResultCallback<BIMMessageListResult>() {
+                        BIMGetMessageOption option = new BIMGetMessageOption.Builder().isNeedServer(true).limit(pageSize).anchorMessage(null).build();
+                        BIMClient.getInstance().getConversationUnReadMessageList(conversationId, option, new BIMResultCallback<BIMMessageListResult>() {
                             @Override
                             public void onSuccess(BIMMessageListResult bimMessageListResult) {
                                 adapter.add(bimMessageListResult.getMessageList());
@@ -203,7 +205,8 @@ public class VEUnreadMessageDetailActivity extends Activity implements View.OnCl
     private void loadData() {
         if (!isQuery && msgResult != null && msgResult.isHasMore()) {
             BIMMessage msg = adapter.getOldestMessage();
-            BIMClient.getInstance().getConversationUnreadMessageList(conversationId, msg, pageSize, new BIMResultCallback<BIMMessageListResult>() {
+            BIMGetMessageOption option = new BIMGetMessageOption.Builder().isNeedServer(true).limit(pageSize).anchorMessage(msg).build();
+            BIMClient.getInstance().getConversationUnReadMessageList(conversationId, option, new BIMResultCallback<BIMMessageListResult>() {
                 @Override
                 public void onSuccess(BIMMessageListResult bimMessageListResult) {
                     adapter.add(bimMessageListResult.getMessageList());
@@ -244,10 +247,11 @@ class MessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     public void add(List<BIMMessage> messageList) {
         if (messageList != null) {
             for (BIMMessage msg : messageList) {
-                if (msg != null && !uuids.contains(msg.getUuid())) {
-                    uuids.add(msg.getUUId());
-                    data.add(msg);
-                }
+//                if (msg != null && !uuids.contains(msg.getUuid())) {
+//                    uuids.add(msg.getUUId());
+//                    data.add(msg);
+//                }
+                data.add(msg);
             }
         }
         Collections.sort(data, (o1, o2) -> o1.getOrderIndex() - o2.getOrderIndex() > 0 ? 1: 0);
