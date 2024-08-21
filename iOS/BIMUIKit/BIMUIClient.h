@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
  *        + `true`: 成功。
  *        + `false`: 失败。
  */
-- (BOOL)initSDK:(int)sdkAppID config:(BIMSDKConfig *)config env:(BIMEnv)env;
+- (BOOL)initSDK:(int)sdkAppID config:(BIMSDKConfig *)config env:(BIMEnv)env NS_UNAVAILABLE;
 
 /**
  * @type api

@@ -30,6 +30,16 @@
 				<string>rangersapplog.b674e0c0eec26787</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.ss.iphone.ucenter.cn.inhouse</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>rangersapplog.fd130c32da7c3be1</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>

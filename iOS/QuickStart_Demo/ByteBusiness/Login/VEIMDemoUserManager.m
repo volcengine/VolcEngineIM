@@ -86,12 +86,11 @@
     
     BIMSDKConfig *config = [[BIMSDKConfig alloc] init];
 //    config.enableAPM = ![BDIMDebugNetworkManager sharedManager].disableApm;
-//    config.enableAppLog = ![BDIMDebugNetworkManager sharedManager].disableApplog;
     [config setLogListener:^(BIMLogLevel logLevel, NSString * _Nonnull logContent) {
             // 日志 输出
         NSLog(@"TIM--%@", logContent);
     }];
-    [[BIMUIClient sharedInstance] initSDK:[kVEIMDemoAppID integerValue] config:config env:kVEIMDemoEnv];
+    [[BIMUIClient sharedInstance] initSDK:[kVEIMDemoAppID integerValue] config:config];
     
     [[BIMUIClient sharedInstance] setUserProvider:^BIMUser * _Nullable(long long userID) {
         if (userID == 0) {
