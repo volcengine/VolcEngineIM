@@ -323,7 +323,11 @@ public class VELiveDetailActivity extends Activity {
 
             @Override
             public void onFailed(BIMErrorCode code) {
-                waitDialog.dismiss();
+                try {
+                    waitDialog.dismiss();
+                } catch (Exception e) {
+                    BIMLog.e(TAG, "dismiss error" + e.getMessage());
+                }
                 Toast.makeText(VELiveDetailActivity.this, "解散群聊失败: " + code, Toast.LENGTH_SHORT).show();
             }
         });
