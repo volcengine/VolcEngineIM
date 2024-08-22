@@ -17,7 +17,6 @@
 #define kVEIMDemoAppID  @""
 #define kVEIMDemoToken @""
 #define kVEIMDemoUserID @""
-#define kVEIMDemoEnv (BIM_ENV_DEFAULT_ZH) // env 国内：BIM_ENV_DEFAULT_ZH 海外：BIM_ENV_I18N
 
 ///Error
 #define kVEIMDemoErrorDomain @"VEIMDemoErrorDomain"
