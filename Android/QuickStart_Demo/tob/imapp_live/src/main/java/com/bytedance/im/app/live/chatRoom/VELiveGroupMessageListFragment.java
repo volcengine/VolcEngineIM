@@ -275,12 +275,14 @@ public class VELiveGroupMessageListFragment extends Fragment {
     }
 
     private void joinFailed(BIMErrorCode code){
-        if (code == BIMErrorCode.BIM_SERVER_ADD_MEMBER_IS_BLOCK) {
-            toast( "用户在进群黑名单!");
-        } else {
-            toast("加入失败:" + code);
+        if (isAdded()) {
+            if (code == BIMErrorCode.BIM_SERVER_ADD_MEMBER_IS_BLOCK) {
+                toast("用户在进群黑名单!");
+            } else {
+                toast("加入失败:" + code);
+            }
+            getActivity().finish();
         }
-        getActivity().finish();
     }
 
     @Nullable

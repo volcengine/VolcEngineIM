@@ -77,7 +77,10 @@ public class VESearchResultActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                BIMUIUtils.showKeyBoard(getSearchEditText());
+                EditText v = getSearchEditText();
+                if (v != null && v.getVisibility() == View.VISIBLE) {
+                    BIMUIUtils.showKeyBoard(v);
+                }
             }
         },500);
     }

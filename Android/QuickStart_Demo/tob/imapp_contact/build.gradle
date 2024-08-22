@@ -40,6 +40,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     if (remoteUIkit.toBoolean()) {
+        api(im_sdk_log_remote)
         api(im_ui_sdk_remote)
         api(im_sdk_remote)
     } else {
