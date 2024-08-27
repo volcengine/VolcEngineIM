@@ -47,6 +47,13 @@ dependencies {
     api project(':imapp_search') //搜索
     api project(':imapp_profile')//个人页
     api project(':imapp_member') //选人、会话成员
+
+    if (isI18n.toBoolean()) {
+        api(im_sdk_log_remote_global)
+    } else {
+        api(im_sdk_log_remote)
+    }
+
     if (remoteUIkit.toBoolean()) {
         api(im_ui_sdk_remote)
     } else {

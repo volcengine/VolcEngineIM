@@ -13,7 +13,7 @@ buildscript {
         // 国内上报组件
         im_sdk_log_remote = "com.bytedance.im:imsdk-tob-log:1.17.0-alpha.0"
         // 海外上报组件
-//        im_sdk_log_remote = "com.bytedance.im:imsdk-tob-log-global:1.17.0-alpha.0"
+        im_sdk_log_remote_global = "com.bytedance.im:imsdk-tob-log-global:1.17.0-alpha.0"
     }
     repositories {
         maven {
