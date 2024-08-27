@@ -9,9 +9,8 @@ target 'ByteBusiness' do
 
   # Pods for VEIMDemo
   
-#  pod 'im-uikit-tob', '1.15.0'
   pod 'im-uikit-tob', :path=>'../'
-  pod 'imsdk-tob', '1.17.0-alpha.1',
+  pod 'imsdk-tob', '1.17.0',
       :subspecs => [
         'Core',
         #国内环境

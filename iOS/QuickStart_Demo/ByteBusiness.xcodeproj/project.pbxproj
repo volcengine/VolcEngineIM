@@ -993,7 +993,7 @@
 				25EE372A2433166D00AB5267 /* Resources */,
 				22330D1862241CE1AB0F4C2A /* [CP] Copy Pods Resources */,
 				2B469D7E2B2B0E6100844755 /* ShellScript */,
-				122368ECB5F72CCC98792829 /* [CP] Embed Pods Frameworks */,
+				33AB9E0D395DCFED70414C8A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1116,23 +1116,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		122368ECB5F72CCC98792829 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ByteBusiness/Pods-ByteBusiness-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ByteBusiness/Pods-ByteBusiness-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ByteBusiness/Pods-ByteBusiness-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		22330D1862241CE1AB0F4C2A /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1188,6 +1171,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh ${PODS_ROOT}/RangersAPM/RangersAPM/Core/APMPlus_DSYMUploader.sh \"520458\"\n";
+		};
+		33AB9E0D395DCFED70414C8A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ByteBusiness/Pods-ByteBusiness-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ByteBusiness/Pods-ByteBusiness-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ByteBusiness/Pods-ByteBusiness-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		D05BF5AA605007EE9820EE94 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
