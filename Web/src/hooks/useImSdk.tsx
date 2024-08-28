@@ -147,7 +147,6 @@ const useInit = () => {
       if (!userId) return;
       const im: BytedIM = await init({ userId, deviceId: userId });
       setBytedIMInstance(() => im);
-
       im?.event?.subscribe?.(IMEvent.InitFinish, () => {
         setTimeout(() => setLoading(false), 20);
       });
