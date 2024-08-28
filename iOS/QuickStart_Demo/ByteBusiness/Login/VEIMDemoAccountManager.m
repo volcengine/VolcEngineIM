@@ -9,6 +9,7 @@
 #import "VEIMDemoAccountManager.h"
 #import "VEIMDemoLoginViewController.h"
 #import "VEIMDemoRouter.h"
+#import <OneKit/BTDResponder.h>
 
 @interface VEIMDemoAccountManager ()
 
@@ -39,6 +40,9 @@
 
 - (void)showLoginVC
 {
+    if ([[BTDResponder topViewController] isKindOfClass:VEIMDemoLoginViewController.class]) {//迁移debug按钮到登录页
+        return;
+    }
     VEIMDemoLoginViewController *loginVC = [[VEIMDemoLoginViewController alloc] init];
     [[VEIMDemoRouter shared] presentViewController:loginVC fullScreen:YES animated:YES];
 }

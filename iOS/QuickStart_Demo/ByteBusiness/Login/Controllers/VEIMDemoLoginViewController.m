@@ -13,6 +13,11 @@
 #import "BIMToastView.h"
 #import "VEIMDemoDefine.h"
 
+#if __has_include("BDIMDebugManager.h")
+#import "BDIMDebugManager.h"
+#endif
+
+
 #import <Masonry/Masonry.h>
 
 @interface VEIMDemoLoginViewController () <UITableViewDelegate, UITableViewDataSource, UITextViewDelegate>
@@ -50,6 +55,15 @@
     user.userToken = kVEIMDemoToken;
     user.name = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:user.userID];
     self.currentSelectedUser = user;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+#if __has_include("BDIMDebugManager.h")
+//    [[BDIMDebugManager sharedManager] showDebugEntrance:self];
+#endif
+
 }
 
 

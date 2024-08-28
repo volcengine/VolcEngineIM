@@ -30,8 +30,7 @@
     
     [self setupTabBarItems];
     
-    
-//    [[BDIMDebugManager sharedManager] showDebugEntrance:self];
+//    [[BDIMDebugManager sharedManager] showDebugEntrance:self]; // use hook later
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:kVEIMDemoUserDidLoginNotification object:nil];
     
@@ -51,6 +50,7 @@
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     
+//    [[BDIMDebugManager sharedManager] showDebugEntrance:self]; // use hook later
     [[VEIMDemoUserManager sharedManager] showLoginVCIfNeed];
 }
 
