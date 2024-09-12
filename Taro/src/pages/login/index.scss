@@ -1,0 +1,32 @@
+page {
+  background-color: white;
+  padding: 14px;
+  box-sizing: border-box;
+  color: #333;
+}
+
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  .label {
+    height: 46px;
+    line-height: 46px;
+    font-size: 30px;
+  }
+
+  .input-wrapper {
+    display: flex;
+    align-items: center;
+    margin-top: 30px;
+  }
+
+  .input-value {
+    flex: 1;
+    font-size: 28px;
+  }
+
+  .btn-wrapper {
+    margin-top: 80px;
+  }
+}
