@@ -1,7 +1,7 @@
 import { User } from './interface';
 import * as IMLib from '@volcengine/im-mp-sdk';
 
-export const APP_ID =  0;
+export const APP_ID =  666675;
 
 // imcloud 配置
 export const IMCLOUD_CONFIG = {
@@ -11,7 +11,7 @@ export const IMCLOUD_CONFIG = {
   timeout: 5000,
   apiUrl: 'https://imapi.volcvideo.com',
   frontierUrl: 'wss://frontier-sinftob.ivolces.com/ws/v2',
-  tokenDomain:  ''
+  tokenDomain:  'https://imapi.volcvideo.com/imcloud'
 };
 
 // 用户
