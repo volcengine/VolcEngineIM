@@ -13,11 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bytedance.im.core.api.enums.BIMPushStatus;
+import com.bytedance.im.core.api.model.BIMStrangeBox;
 import com.bytedance.im.core.api.model.BIMUnReadInfo;
+import com.bytedance.im.core.stranger.StrangerBox;
 import com.bytedance.im.ui.R;
+import com.bytedance.im.ui.conversation.adapter.viewhodler.VEConversationDefaultViewHolder;
 import com.bytedance.im.ui.conversation.adapter.viewhodler.VEConversationViewHolder;
+import com.bytedance.im.ui.conversation.adapter.viewhodler.VEStrangeBoxViewHolder;
 import com.bytedance.im.ui.conversation.model.VEConvBaseWrapper;
 import com.bytedance.im.ui.conversation.model.VEConversationWrapper;
+import com.bytedance.im.ui.conversation.model.VEStrangeBoxWrapper;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.core.api.model.BIMConversation;
 
@@ -58,10 +63,14 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
 
     @NonNull
     @Override
-    public VEViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        int layout = data.get(i).getType();
+    public VEViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int layout) {
         View v = LayoutInflater.from(mContext).inflate(layout, viewGroup, false);
-        return new VEConversationViewHolder(v, recyclerView);
+        if (layout == R.layout.bim_im_item_conversation_stranger_box) {
+            return new VEStrangeBoxViewHolder(v, recyclerView);
+        } else if (layout == R.layout.bim_im_item_conversation) {
+            return new VEConversationViewHolder(v, recyclerView);
+        }
+        return new VEConversationDefaultViewHolder(v);
     }
 
     @Override
@@ -96,6 +105,11 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
         return data.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return data.get(position).getType();
+    }
+
     /**
      * 去重
      *
@@ -114,13 +128,14 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
     public void appendConversation(List<BIMConversation> list) {
         if (list == null || list.isEmpty()) return;
         int count = 0;
+        int size = data.size();
         for (BIMConversation conversation : list) {
             if (!checkExist(conversation.getConversationID())) {
                 data.add(wrap(conversation));
                 count++;
             }
         }
-        notifyItemRangeInserted(data.size(), count);
+        notifyItemRangeInserted(size, count);
     }
 
     /**
@@ -133,10 +148,15 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
         for (BIMConversation conversation : list) {
             if (!checkExist(conversation.getConversationID())) {
                 VEConversationWrapper wrapper = wrap(conversation);
-                int insertIndex = findInsertIndex(wrapper);
-                insertIndex(insertIndex, wrapper);
+                insertConversation(wrapper);
             }
         }
+    }
+
+    //插入会话
+    private void insertConversation(VEConvBaseWrapper wrapper) {
+        int insertIndex = findInsertIndex(wrapper);
+        insertIndex(insertIndex, wrapper);
     }
 
     /**
@@ -148,10 +168,14 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
         BIMLog.i(TAG, "updateConversation()");
         for (BIMConversation conversation : list) {
             VEConversationWrapper wrapper = wrap(conversation);
-            removeIndex(finIndex(wrapper));
-            checkExist(conversation.getConversationID());
-            insertIndex(findInsertIndex(wrapper), wrapper);
+            updateConversation(wrapper);
         }
+    }
+
+    private void updateConversation(VEConvBaseWrapper wrapper){
+        removeIndex(finIndex(wrapper));
+        checkExist(wrapper.getConversationId());
+        insertIndex(findInsertIndex(wrapper), wrapper);
     }
 
 
@@ -166,6 +190,46 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
             VEConversationWrapper wrapper = wrap(conversation);
             removeIndex(finIndex(wrapper));
         }
+    }
+
+    public List<VEConvBaseWrapper> getData() {
+        return data;
+    }
+
+    /**
+     * 更新陌生人盒子
+     * @param strangerBox
+     */
+    public void insertOrUpdateStrangeBox(BIMStrangeBox strangerBox){
+        if (strangerBox == null) {
+            int index = findStrangeBox();
+            if (index >= 0) {
+                data.remove(index);
+                notifyItemRemoved(index);
+                notifyItemRangeChanged(index, data.size() - index);
+            }
+        } else {
+            VEStrangeBoxWrapper wrapper = new VEStrangeBoxWrapper(strangerBox, R.layout.bim_im_item_conversation_stranger_box);
+            int index = findStrangeBox();
+            if (index == -1) {
+                insertConversation(wrapper);//添加
+            } else {
+                data.set(index, wrapper);
+                notifyItemChanged(index);
+            }
+        }
+    }
+
+    private int findStrangeBox(){
+        int index = -1;
+        for (int i = 0; i < data.size(); i++) {
+            VEConvBaseWrapper wrapper = data.get(i);
+            if (wrapper instanceof VEStrangeBoxWrapper) {
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
     /**
@@ -190,7 +254,7 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
      * @param index
      * @param wrapper
      */
-    private void insertIndex(int index, VEConversationWrapper wrapper) {
+    private void insertIndex(int index, VEConvBaseWrapper wrapper) {
         BIMLog.i(TAG, "insertIndex() index:" + index);
         if (data.isEmpty()) {
             data.add(wrapper);
@@ -205,7 +269,8 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
 
         if (conversationInsertListener != null) {
             if (wrapper.getInfo() instanceof BIMConversation) {
-                conversationInsertListener.afterConversationInsert(wrapper.getInfo(), index);
+                BIMConversation bimConversation = (BIMConversation) wrapper.getInfo();
+                conversationInsertListener.afterConversationInsert(bimConversation, index);
             }
         }
     }
@@ -280,5 +345,11 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
 
     public interface ConversationInsertListener {
         void afterConversationInsert(BIMConversation conversation, int position);
+    }
+
+    public void clear(){
+        data.clear();
+        checkSet.clear();
+        notifyDataSetChanged();
     }
 }

@@ -18,7 +18,6 @@ public class AudioPlayerManager implements MediaPlayer.OnCompletionListener, Med
     public AudioPlayerManager(Context context) {
         mContext = context;
         mExecutor = Executors.newSingleThreadExecutor();
-        mPlayer = new MediaPlayer();
     }
 
     public void start(String path) {
@@ -44,6 +43,7 @@ public class AudioPlayerManager implements MediaPlayer.OnCompletionListener, Med
                     if (mPlayer != null) {
                         mPlayer.reset();
                     }
+                    mPlayer = new MediaPlayer();
                     prepare();
                     mPlayer.start();
                 } catch (Exception e) {

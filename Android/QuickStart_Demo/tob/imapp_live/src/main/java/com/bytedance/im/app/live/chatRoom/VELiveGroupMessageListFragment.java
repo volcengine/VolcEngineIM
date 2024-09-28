@@ -76,6 +76,8 @@ public class VELiveGroupMessageListFragment extends Fragment {
     public static final String AVATAR_URL = "avatar_url";
     private static final String EXT_ALIAS_NAME = "a:live_group_member_alias_name";
     private static final String EXT_AVATAR_URL = "a:live_group_member_avatar_url";
+    private static final String CHECK_MSG_KEY = "s:send_response_check_msg";
+    private static final String CHECK_CODE_KEY = "s:send_response_check_code";
     public static final int REQUEST_EDIT_DETAIL = 0;
     public static final int TYPE_SKIP_UPDATE_MY_MEMBER_INFO = 0;
     public static final int TYPE_UPDATE_MY_MEMBER_INFO = 1;
@@ -543,6 +545,8 @@ public class VELiveGroupMessageListFragment extends Fragment {
                     failedText += "当前会话被禁言";
                 } else if (code == BIMErrorCode.BIM_SERVER_ERROR_SEND_MESSAGE_TOO_LARGE) {
                     failedText += "消息体过大";
+                } else if (bimMessage.getCheckMessage() != null) {
+                    failedText = "checkCode:" + bimMessage.getCheckCode() + ", checkMessage:" + bimMessage.getCheckMessage();
                 } else {
                     failedText += code;
                 }

@@ -6,6 +6,7 @@ package com.bytedance.im.ui.conversation.model;
  * @param <T>
  */
 public class VEConvBaseWrapper<T> {
+    protected long ORDER_TOP_STRANGE = Long.MAX_VALUE;
     private int layoutId;
     public VEConvBaseWrapper(T t, int type) {
         this.t = t;

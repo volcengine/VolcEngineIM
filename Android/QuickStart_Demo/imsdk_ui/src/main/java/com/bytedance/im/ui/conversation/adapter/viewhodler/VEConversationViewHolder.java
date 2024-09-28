@@ -7,6 +7,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.api.enums.BIMPushStatus;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.core.internal.utils.IMLog;
 import com.bytedance.im.core.model.inner.msg.BIMCustomElement;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
@@ -140,55 +142,56 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
         lastTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(bimConversation.getUpdatedTime()));
         //会话类型 - 轻直播
         conversationType.setVisibility(View.GONE);
+        lastMsg.setVisibility(View.VISIBLE);
         //会话消息 - 草稿
         if (!TextUtils.isEmpty(bimConversation.getDraftText())) {
             SpannableString str = new SpannableString("[草稿]" + bimConversation.getDraftText());
             str.setSpan(new ForegroundColorSpan(Color.RED), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             lastMsg.setText(str);
-            return;
-        }
-        //会话最后一条消息
-        BIMMessage lastMessage = bimConversation.getLastMessage();
-        if (lastMessage != null) {
-            BIMUIUser user = getBIMUIUSerOrAsyncRefresh(lastMessage.getSenderUID());
-            if (user == null) {
-                return;
-            }
-            if (lastMessage.isRecalled()) {
-                lastMsg.setText(BIMUtils.generateRecallHint(lastMessage, user));
-            } else {
-                BIMBaseElement content = null;
-                if (lastMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_CUSTOM) { //自定义消息解析
-                    BIMCustomElement element = (BIMCustomElement) lastMessage.getElement();
-                    content = BIMMessageManager.getInstance().decode(element.getData());
-                    if (content == null) {
-                        content = new BIMBaseElement();
-                    }
+        } else {
+            //会话最后一条消息
+            BIMMessage lastMessage = bimConversation.getLastMessage();
+            if (lastMessage != null) {
+                BIMUIUser user = getBIMUIUSerOrAsyncRefresh(lastMessage.getSenderUID());
+                if (user == null) {
+                    return;
+                }
+                if (lastMessage.isRecalled()) {
+                    lastMsg.setText(BIMUtils.generateRecallHint(lastMessage, user));
                 } else {
-                    content = lastMessage.getElement();
-                }
-                String prefix = BIMUINameUtils.getShowName(user) + ": ";
-                if (content instanceof BIMGroupNotifyElement) {
-                    prefix = "";
-                }
-                if (content != null) {
-                    lastMsg.setText(prefix + content.getMsgHint());
-                }
-                //兼容web 临时逻辑,后续删除
-                if (lastMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_TEXT) {
-                    String msgStr = BIMUtils.fixWebContent(lastMessage.getContentData());
-                    if (!TextUtils.isEmpty(msgStr)) {
-                        lastMsg.setText(prefix + msgStr);
+                    BIMBaseElement content = null;
+                    if (lastMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_CUSTOM) { //自定义消息解析
+                        BIMCustomElement element = (BIMCustomElement) lastMessage.getElement();
+                        content = BIMMessageManager.getInstance().decode(element.getData());
+                        if (content == null) {
+                            content = new BIMBaseElement();
+                        }
+                    } else {
+                        content = lastMessage.getElement();
+                    }
+                    String prefix = BIMUINameUtils.getShowName(user) + ": ";
+                    if (content instanceof BIMGroupNotifyElement) {
+                        prefix = "";
+                    }
+                    if (content != null) {
+                        lastMsg.setText(prefix + content.getMsgHint());
+                    }
+                    //兼容web 临时逻辑,后续删除
+                    if (lastMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_TEXT) {
+                        String msgStr = BIMUtils.fixWebContent(lastMessage.getContentData());
+                        if (!TextUtils.isEmpty(msgStr)) {
+                            lastMsg.setText(prefix + msgStr);
+                        }
                     }
                 }
+            } else {
+                lastMsg.setText("");
             }
-        } else {
-            lastMsg.setText("");
-        }
-        if (lastMsg.getText() == null || lastMsg.getText().toString().isEmpty()) {
-            lastMsg.setVisibility(View.GONE);
-        } else {
-            lastMsg.setVisibility(View.VISIBLE);
+            if (lastMsg.getText() == null || lastMsg.getText().toString().isEmpty()) {
+                lastMsg.setVisibility(View.GONE);
+            } else {
+                lastMsg.setVisibility(View.VISIBLE);
+            }
         }
     }
 

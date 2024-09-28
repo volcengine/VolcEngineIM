@@ -5,7 +5,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -204,7 +203,9 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         } else {
             mTime.setVisibility(View.GONE);
         }
-        if (isSelf) {
+        if (ui.isForceStatusGone()) {
+            senStatus.setVisibility(View.GONE);
+        } else if (isSelf) {
             if (bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL || bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS) {
                 senStatus.setVisibility(View.GONE);
             } else {
