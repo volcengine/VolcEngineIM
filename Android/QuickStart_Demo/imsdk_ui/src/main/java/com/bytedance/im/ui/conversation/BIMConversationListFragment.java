@@ -5,14 +5,15 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMConversationType;
@@ -20,8 +21,12 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
+import com.bytedance.im.core.api.interfaces.BIMStrangeBoxListener;
+import com.bytedance.im.core.api.interfaces.BIMStrangeConversationListener;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMConversationListResult;
+import com.bytedance.im.core.api.model.BIMStrangeBox;
+import com.bytedance.im.core.service.BIMINService;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.api.BIMUIUser;
@@ -32,6 +37,7 @@ import com.bytedance.im.ui.message.BIMMessageListFragment;
 import com.bytedance.im.ui.user.OnUserInfoUpdateListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BIMConversationListFragment extends Fragment {
@@ -59,6 +65,7 @@ public class BIMConversationListFragment extends Fragment {
         BIMLog.i(TAG, "onCreateView() this: " + this);
         rootView = inflater.inflate(R.layout.bim_im_fragment_conversation_list, container, false);
         BIMClient.getInstance().addConversationListener(createConversationListener());
+        BIMClient.getInstance().getService(BIMINService.class).addStrangeConversationListener(strangeConversationListener);
         recyclerView = rootView.findViewById(R.id.conversation_list);
         recyclerView.setItemAnimator(null);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -83,7 +90,10 @@ public class BIMConversationListFragment extends Fragment {
             @Override
             public void onItemClick(VEConvBaseWrapper wrapper, int position) {
                 Object o = wrapper.getInfo();
-                if (o != null && o instanceof BIMConversation) {
+                if(o == null){
+                    return;
+                }
+                if (o instanceof BIMConversation) {
                     BIMConversation conversation = (BIMConversation) o;
                     if (onItemClickListener != null) {
                         //优先代理外部
@@ -96,6 +106,8 @@ public class BIMConversationListFragment extends Fragment {
                             startChat(conversation.getConversationID());
                         }
                     }
+                } else if (o instanceof BIMStrangeBox) {
+                    BIMUIClient.getInstance().getModuleStarter().startStrangeConvListActivity(getActivity());
                 }
             }
         });
@@ -106,6 +118,8 @@ public class BIMConversationListFragment extends Fragment {
                 if (wrapper.getInfo() instanceof BIMConversation) {
                     BIMConversation conversation = (BIMConversation) wrapper.getInfo();
                     showConversationOperation(conversation);
+                } else if (wrapper.getInfo() instanceof BIMStrangeBox) {
+                    showStrangeBoxOperation();
                 }
                 return false;
             }
@@ -119,9 +133,38 @@ public class BIMConversationListFragment extends Fragment {
                 }
             }
         });
+        initStrangeBox();
         loadData();
         addUserListener();
         return rootView;
+    }
+
+    private void refreshStrangeBox(){
+        if (BIMClient.getInstance().isToB()) {
+            return;
+        }
+        BIMClient.getInstance().getService(BIMINService.class).getStrangeBoxConversation(new BIMResultCallback<BIMStrangeBox>() {
+            @Override
+            public void onSuccess(BIMStrangeBox strangeBox) {
+                BIMLog.i(TAG,"getStrangeBoxConversation onSuccess strangeBox: "+strangeBox);
+                if (strangeBox == null) {
+                    strangeBox = new BIMStrangeBox(null, 0); //假的占位
+                }
+                adapter.insertOrUpdateStrangeBox(strangeBox);
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        });
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshStrangeBox();
     }
 
     @Override
@@ -162,7 +205,41 @@ public class BIMConversationListFragment extends Fragment {
             }
         });
     }
+    private boolean isInitStrangeBox = true;
+    private void initStrangeBox(){
+        if (BIMClient.getInstance().isToB()) {
+            return;
+        }
+        BIMClient.getInstance().getService(BIMINService.class).getStrangeBoxConversation(new BIMResultCallback<BIMStrangeBox>() {
+            @Override
+            public void onSuccess(BIMStrangeBox strangeBox) {
+                BIMLog.i(TAG,"getStrangeBoxConversation onSuccess strangeBox: "+strangeBox);
+                if (strangeBox == null) {
+                    strangeBox = new BIMStrangeBox(null, 0); //假的占位
+                }
+                adapter.insertOrUpdateStrangeBox(strangeBox);
+                if (isInitStrangeBox) { //初始化陌生人
+                    recyclerView.scrollToPosition(0);
+                    isInitStrangeBox = false;
+                }
+            }
 
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        });
+        BIMClient.getInstance().getService(BIMINService.class).addStrangeBoxListener(new BIMStrangeBoxListener() {
+            @Override
+            public void onStrangeBoxChanged(BIMStrangeBox strangeBox) {
+                BIMLog.i(TAG,"getStrangeBoxConversation onStrangeBoxChanged strangeBox: "+strangeBox +" thread: "+Thread.currentThread());
+                if (strangeBox == null) {
+                    strangeBox = new BIMStrangeBox(null, 0); //假的占位
+                }
+                adapter.insertOrUpdateStrangeBox(strangeBox);
+            }
+        });
+    }
 
     private boolean isSlideToBottom(RecyclerView recyclerView) {
         if (recyclerView == null) return false;
@@ -172,6 +249,39 @@ public class BIMConversationListFragment extends Fragment {
         return false;
     }
 
+    private BIMStrangeConversationListener strangeConversationListener = new BIMStrangeConversationListener() {
+        @Override
+        public void onStrangeConversationUpdate(BIMConversation bimConversation) {
+            if (bimConversation.isStranger()) {
+                adapter.removeConversation(Collections.singletonList(bimConversation));
+            }
+        }
+
+        @Override
+        public void onNewStrangeConversation(BIMConversation bimConversation) {
+
+        }
+
+        @Override
+        public void onStrangeConversationTransfer(BIMConversation bimConversation) {
+
+        }
+
+        @Override
+        public void onStrangeConversationDelete(BIMConversation bimConversation) {
+
+        }
+
+        @Override
+        public void onStrangeConversationListMarkReadAll() {
+
+        }
+
+        @Override
+        public void onStrangeConversationListDeleteAll() {
+
+        }
+    };
     /**
      * 注册会话列表相关监听
      */
@@ -246,6 +356,31 @@ public class BIMConversationListFragment extends Fragment {
                 .create().show();
     }
 
+    private void showStrangeBoxOperation() {
+        BIMLog.i(TAG, "showStrangeBoxOperation");
+        String[] conversationOptionType = new String[]{
+                "删除",
+        };
+        new AlertDialog.Builder(getActivity())
+                .setItems(conversationOptionType, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        BIMClient.getInstance().getService(BIMINService.class).deleteAllStrangeConversationList(new BIMSimpleCallback() {
+                            @Override
+                            public void onSuccess() {
+                                Toast.makeText(getActivity(),"删除陌生人盒子成功",Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onFailed(BIMErrorCode code) {
+
+                            }
+                        });
+                    }
+                })
+                .create().show();
+    }
+
     public void startChat(String cid) {
         Intent intent = new Intent();
         intent.setAction(BIMMessageListFragment.ACTION);
@@ -255,6 +390,7 @@ public class BIMConversationListFragment extends Fragment {
 
     /**
      * 设置会话列表 item 监听
+     *
      * @param onItemClickListener item 点击监听
      */
     public void setOnItemClickListener(OnConversationClickListener onItemClickListener) {
@@ -263,10 +399,11 @@ public class BIMConversationListFragment extends Fragment {
 
 
     private OnUserInfoUpdateListener listener;
+
     /**
      * 好友信息更新监听
      */
-    public void addUserListener(){
+    public void addUserListener() {
         if (listener == null) {
             listener = new OnUserInfoUpdateListener() {
                 @Override
@@ -280,7 +417,7 @@ public class BIMConversationListFragment extends Fragment {
         BIMUIClient.getInstance().getUserProvider().addUserUpdateListener(listener);
     }
 
-    public void removeUserListener(){
+    public void removeUserListener() {
         if (listener != null) {
             BIMUIClient.getInstance().getUserProvider().removeUserUpdateListener(listener);
         }

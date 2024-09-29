@@ -186,7 +186,12 @@ public class ModuleStarter {
         intent.setAction("com.bytedance.im.app.member.receipt.VEReadReceiptListActivity");
         return checkAndStart(activity, intent);
     }
-
+    //启动陌生人会话
+    public boolean startStrangeConvListActivity(Activity activity) {
+        Intent intent = new Intent();
+        intent.setAction("com.bytedance.im.app.conversationin.strange.INStrangeConvListActivity");
+        return checkAndStart(activity,intent);
+    }
 
     private boolean checkAndStart(Context context, Intent intent) {
         if (intent.resolveActivity(context.getPackageManager()) != null) {
@@ -195,4 +200,6 @@ public class ModuleStarter {
         }
         return false;
     }
+
+
 }

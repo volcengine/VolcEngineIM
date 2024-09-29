@@ -18,7 +18,12 @@ public class DefaultProvider implements BIMUserProvider{
 
     @Override
     public void getUserInfoAsync(long uid, BIMResultCallback<BIMUIUser> callback) {
-
+        if(callback==null){
+            return;
+        }
+        BIMUIUser bimuiUser = new BIMUIUser();
+        bimuiUser.setNickName(String.valueOf(uid));
+        callback.onSuccess(bimuiUser);
     }
 
     @Override

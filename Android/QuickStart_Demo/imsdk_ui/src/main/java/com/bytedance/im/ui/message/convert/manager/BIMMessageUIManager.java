@@ -9,6 +9,7 @@ import com.bytedance.im.ui.message.adapter.ui.inner.FileMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.ImageMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.PoiMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.StreamMessageUI;
+import com.bytedance.im.ui.message.adapter.ui.inner.SystemMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.TextMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.VideoMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.inner.VoiceMessageUI;
@@ -48,6 +49,7 @@ public class BIMMessageUIManager {
         registerMessageUI(new VoiceMessageUI());
         registerMessageUI(new FileMessageUI());
         registerMessageUI(new PoiMessageUI());
+        registerMessageUI(new SystemMessageUI());
         registerMessageUI(new DefaultMessageUI());
         registerMessageUI(new CustomMessageDefaultUI());
     }

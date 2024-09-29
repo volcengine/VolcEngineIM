@@ -108,4 +108,12 @@ public abstract class BaseCustomElementUI {
     public boolean isEnableReceipt(BIMMessage bimMessage) {
         return true;
     }
+
+    /**
+     * 是否展示重发按钮
+     * @return
+     */
+    public boolean isForceStatusGone(){
+        return false;
+    }
 }

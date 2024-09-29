@@ -1,0 +1,23 @@
+.audio-item-wrapper {
+  display: flex;
+  align-items: center;
+
+  .icon-wrapper {
+    padding-right: 20px;
+
+    .icon {
+      width: 60px;
+      height: 60px;
+    }
+  }
+
+  .progress-wrapper {
+    max-width: 400px;
+    flex: 1;
+  }
+
+  .text {
+    margin-left: 20px;
+    font-size: 32px;
+  }
+}
