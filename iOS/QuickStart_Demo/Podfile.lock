@@ -1,19 +1,16 @@
 PODS:
   - Bolts/Tasks (1.9.1)
   - IGListDiffKit (5.0.0)
-  - im-uikit-tob (1.17.0):
-    - imsdk-tob (= 1.17.0)
+  - im-uikit-tob (1.18.0):
     - Masonry
     - MJRefresh
     - SDWebImage
-  - imsdk-tob (1.17.0):
-    - imsdk-tob/Core (= 1.17.0)
-  - imsdk-tob/Config/CN (1.17.0):
+  - imsdk-tob/Config/CN (1.18.0-alpha.1):
     - RangersAppLog/Host/CN
-  - imsdk-tob/Core (1.17.0):
+  - imsdk-tob/Core (1.18.0-alpha.1):
     - imsdk-tob/Core_Common
     - TTSDK/Uploader (> 1.28)
-  - imsdk-tob/Core_Common (1.17.0):
+  - imsdk-tob/Core_Common (1.18.0-alpha.1):
     - Bolts/Tasks
     - IGListDiffKit
     - imsdk-tob/Feature_EssentialPB
@@ -32,7 +29,7 @@ PODS:
     - TTNetworkManager (~> 4.1)
     - WCDB (~> 1.0.6)
     - YYCache
-  - imsdk-tob/Feature_EssentialPB (1.17.0):
+  - imsdk-tob/Feature_EssentialPB (1.18.0-alpha.1):
     - Protobuf (= 3.21.9)
   - libextobjc (0.6):
     - libextobjc/EXTADT (= 0.6)
@@ -123,31 +120,31 @@ PODS:
     - OneKit/Section
     - OneKit/Service
   - Protobuf (3.21.9)
-  - RangersAPM/Above (5.0.0)
-  - RangersAPM/APMLog (5.0.0):
+  - RangersAPM/Above (5.1.2)
+  - RangersAPM/APMLog (5.1.2):
     - RangersAPM/CloudCommand
     - RangersAPM/Core
     - RangersAPM/HMD
     - RangersAPM/Zip
-  - RangersAPM/CloudCommand (5.0.0):
+  - RangersAPM/CloudCommand (5.1.2):
     - RangersAPM/Core
     - RangersAPM/HMD
-  - RangersAPM/CN (5.0.0):
+  - RangersAPM/CN (5.1.2):
     - RangersAPM/Core
     - RangersAPM/Public
-  - RangersAPM/Core (5.0.0):
+  - RangersAPM/Core (5.1.2):
     - RangersAPM/HMDLite
-  - RangersAPM/HMD (5.0.0):
+  - RangersAPM/HMD (5.1.2):
     - RangersAPM/Core
     - RangersAPM/Public
-  - RangersAPM/HMDLite (5.0.0)
-  - RangersAPM/Public (5.0.0):
+  - RangersAPM/HMDLite (5.1.2)
+  - RangersAPM/Public (5.1.2):
     - RangersAPM/Above
     - RangersAPM/Core
     - RangersAPM/HMDLite
     - RangersAPM/Zyone
-  - RangersAPM/Zip (5.0.0)
-  - RangersAPM/Zyone (5.0.0)
+  - RangersAPM/Zip (5.1.2)
+  - RangersAPM/Zyone (5.1.2)
   - RangersAppLog/Core (6.13.2):
     - RangersAppLog/Encryptor
   - RangersAppLog/Encryptor (6.13.2):
@@ -155,9 +152,9 @@ PODS:
   - RangersAppLog/Host/CN (6.13.2):
     - RangersAppLog/Core
   - RSSwizzle (0.1.0)
-  - SDWebImage (5.19.6):
-    - SDWebImage/Core (= 5.19.6)
-  - SDWebImage/Core (5.19.6)
+  - SDWebImage (5.19.7):
+    - SDWebImage/Core (= 5.19.7)
+  - SDWebImage/Core (5.19.7)
   - SQLiteRepairKit (1.2.2):
     - WCDBOptimizedSQLCipher (~> 1.2.0)
   - TTNetworkManager (4.1.127.43)
@@ -178,8 +175,8 @@ PODS:
 
 DEPENDENCIES:
   - im-uikit-tob (from `../`)
-  - imsdk-tob/Config/CN (= 1.17.0)
-  - imsdk-tob/Core (= 1.17.0)
+  - imsdk-tob/Config/CN (= 1.18.0-alpha.1)
+  - imsdk-tob/Core (= 1.18.0-alpha.1)
   - Masonry
   - MBProgressHUD
   - MJRefresh
@@ -219,8 +216,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   IGListDiffKit: 02d937d7e714d6f558771f284ed80668d483b522
-  im-uikit-tob: 20fa5e17188283d7af07d341610caa5a7a37d808
-  imsdk-tob: 5fdc16a12a8a2676c8a99422e4cf3b05aa56f8c3
+  im-uikit-tob: d116e47fac0e5b55e760df1a14d3e50c2c5c9eaf
+  imsdk-tob: d776ba3a409fe7e1609c8aac48d430b6bf555242
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
@@ -230,10 +227,10 @@ SPEC CHECKSUMS:
   MMKVCore: af055b00e27d88cd92fad301c5fecd1ff9b26dd9
   OneKit: 05d59eb122e247640c35ceb28b300ae27e89cb88
   Protobuf: 02524ec14183fe08fb259741659e79683788158b
-  RangersAPM: 40b25c2a5e86d8951c28975807b2174693cdbd7d
+  RangersAPM: 8b7eb1b2a1e89f601629e7eeff99e17df57eea0c
   RangersAppLog: aca2ba1dd540ae001120f5fe1e391aafc82aa1c7
   RSSwizzle: d561958f595028bfcef98c7d55c318b3878a61c6
-  SDWebImage: a79252b60f4678812d94316c91da69ec83089c9f
+  SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3
   SQLiteRepairKit: 35aaae5a8838adb85f5b1eb4d796055be6060a4b
   TTNetworkManager: 01682359a3ae7220be8f12a57d156f9861d095a6
   TTSDK: 52ee1a9675e1f313fa9102475c7331268dca7524
@@ -241,6 +238,6 @@ SPEC CHECKSUMS:
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: 7cadd411a69f208f057ea84700f41f131d72f459
+PODFILE CHECKSUM: 6ae04349abd08e4aab6d024c1ba41585e2256431
 
 COCOAPODS: 1.15.2
