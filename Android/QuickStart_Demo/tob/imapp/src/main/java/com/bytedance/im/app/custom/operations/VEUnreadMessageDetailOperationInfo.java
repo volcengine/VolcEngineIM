@@ -24,8 +24,14 @@ public class VEUnreadMessageDetailOperationInfo extends BIMMessageOperation {
         Intent intent = new Intent(v.getContext(), VEUnreadMessageDetailActivity.class);
         if (bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_TEXT) {
             String msgID = ((BIMTextElement) bimMessage.getElement()).getText();
+            long msgServerId = -1;
             try {
-                long msgServerId = Long.parseLong(msgID);
+                msgServerId = Long.parseLong(msgID);
+            } catch (Exception e) {
+
+            }
+
+            if (msgServerId > 0) {
                 BIMClient.getInstance().getMessageByServerID(msgServerId, 0, false, new BIMResultCallback<BIMMessage>() {
                     @Override
                     public void onSuccess(BIMMessage bimMessage) {
@@ -41,8 +47,8 @@ public class VEUnreadMessageDetailOperationInfo extends BIMMessageOperation {
                         v.getContext().startActivity(intent);
                     }
                 });
-            } catch (Exception e) {
-
+            } else {
+                v.getContext().startActivity(intent);
             }
         } else {
             v.getContext().startActivity(intent);

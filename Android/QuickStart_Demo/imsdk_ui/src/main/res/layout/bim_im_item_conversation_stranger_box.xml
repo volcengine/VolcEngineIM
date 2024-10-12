@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/root"
+    android:paddingLeft="16dp">
+
+    <ImageView
+        android:id="@+id/iv_conversation_top"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/icon_im_conversation_top"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/iv_conversation_user_img"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/icon_recommend_user_default" />
+
+    <TextView
+        android:id="@+id/tv_conversation_unread_num"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:background="@drawable/shape_im_conversation_unread_num_bg"
+        android:gravity="center"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:textColor="@color/business_base_white"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/iv_conversation_user_img"
+        app:layout_constraintTop_toTopOf="@id/iv_conversation_user_img"
+        tools:text="0" />
+
+    <TextView
+        android:id="@+id/tv_conversation_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="14dp"
+        android:maxLines="1"
+        android:maxEms="10"
+        android:ellipsize="end"
+        android:textColor="@color/business_im_222"
+        android:textSize="18sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toStartOf="@id/tv_conversation_last_time"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/iv_conversation_user_img"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tv_conversation_last_msg"
+        tools:text="詹姆斯" />
+
+    <ImageView
+        android:id="@+id/iv_conversation_type"
+        android:layout_width="42dp"
+        android:layout_height="18dp"
+        android:layout_marginLeft="6dp"
+        android:src="@drawable/icon_im_conversation_type_live"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/tv_conversation_user_name"
+        app:layout_constraintStart_toEndOf="@id/tv_conversation_user_name"
+        app:layout_constraintTop_toTopOf="@id/tv_conversation_user_name"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_conversation_last_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:textColor="@color/business_im_222_p30"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_conversation_user_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_conversation_user_name"
+        app:layout_constraintTop_toTopOf="@id/tv_conversation_user_name"
+        tools:text="11:30" />
+
+    <TextView
+        android:id="@+id/tv_conversation_last_msg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="20dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/business_im_999"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_conversation_mute"
+        app:layout_constraintTop_toBottomOf="@+id/tv_conversation_user_name"
+        app:layout_constraintStart_toEndOf="@id/iv_conversation_user_img"
+        tools:text="自从来到现在这座城市，我感觉气候真的特别舒适" />
+
+    <ImageView
+        android:id="@+id/iv_conversation_mute"
+        android:layout_width="13dp"
+        android:layout_height="13dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/icon_im_conversation_mute"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/tv_conversation_last_msg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_conversation_last_msg"
+        tools:visibility="visible" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/business_im_e8e8"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -42,7 +42,13 @@ public class MediaHelper {
                 Collections.sort(allList, new Comparator<MediaInfo>() {
                     @Override
                     public int compare(MediaInfo o1, MediaInfo o2) {
-                        return (int) (o2.getFileLastModified() - o1.getFileLastModified());
+                        if (o2.getFileLastModified() > o1.getFileLastModified()) {
+                            return 1;
+                        } else if (o2.getFileLastModified() == o1.getFileLastModified()) {
+                            return 0;
+                        } else {
+                            return -1;
+                        }
                     }
                 });
 
