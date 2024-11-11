@@ -53,7 +53,7 @@
     "@tarojs/runtime": "3.6.3",
     "@tarojs/shared": "3.6.3",
     "@tarojs/taro": "3.6.3",
-    "@volcengine/im-mp-sdk": "1.17.0",
+    "@volcengine/im-mp-sdk": "1.18.0",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.7",
     "lodash-wechat": "1.0.0",
