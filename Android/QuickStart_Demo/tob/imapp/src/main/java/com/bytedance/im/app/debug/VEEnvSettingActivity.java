@@ -62,6 +62,8 @@ public class VEEnvSettingActivity extends Activity {
                     curEnv = Constants.ENV_i18n;
                 } else if (checkedId == R.id.env_ppe) {
                     curEnv = Constants.ENV_PPE;
+                } else if (checkedId == R.id.env_i8n_ppe) {
+                    curEnv = Constants.ENV_PPEi18n;
                 }
                 updateSwimLane();
             }
@@ -87,6 +89,8 @@ public class VEEnvSettingActivity extends Activity {
             mEnvGroup.check(R.id.env_i18n);
         } else if (curEnv == Constants.ENV_PPE) {
             mEnvGroup.check(R.id.env_ppe);
+        } else if (curEnv == Constants.ENV_PPEi18n) {
+            mEnvGroup.check(R.id.env_i8n_ppe);
         }
     }
 
@@ -96,6 +100,8 @@ public class VEEnvSettingActivity extends Activity {
             SpUtils.getInstance().setBoeSwimLane(etSwimlane.getText().toString());
         } else if (curEnv == Constants.ENV_PPE) {
             SpUtils.getInstance().setPPeSwimLane(etSwimlane.getText().toString());
+        } else if (curEnv == Constants.ENV_PPEi18n) {
+            SpUtils.getInstance().setI18NPPeSwimLane(etSwimlane.getText().toString());
         }
     }
 
@@ -107,6 +113,9 @@ public class VEEnvSettingActivity extends Activity {
         } else if (curEnv == Constants.ENV_BOE) {
             String boeSwim = SpUtils.getInstance().getBoeSwimLane();
             etSwimlane.setText(boeSwim);
+        } else if (curEnv == Constants.ENV_PPEi18n) {
+            String swim = SpUtils.getInstance().getI18NPpeSwimLane();
+            etSwimlane.setText(swim);
         } else {
             llSwimEdit.setVisibility(TextView.GONE);
         }

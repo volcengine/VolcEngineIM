@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bytedance.im.app.search">
+
     <application>
         <activity
             android:name=".VESearchResultActivity"
@@ -11,6 +12,47 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="com.bytedance.im.app.search.VESearchResultActivity" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".global.VEGlobalSearchResultActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.app.search.global.VEGlobalSearchResultActivity" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".global.group.SearchGlobalGroupActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".global.contact.SearchGlobalFriendActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".global.message.SearchGlobalMessageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".global.message.SearchMsgInConvActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"
+            android:windowSoftInputMode="adjustPan"
+            />
+        <activity android:name=".global.member.VEConvMemberSearchActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp"
+            android:windowSoftInputMode="adjustPan"
+            >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bytedance.im.app.search.global.member.VEConvMemberSearchActivity" />
+            </intent-filter>
+
         </activity>
     </application>
 </manifest>

@@ -73,6 +73,10 @@ public class SearchBar extends FrameLayout {
         });
     }
 
+    public void setText(String text) {
+        editText.setText(text);
+    }
+
     public EditText getEditText() {
         return editText;
     }

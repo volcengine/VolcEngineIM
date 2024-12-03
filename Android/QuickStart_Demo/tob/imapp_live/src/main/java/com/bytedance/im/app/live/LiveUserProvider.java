@@ -70,7 +70,7 @@ public class LiveUserProvider implements BIMUserProvider {
             @Override
             public void onFailed(BIMErrorCode code) {
                 if (callback != null) {
-                    callback.failed(code);
+                    callback.failed(null, code);
                 }
             }
         });

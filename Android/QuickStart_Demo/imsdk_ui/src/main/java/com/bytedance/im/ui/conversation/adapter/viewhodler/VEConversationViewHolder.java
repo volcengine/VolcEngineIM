@@ -7,7 +7,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,7 +17,6 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.api.enums.BIMPushStatus;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
-import com.bytedance.im.core.internal.utils.IMLog;
 import com.bytedance.im.core.model.inner.msg.BIMCustomElement;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
@@ -34,7 +32,9 @@ import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.model.inner.msg.BIMBaseElement;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 
 public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIMConversation>> {
     private ImageView userHeadImg;
@@ -46,7 +46,7 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
     private ImageView conversationMute;
     private ImageView conversationTop;
     private View root;
-    private RecyclerView recyclerView;
+    private RecyclerView recyclerView;;
 
     public VEConversationViewHolder(@NonNull View itemView,RecyclerView recyclerView) {
         super(itemView);
@@ -194,7 +194,6 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
             }
         }
     }
-
 
     private BIMUIUser getBIMUIUSerOrAsyncRefresh(long uid) {
         BIMUIUser user = BIMUIClient.getInstance().getUserProvider().getUserInfo(uid);

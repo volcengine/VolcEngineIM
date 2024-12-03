@@ -1,17 +1,17 @@
 package com.bytedance.im.app.search;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bytedance.im.app.search.model.VESearchDivWrapper;
-import com.bytedance.im.app.search.model.VESearchWrapper;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bytedance.im.app.search.interfaces.OnSearchMsgClickListener;
+import com.bytedance.im.app.search.model.VESearchWrapper;
 import com.bytedance.im.app.search.viewHolder.VESearchDivViewHolder;
 import com.bytedance.im.app.search.viewHolder.VESearchFileMsgViewHolder;
+import com.bytedance.im.app.search.viewHolder.VESearchFileMsgViewHolder2;
 import com.bytedance.im.app.search.viewHolder.VESearchMsgViewHolder;
 import com.bytedance.im.app.search.viewHolder.VESearchViewHolder;
 
@@ -33,6 +33,8 @@ public class VESearchAdapter extends RecyclerView.Adapter<VESearchViewHolder> {
         VESearchViewHolder viewHolder = null;
         if (type == R.layout.ve_im_item_media_file_layout) {
             viewHolder = new VESearchFileMsgViewHolder(view);
+        } else if (type == R.layout.ve_im_item_media_file_layout_2) {
+            viewHolder = new VESearchFileMsgViewHolder2(view);
         } else if (type == R.layout.ve_im_item_search_msg_layout) {
             VESearchMsgViewHolder v = new VESearchMsgViewHolder(view);
             viewHolder = v;

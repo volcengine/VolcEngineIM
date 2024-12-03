@@ -11,7 +11,7 @@ import com.bytedance.im.search.api.BIMSearchExpandService;
 import com.bytedance.im.search.api.model.BIMSearchMessageListResult;
 import com.bytedance.im.search.api.model.BIMSearchMsgInfo;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchViewModel {
@@ -37,11 +37,16 @@ public class SearchViewModel {
         if (anchorSearchInfo != null) {
             anchorMessage = anchorSearchInfo.getMessage();
         }
+        List<BIMMessageType> searchTypeList = new ArrayList<>();
+        if (this.bimMessageType != null) {
+            searchTypeList.add(this.bimMessageType);
+        }
+
         BIMGetMessageByTypeOption option = new BIMGetMessageByTypeOption
                 .Builder()
                 .anchorMessage(anchorMessage)
                 .limit(20)
-                .messageTypeList(Collections.singletonList(bimMessageType))
+                .messageTypeList(searchTypeList)
                 .direction(bimPullDirection)
                 .build();
         BIMClient.getInstance().getService(BIMSearchExpandService.class).searchLocalMessageWithMsgType(searchKey, conversationId, option, new BIMResultCallback<BIMSearchMessageListResult>() {

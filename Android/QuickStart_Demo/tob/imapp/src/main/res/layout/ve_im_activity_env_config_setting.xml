@@ -90,6 +90,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="i18n环境" />
+
+        <RadioButton
+            android:id="@+id/env_i8n_ppe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="海外ppe环境" />
     </RadioGroup>
 
     <LinearLayout

@@ -195,6 +195,10 @@ public class VELiveDetailActivity extends Activity {
         BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroup(conversationShortId, new BIMResultCallback<BIMConversation>() {
             @Override
             public void onSuccess(BIMConversation conversation) {
+                if (VELiveDetailActivity.this.isDestroyed()) {
+                    return;
+                }
+
                 BIMMember curMember = conversation.getCurrentMember();
                 bimConversation = conversation;
                 String name = VELiveDetailController.getGroupName(conversation);

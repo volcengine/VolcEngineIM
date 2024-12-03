@@ -2,15 +2,11 @@ package com.bytedance.im.app.search.types;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,12 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bytedance.im.app.search.R;
 import com.bytedance.im.app.search.VESearchAdapter;
+import com.bytedance.im.app.search.interfaces.OnSearchMsgClickListener;
 import com.bytedance.im.app.search.model.VESearchDivWrapper;
 import com.bytedance.im.app.search.model.VESearchMsgInfo;
 import com.bytedance.im.app.search.model.VESearchMsgWrapper;
 import com.bytedance.im.app.search.model.VESearchWrapper;
 import com.bytedance.im.app.search.types.model.SearchViewModel;
-import com.bytedance.im.app.search.types.widget.SearchBar;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.api.enums.BIMPullDirection;
@@ -36,7 +32,6 @@ import com.bytedance.im.search.api.model.BIMSearchMsgInfo;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.log.BIMLog;
-import com.bytedance.im.ui.starter.ModuleStarter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,6 +48,10 @@ public class SearchMsgFragment extends Fragment {
     private SearchViewModel searchViewModel;
     private VESearchAdapter searchAdapter;
     private String searchKey;
+    private OnSearchMsgClickListener onSearchMsgClickListener;
+    private int fileItemUIType = FILE_ITEM_TYPE_FILE_FIRST;
+    public static int FILE_ITEM_TYPE_SENDER_FIST = 0; //item中间展示User
+    public static int FILE_ITEM_TYPE_FILE_FIRST = 1; //item中间展示文件名
 
     @Nullable
     @Override
@@ -100,7 +99,11 @@ public class SearchMsgFragment extends Fragment {
                         List<VESearchWrapper> searchWrapperList = new ArrayList<>();
                         for (BIMSearchMsgInfo searchMsgInfo : bimSearchMsgInfos) {
                             if (BIMMessageType.BIM_MESSAGE_TYPE_FILE == searchMsgInfo.getMessage().getMsgType()) {
-                                searchWrapperList.add(new VESearchMsgWrapper(R.layout.ve_im_item_media_file_layout, new VESearchMsgInfo(searchMsgInfo, map.get(searchMsgInfo.getMessage().getSenderUID()))));
+                                int layout = R.layout.ve_im_item_media_file_layout; //默认
+                                if (fileItemUIType == FILE_ITEM_TYPE_SENDER_FIST) {
+                                    layout = R.layout.ve_im_item_media_file_layout_2; //切换布局展示
+                                }
+                                searchWrapperList.add(new VESearchMsgWrapper(layout, new VESearchMsgInfo(searchMsgInfo, map.get(searchMsgInfo.getMessage().getSenderUID()))));
                             } else if (BIMMessageType.BIM_MESSAGE_TYPE_TEXT == searchMsgInfo.getMessage().getMsgType()) {
                                 searchWrapperList.add(new VESearchMsgWrapper(R.layout.ve_im_item_search_msg_layout, new VESearchMsgInfo(searchMsgInfo, map.get(searchMsgInfo.getMessage().getSenderUID()))));
                             }
@@ -109,12 +112,12 @@ public class SearchMsgFragment extends Fragment {
                             showEmpty(true);
                         } else {
                             showEmpty(false);
-                            if (searchViewModel.getBimMessageType() == BIMMessageType.BIM_MESSAGE_TYPE_TEXT) {
+                            if (searchViewModel.getBimMessageType() == BIMMessageType.BIM_MESSAGE_TYPE_TEXT && searchAdapter.getItemCount() == 0) {
                                 searchAdapter.appendData(Collections.singletonList(new VESearchDivWrapper(R.layout.ve_im_item_search_div_layout, "消息记录")));
                             }
                             searchAdapter.appendData(searchWrapperList);
                         }
-
+                        Log.i(TAG,"loadMore end adapter size: "+searchAdapter.getItemCount());
                     }
 
                     @Override
@@ -132,23 +135,47 @@ public class SearchMsgFragment extends Fragment {
             }
         });
     }
-
     public void search(String key, String conversationID, BIMMessageType bimMessageType, BIMPullDirection pullDirection) {
+        search(key,conversationID,bimMessageType,pullDirection,FILE_ITEM_TYPE_FILE_FIRST);
+    }
+
+    /**
+     * 会话内搜索
+     */
+    public void search(String key, String conversationID, BIMMessageType bimMessageType, BIMPullDirection pullDirection, int fileUIType) {
         BIMLog.i(TAG, "search key: " + key);    //搜索
         searchKey = key;
+        this.fileItemUIType = fileUIType;
         showEmpty(TextUtils.isEmpty(key));
         searchViewModel = new SearchViewModel(conversationID, bimMessageType, key, pullDirection);
         searchAdapter = new VESearchAdapter(searchDetail -> {
-            BIMMessage message = searchDetail.getMessage();
-            if (message.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_FILE) {
-                Toast.makeText(getActivity(), "暂不支持文件预览", Toast.LENGTH_SHORT).show();
-            } else if (message.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_TEXT) {
-                BIMUIClient.getInstance().getModuleStarter().startMessageModule(getActivity(), searchDetail.getMessage().getUuid(), conversationID);
+            if (onSearchMsgClickListener != null) {
+                onSearchMsgClickListener.onSearchMsgClick(searchDetail);
+            } else {
+                BIMMessage message = searchDetail.getMessage();
+                if (message.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_FILE) {
+                    Toast.makeText(getActivity(), "暂不支持文件预览", Toast.LENGTH_SHORT).show();
+                } else if (message.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_TEXT) {
+                    BIMUIClient.getInstance().getModuleStarter().startMessageModule(getActivity(), searchDetail.getMessage().getUuid(), conversationID);
+                }
             }
         });
         recyclerView.setAdapter(searchAdapter);
         loadMore();
     }
+
+    public void setOnItemClickListener(OnSearchMsgClickListener listener){
+        onSearchMsgClickListener = listener;
+    }
+
+    /**
+     * 全局搜索
+     */
+    public void searchGlobal(String key, BIMPullDirection pullDirection) {
+        search(key, "", null, pullDirection);
+    }
+
+
 
     private void showEmpty(boolean isShowEmpty) {
         if (isShowEmpty) {

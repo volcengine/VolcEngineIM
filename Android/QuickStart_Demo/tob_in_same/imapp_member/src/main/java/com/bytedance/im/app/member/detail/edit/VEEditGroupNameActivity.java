@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +62,10 @@ public class VEEditGroupNameActivity extends VEEditActivity {
      * @param text
      */
     private void setGroupName(String text) {
+        if (TextUtils.isEmpty(text)) {
+            Toast.makeText(VEEditGroupNameActivity.this, "名称无效", Toast.LENGTH_SHORT).show();
+            return;
+        }
         waitDialog = ProgressDialog.show(VEEditGroupNameActivity.this, "名称修改中, 稍等...", "");
         BIMUIClient.getInstance().setGroupName(conversationId, text, new BIMSimpleCallback() {
             @Override

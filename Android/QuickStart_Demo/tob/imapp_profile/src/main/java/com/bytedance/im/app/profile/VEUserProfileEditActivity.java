@@ -1,9 +1,14 @@
 package com.bytedance.im.app.profile;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -53,10 +58,17 @@ public class VEUserProfileEditActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ve_im_activity_mine_edit_layout);
-        showUid = getIntent().getLongExtra(ModuleStarter.MODULE_KEY_UID,0);
+        showUid = getIntent().getLongExtra(ModuleStarter.MODULE_KEY_UID, 0);
         conversationId = getIntent().getStringExtra(ModuleStarter.MODULE_KEY_CID);
         boolean editAble = BIMClient.getInstance().getCurrentUserID() == showUid;
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
+        findViewById(R.id.action_title).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                copyUidToBoard();
+                return false;
+            }
+        });
         portraitLayout = findViewById(R.id.cl_mine_portrait);
         nickNameLayout = findViewById(R.id.cl_mine_name);
         memberNameLayout = findViewById(R.id.cl_member_name);
@@ -91,7 +103,7 @@ public class VEUserProfileEditActivity extends Activity {
     }
 
     private void updateUI(BIMUserFullInfo userFullInfo, BIMMember member) {
-        if(this.isFinishing()){
+        if (this.isFinishing()) {
             return;
         }
         BIMUIClient.getInstance().getUserProvider().reloadUserInfo(showUid);   //刷新数据到内存
@@ -155,7 +167,7 @@ public class VEUserProfileEditActivity extends Activity {
      */
     private void refreshUserProfile() {
 
-        BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfo(showUid, true,new BIMResultCallback<BIMUserFullInfo>() {
+        BIMClient.getInstance().getService(BIMContactExpandService.class).getUserFullInfo(showUid, true, new BIMResultCallback<BIMUserFullInfo>() {
             @Override
             public void onSuccess(BIMUserFullInfo fullInfo) {
                 if (!TextUtils.isEmpty(conversationId)) {
@@ -204,7 +216,7 @@ public class VEUserProfileEditActivity extends Activity {
             @Override
             public void onSuccess(BIMUserFullInfo bimUserProfile) {
                 Toast.makeText(VEUserProfileEditActivity.this, "设置昵称成功", Toast.LENGTH_SHORT).show();
-                updateUI(bimUserProfile,bimMember);
+                updateUI(bimUserProfile, bimMember);
             }
 
             @Override
@@ -228,7 +240,7 @@ public class VEUserProfileEditActivity extends Activity {
             @Override
             public void onSuccess(BIMUserFullInfo bimUserProfile) {
                 Toast.makeText(VEUserProfileEditActivity.this, "更新头像成功", Toast.LENGTH_SHORT).show();
-                updateUI(bimUserProfile,bimMember);
+                updateUI(bimUserProfile, bimMember);
             }
 
             @Override
@@ -251,7 +263,7 @@ public class VEUserProfileEditActivity extends Activity {
             @Override
             public void onSuccess(BIMUserFullInfo bimUserProfile) {
                 Toast.makeText(VEUserProfileEditActivity.this, "更新额外信息成功！", Toast.LENGTH_SHORT).show();
-                updateUI(bimUserProfile,bimMember);
+                updateUI(bimUserProfile, bimMember);
             }
 
             @Override
@@ -259,5 +271,11 @@ public class VEUserProfileEditActivity extends Activity {
                 Toast.makeText(VEUserProfileEditActivity.this, "更新额外信息失败！", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void copyUidToBoard() {
+        ClipData mClipData = ClipData.newPlainText("showUid", "" + showUid);
+        ((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(mClipData);
+        Toast.makeText(this, "已复制uid: " + showUid, Toast.LENGTH_SHORT).show();
     }
 }

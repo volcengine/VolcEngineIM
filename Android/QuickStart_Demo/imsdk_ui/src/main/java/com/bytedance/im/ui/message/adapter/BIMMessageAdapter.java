@@ -142,6 +142,10 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
      * @return -1:非法 0:更新 1:插入 2: 追加
      */
     public int insertOrUpdateMessage(BIMMessage message) {
+        return insertOrUpdateMessage(message, false);
+    }
+
+    public int insertOrUpdateMessage(BIMMessage message, boolean onlyUpdate) {
         if (message == null) {
             BIMLog.i(TAG, "message is null!");
             return INVALID;
@@ -156,6 +160,10 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
             notifyItemChanged(containsIndex);
             return UPDATE;
         } else {
+            if (onlyUpdate) {
+                return INVALID;
+            }
+
             //插入
             if (data.isEmpty()) {
                 data.add(curMsgWrap);

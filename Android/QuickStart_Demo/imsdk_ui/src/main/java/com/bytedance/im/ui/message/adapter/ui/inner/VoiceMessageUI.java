@@ -30,10 +30,13 @@ import com.bytedance.im.core.model.inner.msg.BIMAudioElement;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @CustomUIType(contentCls = BIMAudioElement.class)
 public class VoiceMessageUI extends BaseCustomElementUI {
+    static final String  KEY_PLAYED_MARK = "audio_played_mark";
     @Override
     public int getLayoutId() {
         return R.layout.bim_im_item_message_voice;
@@ -47,7 +50,8 @@ public class VoiceMessageUI extends BaseCustomElementUI {
         BIMAudioElement audioElement = (BIMAudioElement) messageWrapper.getBimMessage().getElement();
         View sendContent = itemView.findViewById(R.id.ll_voice_content_send);
         View receiveContent = itemView.findViewById(R.id.ll_voice_content_receive);
-
+        View receiveBg = itemView.findViewById(R.id.ll_voice_content_receive_bg);
+        View playedMark = itemView.findViewById(R.id.played_mark);
         CircleProgressView circleProgressView = itemView.findViewById(R.id.pv_circle_view);
         circleProgressView.setVisibility(View.GONE);
         if (bimMessage.isSelf()) {
@@ -70,21 +74,31 @@ public class VoiceMessageUI extends BaseCustomElementUI {
                     }
                 });
             }
+            playedMark.setVisibility(View.GONE);
         } else {
             sendContent.setVisibility(View.GONE);
             receiveContent.setVisibility(View.VISIBLE);
             ImageView voiceIcon = itemView.findViewById(R.id.voice_icon_receive);
             voiceIcon.setImageResource(R.drawable.icon_im_voice_recevie);
             TextView reDuration = itemView.findViewById(R.id.tv_voice_duration_receive);
-            receiveContent.setBackgroundResource(R.drawable.shape_im_conversation_msg_receive_bg);
+            receiveBg.setBackgroundResource(R.drawable.shape_im_conversation_msg_receive_bg);
             reDuration.setTextColor(itemView.getContext().getResources().getColor(R.color.business_im_222));
             updateDuration(reDuration, audioElement);
+            String isMarkStr = bimMessage.getLocalExtra().get(KEY_PLAYED_MARK);
+            if ("1".equals(isMarkStr)) {
+                playedMark.setVisibility(View.GONE);
+            } else {
+                playedMark.setVisibility(View.VISIBLE);
+            }
         }
         if (audioElement == null) {
             return;
         }
         // 语音识别的文字，暂不支持
         asrTextTv.setVisibility(View.GONE);
+        if (bimMessage.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_LIVE_CHAT) {
+            playedMark.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -110,6 +124,7 @@ public class VoiceMessageUI extends BaseCustomElementUI {
                         @Override
                         public void onSuccess(BIMMessage bimMessage) {
                             AudioHelper.getInstance().play(audioElement.getURL());
+
                         }
 
                         @Override
@@ -136,6 +151,7 @@ public class VoiceMessageUI extends BaseCustomElementUI {
                         public void onSuccess(BIMMessage bimMessage) {
                             Toast.makeText(v.getContext(), "下载成功", Toast.LENGTH_SHORT).show();
                             AudioHelper.getInstance().play(audioElement.getDownloadPath());
+                            markPlayed(messageWrapper.getBimMessage()); //标记已经播放过
                         }
 
                         @Override
@@ -149,6 +165,7 @@ public class VoiceMessageUI extends BaseCustomElementUI {
                     });
                 } else {
                     AudioHelper.getInstance().play(audioElement.getDownloadPath());
+                    markPlayed(messageWrapper.getBimMessage()); //标记已经播放过
                 }
             }
         }
@@ -182,6 +199,26 @@ public class VoiceMessageUI extends BaseCustomElementUI {
             }
         }
         return BIMUtils.dip2px(context, widthDp);
+    }
+
+    /**
+     * 标记已经播放
+     * @param bimMessage
+     */
+    private void markPlayed(BIMMessage bimMessage){
+        Map<String,String> localExt = new HashMap<>();
+        localExt.put(KEY_PLAYED_MARK,"1");
+        BIMClient.getInstance().setMessageLocalExt(bimMessage, localExt, new BIMResultCallback<BIMMessage>() {
+            @Override
+            public void onSuccess(BIMMessage bimMessage) {
+                BIMLog.i("VoiceMessageUI", "setMessageLocalExt success");
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+                BIMLog.i("VoiceMessageUI", "setMessageLocalExt failed:"+code);
+            }
+        });
     }
 
     @Override
