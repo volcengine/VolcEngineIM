@@ -406,6 +406,8 @@ typedef enum : NSUInteger {
             VEIMDemoUserSelectionController *userController = [[VEIMDemoUserSelectionController alloc] initWithUsers:users];
             userController.title = self.conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT ? @"成员列表" : @"群成员列表";
             userController.delegate = self;
+            userController.isShowSearcTextField = self.conversation.conversationType == BIM_CONVERSATION_TYPE_GROUP_CHAT;
+            userController.conversation = self.conversation;
             [self.navigationController pushViewController:userController animated:YES];
         };
         

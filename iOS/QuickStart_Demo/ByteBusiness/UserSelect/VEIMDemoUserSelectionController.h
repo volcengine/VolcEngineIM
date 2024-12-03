@@ -16,7 +16,7 @@ typedef enum : NSUInteger {
     VEIMDemoUserSelectionStyleMultiSelection,
 } VEIMDemoUserSelectionStyle;
 
-@class VEIMDemoUserSelectionController, VEIMDemoUser;
+@class VEIMDemoUserSelectionController, VEIMDemoUser, BIMConversation;
 @protocol VEIMDemoUserSelectionControllerDelegate <NSObject>
 
 @optional
@@ -38,6 +38,10 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) VEIMDemoUserSelectionStyle style;
 
 @property (nonatomic, assign) BOOL isShowSilentMark;
+
+@property (nonatomic, assign) BOOL isShowSearcTextField;
+
+@property (nonatomic, strong) BIMConversation *conversation;
 
 @property (nonatomic, weak) id <VEIMDemoUserSelectionControllerDelegate> delegate;
 

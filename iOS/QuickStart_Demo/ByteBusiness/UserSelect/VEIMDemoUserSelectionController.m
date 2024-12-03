@@ -9,14 +9,18 @@
 #import "VEIMDemoTestUserCell.h"
 #import "VEIMDemoUserManager.h"
 #import "BIMUIDefine.h"
+#import "VEIMDemoGlobalSearchDefine.h"
+#import "VEIMDemoGlobalSearchMoreResultController.h"
 
-@interface VEIMDemoUserSelectionController ()
+@interface VEIMDemoUserSelectionController () <UITextFieldDelegate>
 
 @property (nonatomic, weak) VEIMDemoUser *selectedUser;
 
 @property (nonatomic, strong) NSMutableArray *users;
 
 @property (nonatomic, strong) NSMutableArray *selectedUsers;
+
+@property (nonatomic, strong) UITextField *txtfSearch;
 
 @end
 
@@ -35,6 +39,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    if (self.isShowSearcTextField) {
+        [self.view addSubview:self.txtfSearch];
+    }
+    [self updateConstraints];
+    
     if (!self.users) {
         self.users = [NSMutableArray array];
     }
@@ -55,6 +64,25 @@
 {
     [super viewWillAppear:animated];
     [self.tableview reloadData];
+}
+
+- (void)updateConstraints
+{
+    if (self.isShowSearcTextField) {
+        UIStatusBarManager *manager = [UIApplication sharedApplication].windows.firstObject.windowScene.statusBarManager;
+        CGFloat statusBarHeight = manager.statusBarFrame.size.height;
+        CGFloat topOffset = self.navigationController.navigationBar.frame.size.height + statusBarHeight;
+        [self.txtfSearch mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.right.equalTo(self.view);
+            make.top.mas_equalTo(self.view.mas_top).offset(topOffset);
+            make.height.mas_equalTo(40);
+        }];
+        
+        [self.tableview mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.txtfSearch.mas_bottom).offset(10);
+            make.left.right.bottom.equalTo(self.view);
+        }];
+    }
 }
 
 - (void)rightClicked: (id)sender{
@@ -159,6 +187,54 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.selectedUsers removeAllObjects];
     });
+}
+
+#pragma mark - UITextFieldDelegate
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    [self didSearchTextChange:[textField.text copy]];
+    self.txtfSearch.text = @"";
+    return NO;
+}
+
+- (void)textFieldDidChange:(UITextField *)textField
+{
+    [self didSearchTextChange:[textField.text copy]];
+    self.txtfSearch.text = @"";
+}
+
+- (void)didSearchTextChange:(NSString *)word
+{
+    VEIMDemoGlobalSearchMoreResultController *vc = [[VEIMDemoGlobalSearchMoreResultController alloc] initWithSearchType:VEIMDemoGlobalSearchTypeMember key:word limit:20];
+    vc.conversation = self.conversation;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+#pragma mark - Getter & Setter
+
+- (UITextField *)txtfSearch
+{
+    if (!_txtfSearch) {
+        UITextField *txtf = [[UITextField alloc] init];
+        txtf.delegate = self;
+        txtf.placeholder = @"搜索";
+        txtf.clearButtonMode = UITextFieldViewModeAlways;
+
+        txtf.leftViewMode = UITextFieldViewModeAlways;
+        txtf.leftView = ({
+            UIView *leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 38, 34)];
+            UIImageView *leftImgView = [[UIImageView alloc] initWithFrame:CGRectMake(12, 10, 14, 14)];
+            leftImgView.image = [UIImage imageNamed:@"icon_search2"];
+            [leftView addSubview:leftImgView];
+            leftView;
+        });
+
+        _txtfSearch = txtf;
+        [_txtfSearch addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+
+    }
+    return _txtfSearch;
 }
 
 @end

@@ -500,10 +500,13 @@
 
 
 #pragma mark - InputTool
-- (void)sendMessageToastWithError:(BIMError *)error
+- (void)sendMessageToastWithError:(BIMError *)error message:(BIMMessage *)message
 {
-    NSString *toast = [NSString stringWithFormat:@"消息发送失败:%@", error.localizedDescription];
-    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+    NSString *toast = [NSString stringWithFormat:@"消息发送失败:%ld", (long)error.code];
+    NSDictionary *localExt = message.localExt;
+    if (localExt && !BTD_isEmptyString([message checkMessage])) {//优先展示checkMessage
+        toast = [NSString stringWithFormat:@"checkCode:%@, checkMessage:%@", @([message checkCode]), [message checkMessage]];
+    } else if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
         if (error.code == BIM_UPLOAD_FILE_SIZE_OUT_LIMIT) {
             toast = [NSString stringWithFormat:@"消息发送失败: 文件大小超过限制"];
         } else if (error.code == BIM_SERVER_ERROR_SEND_MESSAGE_TOO_LARGE) {
@@ -545,7 +548,7 @@
         [[BIMClient sharedInstance] sendLiveGroupMessage:sendMessage conversation:self.conversation.conversationID priority:self.inputTool.priority progress:progress completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
             @strongify(self);
             if (error) {
-                [self sendMessageToastWithError:error];
+                [self sendMessageToastWithError:error message:message];
             }
         }];
     } else {
@@ -559,7 +562,7 @@
         [[BIMClient sharedInstance] sendMessage:sendMessage conversationId:self.conversation.conversationID saved:nil progress:progress completion:^(BIMMessage * _Nonnull message, BIMError * _Nullable error) {
             @strongify(self);
             if (error) {
-                [self sendMessageToastWithError:error];
+                [self sendMessageToastWithError:error message:message];
             }
         }];
     }
@@ -789,7 +792,7 @@
         [[BIMClient sharedInstance] sendLiveGroupMessage:sendMessage conversation:self.conversation.conversationID priority:self.inputTool.priority progress:progressBlock completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
             @strongify(self);
             if (error) {
-                [self sendMessageToastWithError:error];
+                [self sendMessageToastWithError:error message:message];
             }
         }];
     } else {
@@ -800,7 +803,7 @@
             } progress:progressBlock completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
                 @strongify(self);
                 if (error) {
-                    [self sendMessageToastWithError:error];
+                    [self sendMessageToastWithError:error message:message];
                 }
             }];
     }

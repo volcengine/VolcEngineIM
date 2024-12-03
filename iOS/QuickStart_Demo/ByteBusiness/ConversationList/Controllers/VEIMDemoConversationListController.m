@@ -19,9 +19,12 @@
 #import <imsdk-tob/BIMSDK.h>
 #import <im-uikit-tob/BIMFriendConversationListController.h>
 #import <Masonry/View+MASShorthandAdditions.h>
+#import "VEIMDemoGlobalSearchResultController.h"
+#import "VEIMDemoGlobalSearchResultController.h"
 
 @interface VEIMDemoConversationListController () <VEIMDemoUserSelectionControllerDelegate, BIMConversationListControllerDelegate, VEIMDemoConversationListSelectionDelegate>
 @property (nonatomic, strong) VEIMDemoCommonMenu *menu;
+@property (nonatomic, strong) UIButton *txtfSearchBtn;
 @property (nonatomic, strong) VEIMDemoConversationListSelectionCollectionView *selectionView;
 @property (nonatomic, strong) UIView *curConvListView;
 @property (nonatomic, strong) BIMBaseConversationListController *curConvListController;
@@ -49,6 +52,7 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_add"] style:UIBarButtonItemStylePlain target:self action:@selector(rightBarItemClicked:)];
     
     self.view.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:self.txtfSearchBtn];
     [self.view addSubview:self.selectionView];
     [self setupConvListControllers];
     [self makeSubViewsConstraints];
@@ -73,8 +77,16 @@
     UIStatusBarManager *manager = [UIApplication sharedApplication].windows.firstObject.windowScene.statusBarManager;
     CGFloat statusBarHeight = manager.statusBarFrame.size.height;
     CGFloat topOffset = self.navigationController.navigationBar.frame.size.height + statusBarHeight;
-    [self.selectionView mas_makeConstraints:^(MASConstraintMaker *make) {
+    
+    [self.txtfSearchBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.view.mas_top).offset(topOffset + 10);
+        make.centerX.equalTo(self.view);
+        make.width.equalTo(self.view).offset(-30);
+        make.height.mas_equalTo(34);
+    }];
+    
+    [self.selectionView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.txtfSearchBtn.mas_bottom).offset(10);
         make.centerX.equalTo(self.view);
         make.width.equalTo(self.view).offset(-30);
         make.height.equalTo(@(34));
@@ -231,6 +243,30 @@
         [self.view addSubview:self.curConvListView];
         [self makeSubViewsConstraints];
     });
+}
+
+#pragma mark - txtfSearchBtn
+
+- (UIButton *)txtfSearchBtn
+{
+    if (!_txtfSearchBtn) {
+        _txtfSearchBtn = [[UIButton alloc] initWithFrame:CGRectMake(140, 100, 100, 50)];
+        [_txtfSearchBtn setTitle:@" 搜索" forState:UIControlStateNormal];
+        [_txtfSearchBtn setTitleColor:[UIColor systemGrayColor] forState:UIControlStateNormal];
+        [_txtfSearchBtn setImage:[UIImage imageNamed:@"icon_search2"] forState:UIControlStateNormal];
+        _txtfSearchBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        [_txtfSearchBtn addTarget:self action:@selector(txtfSearchBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+        [_txtfSearchBtn.layer setCornerRadius:15.f]; //设置矩圆角半径
+        [_txtfSearchBtn.layer setBorderWidth:1.0];   //边框宽度
+        [_txtfSearchBtn.layer setBorderColor:[UIColor systemGray2Color].CGColor];//边框颜色
+    }
+    return _txtfSearchBtn;
+}
+
+- (void)txtfSearchBtnClick:(UIButton *)txtfSearchBtn
+{
+    VEIMDemoGlobalSearchResultController *searchVC = [[VEIMDemoGlobalSearchResultController alloc] initWithKey:@""];
+    [self.navigationController pushViewController:searchVC animated:YES];
 }
 
 @end

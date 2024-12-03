@@ -27,7 +27,7 @@
     
     CGFloat rightOfNameLabel = 0;
     if (self.nameLabel.text.length) {
-        rightOfNameLabel = self.msgType == BIM_MESSAGE_TYPE_TEXT ? -90 : -60;
+        rightOfNameLabel = -90;
     }
     
     if (self.subTitleLabel.text.length || self.subTitleLabel.attributedText.length) {
@@ -38,9 +38,8 @@
         }];
         if (self.msgType == BIM_MESSAGE_TYPE_FILE) {
             [self.dateLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(self.nameLabel.mas_bottom).with.offset(8);
                 make.right.mas_equalTo(-12);
-                make.centerY.equalTo(self.subTitleLabel);
+                make.centerY.equalTo(self.nameLabel);
             }];
             
             [self.subTitleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {

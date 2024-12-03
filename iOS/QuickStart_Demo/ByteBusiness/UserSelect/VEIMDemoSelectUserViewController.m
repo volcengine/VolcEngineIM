@@ -242,6 +242,12 @@ static NSInteger const kMaxCount = 5;
             [BIMToastView toast:toast];
         } else {
             [weakself dismiss];
+            
+            if (BTD_isEmptyString(conversation.name)) {
+                /// 设置默认群名用于搜索
+                [[BIMClient sharedInstance] setGroupName:conversation.conversationID name:@"未命名群聊" completion:^(BIMError * _Nullable error) {}];
+            }
+            
             BIMMessage *msg = [[BIMClient sharedInstance] createCustomMessage:@{@"text":msgStr,@"type":@(2)}];
             [[BIMClient sharedInstance] sendMessage:msg conversationId:conversation.conversationID saved:nil progress:nil  completion:nil];
 

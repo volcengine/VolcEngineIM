@@ -14,6 +14,9 @@
 #import <AVFoundation/AVAsset.h>
 #import <OneKit/BTDMacros.h>
 
+static const CGFloat kRedDotWH = 6;
+static NSString *const kHasPlay = @"hasPlay";
+
 @interface BIMAudioChatCell ()
 
 @property (nonatomic, strong) UILabel *durationLabel;
@@ -21,6 +24,8 @@
 @property (nonatomic, strong) AVPlayer *player;
 
 @property (nonatomic, strong) BIMAudioElement *file;
+
+@property (nonatomic, strong) UIView *redDotView;
 
 @end
 
@@ -32,6 +37,13 @@
     self.durationLabel = [UILabel new];
     self.durationLabel.font = kFont(14);
     [self.contentView addSubview:self.durationLabel];
+    
+    self.redDotView = [UIView new];
+    self.redDotView.backgroundColor = [UIColor redColor];
+    self.redDotView.clipsToBounds = YES;
+    self.redDotView.layer.cornerRadius = kRedDotWH * 0.5;
+    [self addSubview:self.redDotView];
+    
     
     self.player = [[AVPlayer alloc] init];
 }
@@ -52,14 +64,13 @@
     }
 
     if (self.isSelfMsg) {
-//        self.imageBg.backgroundColor = kIM_Blue_Color;
-        
         self.imageContent.image = kIMAGE_IN_BUNDLE_NAMED(@"icon_selfVoice");
         self.durationLabel.textColor = [UIColor whiteColor];
+        self.redDotView.hidden = YES;
     } else {
-//        self.imageBg.backgroundColor = [UIColor whiteColor];
         self.imageContent.image = kIMAGE_IN_BUNDLE_NAMED(@"icon_otherVoice");
         self.durationLabel.textColor = [UIColor blackColor];
+        self.redDotView.hidden = self.converstaion.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP || [message.localExt[kHasPlay] boolValue];
     }
 
     if (message.msgType == BIM_MESSAGE_TYPE_AUDIO) {
@@ -160,12 +171,6 @@
             make.centerY.mas_equalTo(self.progressView);
             make.centerX.mas_equalTo(self.progressView);
         }];
-//        [self.imageBg mas_remakeConstraints:^(MASConstraintMaker *make) {
-//            make.top.equalTo(self.imageContent).offset(-margin*0.5);
-//            make.bottom.equalTo(self.imageContent).offset(margin*0.5);
-//            make.right.equalTo(self.imageContent).offset(margin*0.5);
-//            make.bottom.mas_equalTo(-margin);
-//        }];
     } else {
         [self.imageContent mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.nameLabel).offset(margin);
@@ -176,13 +181,12 @@
             make.centerY.equalTo(self.imageContent);
             make.left.equalTo(self.imageContent.mas_right).offset(4);
         }];
-//        [self.imageBg mas_remakeConstraints:^(MASConstraintMaker *make) {
-//            make.left.equalTo(self.imageContent.mas_left).offset(-margin*0.5);
-//            make.top.equalTo(self.imageContent).offset(-margin*0.5);
-//            make.bottom.equalTo(self.imageContent).offset(margin*0.5);
-//            make.width.mas_equalTo(audioW);
-//            make.bottom.mas_equalTo(-margin);
-//        }];
+
+        [self.redDotView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.chatBg.mas_right).offset(5);
+            make.centerY.equalTo(self.chatBg);
+            make.width.height.mas_equalTo(kRedDotWH);
+        }];
     }
 }
 
@@ -253,7 +257,13 @@
     [self.player replaceCurrentItemWithPlayerItem:item];
     [self.player play];
     [self startAnimation];
-    [[BIMClient sharedInstance] sendMessageReadReceipts:@[self.message] completion:^(BIMError * _Nullable error) {}];
+    
+   
+    if (self.converstaion.conversationType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        [[BIMClient sharedInstance] sendMessageReadReceipts:@[self.message] completion:^(BIMError * _Nullable error) {}];
+        [[BIMClient sharedInstance] setMessageLocalExt:self.message localExt:@{kHasPlay: @"1"} completion:^(BIMError * _Nullable error) {}];
+    }
+    
 }
 
 - (void)refreshMediaMessage:(BIMMessage *)message completion:(BIMCompletion)completion

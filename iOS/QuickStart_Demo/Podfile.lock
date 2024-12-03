@@ -1,16 +1,16 @@
 PODS:
   - Bolts/Tasks (1.9.1)
   - IGListDiffKit (5.0.0)
-  - im-uikit-tob (1.18.1):
+  - im-uikit-tob (1.19.0):
     - Masonry
     - MJRefresh
     - SDWebImage
-  - imsdk-tob/Config/CN (1.18.1):
+  - imsdk-tob/Config/CN (1.19.0-alpha.0):
     - RangersAppLog/Host/CN
-  - imsdk-tob/Core (1.18.1):
+  - imsdk-tob/Core (1.19.0-alpha.0):
     - imsdk-tob/Core_Common
-    - TTSDK/Uploader (> 1.28)
-  - imsdk-tob/Core_Common (1.18.1):
+    - TTSDK/Uploader (< 1.99, >= 1.43.1.9-premium)
+  - imsdk-tob/Core_Common (1.19.0-alpha.0):
     - Bolts/Tasks
     - IGListDiffKit
     - imsdk-tob/Feature_EssentialPB
@@ -29,7 +29,7 @@ PODS:
     - TTNetworkManager (~> 4.1)
     - WCDB (~> 1.0.6)
     - YYCache
-  - imsdk-tob/Feature_EssentialPB (1.18.1):
+  - imsdk-tob/Feature_EssentialPB (1.19.0-alpha.0):
     - Protobuf (= 3.21.9)
   - libextobjc (0.6):
     - libextobjc/EXTADT (= 0.6)
@@ -120,36 +120,35 @@ PODS:
     - OneKit/Section
     - OneKit/Service
   - Protobuf (3.21.9)
-  - RangersAPM/Above (5.1.2)
-  - RangersAPM/APMLog (5.1.2):
+  - RangersAPM/Above (5.1.3)
+  - RangersAPM/APMLog (5.1.3):
     - RangersAPM/CloudCommand
     - RangersAPM/Core
     - RangersAPM/HMD
     - RangersAPM/Zip
-  - RangersAPM/CloudCommand (5.1.2):
+  - RangersAPM/CloudCommand (5.1.3):
     - RangersAPM/Core
     - RangersAPM/HMD
-  - RangersAPM/CN (5.1.2):
+  - RangersAPM/CN (5.1.3):
     - RangersAPM/Core
     - RangersAPM/Public
-  - RangersAPM/Core (5.1.2):
+  - RangersAPM/Core (5.1.3):
     - RangersAPM/HMDLite
-  - RangersAPM/HMD (5.1.2):
+  - RangersAPM/HMD (5.1.3):
     - RangersAPM/Core
     - RangersAPM/Public
-  - RangersAPM/HMDLite (5.1.2)
-  - RangersAPM/Public (5.1.2):
+  - RangersAPM/HMDLite (5.1.3)
+  - RangersAPM/Public (5.1.3):
     - RangersAPM/Above
     - RangersAPM/Core
     - RangersAPM/HMDLite
     - RangersAPM/Zyone
-  - RangersAPM/Zip (5.1.2)
-  - RangersAPM/Zyone (5.1.2)
-  - RangersAppLog/Core (6.13.2):
-    - RangersAppLog/Encryptor
-  - RangersAppLog/Encryptor (6.13.2):
-    - OneKit/BaseKit
-  - RangersAppLog/Host/CN (6.13.2):
+  - RangersAPM/Zip (5.1.3)
+  - RangersAPM/Zyone (5.1.3)
+  - RangersAppLog/Core (6.16.9):
+    - RangersAppLog/Encryptor/VOLC
+  - RangersAppLog/Encryptor/VOLC (6.16.9)
+  - RangersAppLog/Host/CN (6.16.9):
     - RangersAppLog/Core
   - RSSwizzle (0.1.0)
   - SDWebImage (5.20.0):
@@ -157,16 +156,22 @@ PODS:
   - SDWebImage/Core (5.20.0)
   - SQLiteRepairKit (1.2.2):
     - WCDBOptimizedSQLCipher (~> 1.2.0)
+  - SSZipArchive (2.4.3)
   - TTNetworkManager (4.1.127.43)
-  - TTSDK/Core (1.36.2.5):
-    - RangersAppLog/Core (~> 6.13.0)
-    - RangersAppLog/Host/CN (~> 6.13.0)
-  - TTSDK/Tools (1.36.2.5)
-  - TTSDK/Uploader (1.36.2.5):
+  - TTSDK/Core (1.44.3.8-standard):
+    - RangersAppLog/Core (~> 6.16.2)
+    - RangersAppLog/Host/CN (~> 6.16.2)
+  - TTSDK/SSL (1.44.3.8-standard)
+  - TTSDK/Tools (1.44.3.8-standard):
+    - TTSDK/SSL
+  - TTSDK/TopSignature (1.44.3.8-standard)
+  - TTSDK/Uploader (1.44.3.8-standard):
+    - SSZipArchive (~> 2.2)
     - TTSDK/Core
     - TTSDK/Tools
+    - TTSDK/TopSignature
     - TTSDK/VCN
-  - TTSDK/VCN (1.36.2.5)
+  - TTSDK/VCN (1.44.3.8-standard)
   - WCDB (1.0.7.5):
     - SQLiteRepairKit (~> 1.2.0)
     - WCDBOptimizedSQLCipher (~> 1.2.0)
@@ -175,8 +180,8 @@ PODS:
 
 DEPENDENCIES:
   - im-uikit-tob (from `../`)
-  - imsdk-tob/Config/CN (= 1.18.1)
-  - imsdk-tob/Core (= 1.18.1)
+  - imsdk-tob/Config/CN (= 1.19.0-alpha.0)
+  - imsdk-tob/Core (= 1.19.0-alpha.0)
   - Masonry
   - MBProgressHUD
   - MJRefresh
@@ -198,6 +203,7 @@ SPEC REPOS:
     - RSSwizzle
     - SDWebImage
     - SQLiteRepairKit
+    - SSZipArchive
     - WCDB
     - WCDBOptimizedSQLCipher
     - YYCache
@@ -216,8 +222,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   IGListDiffKit: 02d937d7e714d6f558771f284ed80668d483b522
-  im-uikit-tob: 1fde2ca7979d07565508d8993286787ef993acb0
-  imsdk-tob: 5402b48db76bce6e1f84f000a69ca7227027fe77
+  im-uikit-tob: 7cc3fd9514de162b01db78b12f6546c8738afc71
+  imsdk-tob: 67910dfee6717c14afc1cb3e153bb63b2e91601f
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
@@ -227,17 +233,18 @@ SPEC CHECKSUMS:
   MMKVCore: c04b296010fcb1d1638f2c69405096aac12f6390
   OneKit: 05d59eb122e247640c35ceb28b300ae27e89cb88
   Protobuf: 02524ec14183fe08fb259741659e79683788158b
-  RangersAPM: 8b7eb1b2a1e89f601629e7eeff99e17df57eea0c
-  RangersAppLog: aca2ba1dd540ae001120f5fe1e391aafc82aa1c7
+  RangersAPM: 99d0ff9dd5f33d3ffbeb5a2f00298236abc79cc9
+  RangersAppLog: d4fa640a806e5fef583b07bea2f610684e81161e
   RSSwizzle: d561958f595028bfcef98c7d55c318b3878a61c6
   SDWebImage: 73c6079366fea25fa4bb9640d5fb58f0893facd8
   SQLiteRepairKit: 35aaae5a8838adb85f5b1eb4d796055be6060a4b
+  SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   TTNetworkManager: 01682359a3ae7220be8f12a57d156f9861d095a6
-  TTSDK: 52ee1a9675e1f313fa9102475c7331268dca7524
+  TTSDK: 10534311ab0d5b317ace9e6289a6c6b68760a39a
   WCDB: 8e90babdeb7784c569353a4bd22a66c0a175a882
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: be8e8b4a542936c0a8d2f13fed46977934db5f6f
+PODFILE CHECKSUM: 001c1761f0b008f137e4d45da6191a157bd3e3dc
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
