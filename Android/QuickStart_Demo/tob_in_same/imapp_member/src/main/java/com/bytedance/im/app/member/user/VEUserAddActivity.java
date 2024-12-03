@@ -178,7 +178,7 @@ public class VEUserAddActivity extends Activity {
     }
 
     protected void onConfirmClick(ArrayList<Long> uidList) {
-        if (uidList == null || uidList.isEmpty()) {
+        if (uidList == null) {
             Toast.makeText(this, "请添加用户 id", Toast.LENGTH_SHORT).show();
             return;
         }

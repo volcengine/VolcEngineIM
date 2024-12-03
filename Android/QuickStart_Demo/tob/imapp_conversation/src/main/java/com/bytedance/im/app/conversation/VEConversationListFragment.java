@@ -47,6 +47,7 @@ public class VEConversationListFragment extends Fragment implements BIMSupportUn
     private ImageView createIv;
     private FrameLayout convListContainer;
     private TextView allConvBtn, friendConvBtn;
+    private View searchBtn;
     private Fragment allConvListFragment, friendConvListFragment;
     private int REQUEST_CODE_CRETE_UID_LIST = 1000;
     private int REQUEST_CODE_CRETE_UID = 1001;
@@ -64,10 +65,10 @@ public class VEConversationListFragment extends Fragment implements BIMSupportUn
         allConvBtn = rootView.findViewById(R.id.btn_all_conv);
         friendConvBtn = rootView.findViewById(R.id.btn_friend_conv);
         convListContainer = rootView.findViewById(R.id.conversation_list_container);
-
+        searchBtn = rootView.findViewById(R.id.global_search);
         allConvBtn.setOnClickListener(this::toggleList);
         friendConvBtn.setOnClickListener(this::toggleList);
-
+        searchBtn.setOnClickListener(this::goToSearchActivity);
         createIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -348,6 +349,10 @@ public class VEConversationListFragment extends Fragment implements BIMSupportUn
                 Toast.makeText(getActivity(), "创建单聊失败 code: " + code, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void goToSearchActivity(View v) {
+        BIMUIClient.getInstance().getModuleStarter().startGlobalSearchModule(getActivity());
     }
 }
 

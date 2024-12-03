@@ -11,6 +11,7 @@ public class SpUtils {
     public static final String SP_NO_RESET_NAME = "no_reset_sp_key";
     public static final String SP_BOE_SWIM_LANE_KEY = "boe_swim_lane";
     public static final String SP_PPE_SWIM_LANE_KEY = "ppe_swim_lane";
+    public static final String SP_I18N_PPE_SWIM_LANE_KEY = "i18n_ppe_swim_lane";
     public static final String SP_ENV_KEY = "env_key";
     public static final String SP_LOG_IN_INFO = "login_info";
 
@@ -50,6 +51,10 @@ public class SpUtils {
         sp.edit().putString(SP_PPE_SWIM_LANE_KEY, swimLane).commit();
     }
 
+    public void setI18NPPeSwimLane(String swimLane) {
+        sp.edit().putString(SP_I18N_PPE_SWIM_LANE_KEY, swimLane).commit();
+    }
+
     public int getEnv() {
         return sp.getInt(SP_ENV_KEY, Constants.ENV_RELEASE);
     }
@@ -60,6 +65,10 @@ public class SpUtils {
 
     public String getPpeSwimLane() {
         return sp.getString(SP_PPE_SWIM_LANE_KEY, "");
+    }
+
+    public String getI18NPpeSwimLane() {
+        return sp.getString(SP_I18N_PPE_SWIM_LANE_KEY, "");
     }
 
     public void setLoginUserInfo(UserToken userToken) {

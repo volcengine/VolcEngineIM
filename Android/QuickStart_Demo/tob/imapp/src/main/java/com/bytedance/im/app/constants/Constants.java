@@ -39,6 +39,10 @@ public class Constants {
      */
     public static final int ENV_i18n = 5;
     /**
+     * 海外环境 ppe
+     */
+    public static final int ENV_PPEi18n = 6;
+    /**
      * 默认环境
      */
     public static final int ENV_DEFAULT = ENV_RELEASE;

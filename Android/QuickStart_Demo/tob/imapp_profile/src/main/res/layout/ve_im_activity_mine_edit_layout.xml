@@ -24,7 +24,7 @@
                 android:src="@drawable/icon_im_back_black" />
 
             <TextView
-                android:id="@+id/_title"
+                android:id="@+id/action_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

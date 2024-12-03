@@ -536,7 +536,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
                 if (adapter.appendOrUpdate(bimMessage) == BIMMessageAdapter.APPEND) {
                     scrollBottom();
                 }
-                String failedText = "发送失败:" + code;
+                String failedText = "消息发送失败: ";
                 if (code == BIMErrorCode.BIM_SERVER_ERROR_SEND_CONVERSATION_NOT_EXIST) {
                     failedText += "会话不存在";
                 } else if (code == BIMErrorCode.BIM_SERVER_ERROR_SEND_USER_SILENT) {
@@ -548,7 +548,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
                 } else if (bimMessage.getCheckMessage() != null) {
                     failedText = "checkCode:" + bimMessage.getCheckCode() + ", checkMessage:" + bimMessage.getCheckMessage();
                 } else {
-                    failedText += code;
+                    failedText += code.getValue();
                 }
                 toast( failedText);
             }

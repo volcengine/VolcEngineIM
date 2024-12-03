@@ -27,8 +27,6 @@ import com.bytedance.im.app.custom.operations.VEMessageDetailOperationInfo;
 import com.bytedance.im.app.utils.VEUtils;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
-import com.bytedance.im.core.api.enums.BIMLogLevel;
-import com.bytedance.im.core.api.interfaces.BIMLogListener;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 
 import com.bytedance.im.ui.BIMUIClient;
@@ -172,6 +170,9 @@ public class VELoginActivity extends Activity implements BIMLoginListener {
             curAppId = Constants.APP_ID;    //国内 appid
         } else if (env == Constants.ENV_PPE) {
             swimLean = SpUtils.getInstance().getPpeSwimLane();
+        } else if (env == Constants.ENV_PPEi18n) {
+            curAppId = Constants.APP_ID_I18N;
+            swimLean = SpUtils.getInstance().getI18NPpeSwimLane();
         }
 
         Log.i(TAG, "initSDK() env: " + env + " curAppId: " + curAppId);

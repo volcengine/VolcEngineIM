@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -37,6 +39,8 @@ import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.core.api.model.BIMMessage;
+import com.bytedance.im.core.internal.task.Task;
+import com.bytedance.im.core.internal.utils.IMLog;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
@@ -358,20 +362,33 @@ public class VEDetailGroupConversationActivity extends Activity {
 
             @Override
             public void onSuccess(BIMMessage bimMessage) {
-                //发送成功后,执行解散
-                BIMUIClient.getInstance().dissolveGroup(conversationId, true, new BIMSimpleCallback() {
-                    @Override
-                    public void onSuccess() {
-                        waitDialog.dismiss();
-                        setResultDelete();
-                        finish();
-                    }
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    //发送成功后,执行解散
+                    BIMUIClient.getInstance().dissolveGroup(conversationId, false, new BIMSimpleCallback() {
+                        @Override
+                        public void onSuccess() {
+                            BIMClient.getInstance().deleteConversation(conversationId, new BIMSimpleCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    waitDialog.dismiss();
+                                    setResultDelete();
+                                    finish();
+                                }
 
-                    @Override
-                    public void onFailed(BIMErrorCode code) {
-                        waitDialog.dismiss();
-                        finish();
-                    }
+                                @Override
+                                public void onFailed(BIMErrorCode code) {
+                                    waitDialog.dismiss();
+                                    finish();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailed(BIMErrorCode code) {
+                            waitDialog.dismiss();
+                            finish();
+                        }
+                    });
                 });
             }
 

@@ -54,6 +54,13 @@ public class ModuleStarter {
         return checkAndStart(context, intent);
     }
 
+    public boolean startGlobalSearchModule(Context context){
+        Intent intent = new Intent();
+        intent.setAction("com.bytedance.im.app.search.global.VEGlobalSearchResultActivity");
+        intent.addCategory("android.intent.category.DEFAULT");
+        return checkAndStart(context, intent);
+    }
+
     //启动聊天页
     public boolean startMessageModule(Context context, String cid) {
         return startMessageModule(context, null, cid);
@@ -193,6 +200,13 @@ public class ModuleStarter {
         return checkAndStart(activity,intent);
     }
 
+    public boolean startConvMemberSearch(Activity activity,String conversationId){
+        Intent intent = new Intent();
+        intent.putExtra(ModuleStarter.MODULE_KEY_CID,conversationId);
+        intent.setAction("com.bytedance.im.app.search.global.member.VEConvMemberSearchActivity");
+        return checkAndStart(activity,intent);
+    }
+
     private boolean checkAndStart(Context context, Intent intent) {
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(intent);
@@ -200,6 +214,4 @@ public class ModuleStarter {
         }
         return false;
     }
-
-
 }

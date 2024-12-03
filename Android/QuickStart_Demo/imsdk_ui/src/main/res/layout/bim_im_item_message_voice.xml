@@ -58,28 +58,43 @@
         android:id="@+id/ll_voice_content_receive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_im_conversation_msg_receive_bg"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingLeft="15dp"
-        android:paddingTop="11dp"
-        android:paddingRight="15dp"
-        android:paddingBottom="11dp">
-
-        <TextView
-            android:id="@+id/tv_voice_duration_receive"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/ll_voice_content_receive_bg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:textColor="@color/business_im_222"
-            android:textSize="16sp"
-            tools:text="16'" />
+            android:background="@drawable/shape_im_conversation_msg_receive_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="15dp"
+            android:paddingTop="11dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="11dp">
+
+            <TextView
+                android:id="@+id/tv_voice_duration_receive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/business_im_222"
+                android:textSize="16sp"
+                tools:text="16'" />
+            <ImageView
+                android:id="@+id/voice_icon_receive"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/icon_im_voice_recevie" />
+        </LinearLayout>
+
         <ImageView
-            android:id="@+id/voice_icon_receive"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@drawable/icon_im_voice_recevie" />
+            android:id="@+id/played_mark"
+            android:layout_marginStart="4dp"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/shape_im_conversation_unread_num_bg"/>
     </LinearLayout>
+
 
     <TextView
         android:id="@+id/tv_msg_asr_text_content"

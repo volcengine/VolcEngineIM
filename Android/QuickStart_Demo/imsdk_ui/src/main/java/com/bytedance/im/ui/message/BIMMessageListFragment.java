@@ -49,6 +49,7 @@ import com.bytedance.im.core.model.LocalPropertyItem;
 import com.bytedance.im.core.model.Message;
 import com.bytedance.im.core.model.inner.msg.BIMTextElement;
 import com.bytedance.im.core.service.BIMINService;
+import com.bytedance.im.core.service.BIMMessageService;
 import com.bytedance.im.core.service.manager.BIMMessageManager;
 import com.bytedance.im.core.stream.interfaces.StreamMessageListener;
 import com.bytedance.im.ui.BIMUIClient;
@@ -484,15 +485,15 @@ public class BIMMessageListFragment extends Fragment {
     private void checkInitAndScroll(CountDownLatch countDownLatch, BIMMessage startMessage) {
         countDownLatch.countDown();
         if (countDownLatch.getCount() == 0) {
-            int index = adapter.findIndex(startMessage);
-            BIMLog.i(TAG, "checkInitAndScroll index:" + index);
-            if (index > 0) {
-                recyclerView.post(() -> {
+            recyclerView.post(() -> {
+                int index = adapter.findIndex(startMessage);
+                BIMLog.i(TAG, "checkInitAndScroll index:" + index);
+                if (index > 0) {
                     RecyclerView.SmoothScroller smoothScroller = new CenterSmoothScroller(recyclerView.getContext());
                     smoothScroller.setTargetPosition(index);
                     recyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
-                });
-            }
+                }
+            });
         }
     }
 
@@ -647,6 +648,7 @@ public class BIMMessageListFragment extends Fragment {
     private void sendImageMessage(String path, Uri uri) {
         BIMLog.i(TAG, "sendImageMessage() path: " + path + " uri: " + uri);
         BIMMessage imageMessage = BIMClient.getInstance().createImageMessage(path);
+//        BIMMessage imageMessage = BIMClient.getInstance().getServiceManager().getService(BIMMessageService.class).createImageMessage(path,uri,true,"cipher_v2");
         sendMessage(imageMessage);
     }
 
@@ -797,7 +799,7 @@ public class BIMMessageListFragment extends Fragment {
                     } else if (bimMessage.getCheckMessage() != null) {
                         Toast.makeText(getActivity(), "checkCode:" + bimMessage.getCheckCode() + ", checkMessage:" + bimMessage.getCheckMessage(), Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getActivity(), "发送失败 code: " + code, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "消息发送失败: " + code.getValue(), Toast.LENGTH_SHORT).show();
                     }
                 }
                 if (adapter.insertOrUpdateMessage(bimMessage) == BIMMessageAdapter.APPEND) {
@@ -863,6 +865,7 @@ public class BIMMessageListFragment extends Fragment {
                     Toast.makeText(getActivity(), "出现错误，重复收到消息！", Toast.LENGTH_SHORT).show();
                 }
             }
+            BIMClient.getInstance().markConversationRead(conversationId,null);
         }
 
         @Override
@@ -896,7 +899,7 @@ public class BIMMessageListFragment extends Fragment {
         public void onUpdateMessage(BIMMessage message) {
             BIMLog.i(TAG, "onUpdateMessage() uuid: " + message.getUuid() + " thread:" + Thread.currentThread() + " element: " + message.getElement() + " contentData:" + message.getContentData());
             if (message.getConversationID().equals(bimConversation.getConversationID())) {
-                adapter.insertOrUpdateMessage(message);
+                adapter.insertOrUpdateMessage(message, true);
             }
         }
 
@@ -1061,10 +1064,6 @@ public class BIMMessageListFragment extends Fragment {
     }
 
     public static class CenterSmoothScroller extends LinearSmoothScroller {
-        @Override
-        protected void onStart() {
-            super.onStart();
-        }
 
         public CenterSmoothScroller(Context context) {
             super(context);
@@ -1073,11 +1072,6 @@ public class BIMMessageListFragment extends Fragment {
         @Override
         public int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int snapPreference) {
             return (boxStart + (boxEnd - boxStart) / 2) - (viewStart + (viewEnd - viewStart) / 2);
-        }
-
-        @Override
-        protected int calculateTimeForScrolling(int dx) {
-            return 1;
         }
     }
 

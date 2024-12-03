@@ -3,6 +3,7 @@ package com.bytedance.im.app.member.detail.edit;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -35,7 +36,13 @@ public class VEEditActivity extends Activity {
         editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(initMaxEditCount())});
         editText.setEnabled(false);
         findViewById(R.id.back).setOnClickListener(v -> finish());
-        confirm.setOnClickListener(v -> onConfirmClick(editText.getText().toString()));
+        confirm.setOnClickListener(v -> {
+            String text = editText.getText().toString();
+            if (!TextUtils.isEmpty(text)) {
+                text = text.trim();
+            }
+            onConfirmClick(text);
+        });
         BIMUIClient.getInstance().getConversation(conversationId, new BIMResultCallback<BIMConversation>() {
             @Override
             public void onSuccess(BIMConversation conversation) {

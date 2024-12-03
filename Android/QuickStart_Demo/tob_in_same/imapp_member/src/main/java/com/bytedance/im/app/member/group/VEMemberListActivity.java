@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,6 +45,7 @@ public class VEMemberListActivity extends Activity {
         findViewById(R.id.back).setOnClickListener(v -> finish());
         memberListV = findViewById(R.id.user_list);
         memberListV.setLayoutManager(new LinearLayoutManager(this));
+        findViewById(R.id.msg_search_bar).setOnClickListener(v -> BIMUIClient.getInstance().getModuleStarter().startConvMemberSearch(VEMemberListActivity.this,conversationId));
     }
 
     @Override

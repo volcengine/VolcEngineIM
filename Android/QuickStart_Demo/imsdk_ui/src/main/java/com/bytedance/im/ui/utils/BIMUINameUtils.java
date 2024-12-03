@@ -10,6 +10,9 @@ import java.util.List;
 public class BIMUINameUtils {
     //公开场景：用户资料>兜底uid
     public static String getShowNickName(BIMUIUser user) {
+        if (user == null) {
+            return "default";
+        }
         String name = "用户" + user.getUid();         //用户ID
         if (!TextUtils.isEmpty(user.getNickName())) { //用户资料名
             name = user.getNickName();
@@ -19,6 +22,9 @@ public class BIMUINameUtils {
 
     //好友场景 好友备注>用户资料>兜底uid
     public static String getShowName(BIMUIUser user) {
+        if (user == null) {
+            return "default";
+        }
         String name = "用户" + user.getUid();         //用户ID
         if (user != null) {
             if (!TextUtils.isEmpty(user.getNickName())) { //用户资料名
@@ -33,6 +39,9 @@ public class BIMUINameUtils {
 
     //群内名称  好友备注>群内备注>用户资料>兜底uid
     public static String getShowNameInGroup(BIMMember member, BIMUIUser user) {
+        if (user == null) {
+            return "用户" + member.getUserID();
+        }
         String name = "用户" + user.getUid();         //用户ID
         if (!TextUtils.isEmpty(user.getNickName())) { //用户资料名
             name = user.getNickName();
@@ -48,6 +57,9 @@ public class BIMUINameUtils {
 
     //头像展示 群内备注>用户资料
     public static String getPortraitUrl(BIMMember member, BIMUIUser user) {
+        if (user == null) {
+            return "default";
+        }
         String url = user.getPortraitUrl();         //用户资料
         if (!TextUtils.isEmpty(member.getAvatarUrl())) {
             url = member.getAvatarUrl();                //群内备注
