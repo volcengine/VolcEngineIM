@@ -195,7 +195,7 @@ static NSInteger const kMaxCount = 5;
 - (void)p_createSingleConversation
 {
     UINavigationController *nav = self.navigationController;
-    [self dismiss];
+    [self.navigationController popViewControllerAnimated:NO]; // 适配iOS18.x，如果animated:YES则会crash
     [[BIMClient sharedInstance] createSingleConversation:@(self.textField.text.longLongValue) completion:^(BIMConversation * _Nonnull conversation, BIMError * _Nullable error) {
         if (error) {
             [BIMToastView toast:[NSString stringWithFormat:@"创建聊天失败: %@",error.localizedDescription]];
@@ -241,7 +241,7 @@ static NSInteger const kMaxCount = 5;
             
             [BIMToastView toast:toast];
         } else {
-            [weakself dismiss];
+            [weakself.navigationController popViewControllerAnimated:NO];
             
             if (BTD_isEmptyString(conversation.name)) {
                 /// 设置默认群名用于搜索
