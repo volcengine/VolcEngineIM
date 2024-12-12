@@ -1009,8 +1009,8 @@
 				25EE37292433166D00AB5267 /* Frameworks */,
 				25EE372A2433166D00AB5267 /* Resources */,
 				2B469D7E2B2B0E6100844755 /* ShellScript */,
-				A774937D9B9526D2D5384EBD /* [CP] Embed Pods Frameworks */,
-				09D02E0FC38C41796EE2BF00 /* [CP] Copy Pods Resources */,
+				AD9E3839701F2D19642C45D0 /* [CP] Embed Pods Frameworks */,
+				1BF6DA9B28D8692227FC6EAF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1133,7 +1133,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		09D02E0FC38C41796EE2BF00 /* [CP] Copy Pods Resources */ = {
+		1BF6DA9B28D8692227FC6EAF /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1189,7 +1189,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A774937D9B9526D2D5384EBD /* [CP] Embed Pods Frameworks */ = {
+		AD9E3839701F2D19642C45D0 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1435,6 +1435,7 @@
 				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "INHOUSE=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1457,7 +1458,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusinessRelease_inhouse.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CURRENT_PROJECT_VERSION = 1.19.0;
+				CURRENT_PROJECT_VERSION = 1.19.1;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XXHND5J98K;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -1483,7 +1484,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.19.0;
+				MARKETING_VERSION = 1.19.1;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1662,9 +1663,9 @@
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusiness.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.19.0;
+				CURRENT_PROJECT_VERSION = 1.19.1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 5HG673Y488;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1690,14 +1691,14 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.19.0;
+				MARKETING_VERSION = 1.19.1;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-ld64",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.inhouse.zj;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1717,7 +1718,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.19.0;
+				CURRENT_PROJECT_VERSION = 1.19.1;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3XMD9D6A65;
 				ENABLE_BITCODE = NO;
@@ -1744,7 +1745,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.19.0;
+				MARKETING_VERSION = 1.19.1;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",

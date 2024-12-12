@@ -36,6 +36,7 @@
 @property (nonatomic, assign) long long nextCursor;
 @property (nonatomic, strong) BIMMessage *anchorMessage;
 
+@property (nonatomic, assign) BOOL emptyGroupHasMore;
 @property (nonatomic, assign) long long nextEmptyGroupCursor;
 
 @end
@@ -51,6 +52,7 @@
         _limit = limit;
         _infoList = @[];
         _hasMore = YES;
+        _emptyGroupHasMore = YES;
     }
     return self;
 }
@@ -147,6 +149,7 @@
     self.anchorMessage = nil;
     self.infoList = @[];
     self.tblResult.mj_footer.hidden = YES;
+    self.emptyGroupHasMore = YES;
     self.nextEmptyGroupCursor = 0;
     [self.tblResult.mj_footer resetNoMoreData];
     [self refreshEmptyLabel];
@@ -392,7 +395,11 @@
         if (self.canSearchEmptyGroup && result.groupInfoList.count < self.limit) {
             [self loadMoreEmptyGroup];
         } else {
-            [self.tblResult.mj_footer endRefreshingWithNoMoreData];
+            if (self.hasMore) {
+                [self.tblResult.mj_footer endRefreshing];
+            } else {
+                [self.tblResult.mj_footer endRefreshingWithNoMoreData];
+            }
             [self reloadTable];
         }
     }];
@@ -415,11 +422,11 @@
             self.infoList = [infoList copy];
         }
         
-        self.hasMore = result.hasMore;
+        self.emptyGroupHasMore = result.hasMore;
         self.nextEmptyGroupCursor = result.nextCursor;
         [self refreshEmptyLabel];
         self.tblResult.mj_footer.hidden = !self.infoList.count;
-        if (self.hasMore) {
+        if (self.emptyGroupHasMore) {
             [self.tblResult.mj_footer endRefreshing];
         } else {
             [self.tblResult.mj_footer endRefreshingWithNoMoreData];

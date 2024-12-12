@@ -77,7 +77,7 @@ static NSInteger VEIMDemoGlobalSearchCellMaxShowCount = 3;
     
     self.title = @"全局搜索";
     
-#if DEBUG
+#if DEBUG || INHOUSE
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:self action:@selector(canSearchEmptyGroupChange)];
     [self setRightBarButtonItemTitle];
 #endif
@@ -205,8 +205,8 @@ static NSInteger VEIMDemoGlobalSearchCellMaxShowCount = 3;
         } else {
             self.groupInfoList = result.groupInfoList;
         }
-        if (self.canSearchEmptyGroup && result.groupInfoList.count < VEIMDemoGlobalSearchCellMaxShowCount) {
-            /// 会话数量不够且允许拉空会话时，拉一空会话列表
+        if (self.canSearchEmptyGroup && result.groupInfoList.count < VEIMDemoGlobalSearchCellMaxShowCount + 1) {
+            /// 会话数量不够且允许拉空会话时，拉空会话列表
             [[BIMClient sharedInstance] searchLocalGlobalEmptyGroup:self.key cursor:0 limit:self.limit completion:^(BIMSearchGroupListResult * _Nullable result, BIMError * _Nullable error) {
                 @strongify(self);
                 if (![[self getRealSearchKey] isEqualToString:word]) {

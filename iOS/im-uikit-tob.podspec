@@ -9,7 +9,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "im-uikit-tob"
-  spec.version      = "1.19.0"
+  spec.version      = "1.19.1"
   spec.summary      = "IM UIKit"
   spec.description  = <<-DESC
        TODO: Add long description of the pod here.
@@ -18,7 +18,7 @@ Pod::Spec.new do |spec|
   spec.homepage     = "https://github.com/volcengine/VolcEngineIM/tree/main/iOS"
   spec.license      = { :type => "MIT", :file => "FILE_LICENSE" }
   spec.author             = { "yangzhanjiang" => "yangzhanjiang@bytedance.com" }
-  spec.ios.deployment_target = '9.0'
+  spec.ios.deployment_target = '11.0'
   spec.source           = { :git => 'git@github.com:volcengine/VolcEngineIM.git', :tag => spec.version.to_s }
   spec.source_files  = '**/BIMUIKit/**/*.{h,m,c}'
 
