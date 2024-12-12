@@ -27,6 +27,9 @@ function sendMessageCheckCode(result) {
     case im_proto.StatusCode.AlREADY_IN_BLACK:
       ArcoMessage.error('对方已拒收你的消息');
       break;
+    case im_proto.StatusCode.MESSAGE_FREQ:
+      ArcoMessage.error('消息被限频：78');
+      break;
     case 3:
       if (result.checkCode.eq(100)) {
         ArcoMessage.error(`该用户已注销，不存在`);
@@ -95,8 +98,8 @@ const useMessage = () => {
     if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
       bytedIMInstance?.event?.emit?.(IMEvent.MessageUpsert, null, message);
     }
-
-    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
+    const result = await bytedIMInstance.sendMessage({ message, priority });
+    sendMessageCheckCode(result);
     setReferenceMessage(null);
   };
   const editTextMessage = async (message: Message, content: string) => {
