@@ -46,6 +46,7 @@ const ChatSetting: FC<ChatSettingProps> = props => {
     leaveGroupConversation,
     dissolveGroupConversation,
     configGroupConversationCoreInfo,
+    clearConversationMessage,
   } = useConversation();
 
   const { id, isStickOnTop, coreInfo, isMuted } = currentConversation;
@@ -202,6 +203,19 @@ const ChatSetting: FC<ChatSettingProps> = props => {
           >
             <p className="setting-item-title">置顶聊天</p>
           </CheckBox>
+
+          <div
+            className="select-item-wrapper"
+            onClick={() => {
+              clearConversationMessage(id);
+            }}
+          >
+            <div className="item-name-wrapper">清空聊天记录</div>
+
+            <div className="item-icon-wrapper">
+              <IconRight />
+            </div>
+          </div>
         </div>
       </div>
 

@@ -416,6 +416,14 @@ const useInit = () => {
       }
     );
 
+    const handleConversationClearMessageHandler = bytedIMInstance?.event.subscribe(
+      IMEvent.ConversationClearMessage,
+      ({ conversation_id, update_min_index }) => {
+        ArcoMessage.info(`会话 ${conversation_id} 消息被清空`);
+        getMessageList();
+      }
+    );
+
     return () => {
       bytedIMInstance?.event.unsubscribe(IMEvent.ConversationUpsert, conversationUpsertHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.ConversationLeave, conversationLeaveHandler);
@@ -442,6 +450,7 @@ const useInit = () => {
       bytedIMInstance?.event.unsubscribe(IMEvent.LiveGroupMarkTypeUpdate, handleLiveGroupMarkTypeUpdateHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.MessageRead, handleMessageReadHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.ConversationMessageRead, handleConversationMessageReadHandler);
+      bytedIMInstance?.event.unsubscribe(IMEvent.ConversationClearMessage, handleConversationClearMessageHandler);
       window.removeEventListener('loadLiveHistory', loadLiveHistoryListener);
     };
   }, [bytedIMInstance, currentConversation?.id]);

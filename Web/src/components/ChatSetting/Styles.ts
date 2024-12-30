@@ -36,6 +36,17 @@ export default styled.div`
     cursor: pointer;
   }
 
+  .select-item-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    cursor: pointer;
+
+    .item-name-wrapper {
+      flex: 1;
+    }
+  }
+
   .chat-user-detail {
     margin-left: 8px;
 
@@ -143,6 +154,7 @@ export default styled.div`
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin: 8px 0;
     }
 
     .setting-item-desc {

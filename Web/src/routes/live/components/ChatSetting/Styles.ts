@@ -154,6 +154,7 @@ export default styled.div`
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin: 8px 0;
     }
 
     .setting-item-desc {

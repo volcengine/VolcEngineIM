@@ -225,6 +225,22 @@ const useConversation = () => {
     }
   };
 
+  /**
+   * 清空会话历史消息
+   * @param id
+   */
+  const clearConversationMessage = async (id: string) => {
+    const conv = getConversation(id);
+    if (conv?.id) {
+      try {
+        await bytedIMInstance?.clearConversationMessage({ conversation: conv });
+        Message.success('清空聊天记录请求成功');
+      } catch (e) {
+        Message.error('清空聊天记录请求失败');
+      }
+    }
+  };
+
   return {
     getConversation,
     selectConversation,
@@ -236,6 +252,7 @@ const useConversation = () => {
     configGroupConversationCoreInfo,
     configConversationSettingInfo,
     configConversationWeakMute,
+    clearConversationMessage,
   };
 };
 
