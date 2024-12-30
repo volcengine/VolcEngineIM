@@ -7,9 +7,9 @@ public class Constants {
 
     public static final int APP_ID = 0; //国内appID
 
-    public static final String token = "4PSUAb9wRtD315bnH2UBMnlh7jNfm7rao0i4jHfaqu2iFfLm79pgW5";  //token
+    public static final String token = "";  //token
 
-    public static final long uid = 2544733918335184L;      //用户uid
+    public static final long uid = 0L;      //用户uid
 
 
     /**
