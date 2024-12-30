@@ -10,12 +10,57 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.ui.R;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class DialogUtil {
+
+    public static void showClearConversationMsgDialog(Context context, BIMResultCallback<Boolean> callback) {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setCancelable(false);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+            if (null != dialog.getWindow()) {
+                Window window = dialog.getWindow();
+
+                window.setGravity(Gravity.CENTER);
+                window.setContentView(R.layout.bim_im_clear_conversation_dialog);
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                TextView tvAgree = window.findViewById(R.id.tv_agree);
+                RadioButton rbServer = window.findViewById(R.id.rb_server);
+                TextView tvDisagree = window.findViewById(R.id.tv_disagree);
+
+                AtomicReference<Boolean> deleteFromServer = new AtomicReference<>(false);
+                rbServer.setOnClickListener(v -> {
+                    deleteFromServer.set(!deleteFromServer.get());
+                    rbServer.setChecked(deleteFromServer.get());
+                });
+                tvAgree.setOnClickListener(v -> {
+                    if (callback != null) {
+                        callback.onSuccess(rbServer.isChecked());
+                        dialog.dismiss();
+                    }
+                });
+                tvDisagree.setOnClickListener(v -> {
+                    if (callback != null) {
+                        callback.onFailed(null);
+                        dialog.dismiss();
+                    }
+                });
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+    }
 
     public static void showFileInfoDialog(Context context, String fileType, String fileSize) {
         try {

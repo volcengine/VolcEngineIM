@@ -296,7 +296,15 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
             } else if (cur > target) {
                 l = mid + 1;
             } else {
-                return mid;
+                long targetShortId = wrapper.getConversationShortId();
+                long curShortId = data.get(mid).getConversationShortId();
+                if (curShortId < targetShortId) {
+                    r = mid;
+                } else if (curShortId > targetShortId) {
+                    l = mid + 1;
+                } else {
+                    return mid;
+                }
             }
         }
         return l;

@@ -228,6 +228,11 @@ public class BIMMessageListActivity extends Activity {
         public void onReceiveReadReceipt(List<BIMReadReceipt> readReceiptList) {
 
         }
+
+        @Override
+        public void onConversationClearMessage(List<String> conversationIdList) {
+
+        }
     };
 
     @Override

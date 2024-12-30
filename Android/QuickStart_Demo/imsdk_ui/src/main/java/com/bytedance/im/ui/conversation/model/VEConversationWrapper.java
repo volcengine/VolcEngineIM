@@ -13,6 +13,11 @@ public class VEConversationWrapper extends VEConvBaseWrapper<BIMConversation> {
     }
 
     @Override
+    public long getConversationShortId() {
+        return t.getConversationShortID();
+    }
+
+    @Override
     public String getConversationId() {
         return t.getConversationID();
     }

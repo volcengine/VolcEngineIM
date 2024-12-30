@@ -138,6 +138,19 @@ public class VEContactListFragment extends Fragment implements BIMSupportUnread 
             }
         });
         service.addFriendListener(friendListener);
+        service.getFriendApplyUnreadCount(new BIMResultCallback<Integer>() {
+            @Override
+            public void onSuccess(Integer integer) {
+                if (friendListener != null) {
+                    friendListener.onFriendApplyUnreadCountChanged(integer);
+                }
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        });
         initStickTopItem();
         loadData();
         return view;

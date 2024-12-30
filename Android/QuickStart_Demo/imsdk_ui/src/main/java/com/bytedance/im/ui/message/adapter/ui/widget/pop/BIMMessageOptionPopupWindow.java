@@ -126,9 +126,10 @@ public class BIMMessageOptionPopupWindow extends PopupWindow {
                 dismiss();
             }
         });
-        operaRecyclerView.setLayoutManager(new GridLayoutManager(mContext, data.size()));
-        operaRecyclerView.setAdapter(operationAdapter);
-
+        if (data.size() > 0) {
+            operaRecyclerView.setLayoutManager(new GridLayoutManager(mContext, data.size()));
+            operaRecyclerView.setAdapter(operationAdapter);
+        }
         if (bimMessage.getServerMsgId() > 0) {
             switchPanel(false);
             emojiGroupView.reset();

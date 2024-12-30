@@ -46,7 +46,7 @@ public class VEMemberHozionAdapter extends RecyclerView.Adapter<VEMemberHozionAd
         if (memberList == null) return;
         data = new ArrayList<>();
         data.addAll(memberList);
-        MemberUtils.sort(data);
+        MemberUtils.sortWrap(data);
         if (data.size() > 5) {
             data = new ArrayList<>(data.subList(0, 5));
         }
@@ -56,7 +56,7 @@ public class VEMemberHozionAdapter extends RecyclerView.Adapter<VEMemberHozionAd
         if (isShowRemove) {
             data.add(new MemberWrapper(null, null,TYPE_DELETE));
         }
-        MemberUtils.sort(data);
+        MemberUtils.sortWrap(data);
         notifyDataSetChanged();
     }
 

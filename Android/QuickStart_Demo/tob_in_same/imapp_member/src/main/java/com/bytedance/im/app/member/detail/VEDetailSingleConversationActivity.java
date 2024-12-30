@@ -1,9 +1,12 @@
 package com.bytedance.im.app.member.detail;
 
+import static com.bytedance.im.core.api.enums.BIMClearConversationMessageType.BIM_CLEAR_CONVERSATION_MESSAGE_TYPE_ALL_MY_DEVICE;
+import static com.bytedance.im.core.api.enums.BIMClearConversationMessageType.BIM_CLEAR_CONVERSATION_MESSAGE_TYPE_LOCAL_DEVICE;
+import static com.bytedance.im.ui.message.adapter.ui.widget.pop.DialogUtil.showClearConversationMsgDialog;
+
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -17,13 +20,16 @@ import com.bytedance.im.app.member.R;
 import com.bytedance.im.app.member.group.VEDetailController;
 import com.bytedance.im.app.member.VEDebugConversationDetailActivity;
 import com.bytedance.im.app.member.detail.ext.VEDebugExtActivity;
-import com.bytedance.im.app.member.group.VEMemberUtils;
+import com.bytedance.im.app.member.group.MemberListViewModel;
 import com.bytedance.im.app.member.group.VESingleMemberListActivity;
 import com.bytedance.im.app.member.group.adapter.MemberWrapper;
 import com.bytedance.im.app.member.group.adapter.VEMemberHozionAdapter;
 import com.bytedance.im.core.api.BIMClient;
+import com.bytedance.im.core.api.enums.BIMClearConversationMessageType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
+import com.bytedance.im.core.api.model.BIMClearConversationOption;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.BIMUIClient;
@@ -36,6 +42,7 @@ public class VEDetailSingleConversationActivity extends Activity {
     private RecyclerView recyclerView;
     private View customLayout;
     private View queryConv;
+    private View clearConv;
     private BIMConversation bimConversation;
     private View btnMore;
     @Override
@@ -45,6 +52,7 @@ public class VEDetailSingleConversationActivity extends Activity {
         String conversationId = getIntent().getStringExtra(ModuleStarter.MODULE_KEY_CID);
         recyclerView = findViewById(R.id.recycler_view_member);
         customLayout = findViewById(R.id.fl_custom);
+        clearConv = findViewById(R.id.clear_conv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         VEMemberHozionAdapter adapter = new VEMemberHozionAdapter(this, new VEMemberHozionAdapter.OnClickListener() {
             @Override
@@ -83,8 +91,8 @@ public class VEDetailSingleConversationActivity extends Activity {
                 finish();
             }
         });
-
-        VEMemberUtils.getGroupMemberList(conversationId, new BIMResultCallback<List<MemberWrapper>>() {
+        //单聊就两个成员
+        new MemberListViewModel(conversationId, 2).loadMore(new BIMResultCallback<List<MemberWrapper>>() {
             @Override
             public void onSuccess(List<MemberWrapper> wrapperList) {
                 if (wrapperList != null
@@ -123,6 +131,33 @@ public class VEDetailSingleConversationActivity extends Activity {
         } else {
             queryConv.setVisibility(View.GONE);
         }
+
+        BIMClearConversationOption option = new BIMClearConversationOption.Builder()
+                .conversationId(conversationId)
+                .deleteFromServer(false)
+                .build();
+        clearConv.setOnClickListener(v -> showClearConversationMsgDialog(VEDetailSingleConversationActivity.this, new BIMResultCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean deleteFromServer) {
+                BIMClearConversationMessageType deleteType = deleteFromServer ? BIM_CLEAR_CONVERSATION_MESSAGE_TYPE_ALL_MY_DEVICE : BIM_CLEAR_CONVERSATION_MESSAGE_TYPE_LOCAL_DEVICE;
+                BIMClient.getInstance().clearConversationMessage(conversationId, deleteType, new BIMSimpleCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(VEDetailSingleConversationActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailed(BIMErrorCode code) {
+                        Toast.makeText(VEDetailSingleConversationActivity.this, "操作失败：" + code.getValue(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        }));
     }
 
 

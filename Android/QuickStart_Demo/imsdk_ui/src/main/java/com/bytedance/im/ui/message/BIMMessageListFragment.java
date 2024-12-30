@@ -857,7 +857,7 @@ public class BIMMessageListFragment extends Fragment {
         @Override
         public void onReceiveMessage(BIMMessage message) {
             BIMLog.i(TAG, "onReceiveMessage() uuid: " + message.getUuid() + " thread:" + Thread.currentThread());
-            if (message.getConversationID().equals(bimConversation.getConversationID())) {
+            if (bimConversation != null && message.getConversationID().equals(bimConversation.getConversationID())) {
                 int r = adapter.insertOrUpdateMessage(message);
                 if (r == BIMMessageAdapter.APPEND) {
                     scrollBottom();
@@ -871,7 +871,7 @@ public class BIMMessageListFragment extends Fragment {
         @Override
         public void onSendMessage(BIMMessage message) {
             BIMLog.i(TAG, "onSendMessage() uuid: " + message.getUuid() + " thread:" + Thread.currentThread());
-            if (message.getConversationID().equals(bimConversation.getConversationID())) {
+            if (bimConversation != null && message.getConversationID().equals(bimConversation.getConversationID())) {
                 if (adapter.insertOrUpdateMessage(message) == BIMMessageAdapter.APPEND) {
                     scrollBottom();
                 }
@@ -890,7 +890,7 @@ public class BIMMessageListFragment extends Fragment {
         public void onRecallMessage(BIMMessage message) {
             BIMLog.i(TAG, "onRecallMessage() uuid: " + message.getUuid() + " thread:" + Thread.currentThread());
             Toast.makeText(getActivity(), "消息撤回：" + message.getHint(), Toast.LENGTH_SHORT).show();
-            if (message.getConversationID().equals(bimConversation.getConversationID())) {
+            if (bimConversation != null && message.getConversationID().equals(bimConversation.getConversationID())) {
                 adapter.insertOrUpdateMessage(message);
             }
         }
@@ -898,7 +898,7 @@ public class BIMMessageListFragment extends Fragment {
         @Override
         public void onUpdateMessage(BIMMessage message) {
             BIMLog.i(TAG, "onUpdateMessage() uuid: " + message.getUuid() + " thread:" + Thread.currentThread() + " element: " + message.getElement() + " contentData:" + message.getContentData());
-            if (message.getConversationID().equals(bimConversation.getConversationID())) {
+            if (bimConversation != null && message.getConversationID().equals(bimConversation.getConversationID())) {
                 adapter.insertOrUpdateMessage(message, true);
             }
         }
@@ -915,6 +915,15 @@ public class BIMMessageListFragment extends Fragment {
                 BIMMessage bimMessage = receipt.getMessage();
                 if (bimMessage != null && bimMessage.getConversationID().equals(bimConversation.getConversationID())) {
                     adapter.insertOrUpdateMessage(receipt.getMessage());
+                }
+            }
+        }
+
+        @Override
+        public void onConversationClearMessage(List<String> conversationIdList) {
+            for (String cid: conversationIdList) {
+                if(conversationId != null && conversationId.equals(cid)) {
+                    adapter.clear();
                 }
             }
         }

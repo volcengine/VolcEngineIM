@@ -31,6 +31,10 @@ public class VEConvBaseWrapper<T> {
         return 0;
     }
 
+    public long getConversationShortId() {
+        return 0L;
+    }
+
     public String getConversationId(){
         return "";
     }
