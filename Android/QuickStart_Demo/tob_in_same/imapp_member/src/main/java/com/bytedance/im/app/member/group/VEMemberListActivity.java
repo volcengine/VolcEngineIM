@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bytedance.im.app.member.R;
 import com.bytedance.im.app.member.group.adapter.MemberWrapper;
 import com.bytedance.im.app.member.group.adapter.VEMemberListAdapter;
+import com.bytedance.im.app.member.group.adapter.VEMemberSelectAdapter;
+import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMMember;
@@ -30,6 +32,7 @@ public class VEMemberListActivity extends Activity {
     protected RecyclerView memberListV;
     protected VEMemberListAdapter adapter;
     private String conversationId;
+    private MemberListViewModel viewModel;
 
     public static void start(Activity activity, String conversationId) {
         Intent intent = new Intent(activity, VEMemberListActivity.class);
@@ -45,27 +48,50 @@ public class VEMemberListActivity extends Activity {
         findViewById(R.id.back).setOnClickListener(v -> finish());
         memberListV = findViewById(R.id.user_list);
         memberListV.setLayoutManager(new LinearLayoutManager(this));
-        findViewById(R.id.msg_search_bar).setOnClickListener(v -> BIMUIClient.getInstance().getModuleStarter().startConvMemberSearch(VEMemberListActivity.this,conversationId));
+        findViewById(R.id.msg_search_bar).setOnClickListener(v -> BIMUIClient.getInstance().getModuleStarter().startConvMemberSearch(VEMemberListActivity.this, conversationId));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        initData();
+        viewModel = new MemberListViewModel(conversationId, 20);
+        adapter = null;
+        loadData();
+        memberListV.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                boolean isSlideToBottom = isSlideToBottom(recyclerView);
+                if (isSlideToBottom && viewModel.hasMore()) {
+                    loadData();
+                }
+            }
+        });
     }
 
-    protected void initData() {
-        VEMemberUtils.getGroupMemberList(conversationId, new BIMResultCallback<List<MemberWrapper>>() {
+    private void loadData() {
+        viewModel.loadMore(new BIMResultCallback<List<MemberWrapper>>() {
             @Override
             public void onSuccess(List<MemberWrapper> memberWrappers) {
-                Log.i(TAG, "refreshUserListView() members.size(): " + memberWrappers.size());
-                adapter = new VEMemberListAdapter(VEMemberListActivity.this, filterMember(memberWrappers), memberWrapper -> onMemberClick(memberWrapper));
-                memberListV.setAdapter(adapter);
+                if (memberWrappers != null) {
+                    Log.i(TAG, "refreshUserListView() success");
+                    if (adapter == null) {
+                        adapter = new VEMemberListAdapter(VEMemberListActivity.this, filterMember(memberWrappers), memberWrapper -> onMemberClick(memberWrapper));
+                        memberListV.setAdapter(adapter);
+                    } else {
+                        adapter.appendMemberList(filterMember(memberWrappers));
+                    }
+                }
             }
 
             @Override
             public void onFailed(BIMErrorCode code) {
-                Log.i(TAG, "onFailed() code: " + code);
+
             }
         });
     }
@@ -75,7 +101,15 @@ public class VEMemberListActivity extends Activity {
         BIMUIClient.getInstance().getModuleStarter().startProfileModule(VEMemberListActivity.this, member.getUserID(), conversationId);
     }
 
-    protected List<MemberWrapper> filterMember(List<MemberWrapper> members){
+    protected List<MemberWrapper> filterMember(List<MemberWrapper> members) {
         return members;
+    }
+
+    private boolean isSlideToBottom(RecyclerView recyclerView) {
+        if (recyclerView == null) return false;
+        if (recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset()
+                >= recyclerView.computeVerticalScrollRange())
+            return true;
+        return false;
     }
 }

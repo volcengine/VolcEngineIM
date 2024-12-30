@@ -1,5 +1,9 @@
 package com.bytedance.im.app.member.detail;
 
+import static com.bytedance.im.core.api.enums.BIMClearConversationMessageType.BIM_CLEAR_CONVERSATION_MESSAGE_TYPE_ALL_MY_DEVICE;
+import static com.bytedance.im.core.api.enums.BIMClearConversationMessageType.BIM_CLEAR_CONVERSATION_MESSAGE_TYPE_LOCAL_DEVICE;
+import static com.bytedance.im.ui.message.adapter.ui.widget.pop.DialogUtil.showClearConversationMsgDialog;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -8,6 +12,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -22,7 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bytedance.im.app.member.BuildConfig;
 import com.bytedance.im.app.member.R;
 import com.bytedance.im.app.member.group.VEDetailController;
-import com.bytedance.im.app.member.group.VEMemberUtils;
+import com.bytedance.im.app.member.group.MemberListViewModel;
 import com.bytedance.im.app.member.group.adapter.MemberWrapper;
 import com.bytedance.im.app.member.group.adapter.VEMemberHozionAdapter;
 import com.bytedance.im.app.member.VEDebugConversationDetailActivity;
@@ -30,17 +35,17 @@ import com.bytedance.im.app.member.detail.edit.VEEditGroupNameActivity;
 import com.bytedance.im.app.member.detail.edit.VEEditGroupNoticeActivity;
 import com.bytedance.im.app.member.detail.ext.VEDebugExtActivity;
 import com.bytedance.im.core.api.BIMClient;
+import com.bytedance.im.core.api.enums.BIMClearConversationMessageType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSendCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
+import com.bytedance.im.core.api.model.BIMClearConversationOption;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.core.internal.task.Task;
-import com.bytedance.im.core.internal.utils.IMLog;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
@@ -71,6 +76,7 @@ public class VEDetailGroupConversationActivity extends Activity {
     private View optionQuitGroup;
     private ImageView noticeArrow;
     private ImageView nameArrow;
+    private View clearConvView;
 
     private TextView tvGroupName;
     private TextView tvNotice;
@@ -109,6 +115,7 @@ public class VEDetailGroupConversationActivity extends Activity {
         nameArrow = findViewById(R.id.iv_conversation_name);
         flSearch = findViewById(R.id.fl_search_msg);
         customLayout = findViewById(R.id.fl_custom);
+        clearConvView = findViewById(R.id.clear_conv);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         adapter = new VEMemberHozionAdapter(this, new VEMemberHozionAdapter.OnClickListener() {
@@ -171,6 +178,30 @@ public class VEDetailGroupConversationActivity extends Activity {
         } else {
             queryConv.setVisibility(View.GONE);
         }
+        clearConvView.setOnClickListener(v -> {
+            showClearConversationMsgDialog(VEDetailGroupConversationActivity.this, new BIMResultCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean deleteFromServer) {
+                    BIMClearConversationMessageType deleteType = deleteFromServer ? BIM_CLEAR_CONVERSATION_MESSAGE_TYPE_ALL_MY_DEVICE : BIM_CLEAR_CONVERSATION_MESSAGE_TYPE_LOCAL_DEVICE;
+                    BIMClient.getInstance().clearConversationMessage(conversationId, deleteType, new BIMSimpleCallback() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(VEDetailGroupConversationActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailed(BIMErrorCode code) {
+                            Toast.makeText(VEDetailGroupConversationActivity.this, "操作失败：" + code.getValue(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailed(BIMErrorCode code) {
+
+                }
+            });
+        });
     }
 
     private BIMConversationListListener conversationListener = new BIMConversationListListener() {
@@ -242,7 +273,7 @@ public class VEDetailGroupConversationActivity extends Activity {
             }
         });
 
-        VEMemberUtils.getGroupMemberList(conversationId, new BIMResultCallback<List<MemberWrapper>>() {
+        new MemberListViewModel(conversationId,20).loadMore(new BIMResultCallback<List<MemberWrapper>>() {
             @Override
             public void onSuccess(List<MemberWrapper> wrapperList) {
                 Log.i(TAG, "refreshUserListView() members.size(): " + wrapperList.size());
@@ -276,7 +307,7 @@ public class VEDetailGroupConversationActivity extends Activity {
 
             @Override
             public void onFailed(BIMErrorCode code) {
-                Log.i(TAG, "onFailed() code: " + code);
+
             }
         });
     }

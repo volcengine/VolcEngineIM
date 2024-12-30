@@ -275,6 +275,11 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
         notifyDataSetChanged();
     }
 
+    public void clear() {
+        data.clear();
+        notifyDataSetChanged();
+    }
+
     public interface OnMessageItemClickListener {
         void onPortraitClick(BIMMessage message);
 

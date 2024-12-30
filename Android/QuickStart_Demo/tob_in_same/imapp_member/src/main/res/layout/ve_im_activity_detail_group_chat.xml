@@ -171,6 +171,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
         android:background="@color/business_base_white"
+        android:visibility="gone"
         android:padding="16dp">
 
         <TextView
@@ -265,6 +266,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:background="@color/business_base_white"
+        android:visibility="gone"
         android:padding="16dp">
 
         <TextView
@@ -311,6 +313,24 @@
             android:textColor="@color/business_im_222"
             android:textSize="16sp" />
     </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/clear_conv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@color/business_base_white"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="清空聊天记录"
+            android:textColor="@color/business_im_222"
+            android:textSize="16sp" />
+    </FrameLayout>
+
     <FrameLayout
         android:id="@+id/query_conv"
         android:layout_width="match_parent"

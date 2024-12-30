@@ -47,14 +47,13 @@ public class SearchGroupGViewHolder extends RecyclerView.ViewHolder {
         BIMSearchDetail cidDetail = searchInfo.getCidDetail();
         if (convNameSearchDetail != null) {
             title.setText(SearchUIUtils.getSearchSpanString(convNameSearchDetail, convNameSearchDetail.getSearchContent()));
-        } else if (cidDetail != null) {
-            title.setText(SearchUIUtils.getSearchSpanString(cidDetail, cidDetail.getSearchContent()));
-        } else if (TextUtils.isEmpty(conv.getName())) {
-            title.setText("未命名群聊");
         } else {
-            title.setText(conv.getName());
+            if (TextUtils.isEmpty(conv.getName())) {
+                title.setText("未命名群聊");
+            } else {
+                title.setText(conv.getName());
+            }
         }
-
         title.append("(" + conv.getMemberCount() + ")");
         List<BIMSearchMemberInfo> memberList = searchInfo.getMemberInfoList();
         if (memberList != null && !memberList.isEmpty()) {
@@ -65,7 +64,15 @@ public class SearchGroupGViewHolder extends RecyclerView.ViewHolder {
             userPrefix.setVisibility(View.VISIBLE);
         } else {
             descRev.setVisibility(View.GONE);
-            userPrefix.setVisibility(View.GONE);
+            if(cidDetail!=null){
+                userPrefix.setVisibility(View.VISIBLE);
+                userPrefix.setText(SearchUIUtils.getSearchSpanString(cidDetail, cidDetail.getSearchContent()));
+
+            }else {
+                userPrefix.setVisibility(View.GONE);
+
+            }
+
         }
     }
 }

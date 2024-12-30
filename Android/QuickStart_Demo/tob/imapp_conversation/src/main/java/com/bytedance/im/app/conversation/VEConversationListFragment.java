@@ -33,6 +33,7 @@ import com.bytedance.im.ui.api.interfaces.BIMSupportUnread;
 import com.bytedance.im.ui.api.interfaces.BIMUnreadListener;
 import com.bytedance.im.ui.conversation.BIMConversationListFragment;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
+import com.bytedance.im.ui.message.adapter.ui.widget.pop.DialogUtil;
 import com.bytedance.im.ui.starter.ModuleStarter;
 import com.bytedance.im.ui.user.OnUserInfoUpdateListener;
 import com.bytedance.im.ui.utils.BIMUINameUtils;
@@ -51,6 +52,7 @@ public class VEConversationListFragment extends Fragment implements BIMSupportUn
     private Fragment allConvListFragment, friendConvListFragment;
     private int REQUEST_CODE_CRETE_UID_LIST = 1000;
     private int REQUEST_CODE_CRETE_UID = 1001;
+    private int REQUEST_CODE_CLEAR_UNREAD = 1002;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -121,6 +123,7 @@ public class VEConversationListFragment extends Fragment implements BIMSupportUn
         View contentView = LayoutInflater.from(getActivity()).inflate(R.layout.ve_im_popup_window_create_chat, null);
         LinearLayout createSingle = contentView.findViewById(R.id.ll_create_single);
         LinearLayout createGroup = contentView.findViewById(R.id.ll_create_group);
+        LinearLayout clearUnread = contentView.findViewById(R.id.ll_clear_all_unread);
         PopupWindow popupWindow = new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
         popupWindow.setOutsideTouchable(true);
         popupWindow.showAsDropDown(createBtn, 0, 10);
@@ -132,12 +135,16 @@ public class VEConversationListFragment extends Fragment implements BIMSupportUn
                     BIMUIClient.getInstance().getModuleStarter().startMemberSelectSingle(VEConversationListFragment.this, "发起单聊", REQUEST_CODE_CRETE_UID);
                 } else if (id == R.id.ll_create_group) {
                     BIMUIClient.getInstance().getModuleStarter().startMemberModuleAddForResult(VEConversationListFragment.this, "发起群聊", REQUEST_CODE_CRETE_UID_LIST);
+                } else if (id == R.id.ll_clear_all_unread) {
+                    DialogUtil.showBottomConfirmDialog(v.getContext(), "确定要清除所有未读提醒？", "确定",
+                            view -> BIMClient.getInstance().markAllConversationsRead(null));
                 }
                 popupWindow.dismiss();
             }
         };
         createSingle.setOnClickListener(listener);
         createGroup.setOnClickListener(listener);
+        clearUnread.setOnClickListener(listener);
         //弹窗显示时添加全局阴影
         WindowManager.LayoutParams lp = getActivity().getWindow().getAttributes();
         lp.alpha = 0.7f;

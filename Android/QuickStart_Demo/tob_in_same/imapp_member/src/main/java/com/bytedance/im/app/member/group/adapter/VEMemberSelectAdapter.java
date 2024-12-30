@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bytedance.im.app.member.R;
-import com.bytedance.im.app.member.group.VEMemberUtils;
+import com.bytedance.im.app.member.group.MemberListViewModel;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
@@ -29,10 +29,8 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
      * 普通群是全量
      *
      * @param mContext
-     * @param memberList
-     * @param checkedList
      */
-    public VEMemberSelectAdapter(Context mContext, List<MemberWrapper> memberWrapperList, List<Long> checkedIdList, boolean isTag,boolean isOwnerEnable) {
+    public VEMemberSelectAdapter(Context mContext, List<MemberWrapper> memberWrapperList, List<Long> checkedIdList, boolean isTag, boolean isOwnerEnable) {
         this.mContext = mContext;
         data = new ArrayList<>();
         this.isShowTag = isTag;
@@ -49,12 +47,12 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
                 data.add(wrapper);
             }
         }
-        MemberUtils.sort(data);
+        MemberUtils.sortWrap(data);
     }
 
 
     public VEMemberSelectAdapter(Context mContext) {
-        this(mContext, new ArrayList<>(), new ArrayList<>(), true,false);
+        this(mContext, new ArrayList<>(), new ArrayList<>(), true, false);
     }
 
     @NonNull
@@ -105,11 +103,12 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
      */
     public void appendMemberList(List<BIMMember> list) {
         if (list == null) return;
-        VEMemberUtils.getMemberWrapperList(list, new BIMResultCallback<List<MemberWrapper>>() {
+        MemberListViewModel.getMemberWrapperList(list, new BIMResultCallback<List<MemberWrapper>>() {
             @Override
             public void onSuccess(List<MemberWrapper> wrapperList) {
+                int position = data.size();
                 data.addAll(wrapperList);
-                notifyDataSetChanged();
+                notifyItemRangeInserted(position, wrapperList.size());
             }
 
             @Override
@@ -117,6 +116,12 @@ public class VEMemberSelectAdapter extends RecyclerView.Adapter<MemberSelectView
 
             }
         });
+    }
+
+    public void appendMemberWrapper(List<MemberWrapper> memberWrapperList) {
+        int position = data.size();
+        data.addAll(memberWrapperList);
+        notifyItemRangeInserted(position, memberWrapperList.size());
     }
 
     @Override

@@ -29,7 +29,7 @@ public class VEMemberListAdapter extends RecyclerView.Adapter<MemberViewHolder> 
         this.isShowOnline = false;
         data = new ArrayList<>();
         data.addAll(memberList);
-        MemberUtils.sort(data);
+        MemberUtils.sortWrap(data);
     }
 
     public VEMemberListAdapter(Context mContext, OnMemberClickListener listener) {
