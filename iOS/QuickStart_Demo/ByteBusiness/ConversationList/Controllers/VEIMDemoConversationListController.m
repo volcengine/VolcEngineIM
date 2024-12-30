@@ -147,7 +147,11 @@
         groupModel.titleStr = @"发起群聊";
         groupModel.imgStr = @"icon_group";
         
-        NSArray *ary = @[ oneModel, groupModel ];
+        VEIMDemoCommonMenuItemModel *clearAllUnreacCountModel = [[VEIMDemoCommonMenuItemModel alloc] init];
+        clearAllUnreacCountModel.titleStr = @"清除未读";
+        clearAllUnreacCountModel.imgStr = @"icon_group";
+        
+        NSArray *ary = @[ oneModel, groupModel, clearAllUnreacCountModel ];
         
         kWeakSelf(self);
         self.menu = [[VEIMDemoCommonMenu alloc] initWithListArray:ary selectBlock:^(NSInteger index) {
@@ -167,6 +171,20 @@
     } else if (index == 1) {
         vc.conversationType = BIM_CONVERSATION_TYPE_GROUP_CHAT;
         vc.title = @"发起群聊";
+    } else if (index == 2) {
+        UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"清除未读" message:@"确定要清除所有未读提醒？" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *sure = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+            [[BIMClient sharedInstance] markAllConversationsRead:^(BIMError * _Nullable error) {
+                if (error) {
+                    [BIMToastView toast:[NSString stringWithFormat:@"清除未读失败：%@", error.localizedDescription]];
+                }
+            }];
+        }];
+        [alertVC addAction:sure];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+        [alertVC addAction:cancel];
+        [self presentViewController:alertVC animated:YES completion:nil];
+        return;
     }
     [self.navigationController pushViewController:vc animated:YES];
 }

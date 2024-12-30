@@ -93,6 +93,9 @@
 
 - (BOOL)chatA:(BIMConversation *)chatA greaterThanOrEqualToChatB:(BIMConversation *)chatB
 {
+    if (chatA.sortOrder == chatB.sortOrder) {
+        return chatA.conversationShortID.longLongValue >= chatB.conversationShortID.longLongValue;
+    }
     return chatA.sortOrder >= chatB.sortOrder;
 }
 

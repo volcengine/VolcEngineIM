@@ -327,6 +327,13 @@
     [self p_updateMessage:message];
 }
 
+- (void)onConversationClearMessage:(NSArray<NSString *> *)conversationIdList
+{
+    if ([conversationIdList containsObject:self.conversation.conversationID]) {
+        [self p_clearAllMessages];
+    }
+}
+
 /// 发送消息入库完成
 - (void)onSendMessage:(BIMMessage *)message
 {
@@ -398,6 +405,15 @@
                 return;
             }
         }
+    }
+}
+
+- (void)p_clearAllMessages
+{
+    @synchronized (self.lock) {
+        [self.p_messageList removeAllObjects];
+        [self.messageDict removeAllObjects];
+        [self sortMessageListWithScrollToBottom:NO];
     }
 }
 

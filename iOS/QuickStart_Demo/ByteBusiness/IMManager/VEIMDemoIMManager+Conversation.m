@@ -56,13 +56,14 @@
         }
     }
     
-    [[BIMClient sharedInstance] removeGroupMemberList:con.conversationID uidList:set completion:^(NSSet<NSNumber *> * _Nonnull participants, BIMError * _Nullable error) {
-        if (!error) {
-            [self sendSystemMessage:systemMsg convId:con.conversationID completion:nil];
+    [self sendSystemMessage:systemMsg convId:con.conversationID completion:nil];
+    [[BIMClient sharedInstance] removeGroupMemberList:con.conversationID uidList:set completion:^(NSSet<NSNumber *> * _Nonnull participants, BIMError * _Nullable bimError) {
+        NSError *error;
+        if (bimError) {
+            error = [NSError errorWithDomain:kVEIMDemoErrorDomain code:bimError.code userInfo:@{NSLocalizedDescriptionKey : bimError.localizedDescription}];
+            [BIMToastView toast:[NSString stringWithFormat:@"移除失败：%@", error.localizedDescription]];
         }
-        if (completion) {
-            completion(error);
-        }
+        BTD_BLOCK_INVOKE(completion, error);
     }];
 }
 
@@ -86,13 +87,14 @@
 }
 
 - (void)dismissCon:(BIMConversation *)con completion:(void (^ _Nullable)(NSError * _Nullable))completion{
-    [[BIMClient sharedInstance] dissolveGroup:con.conversationID completion:^(BIMError * _Nullable error) {
-        if (error) {
-            [BIMToastView toast:[NSString stringWithFormat:@"解散失败：%@",error.localizedDescription]];
+    [self sendSystemMessage:@" 群聊被解散 " convId:con.conversationID completion:nil];
+    [[BIMClient sharedInstance] dissolveGroup:con.conversationID completion:^(BIMError * _Nullable bimError) {
+        NSError *error;
+        if (bimError) {
+            error = [NSError errorWithDomain:kVEIMDemoErrorDomain code:bimError.code userInfo:@{NSLocalizedDescriptionKey : bimError.localizedDescription}];
+            [BIMToastView toast:[NSString stringWithFormat:@"解散失败：%@", error.localizedDescription]];
         }
-        if (completion) {
-            completion(error);
-        }
+        BTD_BLOCK_INVOKE(completion, error);
     }];
 }
 

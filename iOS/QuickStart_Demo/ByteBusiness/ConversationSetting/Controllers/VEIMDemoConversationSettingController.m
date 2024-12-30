@@ -233,6 +233,40 @@ typedef enum : NSUInteger {
         };
         [self.settings addObject:quit];
     }
+    
+    VEIMDemoSettingModel *deleteAllLocalMsgsExt = [VEIMDemoSettingModel settingWithTitle:@"清空聊天记录" detail:@"" isNeedSwitch:NO switchOn:NO];
+    deleteAllLocalMsgsExt.clickHandler = ^() {
+        @strongify(self);
+        UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"确定后将删除本地聊天记录" message:@" " preferredStyle:UIAlertControllerStyleAlert];
+        UIView *customView = [[UIView alloc] initWithFrame:CGRectMake(0, 30, 270, 40)];
+        UIButton *checkMark = [UIButton buttonWithType:UIButtonTypeCustom];
+        checkMark.frame = CGRectMake(50, 20, 30, 30);
+        [checkMark setImage:[UIImage imageNamed:@"icon_duoxuan_normal"] forState:UIControlStateNormal];
+        [checkMark setImage:[UIImage imageNamed:@"icon_duoxuan_sel"] forState:UIControlStateSelected];
+        [checkMark addTarget:self action:@selector(checkMarkClick:) forControlEvents:UIControlEventTouchUpInside];
+        [customView addSubview:checkMark];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(80, 20, 200, 30)];
+        label.text = @"同时删除漫游聊天记录";
+        label.font = [UIFont systemFontOfSize:14];
+        [customView addSubview:label];
+        [alertVC.view addSubview:customView];
+        UIAlertAction *sure = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+            BIMClearConversationMessageType type = BIMClearConversationMessageTypeLocalDevice;
+            if (checkMark.isSelected) {
+                type = BIMClearConversationMessageTypeAllMyDevices;
+            }
+            [[BIMClient sharedInstance] clearConversationMessage:self.conversation.conversationID type:type completion:^(BIMError * _Nullable error) {
+                if (error) {
+                    [BIMToastView toast:[NSString stringWithFormat:@"清空聊天记录失败：%@",error.localizedDescription]];
+                }
+            }];
+        }];
+        [alertVC addAction:sure];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+        [alertVC addAction:cancel];
+        [self presentViewController:alertVC animated:YES completion:nil];
+    };
+    [self.settings addObject:deleteAllLocalMsgsExt];
 
     VEIMDemoSettingModel *setExt = [VEIMDemoSettingModel settingWithTitle:@"自定义字段" detail:@"" isNeedSwitch:NO switchOn:NO];
     setExt.clickHandler = ^() {
@@ -291,6 +325,13 @@ typedef enum : NSUInteger {
 {
     [super viewWillAppear:animated];
     [self.tableview reloadData];
+}
+
+#pragma mark - Action
+
+- (void)checkMarkClick: (UIButton *)sender
+{
+    sender.selected = !sender.selected;
 }
 
 #pragma mark - tableview delegate & datasource
