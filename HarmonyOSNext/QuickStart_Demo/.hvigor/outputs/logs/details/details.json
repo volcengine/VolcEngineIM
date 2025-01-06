@@ -1,0 +1,113 @@
+{
+  "HVIGOR_OHOS_PLUGIN": {
+    "MODULES": [
+      {
+        "MODULE_NAME": "1043bfc77febe75fafec0c4309faccf1",
+        "API_TYPE": "stageMode",
+        "INCREMENTAL_TASKS": {
+          "COMPILE_ARKTS": true
+        }
+      },
+      {
+        "MODULE_NAME": "28e0936a983df79414c49f70d0934094",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "872742f71b72ff0eca9ca382bef68974",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "933160bb8f51ed5ac0442a681c458754",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "f4b8b938ffbfb37536c5d3f08aae6c7e",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "055b70e4b6d5b19ca4b1435106f68d84",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "efe9add0c0e250f72241799163c9248e",
+        "API_TYPE": "stageMode"
+      }
+    ],
+    "BUILD_MODE": "debug"
+  },
+  "HVIGOR": {
+    "IS_INCREMENTAL": true,
+    "IS_DAEMON": true,
+    "IS_PARALLEL": true,
+    "IS_HVIGORFILE_TYPE_CHECK": false,
+    "TASK_TIME": {
+      "1043bfc77febe75fafec0c4309faccf1": {
+        "init": 119375,
+        "PreCheckSyscap": 196167,
+        "GeneratePkgContextInfo": 616625,
+        "ProcessIntegratedHsp": 904500,
+        "SyscapTransform": 667708,
+        "ProcessRouterMap": 3703959,
+        "GenerateLoaderJson": 62863875,
+        "MergeProfile": 33665667,
+        "ProcessProfile": 263336375,
+        "ProcessResource": 3267667,
+        "ConfigureCmake": 68709,
+        "CompileResource": 251079541,
+        "BuildNativeWithCmake": 96625,
+        "BuildJS": 1605125,
+        "BuildNativeWithNinja": 356625,
+        "ProcessLibs": 441499041,
+        "CompileArkTS": 7000867166,
+        "GeneratePkgModuleJson": 1166917,
+        "PackageHap": 379328750,
+        "SignHap": 322577167,
+        "assembleHap": 93250
+      },
+      "28e0936a983df79414c49f70d0934094": {
+        "init": 56000,
+        "ConfigureCmake": 125542,
+        "BuildNativeWithCmake": 85834,
+        "BuildNativeWithNinja": 733417
+      },
+      "872742f71b72ff0eca9ca382bef68974": {
+        "init": 53417,
+        "MergeProfile": 65714667,
+        "ConfigureCmake": 157667,
+        "BuildNativeWithCmake": 65833,
+        "BuildNativeWithNinja": 508209
+      },
+      "933160bb8f51ed5ac0442a681c458754": {
+        "init": 61417,
+        "MergeProfile": 36305416,
+        "ConfigureCmake": 75125,
+        "BuildNativeWithCmake": 86833,
+        "BuildNativeWithNinja": 451000
+      },
+      "f4b8b938ffbfb37536c5d3f08aae6c7e": {
+        "init": 49917,
+        "ConfigureCmake": 78584,
+        "BuildNativeWithCmake": 140417,
+        "BuildNativeWithNinja": 265208
+      },
+      "055b70e4b6d5b19ca4b1435106f68d84": {
+        "init": 47625,
+        "ConfigureCmake": 77708,
+        "BuildNativeWithCmake": 91958,
+        "BuildNativeWithNinja": 294583
+      },
+      "efe9add0c0e250f72241799163c9248e": {
+        "init": 46250,
+        "MergeProfile": 25736958,
+        "ConfigureCmake": 78459,
+        "BuildNativeWithCmake": 69208,
+        "BuildNativeWithNinja": 416333
+      },
+      "APP": {
+        "init": 64000
+      }
+    },
+    "TOTAL_TIME": 9021351917,
+    "BUILD_ID": "202501061800505800"
+  }
+}

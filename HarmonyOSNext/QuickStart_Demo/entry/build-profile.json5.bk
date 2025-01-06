@@ -1,0 +1,52 @@
+{
+  "apiType": "stageMode",
+  "buildOption": {
+    "nativeLib": {
+      "filter": {
+        "select": [
+          {
+            "package": "@douyin/cronet",
+            "include": [
+              "libcronet.so",
+              "libsscronet.so"
+            ]
+          }
+        ]
+      }
+    },
+    "arkOptions": {
+      "runtimeOnly": {
+        "sources": [],
+        "packages": [
+          "@imcloud/imapp_in",
+          "@imcloud/imapp_tob",
+          "@imcloud/imapp_member",
+          "@imcloud/im_sdk_ui",
+        ]
+      }
+    }
+  },
+  "buildOptionSet": [
+    {
+      "name": "release",
+      "arkOptions": {
+        "obfuscation": {
+          "ruleOptions": {
+            "enable": false,
+            "files": [
+              "./obfuscation-rules.txt"
+            ]
+          }
+        }
+      }
+    },
+  ],
+  "targets": [
+    {
+      "name": "default"
+    },
+    {
+      "name": "ohosTest",
+    }
+  ]
+}
