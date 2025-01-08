@@ -1,5 +1,5 @@
 publish_registry=https://ohpm.byted.org/repos/ohpm
-registry=https://ohpm.openharmony.cn/ohpm/,https://ohpm.byted.org/repos/ohpm/,https://artifact.bytedance.com/repository/byted-ohpm/
+registry=https://ohpm.openharmony.cn/ohpm/,https://artifact.bytedance.com/repository/byted-ohpm/
 # 开启依赖名称校验，本地依赖名称与其对应的包名是否一致，若不一致会导致命令执行失败
 enforce_dependency_key=true
 # 是否开启默认的冲突处理机制
