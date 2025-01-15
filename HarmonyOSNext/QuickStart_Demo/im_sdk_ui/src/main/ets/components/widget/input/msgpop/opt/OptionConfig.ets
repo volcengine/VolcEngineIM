@@ -21,13 +21,13 @@ export abstract class OptionConfig {
    * 配置功能
    */
   onInit(bimMessage:BIMMessage) {
-    let isSelf = bimMessage?.getSendUid() == BIMUIClient.getInstance().getCurrentUserID()
+    let isSelf = bimMessage?.getSenderUID() == BIMUIClient.getInstance().getCurrentUserID()
     this.isEnableRecall = isSelf
-    this.isEnableDelete = isSelf
+    this.isEnableDelete = true
     this.isEnableEdit = false
     this.isForceHeadHidden = false
     this.isForceHiddenReadStatus = false
-    this.isEnablePoP = bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS || bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL
+    this.isEnablePoP =!bimMessage.isRecalled() && (bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_SUCCESS || bimMessage.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_NORMAL)
   }
 
 

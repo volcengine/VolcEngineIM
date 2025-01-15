@@ -34,9 +34,9 @@ export class BIMUIUtils {
   }
 
   static generateHint(bimMessage?: BIMMessage,defaultHint?:string): string {
-    let hint: string = "[未知消息]";
+    let hint: string = "[暂不支持]";
     if (bimMessage) {
-      let element = bimMessage.content
+      let element = bimMessage.getElement()
       const msgType = bimMessage.getMsgType()
       if (msgType === BIMMessageType.BIM_MESSAGE_TYPE_TEXT) {
         let textElement: BIMTextElement = element as BIMTextElement
@@ -45,7 +45,7 @@ export class BIMUIUtils {
           hint = text;
         }
         let editInfo = bimMessage.getEditInfo();
-        if (editInfo && editInfo.content_is_edited) {
+        if (editInfo && editInfo.isEdit()) {
           hint = hint + "(已编辑)"
         }
       } else if (msgType === BIMMessageType.BIM_MESSAGE_TYPE_IMAGE) {
@@ -72,7 +72,7 @@ export class BIMUIUtils {
       } else if (msgType.valueOf() === 10008) {
         hint = "[系统消息]"
       } else {
-        hint = "[未知消息]"
+        hint = "[暂不支持]"
       }
     }
     return hint

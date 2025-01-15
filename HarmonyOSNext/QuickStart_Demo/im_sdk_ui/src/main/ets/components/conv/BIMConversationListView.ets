@@ -30,7 +30,7 @@ export struct BIMConversationListView {
               .onClick(() => {
                 this.itemClickListener(item.conv)
               })
-              .gesture(LongPressGesture().onActionEnd(() => {
+              .gesture(LongPressGesture().onAction(() => {
                 this.itemLongClickListener(item.conv)
               }))
           }

@@ -17,8 +17,8 @@
 export class IMPage {
   static readonly IN_MAIN: string = '@imcloud/imapp_in:main_page';
   static readonly IN_LOGIN: string = '@imcloud/imapp_in:login_page';
-  static readonly IM_PREVIEW_VIDEO_PAGE: string = '@imcloud/imapp_in:preview_video_page'
-  static readonly IM_PREVIEW_IMAGE_PAGE: string = '@imcloud/imapp_in:preview_image_page'
+  static readonly IM_PREVIEW_VIDEO_PAGE: string = '@imcloud/im_sdk_ui:preview_video_page'
+  static readonly IM_PREVIEW_IMAGE_PAGE: string = '@imcloud/im_sdk_ui:preview_image_page'
   static readonly IM_MEMBER_CREATE_SINGLE: string = '@imcloud/imapp_member:create_single_page'
   static readonly IM_MEMBER_CREATE_GROUP: string = '@imcloud/imapp_member:create_group_page'
   static readonly IM_MEMBER_CREATE_GROUP_REMOVE: string = '@imcloud/imapp_member:user_add_page'

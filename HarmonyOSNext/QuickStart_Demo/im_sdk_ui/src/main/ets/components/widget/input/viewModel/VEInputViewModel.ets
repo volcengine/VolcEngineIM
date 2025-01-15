@@ -3,9 +3,11 @@ import { OnEmojiClickListener } from '../VEEmojiPanel'
 import { EmojiHelper, EmojiInfo } from './EmojiHelper'
 import { BIMUIUtils } from '../../../../utils/BIMUIUtils'
 import { BIMUIClient } from '../../../../api/BIMUIClient'
+import { promptAction } from '@kit.ArkUI'
 
 export class VEInputViewModel implements OnEmojiClickListener {
   private tag = "VEInputViewModel"
+  private MAX_LENGTH = 500;
   editText: string = ""
   isShowEdit: Visibility = Visibility.Visible
   isShowAudio: Visibility = Visibility.None
@@ -22,7 +24,7 @@ export class VEInputViewModel implements OnEmojiClickListener {
   refMsg: BIMMessage | undefined
   editMsg: BIMMessage | undefined
   mentionIds: string[] = []
-  conversationId:string = ""
+  conversationId: string = ""
   private _onSendListener: OnSendTextListener | undefined = undefined
   readonly inputTextColor = "FF000000"
   readonly inputTextSize = 16
@@ -63,10 +65,15 @@ export class VEInputViewModel implements OnEmojiClickListener {
   }
 
   onSendClick() {
+    let text = this.getText();
+    if (text.length > this.MAX_LENGTH) {
+      promptAction.showToast({ message: `文本过长,超过 ${this.MAX_LENGTH} 字符,发送失败` })
+      return
+    }
     if (this.editMsg != null) { //编辑消息
-      this._onSendListener?.onSendEditText(this.getText(), this.editMsg, this.mentionIds)
-    } else {  //发送文本消息
-      this._onSendListener?.onSendText(this.getText(), this.refMsg, this.mentionIds)
+      this._onSendListener?.onSendEditText(text, this.editMsg, this.mentionIds)
+    } else { //发送文本消息
+      this._onSendListener?.onSendText(text, this.refMsg, this.mentionIds)
     }
     this.controller.deleteSpans()
     this.updateSendBtn()
@@ -103,12 +110,12 @@ export class VEInputViewModel implements OnEmojiClickListener {
 
   genRefHint(bimMessage: BIMMessage): string {
     this.refMsg = bimMessage
-    return `引用:${BIMUIUtils.generateRefHint("",bimMessage)}`
+    return `引用:${BIMUIUtils.generateRefHint("", bimMessage)}`
   }
 
   genEditHint(bimMessage: BIMMessage): string {
     this.editMsg = bimMessage
-    let oldElement = bimMessage.content as BIMTextElement
+    let oldElement = bimMessage.getElement() as BIMTextElement
     return `旧内容:${oldElement.text}`
   }
 
@@ -122,7 +129,8 @@ export class VEInputViewModel implements OnEmojiClickListener {
     let user = BIMUIClient.getInstance().getUserProvider().getUserInfo(id)
     this.controller.addTextSpan(user.nickName)
   }
-  addMentionAll(){
+
+  addMentionAll() {
     this.controller.addTextSpan("所有人")
     this.mentionIds.push("0")
   }
@@ -136,12 +144,12 @@ export class VEInputViewModel implements OnEmojiClickListener {
     BIMUIClient.getInstance().setConversationDraft(this.getText(), this.conversationId)
   }
 
-  async initDraft(){
+  async initDraft() {
     let result = await BIMUIClient.getInstance().getConversation(this.conversationId)
     if (result.code == BIMErrorCode.BIM_OK) {
       let conv = result.data
       if (conv) {
-        EmojiHelper.instance.setTextWithEmoji(this.controller,conv.getDraftText(),this.inputTextColor,this.inputTextSize)
+        EmojiHelper.instance.setTextWithEmoji(this.controller, conv.getDraftText(), this.inputTextColor, this.inputTextSize)
         this.updateSendBtn()
       }
     }

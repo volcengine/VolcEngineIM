@@ -41,7 +41,7 @@ export struct VEFTSItemView {
               .textOverflow({ overflow: TextOverflow.Ellipsis })
           }
 
-          Text((this.wrapper?.message.content as BIMTextElement).text)
+          Text((this.wrapper?.message.getElement() as BIMTextElement).text)
             .fontSize(14)
             .fontColor('#999999')
             .id("last_msg")

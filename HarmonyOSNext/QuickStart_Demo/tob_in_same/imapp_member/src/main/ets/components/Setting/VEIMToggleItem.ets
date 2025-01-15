@@ -16,7 +16,6 @@ export struct ToggleItem {
         Toggle({type:ToggleType.Switch, isOn: this.isSwitchOn})
           .onChange((isOn: boolean) => {
             this.onChange(isOn)
-            console.log('zj--onChange')
           })
           .onClick(()=> {
             this.switchOnClick();

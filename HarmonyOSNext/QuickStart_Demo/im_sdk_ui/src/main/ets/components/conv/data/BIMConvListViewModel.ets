@@ -69,7 +69,7 @@ export class BIMConvListViewModel {
         this.data.delete(conv)
       })
     },
-    onTotalUnreadMessageCountChanged: (unreadInfo: BIMUnReadInfo): void => {
+    onTotalUnreadMessageCountChanged: (unreadCount: number): void => {
     }
   }
 }

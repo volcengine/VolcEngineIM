@@ -40,6 +40,7 @@ import picker from '@ohos.file.picker';
 import fileUri from '@ohos.file.fileuri';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { fileIo } from '@kit.CoreFileKit';
+import { BIMSearchMsgInfo } from '@imcloud/imsdk';
 
 //uisdk为单例
 export class BIMUIClient {
@@ -587,7 +588,7 @@ export class BIMUIClient {
    * @param conversationId
    */
   public async getMessageUidRead(conversationId: string, bimMessage: BIMMessage): Promise<BIMMessageReadStatusModel> {
-    return this._imClient?.getINService()?.getMessageUidRead(conversationId, bimMessage) ?? new BIMMessageReadStatusModel([], [], bimMessage.getConversationID(), bimMessage.getServerMsgId(), bimMessage.getSendUid())
+    return this._imClient?.getINService()?.getMessageUidRead(conversationId, bimMessage) ?? new BIMMessageReadStatusModel([], [], bimMessage.getConversationID(), bimMessage.getServerMsgId(), bimMessage.getSenderUID())
   }
 
   /**
@@ -597,7 +598,7 @@ export class BIMUIClient {
    * @type api
    * @brief 搜索本地消息。
    */
-  public async searchLocalMessage(conversationId: string, key: string): Promise<BIMResult<BIMMessage[]>> {
+  public async searchLocalMessage(conversationId: string, key: string): Promise<BIMResult<BIMSearchMsgInfo[]>> {
     return this._imClient?.searchLocalMessage(conversationId, key) ?? new BIMResult(BIMErrorCode.BIM_SDK_NOT_READY, [])
   }
 

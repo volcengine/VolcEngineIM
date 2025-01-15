@@ -7,12 +7,15 @@ import { BIMAudioElement } from '@imcloud/imsdk';
 import { BIMAudioPlayer } from '../utils/BIMAudioPlayer';
 import { BIMMessageListView, BIMUIClient } from '../../../../Index';
 import { BIMConversationListListener, BIMImageElement, BIMUnReadInfo, BIMVideoElement } from '@imcloud/imsdk';
+import { data } from '@kit.TelephonyKit';
+import { promptAction } from '@kit.ArkUI';
 
 @Component
 export struct INMessageListPage {
   arg: Map<string, string> = new Map<string, string>()
   @State title: string = ""
   @State conv: BIMConversation | undefined = undefined
+  tag = "INMessageListPage"
 
   aboutToDisappear(): void {
     BIMAudioPlayer.getInstance().stop()
@@ -27,7 +30,7 @@ export struct INMessageListPage {
     onConversationChanged: (conversationList: BIMConversation[]): void => {
       for (let conv of conversationList) {
         if (conv.getConversationId() == this.arg.get('cid')) {
-          // this.conv = conv
+          this.conv = conv
           this.refreshTitle()
           return
         }
@@ -39,7 +42,7 @@ export struct INMessageListPage {
     onConversationDelete: (conversationList: BIMConversation[]): void => {
 
     },
-    onTotalUnreadMessageCountChanged: (unreadInfo: BIMUnReadInfo): void => {
+    onTotalUnreadMessageCountChanged: (unreadCount: number): void => {
 
     }
   }
@@ -53,7 +56,6 @@ export struct INMessageListPage {
 
     BIMUIClient.getInstance().removeConversationListener(this.convListener)
   }
-
 
   build() {
     NavDestination() {
@@ -91,27 +93,27 @@ export struct INMessageListPage {
     }
   }
 
-  private msgClick = ( msg: BIMMessage) => {
+  private msgClick = (msg: BIMMessage) => {
     if (msg.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_IMAGE) {
-      let imageElement = msg.content as BIMImageElement
+      let imageElement = msg.getElement() as BIMImageElement
       if (imageElement.largeImg?.url) {
         let data: Map<string, string> = new Map()
         data.set("url", imageElement.largeImg?.url)
         IMRouter.push(IMPage.IM_PREVIEW_IMAGE_PAGE, data)
       }
     } else if (msg.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO) {
-      let videoElement = msg.content as BIMVideoElement
-      if (videoElement.videoURL) {
+      let videoElement = msg.getElement() as BIMVideoElement
+      if (videoElement.url) {
         let data: Map<string, string> = new Map()
-        data.set("url", videoElement.videoURL)
+        data.set("url", videoElement.url)
         IMRouter.push(IMPage.IM_PREVIEW_VIDEO_PAGE, data)
       }
     } else if (msg.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_AUDIO) {
-      let audioElement = msg.content as BIMAudioElement
-      if (audioElement?.audioURL) {
-        BIMAudioPlayer.getInstance().play(audioElement?.audioURL)
+      let audioElement = msg.getElement() as BIMAudioElement
+      if (audioElement?.url) {
+        BIMAudioPlayer.getInstance().play(audioElement?.url)
       } else {
-        BIMAudioPlayer.getInstance().play(audioElement?.localUri)
+        BIMAudioPlayer.getInstance().play(audioElement?.localURI)
       }
       let data: Map<string, string> = new Map()
       data.set("hasPlay", '1')
@@ -124,6 +126,7 @@ export struct INMessageListPage {
 struct Actionbar {
   @Prop title: string
   @Prop conv: BIMConversation | undefined
+  tag = "INMessageListPage"
 
   build() {
     Column() {
@@ -139,6 +142,8 @@ struct Actionbar {
         Text(this.title)
           .fontSize(20)
           .fontColor('#222222')
+          .maxLines(1)
+          .ellipsisMode(EllipsisMode.END)
 
         Image($r('app.media.icon_im_more'))
           .width(40)
@@ -148,13 +153,17 @@ struct Actionbar {
           .padding(10)
           .onClick(() => {
             if (this.conv?.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
-              let arg = new Map<string, string>()
-              arg.set("cid", this.conv.getConversationId())
-              IMRouter.push(IMPage.IM_MEMBER_DETAIL_GROUP, arg)
+              this.startToDetail()
             } else if (this.conv?.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT) {
-              let arg = new Map<string, string>()
-              arg.set("cid", this.conv.getConversationId())
-              IMRouter.push(IMPage.IM_MEMBER_DETAIL_GROUP, arg)
+              if (!this.conv.isMember()) {
+                promptAction.showToast({ message: "已不再改群" })
+                return
+              }
+              if (this.conv.isDissolved()) {
+                promptAction.showToast({ message: "群聊已解散" })
+                return
+              }
+              this.startToDetail()
             }
           })
           .visibility(this.conv?.isMember() ? Visibility.Visible : Visibility.Hidden)
@@ -163,6 +172,21 @@ struct Actionbar {
     .height(50)
     .margin({ top: BIMUIClient.getInstance().getStatusHeight() })
     .expandSafeArea([SafeAreaType.KEYBOARD])
+  }
+
+  startToDetail() {
+    if (this.conv) {
+      let arg = new Map<string, string>()
+      arg.set("cid", this.conv?.getConversationId())
+      IMRouter.push(IMPage.IM_MEMBER_DETAIL_GROUP, arg, (data) => {
+        let r = data.result as Record<string, string>
+        let opt = r["operation"] as string
+        console.debug(this.tag, `onResult opt:${opt}`)
+        if (opt == "dissolve" || opt == "quit") {
+          IMRouter.pop() //退群解散则退出当前页面
+        }
+      })
+    }
   }
 }
 

@@ -15,9 +15,7 @@ struct VEDefaultLoginFragment {
 
   aboutToAppear(): void {
     this.isAgree = VEIMAppSP.getInstance().getAgree()
-    if (this.isAgree) {
-      this.listener?.onProtoAgree()
-    }
+    this.listener?.onProtoAgree(this.isAgree)
   }
 
   build() {
@@ -33,10 +31,9 @@ struct VEDefaultLoginFragment {
       Column() {
         Row() {
           Checkbox().select(this.isAgree).onChange((value)=>{
+            VEIMAppSP.getInstance().setAgree(value)
             this.isAgree = value;
-            if (this.isAgree) {
-              this.listener?.onProtoAgree()
-            }
+            this.listener?.onProtoAgree(value)
           })
           Text() {
             Span("已阅读并同意 ")
@@ -48,11 +45,7 @@ struct VEDefaultLoginFragment {
               this.startWebView(getContext() as common.UIAbilityContext, 'https://www.volcengine.com/docs/6348/975890')
             })
           }
-        }.onClick(() => {
-          VEIMAppSP.getInstance().setAgree(true)
-          this.isAgree = true
-          this.listener?.onProtoAgree()
-        })
+        }
 
         Text("登录")
           .textAlign(TextAlign.Center)

@@ -38,7 +38,7 @@ export class BIMConvListDataSource extends BasicDataSource<BIMConvWrapper> {
   }
 
   public insertOrUpdate(conv: BIMConversation) {
-    let cid = conv.conversation.conversationId
+    let cid = conv.getConversationId()
     let wrap = new BIMConvWrapper(conv, BIMConvWrapper.TYPE_CONV)
     let findIndex = this.findIndex(wrap)
     if (findIndex >= 0) { //先删除旧数据再加新数据

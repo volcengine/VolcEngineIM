@@ -21,7 +21,7 @@ export struct GroupNotifyElementUI {
     if (this.msgWrapper.msg?.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_CUSTOM) {
       this.groupNotifyElement = this.msgWrapper.baseCustomElement as GroupNotifyElement
     } else {
-      this.groupNotifyElement = this.msgWrapper.msg?.content as BIMSystemElement
+      this.groupNotifyElement = this.msgWrapper.msg?.getElement() as BIMSystemElement
     }
 
   }

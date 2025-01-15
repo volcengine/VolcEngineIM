@@ -7,8 +7,12 @@ export struct MainItem {
       Row() {
         Text(this.title).fontSize(17)
         Blank()
-        Text(this.detail).fontSize(14).fontColor(Color.Gray)
+        Text(this.detail).fontSize(14)
+          .fontColor(Color.Gray)
           .margin({right:10})
+          .width('60%')
+          .maxLines(1)
+          .ellipsisMode(EllipsisMode.END)
         Image($r('app.media.icon_im_goto'))
           .width(12)
           .height(12)

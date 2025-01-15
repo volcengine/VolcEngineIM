@@ -54,7 +54,12 @@ export class EmojiHelper {
           widthRich += this.measureText(textSpan, textSize)
         }
         let res = this.getEmojiRes(match.toString())
-        widthRich += textSize
+        if (res) {
+          widthRich += textSize //图片
+        } else {
+          widthRich += this.measureText(match.toString(), textSize)//文字
+        }
+
         startIndex = match.index + match.toString().length
       }
     }
@@ -88,14 +93,25 @@ export class EmojiHelper {
           widthRich += this.measureText(textSpan,textSize)
         }
         let res = this.getEmojiRes(match.toString())
-        controller.addImageSpan(res, {
-          imageStyle:
-          {
-            size: [textSize, textSize],
-            objectFit: ImageFit.ScaleDown
-          }
-        })
-        widthRich += textSize
+        if (res) {  //图片
+          controller.addImageSpan(res, {
+            imageStyle:
+            {
+              size: [textSize, textSize],
+              objectFit: ImageFit.ScaleDown
+            }
+          })
+          widthRich += textSize
+        } else {//文字
+          controller.addTextSpan(match.toString(), {
+            style: {
+              fontSize: textSize,
+              fontColor: tColor
+            }
+          })
+          widthRich += this.measureText(match.toString(), textSize)
+        }
+
         startIndex = match.index + match.toString().length
       }
     }

@@ -1,7 +1,12 @@
 import { BIMAccountProvider, BIMLoginListener } from "@imcloud/im_sdk_ui";
+import { VEIMAppSP } from "../../sp/VEIMAppSP";
 import { buildDefaultLoginFragment } from "./VEDefaultLoginFragment";
 
 export class VEDefaultAccountProvider implements BIMAccountProvider {
+  logout(): void {
+    VEIMAppSP.getInstance().setAgree(false)
+  }
+
   public static APPID = 0
   public static Env = 0
 

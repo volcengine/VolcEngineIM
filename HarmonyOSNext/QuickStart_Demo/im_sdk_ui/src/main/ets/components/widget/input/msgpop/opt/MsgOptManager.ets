@@ -33,7 +33,7 @@ export class MsgOptManager {
     let optionConfig: OptionConfig = new DefaultOptionConfig()
     if(msg){
       if (msg.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_CUSTOM) {
-        let baseCustom = BIMUIClient.getInstance().parseCustomElement(msg.content as BIMCustomElement)
+        let baseCustom = BIMUIClient.getInstance().parseCustomElement(msg.getElement() as BIMCustomElement)
         optionConfig = this.getOptionConfig(baseCustom.type)
       } else {
         optionConfig = this.getOptionConfig(msg.getMsgType().toString())

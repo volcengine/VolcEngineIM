@@ -18,10 +18,10 @@ export struct FileMessageUI {
   fileElement: BIMFileElement | undefined
 
   aboutToAppear(): void {
-    this.fileElement = this.msgWrapper.msg?.content as BIMFileElement
+    this.fileElement = this.msgWrapper.msg?.getElement() as BIMFileElement
     this.name = this.fileElement.fileName
     let suffix = "B"
-    let l = this.fileElement.fileLength
+    let l = this.fileElement.fileSize
     this.length = `${l}${suffix}`
   }
 

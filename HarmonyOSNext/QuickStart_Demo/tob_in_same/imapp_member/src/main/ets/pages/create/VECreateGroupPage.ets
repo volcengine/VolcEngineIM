@@ -26,6 +26,7 @@ struct VECreateGroupPage {
             TextInput({ text: this.viewModel.editUid, placeholder: "请输入用户ID添加群成员" })
               .maxLines(1)
               .fontSize(18)
+              .maxLength(20)
               .placeholderFont()
               .backgroundColor("#e8e8e8")
               .borderRadius(6)

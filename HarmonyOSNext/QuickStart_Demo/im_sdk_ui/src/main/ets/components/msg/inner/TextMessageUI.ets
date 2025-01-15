@@ -25,11 +25,15 @@ export struct TextMessageUI {
   textContent: string = ""
 
   aboutToAppear(): void {
-    this.textContent = (this.msgWrapper.msg?.content as BIMTextElement).text
+    this.textContent = (this.msgWrapper.msg?.getElement() as BIMTextElement).text
+    if (!this.textContent) {
+      this.textContent = "[暂不支持]"
+    }
     let editInfo = this.msgWrapper.msg?.getEditInfo()
-    if (editInfo && editInfo.content_is_edited) {
+    if (editInfo && editInfo.isEdit()) {
       this.textContent += "(已编辑)"
     }
+
 
     let measuredWidth = EmojiHelper.instance.measureTextWidth(this.textContent) + 32
     if (measuredWidth >= this.itemMsgWidth) {
@@ -74,11 +78,11 @@ export struct TextMessageUI {
 export class TextOptionConfig extends OptionConfig {
   onInit(bimMessage: BIMMessage): void {
     super.onInit(bimMessage)
-    this.isEnableEdit = bimMessage?.getSendUid() == BIMUIClient.getInstance().getCurrentUserID()
+    this.isEnableEdit = bimMessage?.getSenderUID() == BIMUIClient.getInstance().getCurrentUserID()
   }
 
   getCopyText(bimMessage: BIMMessage): string {
-    let textElement = bimMessage?.content as BIMTextElement
+    let textElement = bimMessage?.getElement() as BIMTextElement
     return textElement.text
   }
 }

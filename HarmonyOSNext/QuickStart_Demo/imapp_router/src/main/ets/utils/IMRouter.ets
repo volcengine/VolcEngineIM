@@ -58,9 +58,9 @@ export class IMRouter {
     // Dynamically import the page to be redirected to.
     await import(harName).then((ns: ESObject): Promise<void> => ns.harInit(builderName));
     if (onPop) {
-      IMRouter.getRouter(RouterNameConstants.ENTRY_NAME).pushPathByName(builderName, param, onPop, true)
+      IMRouter.getRouter(RouterNameConstants.ENTRY_NAME).pushPathByName(builderName, param, onPop, false)
     } else {
-      IMRouter.getRouter(RouterNameConstants.ENTRY_NAME).pushPath({ name: builderName, param: param });
+      IMRouter.getRouter(RouterNameConstants.ENTRY_NAME).pushPath({ name: builderName, param: param },false);
     }
   }
 

@@ -25,24 +25,25 @@ export struct VEMainPage {
       },
       onConversationDelete: (conversationList: BIMConversation[]): void => {
       },
-      onTotalUnreadMessageCountChanged: (unreadInfo: BIMUnReadInfo): void => {
+      onTotalUnreadMessageCountChanged: (unreadCount: number): void => {
         this.isShowUnReadCount = false
         this.isShowMuteUnReadCount = false
-        if (unreadInfo.unreadCount > 0) {
+        if (unreadCount > 0) {
           this.isShowUnReadCount = true
-          if (unreadInfo.unreadCount > 99) {
+          if (unreadCount > 99) {
             this.totalUnread = "99+";
           } else {
-            this.totalUnread = unreadInfo.unreadCount.toString();
-          }
-        } else if (unreadInfo.muteUnreadCount > 0) {
-          this.isShowMuteUnReadCount = true
-          if (unreadInfo.muteUnreadCount > 99) {
-            this.totalUnread = "99+";
-          } else {
-            this.totalUnread = unreadInfo.muteUnreadCount.toString();
+            this.totalUnread = unreadCount.toString();
           }
         }
+        // else if (unreadInfo.muteUnreadCount > 0) { //免打扰未读数
+        //   this.isShowMuteUnReadCount = true
+        //   if (unreadInfo.muteUnreadCount > 99) {
+        //     this.totalUnread = "99+";
+        //   } else {
+        //     this.totalUnread = unreadInfo.muteUnreadCount.toString();
+        //   }
+        // }
 
       }
     }
@@ -80,7 +81,7 @@ export struct VEMainPage {
             targetIndex: 1,
             isShowUnread: this.isShowMineUnread,
             isShowMuteUnRead: this.isShowMineUnread
-          })
+          }).visibility(Visibility.None)
           Tab({
             currentIndex: this.currentIndex,
             unreadStr: this.mineUnread,
@@ -89,7 +90,7 @@ export struct VEMainPage {
             targetIndex: 2,
             isShowUnread: this.isShowMineUnread,
             isShowMuteUnRead: this.isShowMineUnread
-          })
+          }).visibility(Visibility.None)
           Tab({
             currentIndex: this.currentIndex,
             unreadStr: this.mineUnread,

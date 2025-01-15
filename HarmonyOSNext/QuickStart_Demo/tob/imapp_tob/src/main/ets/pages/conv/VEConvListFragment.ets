@@ -1,4 +1,4 @@
-import { BIMConversationListView } from '@imcloud/im_sdk_ui/Index'
+import { BIMConversationListView, GroupNotifyElement } from '@imcloud/im_sdk_ui/Index'
 import { IMPage, IMRouter } from '@imcloud/imapp_router'
 import { BIMUIClient } from '@imcloud/im_sdk_ui/Index';
 import { BIMErrorCode } from '@imcloud/imsdk';
@@ -66,32 +66,9 @@ export struct VEConvListFragment {
           this.createDialogController.open()
         })
         .id("create")
-
-      Image($r('app.media.unread_clear'))
-        .width(24)
-        .height(24)
-        .margin({ right: 16 })
-        .alignRules({
-          top: { 'anchor': '__container__', 'align': VerticalAlign.Top },
-          right: { 'anchor': 'create', 'align': HorizontalAlign.Start },
-          bottom: { 'anchor': '__container__', 'align': VerticalAlign.Bottom }
-        })
-        .onClick(() => {
-          this.markAllConv()
-        })
-        .id("clear")
     }.height(48)
     .margin({ top: BIMUIClient.getInstance().getStatusHeight() })
     .width('100%')
-  }
-
-  private async markAllConv() {
-    let result = await BIMUIClient.getInstance().markAllConversationRead()
-    if (result.code == BIMErrorCode.BIM_OK) {
-      promptAction.showToast({ message: "清空未读成功" })
-    } else {
-      promptAction.showToast({ message: "清空未读失败" })
-    }
   }
 }
 
@@ -134,7 +111,7 @@ struct CreateCreateDialog {
       .height(60)
     }.backgroundColor(Color.White)
     .onClick(() => {
-      let arg = new Map<string, string|number>()
+      let arg = new Map<string, string | number>()
       arg.set("title", '发起群聊')
       arg.set('userAddShowType', 0)
       IMRouter.push(IMPage.IM_MEMBER_CREATE_GROUP, arg, (popInfo) => {
@@ -151,12 +128,12 @@ struct CreateCreateDialog {
       let r = await BIMUIClient.getInstance().createSingleConversation(uid)
       if (r.code == BIMErrorCode.BIM_OK) {
         promptAction.showToast({ message: `创建单聊成功:${r.data?.getConversationId()}` })
+        this.gotoMessageList(r.data?.getConversationId() ?? "")
       } else {
         promptAction.showToast({ message: `创建单聊失败 code:${r.code}` })
       }
     } else {
       promptAction.showToast({ message: `创建单聊失败参数错误` })
-
     }
   }
 
@@ -164,12 +141,39 @@ struct CreateCreateDialog {
     if (uidList && uidList.length > 0) {
       let r = await BIMUIClient.getInstance().createGroupConversation(uidList)
       if (r.code == BIMErrorCode.BIM_OK) {
+        let createText = `${BIMUIClient.getInstance().getCurrentUserID()} 邀请 `
+        let uidText = uidList.reduce((pre, cur) => {
+          return `${pre},${cur}`
+        }, "")
+        createText += uidText.substring(1)
+        let conv = r.data
+        let msg = BIMUIClient.getInstance().createCustomMessageWithElement(new GroupNotifyElement(createText))
+        if (conv && msg) {
+          BIMUIClient.getInstance().sendMessage(msg, conv.getConversationId())
+          let arg = new Map<string, string>()
+          arg.set("cid", conv.getConversationId())
+          IMRouter.push(IMPage.IM_UI_MESSAGE_LIST, arg)
+        }
         promptAction.showToast({ message: `创建群聊成功:${r.data?.getConversationId()}` })
       } else {
-        promptAction.showToast({ message: `创建群聊失败 code:${r.code}` })
+        if (r.code == BIMErrorCode.BIM_SERVER_ERROR_CREATE_CONVERSATION_MORE_THAN_LIMIT) {
+          promptAction.showToast({ message: `加群个数超过上限` })
+        } else if (r.code == BIMErrorCode.BIM_SERVER_ERROR_CREATE_CONVERSATION_MEMBER_TOUCH_LIMIT) {
+          promptAction.showToast({ message: `群成员已达上限` })
+        } else {
+          promptAction.showToast({ message: `创建群聊失败 code:${r.code}` })
+        }
       }
     } else {
       promptAction.showToast({ message: `创建群聊失败参数错误` })
+    }
+  }
+
+  private gotoMessageList(cid: string) {
+    if (cid.length > 0) {
+      let arg = new Map<string, string>()
+      arg.set("cid", cid)
+      IMRouter.push(IMPage.IM_UI_MESSAGE_LIST, arg)
     }
   }
 }

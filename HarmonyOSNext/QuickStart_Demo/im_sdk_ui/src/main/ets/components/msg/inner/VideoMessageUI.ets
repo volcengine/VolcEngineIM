@@ -22,21 +22,30 @@ export struct VideoMessageUI {
   retryCount = 0
 
   aboutToAppear(): void {
-    this.videoElement = this.msgWrapper?.msg?.content as BIMVideoElement
-    let orginWidth = px2vp(this.videoElement?.coverImg?.width ?? 200)
-    let orginHeight = px2vp(this.videoElement?.coverImg?.height ?? 200)
+    this.videoElement = this.msgWrapper?.msg?.getElement() as BIMVideoElement
+    let orginWidth = 200
+    let orginHeight = 200
+    let elementWidth = this.videoElement?.coverImg?.width ?? 0
+    let elementHeight = this.videoElement?.coverImg?.height ?? 0
+    if (elementWidth > 0) {
+      orginWidth = px2vp(elementWidth)
+    }
+    if (elementHeight > 0) {
+      orginHeight = px2vp(elementHeight)
+    }
+    console.debug(this.TAG, `video load url videoElement:${this.videoElement} orginWidth:${orginWidth} orginHeight:${orginHeight}`)
     let videoCoverUrl = this.videoElement?.coverImg?.url
     let maxWidth = this.itemMsgWidth / 2
     let scale = maxWidth / orginWidth
     this.videoWidth = maxWidth
     this.videoHeight = orginHeight * scale
-    console.debug(this.TAG,`video load url coverUrl:${videoCoverUrl}`)
-    if (videoCoverUrl) {
+    console.debug(this.TAG, `video load url coverUrl:${videoCoverUrl}`)
+    if (videoCoverUrl && videoCoverUrl.length>0) {
       this.url = videoCoverUrl
     } else {
       this.url = $r('app.media.imsdk_emoji_60')
     }
-    console.debug(this.TAG,`video real use url url:${this.url}`)
+    console.debug(this.TAG, `video real use url url:${this.url} width:${this.videoWidth} height:${this.videoHeight}`)
   }
 
   build() {
@@ -73,7 +82,7 @@ export struct VideoMessageUI {
     if (msg && this.retryCount < 3) {
       let r = await BIMUIClient.getInstance().refreshMediaMessage(msg)
       if (r.code == BIMErrorCode.BIM_OK) {
-        let videoElement = r.data?.content as BIMVideoElement
+        let videoElement = r.data?.getElement() as BIMVideoElement
         let newUrl = videoElement.coverImg?.url ?? ""
         BIMUILog.debug(this.TAG, `refreshUrl oldUrl:${this.url} newUrl:${newUrl}`)
         this.url = newUrl
@@ -88,7 +97,7 @@ export struct VideoMessageUI {
 }
 
 export class VideoOptionConfig extends OptionConfig {
-  onInit(bimMessage:BIMMessage): void {
+  onInit(bimMessage: BIMMessage): void {
     super.onInit(bimMessage)
     this.isEnableCopy = false
     this.isEnableEdit = false

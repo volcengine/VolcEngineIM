@@ -1,5 +1,5 @@
 export interface BIMLoginListener {
-  onProtoAgree: () => void
-  doLogin: (uid: string, token: string) => void
+  onProtoAgree: (isCheck: boolean) => void
+  doLogin: (uid: string, token: string) => Promise<boolean>
   onDebugClick: () => void
 }

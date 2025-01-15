@@ -26,6 +26,7 @@ import {
 import { EmojiInfo } from '../../widget/input/viewModel/EmojiHelper';
 import { BIMMsgReadModel } from './BIMMsgReadModel';
 import { promptAction } from '@kit.ArkUI';
+import { BIMReferenceMessageStatus } from '@imcloud/imsdk';
 
 export class BIMMsgListViewModel implements OnSendTextListener, OnRecorderListener {
   private _tag = "BIMMsgListViewModel"
@@ -39,7 +40,6 @@ export class BIMMsgListViewModel implements OnSendTextListener, OnRecorderListen
   listScroller: Scroller = new Scroller();
   private isInit = false;
   private readModel :BIMMsgReadModel
-
   constructor(cid: string) {
     this.cid = cid;
     this.initToolBtn()
@@ -100,7 +100,10 @@ export class BIMMsgListViewModel implements OnSendTextListener, OnRecorderListen
 
     BIMUILog.info(this._tag, `loadMore start orderIndex: ${this._anchorMessage?.getOrderIndex()}`)
     this._isLoading = true;
-    const option = new BIMGetMessageOption(this._anchorMessage, this._limit, true)
+    // const option = new BIMGetMessageOption(this._anchorMessage, this._limit, true)
+    const option = new BIMGetMessageOption()
+    option.anchorMessage = this._anchorMessage
+    option.limit = this._limit
     const result = await BIMUIClient.getInstance().getHistoryMessageList(this.cid, option)
     if (result.code == BIMErrorCode.BIM_OK || result.data.messageList.length) {
       const pageData = result.data
@@ -157,7 +160,7 @@ export class BIMMsgListViewModel implements OnSendTextListener, OnRecorderListen
     msg.getProperties().forEach((localPropertyItems, emojiValue) => {
       if (emojiInfo.value == emojiValue && localPropertyItems.length > 0) { //匹配到emoji
         localPropertyItems.forEach((item) => {
-          if (item.getUid() == BIMUIClient.getInstance().getCurrentUserID()) { //是自己点的赞
+          if (item.getSender() == BIMUIClient.getInstance().getCurrentUserID()) { //是自己点的赞
             type = BIMMessageNewPropertyModifyType.REMOVE
           }
         })
@@ -202,9 +205,9 @@ export class BIMMsgListViewModel implements OnSendTextListener, OnRecorderListen
     if (mentionStr) {
       ext.set(IMInfoKeys.SDK_MENTION_USER, mentionStr.substring(1));
     }
-    let element = oldMsg.content as BIMTextElement
+    let element = oldMsg.getElement() as BIMTextElement
     element.text = newText
-    oldMsg.content = element
+    // oldMsg.content = element
     let r = await BIMUIClient.getInstance().modifyMessage(oldMsg)
     if (r && r.code == BIMErrorCode.BIM_OK) {
       BIMUILog.debug(this._tag, `modifyMessage() success`)
@@ -286,6 +289,11 @@ export class BIMMsgListViewModel implements OnSendTextListener, OnRecorderListen
       },
       onError: (message: BIMMessage, code: BIMErrorCode) => {
         BIMUILog.debug(this._tag, `sendMessage() onError:${message.getUuid()} content:${msg.innerMessage.content} status:${message.getMsgStatus()}`)
+        if (code == BIMErrorCode.BIM_UPLOAD_FILE_SIZE_OUT_LIMIT) {
+          promptAction.showToast({ message:"消息发送失败: 文件大小超过限制" })
+          return
+        }
+
         this.data.updateSendStatus(message)
         this.listScroller.scrollEdge(Edge.Top)
       }
@@ -325,9 +333,9 @@ export class BIMMsgListViewModel implements OnSendTextListener, OnRecorderListen
         let refUpdate = false
         let refMsg = message.getReferenceInfo()?.getRefMessage()  //引用的消息
         if (refMsg) {
-          let isDelete = message.getReferenceInfo()?.isDelete() ?? false    //引用的消息删除了
-          let isRecall = message.getReferenceInfo()?.isRecall() ?? false    //引用的消息撤回了
-          let isEdit = refMsg?.getEditInfo()?.content_is_edited ?? false    //引用的消息编辑了
+          let isDelete = message.getReferenceInfo()?.getRefStatus() == BIMReferenceMessageStatus.BIM_REFERENCE_MESSAGE_STATUS_DELETED ?? false    //引用的消息删除了
+          let isRecall = message.getReferenceInfo()?.getRefStatus() == BIMReferenceMessageStatus.BIM_REFERENCE_MESSAGE_STATUS_RECALLED ?? false    //引用的消息撤回了
+          let isEdit = refMsg?.getEditInfo()?.isEdit() ?? false    //引用的消息编辑了
           BIMUILog.debug(this._tag, `onUpdateMessage() refMsg isDelete:${isDelete} isRecall:${isRecall} isEdit:${isEdit} content:${message.getContentData()}`)
           refUpdate = isDelete || isRecall || isEdit
         }

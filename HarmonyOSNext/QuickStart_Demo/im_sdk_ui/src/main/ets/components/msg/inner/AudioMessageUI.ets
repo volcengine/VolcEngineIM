@@ -16,7 +16,7 @@ export struct AudioMessageUI {
   duration: string = ""
   audioWidth: number = 0
   aboutToAppear(): void {
-    this.audioElement = this.msgWrapper?.msg?.content as BIMAudioElement
+    this.audioElement = this.msgWrapper?.msg?.getElement() as BIMAudioElement
     this.duration = `${this.audioElement.duration}'`
     this.audioWidth = this.audioElement.duration * 4
     if (this.audioWidth > 180) {

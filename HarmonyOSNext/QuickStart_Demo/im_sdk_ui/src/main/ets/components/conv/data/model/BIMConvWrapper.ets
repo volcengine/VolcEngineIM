@@ -39,14 +39,14 @@ export class BIMConvWrapper {
     }
 
     let lastMsg = conv.getLastMessage()
-    let time = lastMsg?.getCreatedTime() ?? 0
+    let time = lastMsg?.getCreatedTime() ?? conv.getUpdatedTime()
     let data = new Date()
     data.setTime(time)
     let dateFormat: intl.DateTimeFormat = new intl.DateTimeFormat("zh-CN", { dateStyle: 'short', timeStyle: 'short', hourCycle: 'h24' });
     this.time = dateFormat.format(data)
 
     this.lastMsgType = conv.getLastMessage()?.getMsgType() ?? BIMMessageType.BIM_MESSAGE_TYPE_UNKNOWN
-    let sendUid = conv.getLastMessage()?.getSendUid();
+    let sendUid = conv.getLastMessage()?.getSenderUID();
     let sendName: string = `${sendUid}`
     if (sendUid) {
       let user = BIMUIClient.getInstance().getUserProvider().getUserInfo(sendUid)
@@ -56,22 +56,26 @@ export class BIMConvWrapper {
         this.lastMsgHint = `[草稿]${conv.getDraftText()}`
     } else {
       let mentionMsgList = conv.getUnreadMentionMessageList()
-      if (mentionMsgList && mentionMsgList.length > 0) {
-        //有人at你
-        let atMsg = mentionMsgList[0]
-        this.lastMsgHint = "[有人@你]"
+      let list = mentionMsgList.filter((msg)=>{!msg.isRecalled()}) //过滤掉撤回的
+      if (list && list.length > 0) {
+        let atMsg = list[0]
+        this.lastMsgHint = "[有人@你]"        //有人at你
         this.lastMsgHint += ` ${sendName}:${BIMUIUtils.generateHint(atMsg)}`
       } else if (lastMsg) {
         if (lastMsg.isRecalled()) {
-          if (lastMsg.getSendUid() == BIMUIClient.getInstance().getCurrentUserID()) {
+          if (lastMsg.getSenderUID() == BIMUIClient.getInstance().getCurrentUserID()) {
             this.lastMsgHint = `你 撤回了一条消息`
           } else {
-            let recallUser = BIMUIClient.getInstance().getUserProvider().getUserInfo(lastMsg.getSendUid())
-            this.lastMsgHint = `${recallUser.nickName} 撤回了一条消息`
+            if (lastMsg.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT) {
+              let recallUser = BIMUIClient.getInstance().getUserProvider().getUserInfo(lastMsg.getSenderUID())
+              this.lastMsgHint = `${recallUser.nickName} 撤回了一条消息`
+            } else {
+              this.lastMsgHint = `对方 撤回了一条消息`
+            }
           }
         } else {
           let hint = BIMUIUtils.generateHint(lastMsg)
-          if (hint.indexOf("@所有人") >= 0 && BIMUIClient.getInstance().getCurrentUserID() != lastMsg.getSendUid()) {
+          if (hint.indexOf("@所有人") >= 0 && BIMUIClient.getInstance().getCurrentUserID() != lastMsg.getSenderUID()) {
             this.lastMsgHint = `[有人@你] ${sendName}:${hint}`
           } else {
             this.lastMsgHint = `${sendName}:${hint}`

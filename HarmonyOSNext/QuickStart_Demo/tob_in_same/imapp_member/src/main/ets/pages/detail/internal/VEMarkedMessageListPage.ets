@@ -53,7 +53,7 @@ export struct VEMarkedMessageListPage {
           LazyForEach(this.viewModel.data, (item: BIMMessage, index: number) => {
             ListItem() {
               Column() {
-                Text(item.getSendUid().toString())
+                Text(item.getSenderUID().toString())
                 Text(this.dateFormat.format(new Date(item.getCreatedTime())))
                 Text(item.getContentData())
               }

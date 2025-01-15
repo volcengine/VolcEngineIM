@@ -7,6 +7,7 @@ import { BIMMessageStatus } from '@imcloud/imsdk';
 import { BIMConversationType, BIMCustomElement, BIMMessageReadStatusModel, MessageReadStatusModel } from '@imcloud/imsdk';
 import { BaseCustomElement } from '../../custom/BaseCustomElement';
 import { BIMUIUtils } from '../../../../utils/BIMUIUtils';
+import { BIMReferenceMessageStatus } from '@imcloud/imsdk';
 
 @Observed
 export class BIMMessageWrapper {
@@ -24,7 +25,8 @@ export class BIMMessageWrapper {
   sendStatus: BIMMessageStatus = BIMMessageStatus.BIM_MESSAGE_STATUS_SENDING
   forceHiddenHead: boolean = false
   forceHiddenReadStatus: boolean = false
-  uuid:string = ""
+  uuid: string = ""
+
   constructor(bimMessage?: BIMMessage) {
     if (bimMessage) {
       this.msg = bimMessage
@@ -34,12 +36,12 @@ export class BIMMessageWrapper {
       data.setTime(time)
       let dateFormat: intl.DateTimeFormat = new intl.DateTimeFormat("zh-CN", { dateStyle: 'short', timeStyle: 'short', hourCycle: 'h24' });
       this.timeStr = dateFormat.format(data)
-      this.user = BIMUIClient.getInstance().getUserProvider().getUserInfo(bimMessage.getSendUid())
-      this.isSelf = BIMUIClient.getInstance().uid == bimMessage.getSendUid()
+      this.user = BIMUIClient.getInstance().getUserProvider().getUserInfo(bimMessage.getSenderUID())
+      this.isSelf = BIMUIClient.getInstance().uid == bimMessage.getSenderUID()
       if (bimMessage.getMsgType() != BIMMessageType.BIM_MESSAGE_TYPE_CUSTOM) {
         this.elementType = bimMessage.getMsgType().toString()
       } else {
-        let bimCustom = this.msg?.content as BIMCustomElement
+        let bimCustom = this.msg?.getElement() as BIMCustomElement
         if (bimMessage.isRecalled()) { //recall会删除content，导致自定义消息无法解析
           this.baseCustomElement = new BaseCustomElement();
           this.elementType = this.baseCustomElement.type
@@ -62,11 +64,15 @@ export class BIMMessageWrapper {
   updateRecall(bimMessage: BIMMessage) {
     this.msg = bimMessage
     if (bimMessage.isRecalled()) {
-      if (bimMessage.getSendUid() == BIMUIClient.getInstance().getCurrentUserID()) {
+      if (bimMessage.getSenderUID() == BIMUIClient.getInstance().getCurrentUserID()) {
         this.commonInfo.recallStr = `你 撤回了一条消息`
       } else {
-        let recallUser = BIMUIClient.getInstance().getUserProvider().getUserInfo(bimMessage.getSendUid())
-        this.commonInfo.recallStr = `${recallUser.nickName} 撤回了一条消息`
+        if (bimMessage.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT) {
+          let recallUser = BIMUIClient.getInstance().getUserProvider().getUserInfo(bimMessage.getSenderUID())
+          this.commonInfo.recallStr = `${recallUser.nickName} 撤回了一条消息`
+        } else {
+          this.commonInfo.recallStr = `对方 撤回了一条消息`
+        }
       }
       this.commonInfo.isRecall = true
     } else {
@@ -92,7 +98,7 @@ export class BIMMessageWrapper {
     this.msg = bimMessage
     this.commonInfo.sendStatus = bimMessage.getMsgStatus()
     this.sendStatus = bimMessage.getMsgStatus()
-    this.commonInfo.isShowRead = this.isSelf && this.sendStatus != BIMMessageStatus.BIM_MESSAGE_STATUS_FAILED && !this.forceHiddenReadStatus
+    this.commonInfo.isShowRead = !BIMUIClient.isTob() && this.isSelf && this.sendStatus != BIMMessageStatus.BIM_MESSAGE_STATUS_FAILED && !this.forceHiddenReadStatus
   }
 
   updateProgress(bimMessage: BIMMessage, progress: number) {
@@ -106,7 +112,7 @@ export class BIMMessageWrapper {
     map?.forEach((proList, emoji) => {
       let curEmojiText = `${emoji}:`
       proList.forEach((property) => {
-        let user = BIMUIClient.getInstance().getUserProvider().getUserInfo(property.getUid())
+        let user = BIMUIClient.getInstance().getUserProvider().getUserInfo(property.getSender())
         curEmojiText += `${user.nickName},`
       })
       this.likeText += curEmojiText
@@ -124,14 +130,14 @@ export class BIMMessageWrapper {
     if (ref) {
       this.commonInfo.isShowRef = true
       let msg = ref.getRefMessage()
-      if (ref.isRecall()) {
-        this.commonInfo.refText = "已撤回"
-      } else if (ref.isDelete()) {
-        this.commonInfo.refText = "已删除"
+      if (ref.getRefStatus() == BIMReferenceMessageStatus.BIM_REFERENCE_MESSAGE_STATUS_RECALLED) {
+        this.commonInfo.refText = "消息已被撤回"
+      } else if (ref.getRefStatus() == BIMReferenceMessageStatus.BIM_REFERENCE_MESSAGE_STATUS_DELETED) {
+        this.commonInfo.refText = "消息已被删除"
       } else {
         this.commonInfo.refText = BIMUIUtils.generateRefHint(ref.getHint(), msg)
       }
-      if (this.commonInfo.refText == "[未知消息]" && ref.getHint()) {
+      if (this.commonInfo.refText == "[暂不支持]" && ref.getHint()) {
         this.commonInfo.refText = ref.getHint() + "(兜底)"
       }
     } else {
@@ -148,6 +154,6 @@ export class MsgCommonInfo {
   sendStatus: BIMMessageStatus = BIMMessageStatus.BIM_MESSAGE_STATUS_SENDING
   isShowRead: boolean = false
   isReadStr: string = ""
-  refText:string = ""
-  isShowRef:boolean = false
+  refText: string = ""
+  isShowRef: boolean = false
 }

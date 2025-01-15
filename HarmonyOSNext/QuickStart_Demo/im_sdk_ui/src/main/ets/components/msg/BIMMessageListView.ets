@@ -16,6 +16,7 @@ import { OptionViewModel } from '../widget/input/msgpop/opt/OptionViewModel'
 import { stringify } from 'json-bigint';
 import { EmojiHelper } from '../widget/input/viewModel/EmojiHelper'
 import { BIMConversation, BIMConversationListListener, BIMUnReadInfo, Conversation } from '@imcloud/imsdk'
+import { promptAction } from '@kit.ArkUI'
 
 @Component
 export struct BIMMessageListView {
@@ -27,6 +28,8 @@ export struct BIMMessageListView {
   @Provide tools: VEBaseTool[] = [] //工具栏按钮
   @Provide sendTextListener: OnSendTextListener | undefined = undefined //发消息回调
   @Provide sendAudioListener: OnRecorderListener | undefined = undefined
+  @State isDissolve: boolean = false
+  @State isMember: boolean = true
   onItemClickListener: (bimMsg: BIMMessage) => void = () => {
   }
 
@@ -56,6 +59,8 @@ export struct BIMMessageListView {
       for (let conv of conversationList) {
         if (conv.getConversationId() == this.cid) {
           this.conv = conv
+          this.isDissolve = conv.isDissolved()
+          this.isMember = conv.isMember()
           return
         }
       }
@@ -66,7 +71,7 @@ export struct BIMMessageListView {
     onConversationDelete: (conversationList: BIMConversation[]): void => {
 
     },
-    onTotalUnreadMessageCountChanged: (unreadInfo: BIMUnReadInfo): void => {
+    onTotalUnreadMessageCountChanged: (unreadCount: number): void => {
 
     }
   }
@@ -84,32 +89,30 @@ export struct BIMMessageListView {
   async setupConversation(): Promise<void> {
     let r = await BIMUIClient.getInstance().getConversation(this.cid)
     this.conv = r.data
+    this.isDissolve = this.conv?.isDissolved() ?? false
+    this.isMember = this.conv?.isMember() ?? true
   }
 
   build() {
     RelativeContainer() {
-      if (this.conv?.isMember()) {
-        VEInPutView({ conversationId: this.cid, inputOutConfig: this.inputOutConfig}).alignRules({
-          left: { anchor: "__container__", align: HorizontalAlign.Start },
-          right: { anchor: "__container__", align: HorizontalAlign.End },
-          bottom: { anchor: "__container__", align: VerticalAlign.Bottom },
-        }).id("inputView")
-          
-      } else {
-        Text('已不在该群')
+      Stack() {
+        VEInPutView({ conversationId: this.cid, inputOutConfig: this.inputOutConfig })
+          .visibility(!this.isDissolve && this.isMember ? Visibility.Visible : Visibility.None)
+        Text(this.isDissolve ? '群聊已解散' : '已不在该群')
           .height(76)
           .backgroundColor('#F5F5F5')
           .fontColor("#A9A9A9")
           .fontSize(14)
           .textAlign(TextAlign.Center)
-          .padding({bottom: 10})
-          .alignRules({
-          left: { anchor: "__container__", align: HorizontalAlign.Start },
-          right: { anchor: "__container__", align: HorizontalAlign.End },
-          bottom: { anchor: "__container__", align: VerticalAlign.Bottom },
-        }).id("inputView")
-      }
-
+          .padding({ bottom: 10 })
+          .visibility(this.isDissolve || !this.isMember ? Visibility.Visible : Visibility.None)
+          .width('100%')
+    }.alignRules({
+      left: { anchor: "__container__", align: HorizontalAlign.Start },
+      right: { anchor: "__container__", align: HorizontalAlign.End },
+      bottom: { anchor: "__container__", align: VerticalAlign.Bottom }
+    }).width('100%')
+    .id("inputView")
 
       WaterFlow({ scroller: this.rootViewModel.listScroller }) {
         LazyForEach(this.rootViewModel.data, (item: BIMMessageWrapper, index: number) => {
@@ -118,7 +121,8 @@ export struct BIMMessageListView {
               wrapper: item,
               common: item.commonInfo,
               onItemClickListener: this.onItemClickListener,
-              veInputOutConfig: this.inputOutConfig
+              veInputOutConfig: this.inputOutConfig,
+              isDissolve: this.isDissolve
             })
               .enabled(this.conv?.isMember())
           }
@@ -129,7 +133,7 @@ export struct BIMMessageListView {
       .layoutDirection(FlexDirection.ColumnReverse)
       .clip(true)
       .onScrollIndex((first: number, last: number) => {
-        BIMUILog.debug(this.tag, `onScrollIndex start:${first} end:${last} end:${this.rootViewModel.listScroller.isAtEnd()} total-1:${this.rootViewModel.data.totalCount()-1}`)
+        BIMUILog.debug(this.tag, `onScrollIndex start:${first} end:${last} end:${this.rootViewModel.listScroller.isAtEnd()} total-1:${this.rootViewModel.data.totalCount() - 1}`)
         if (last == this.rootViewModel.data.totalCount() - 1) {
           this.rootViewModel.loadMore()
         }
@@ -154,10 +158,11 @@ export struct BIMMessageListView {
 
 @Component
 struct BIMMsgItemView {
-  private sendStatusWidth =40
-  @Provide contentWidth:number = BIMUIUtils.SCREEN_WIDTH - 112
+  private sendStatusWidth = 40
+  @Provide contentWidth: number = BIMUIUtils.SCREEN_WIDTH - 112
   @Provide itemMsgWidth: number = this.contentWidth - this.sendStatusWidth //减去两个头像 减去“已读”宽度
   @Consume rootViewModel: BIMMsgListViewModel
+  @Link isDissolve: boolean //是否解散
   wrapper: BIMMessageWrapper = new BIMMessageWrapper()
   onItemClickListener: (bimMsg: BIMMessage) => void = () => {
   }
@@ -210,14 +215,14 @@ struct BIMMsgItemView {
                         this.rootViewModel.onReSendMessage(failedMsg)
                       }
                     })
-                    .margin({right:2})
+                    .margin({ right: 2 })
                   Text(this.common.isReadStr)//已读未读
                     .fontSize(12)
                     .fontColor('#4c222222')
                     .alignSelf(ItemAlign.End)
                     .margin({ right: 2 })
                     .onClick(() => {
-                        this.rootViewModel.onReadListClick(this.wrapper.msg)
+                      this.rootViewModel.onReadListClick(this.wrapper.msg)
                     })
                     .textAlign(TextAlign.End)
                     .width(this.sendStatusWidth)
@@ -244,7 +249,12 @@ struct BIMMsgItemView {
                 this.onItemClickListener(this.wrapper.msg)
               }
             })
-              .gesture(LongPressGesture().onActionEnd(() => {
+            .gesture(LongPressGesture()
+              .onAction(() => {
+                if (this.isDissolve) {
+                  promptAction.showToast({ message: "群聊已解散" })
+                  return
+                }
                 let showDx = (this.msgItemPosition.x ?? 0) as number
                 let showDy = (this.msgItemPosition.y ?? 0) as number - BIMUIUtils.STATUS_HEIGHT - this.popOptHeight
                 if (this.wrapper.msg) {
@@ -276,15 +286,15 @@ struct BIMMsgItemView {
                   optionController.open()
                 }
               }))
-              .onAreaChange((o, n) => {
-                this.msgItemPosition = n.globalPosition
-              })
+            .onAreaChange((o, n) => {
+              this.msgItemPosition = n.globalPosition
+            })
           }
         }.alignItems(this.wrapper.isSelf ? HorizontalAlign.End : HorizontalAlign.Start)
         .width(this.contentWidth)
 
         //右头像
-        UserHeader({ user: this.wrapper.user})
+        UserHeader({ user: this.wrapper.user })
           .visibility(!this.common.isRecall && !this.wrapper.forceHiddenHead && this.wrapper.isSelf ? Visibility.Visible : Visibility.Hidden)
       }
     }
@@ -323,10 +333,10 @@ struct LikePanel {
   msgWrapper: BIMMessageWrapper = new BIMMessageWrapper()
   controller: RichEditorController = new RichEditorController();
   options: RichEditorOptions = { controller: this.controller };
-  widthRich:number = 20
+  widthRich: number = 20
 
   aboutToAppear(): void {
-    let measuredWidth = EmojiHelper.instance.measureTextWidth(this.msgWrapper.likeText,15) + 32
+    let measuredWidth = EmojiHelper.instance.measureTextWidth(this.msgWrapper.likeText, 15) + 32
     if (measuredWidth >= this.itemMsgWidth) {
       this.widthRich = this.itemMsgWidth
     } else {
@@ -344,7 +354,7 @@ struct LikePanel {
       })
       .backgroundColor('#f1f1f1')
       .onReady(() => {
-        EmojiHelper.instance.setTextWithEmoji(this.controller, this.msgWrapper.likeText, '#999999',15)
+        EmojiHelper.instance.setTextWithEmoji(this.controller, this.msgWrapper.likeText, '#999999', 15)
       })
   }
 }

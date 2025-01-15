@@ -90,7 +90,11 @@ export struct VEInPutView {
         RichEditor(this.options)
           .visibility(this.viewModel.isShowEdit)
           .focusable(true)
+          .onDidChange((rangeBefore: TextRange, rangeAfter: TextRange)=>{
+            this.viewModel.updateSendBtn()
+          })
           .onIMEInputComplete((value: RichEditorTextSpanResult) => {
+            console.debug("qinxue onIMEInputComplete")
             this.viewModel.updateSendBtn()
             if (this.viewModel.getText().endsWith('@')) {
               let arg = new Map<string, string>()

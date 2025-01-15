@@ -60,7 +60,6 @@ export class ShareOptionConfig extends OptionConfig {
     this.isEnableRef = true
     this.isEnablePin = true
     this.isEnableTop = true
-    this.isEnableRecall = true
   }
 }
 

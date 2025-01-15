@@ -58,14 +58,16 @@ export class OptionViewModel {
         let refOption = new EditOption(this.configByMsg, uiContext,editListener)
         this.options.push(refOption)
       }
-      if (optionConfig.isEnablePin) {
-        this.options.push(new PinOption(this.configByMsg,uiContext))
-      }
-      if (optionConfig.isEnableFav) {
-        this.options.push(new FavOption(this.configByMsg, uiContext))
-      }
-      if (optionConfig.isEnableTop) {
-        this.options.push(new TopOption(this.configByMsg,uiContext))
+      if (!BIMUIClient.isTob()) {
+        if (optionConfig.isEnablePin) {
+          this.options.push(new PinOption(this.configByMsg, uiContext))
+        }
+        if (optionConfig.isEnableFav) {
+          this.options.push(new FavOption(this.configByMsg, uiContext))
+        }
+        if (optionConfig.isEnableTop) {
+          this.options.push(new TopOption(this.configByMsg, uiContext))
+        }
       }
       this.optionDataSource.setData(this.options)
     }

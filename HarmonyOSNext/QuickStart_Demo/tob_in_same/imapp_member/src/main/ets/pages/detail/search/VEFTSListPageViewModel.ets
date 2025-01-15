@@ -40,9 +40,11 @@ export class  VEFTSListPageViewModel {
     }
     let list: VESearchWrapper[] = []
     for (let msg of result.data) {
-      let userInfo = BIMUIClient.getInstance().getUserProvider().getUserInfo(msg.getSendUid())
-      let wrapper = new VESearchWrapper(userInfo, msg)
-      list.push(wrapper)
+      if (msg.message) {
+        let userInfo = BIMUIClient.getInstance().getUserProvider().getUserInfo(msg.message.getSenderUID())
+        let wrapper = new VESearchWrapper(userInfo, msg.message)
+        list.push(wrapper)
+      }
     }
     this.data.setData(list)
 

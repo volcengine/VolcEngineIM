@@ -21,14 +21,23 @@ export class RecorderViewModel {
     if (event.type == TouchType.Down) {
       BIMUILog.debug(this._tag, `down Y: ${event.touches[0].y} `)
       this._isCancel = false
-      this.checkAndReqPermission().then((isGrant) => {
-        if (isGrant) {
-          this.recorderTip = "正在录音，手指上滑取消"
-          let fileDir = getContext().tempDir
-          this._curPath = fileDir + '/' + systemDateTime.getTime() + '.m4a'
-          this._recorder.startRecordingProcess(this._curPath)
+      let grantStatus = await checkPermissionGrant('ohos.permission.MICROPHONE')
+      BIMUILog.debug(this._tag, `MICROPHONE  有麦克风权限!`)
+      if (grantStatus != abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED) {
+        BIMUILog.debug(this._tag, `MICROPHONE  请求麦克风权限!`)
+        let result = await reqPermissionsFromUser(['ohos.permission.MICROPHONE'], getContext() as common.UIAbilityContext)
+        if (result[0] === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED) {
+          BIMUILog.debug(this._tag, `用户授予麦克风权限!`)
+        } else {
+          BIMUILog.debug(this._tag, `用户拒绝麦克风权限!`)
         }
-      })
+        return
+      }
+
+      this.recorderTip = "正在录音，手指上滑取消"
+      let fileDir = getContext().tempDir
+      this._curPath = fileDir + '/' + systemDateTime.getTime() + '.m4a'
+      this._recorder.startRecordingProcess(this._curPath)
     } else if (event.type == TouchType.Up) {
       BIMUILog.debug(this._tag, `up Y: ${event.touches[0].y} `)
       await this._recorder.stopRecordingProcess()
