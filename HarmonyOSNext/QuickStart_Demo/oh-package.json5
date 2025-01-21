@@ -8,6 +8,6 @@
     "@ohos/hamock": "1.0.0"
   },
   "overrides": {
-    "@imcloud/imsdk": '1.0.0-alpha.31' //修改依赖
+    "@imcloud/imsdk": '1.0.0-alpha.34' //修改依赖
   }
 }

@@ -10,7 +10,6 @@ export struct MainItem {
         Text(this.detail).fontSize(14)
           .fontColor(Color.Gray)
           .margin({right:10})
-          .width('60%')
           .maxLines(1)
           .ellipsisMode(EllipsisMode.END)
         Image($r('app.media.icon_im_goto'))
