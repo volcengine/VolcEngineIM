@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 @class BIMConversationCell, BIMConversation;
+@protocol BIMMember;
 @protocol BIMConversationCellDelegate <NSObject>
 
 - (void)cellDidLongPress: (BIMConversationCell *)cell;
@@ -22,7 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) id <BIMConversationCellDelegate> delegate;
 
-- (void)refreshWithConversation: (BIMConversation *)conversation;
+- (void)refreshWithConversation:(BIMConversation *)conversation;
+
+- (void)refreshWithConversation:(BIMConversation *_Nonnull)conversation member:(id<BIMMember> _Nullable)member;
 
 @end
 

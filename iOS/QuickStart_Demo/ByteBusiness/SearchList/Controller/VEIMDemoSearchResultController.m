@@ -20,6 +20,7 @@
 #import "VEIMDemoSearchMessageListResultModel.h"
 #import "UIImageView+WebCache.h"
 #import <im-uikit-tob/BIMUIClient.h>
+#import <im-uikit-tob/BIMUICommonUtility.h>
 
 typedef NS_ENUM(NSInteger, VEIMDemoSearchDataSourceMode) {
     VEIM_DEMO_FTS_MODE = 0,
@@ -259,7 +260,7 @@ typedef NS_ENUM(NSInteger, VEIMDemoSearchDataSourceMode) {
     BIMSearchMsgInfo *msg = [self.currentArrMessageResult btd_objectAtIndex:indexPath.row];
     
     BIMUser *user = [BIMUIClient sharedInstance].userProvider(msg.message.senderUID);
-    NSString *userName = user.alias.length ? user.alias : user.nickName;
+    NSString *userName = [BIMUICommonUtility getShowNameWithUser:user];;
     if (self.msgType == BIM_MESSAGE_TYPE_TEXT) {
         cell.nameLabel.text = userName;
         cell.subTitleLabel.attributedText = ({

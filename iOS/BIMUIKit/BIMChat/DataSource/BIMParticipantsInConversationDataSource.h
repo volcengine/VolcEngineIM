@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
  数据源更改
  @param dataSource 更改的实例
  */
-//- (void)participantsDataSourceDidUpdate:(BIMParticipantsInConversationDataSource *)dataSource;
+- (void)participantsDataSourceDidUpdate:(BIMParticipantsInConversationDataSource *)dataSource;
 @end
 
 

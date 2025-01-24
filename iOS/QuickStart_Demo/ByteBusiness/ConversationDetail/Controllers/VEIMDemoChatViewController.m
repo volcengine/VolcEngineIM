@@ -14,6 +14,7 @@
 #import "BIMUIClient.h"
 #import "VEIMDemoProfileEditViewController.h"
 #import "VEIMDemoMessageReadDetailViewController.h"
+#import <im-uikit-tob/BIMUICommonUtility.h>
 
 NSString * const DEFAULT_CONV_TITLE = @"defaultTitle";
 
@@ -68,13 +69,25 @@ NSString * const DEFAULT_CONV_TITLE = @"defaultTitle";
     }
     
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
-//        self.title = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:self.conversation.oppositeUserID];
-        BIMUser *user = [BIMUIClient sharedInstance].userProvider(self.conversation.oppositeUserID);
-        NSString *userAlias = user.alias.length ? user.alias : user.nickName;
-        self.title = userAlias && userAlias.length ? userAlias : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:self.conversation.oppositeUserID];  // TODO: 待优化，后续建立user缓存 VEIMDemoUserManager
-    } else {
-        self.title = [NSString stringWithFormat:@"%@", kValidStr(self.conversation.name) ? self.conversation.name : @"未命名群聊"];
+        long long oppositeUserID = self.conversation.oppositeUserID;
+        BIMUser *user = [BIMUIClient sharedInstance].userProvider(oppositeUserID);
+        /// 可能是刚创建会话还没有用户资料，需要主动拉一次更新 title
+        if (!user) {
+            @weakify(self);
+            // 获取会话信息
+            if ([[BIMUIClient sharedInstance].userInfoDataSource respondsToSelector:@selector(getUserInfoWithUserId:completion:)]) {
+                [[BIMUIClient sharedInstance].userInfoDataSource getUserInfoWithUserId:oppositeUserID completion:^(BIMUser *u) {
+                    @strongify(self);
+                    if (self.conversation.oppositeUserID != oppositeUserID) {
+                        return;
+                    }
+                    self.title = [BIMUICommonUtility getShowNameWithConversation:self.conversation];
+                }];
+            }
+        }
     }
+    
+    self.title = [BIMUICommonUtility getShowNameWithConversation:self.conversation];
 }
 
 - (void)clearTimer

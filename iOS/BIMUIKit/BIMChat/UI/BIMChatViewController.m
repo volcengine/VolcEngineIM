@@ -25,6 +25,7 @@
 #import "BIMMessageDetailDebugViewController.h"
 #import "BIMCouponChatCell.h"
 #import "BIMMessageProgressManager.h"
+#import "BIMUICommonUtility.h"
 
 #import <Masonry/Masonry.h>
 #import <AVFoundation/AVPlayer.h>
@@ -60,7 +61,7 @@
 @end
 
 
-@interface BIMChatViewController () <BIMInputToolViewDelegate, BIMBaseChatCellDelegate, BIMCustomChatCellDelegate, BIMChatViewDataSourceDelegate, BIMUserSelectionControllerDelegate, BIMConversationListListener, BIMMessageListener, BIMLiveGroupMemberEventListener, BIMFriendListener, BIMCouponChatCellDelegate>
+@interface BIMChatViewController () <BIMInputToolViewDelegate, BIMBaseChatCellDelegate, BIMCustomChatCellDelegate, BIMChatViewDataSourceDelegate, BIMUserSelectionControllerDelegate, BIMConversationListListener, BIMMessageListener, BIMLiveGroupMemberEventListener, BIMFriendListener, BIMCouponChatCellDelegate, BIMParticipantsInConversationDataSourceDelegate>
 
 
 //UI related
@@ -240,6 +241,7 @@
     [self conversationStatusUpdateProcess];
     
     self.participantsDataSource = [[BIMParticipantsInConversationDataSource alloc] initWithConversationID:self.conversation.conversationID];
+    self.participantsDataSource.delegate = self;
 }
 
 - (void)setupUIElements{
@@ -625,19 +627,16 @@
 
     [self conversationStatusUpdateProcess];
     
+    NSString *conversationShowName = [BIMUICommonUtility getShowNameWithConversation:self.conversation];
     if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_ONE_CHAT) {
         NSString *participantCount = [NSString stringWithFormat:@"%lu", (unsigned long)self.conversation.memberCount];
-        self.title = [NSString stringWithFormat:@"%@(%@)", self.conversation.name.length ? self.conversation.name : self.conversation.conversationID, participantCount];
+        self.title = [NSString stringWithFormat:@"%@(%@)", conversationShowName , participantCount];
     } else {
-        long long conversationParticipant = self.conversation.oppositeUserID;
-        if (conversationParticipant>0) {
-            BIMUser *user = [BIMUIClient sharedInstance].userProvider(conversationParticipant);
-            self.title = user.alias && user.alias.length ? user.alias : user.nickName;
-//            self.title = [BIMUIClient sharedInstance].userProvider(conversationParticipant).nickName;
-        } else {
-            self.title = @"私聊";
-        }
+        self.title = conversationShowName;
     }
+    btd_dispatch_async_on_main_queue(^{
+        [self.tableview reloadData];
+    });
 }
 
 #pragma mark - TableView Delegate & Datasource

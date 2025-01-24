@@ -8,6 +8,7 @@
 #import "BIMUserCell.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "BIMUIClient.h"
+#import "BIMUICommonUtility.h"
 
 @interface BIMUserCell ()
 
@@ -23,7 +24,7 @@
     _user = user;
     
     [self.portrait sd_setImageWithURL:[NSURL URLWithString:user.portraitUrl] placeholderImage:user.placeholderImage];
-    self.nameLabel.text = (user.alias && user.alias.length) ? user.alias : user.nickName;
+    self.nameLabel.text = [BIMUICommonUtility getShowNameWithUser:user];
     self.subTitleLabel.text = nil;
     
     [self setupConstraints];

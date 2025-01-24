@@ -12,6 +12,7 @@
 #import <OneKit/BTDMacros.h>
 #import "BIMToastView.h"
 #import "UIImage+IMUtils.h"
+#import <im-uikit-tob/BIMUICommonUtility.h>
 
 
 @interface BIMBaseChatCell ()
@@ -166,17 +167,7 @@
 
 - (void)refreshWithUser:(BIMUser *)user sender:(id<BIMMember>)sender
 {
-    NSString *senderName;
-    NSString *friendAlias = user.alias; // 好友备注
-    // 优先级：备注 > 群备注(群昵称) > 用户昵称
-    if (kValidStr(friendAlias)) {
-        senderName = friendAlias;
-    } else if (kValidStr(sender.alias)) {  // 群昵称
-        senderName = sender.alias;
-    } else {
-        senderName = user.nickName;
-    }
-    self.nameLabel.text = senderName;
+    self.nameLabel.text = [BIMUICommonUtility getShowNameInGroupWithUser:user member:sender];
     UIImage *portrait = user.placeholderImage;
     if (!portrait) {
         portrait = [UIImage im_avatarWithUserId:@(user.userID).stringValue];

@@ -17,6 +17,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (CGSize)im_boundingRectWithFont:(UIFont *)font MaxSize:(CGSize)maxSize;
+
+/// 字符串是否为 nil、空字符串或仅由空格组成
++ (BOOL)im_isBlankString:(NSString *)string;
+
 @end
 
 NS_ASSUME_NONNULL_END

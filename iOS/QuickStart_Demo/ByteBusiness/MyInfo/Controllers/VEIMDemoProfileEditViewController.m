@@ -67,7 +67,7 @@
     @weakify(self);
     model.clickHandler = ^{
         @strongify(self);
-        VEIMDemoSelectAvatarViewController *vc = [[VEIMDemoSelectAvatarViewController alloc] init];
+        VEIMDemoSelectAvatarViewController *vc = [[VEIMDemoSelectAvatarViewController alloc] initWithType:VEIMDemoSelectAvatarTypeUserProfile];
         vc.selectCallBack = ^(NSString * _Nonnull url) {
             // 测试声明周期问题
             [[BIMClient sharedInstance] setUserSelfPortrait:url completion:^(BIMError * _Nullable error) {

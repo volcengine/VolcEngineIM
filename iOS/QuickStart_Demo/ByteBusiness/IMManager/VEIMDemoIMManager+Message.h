@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)sendLocalSystemMessage: (NSString *)msg convId: (NSString *)convId completion:(void (^ _Nullable)(NSError * _Nullable))completion;
 
 - (NSString *)contentWithMessage:(BIMMessage *)message;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -13,6 +13,7 @@
 #import <im-uikit-tob/BIMUIClient.h>
 #import <im-uikit-tob/BIMUIDefine.h>
 #import <im-uikit-tob/NSDate+IMUtils.h>
+#import <im-uikit-tob/BIMUICommonUtility.h>
 
 #import "UIImageView+WebCache.h"
 
@@ -36,7 +37,11 @@
 
 - (void)reloadWithGroupInfo:(BIMSearchGroupInfo *)groupInfo
 {
-    [self.portrait sd_setImageWithURL:nil placeholderImage:kIMAGE_IN_BUNDLE_NAMED(@"icon_avatar_group")];
+    NSURL *portraitURL = nil;
+    if (!BTD_isEmptyString(groupInfo.conversation.portraitURL)) {
+        portraitURL = [NSURL URLWithString:groupInfo.conversation.portraitURL];
+    }
+    [self.portrait sd_setImageWithURL: portraitURL placeholderImage:kIMAGE_IN_BUNDLE_NAMED(@"icon_avatar_group")];
     self.nameLabel.attributedText = ({
         NSMutableAttributedString *astrm = [[NSMutableAttributedString alloc] initWithString:@""];
         if (groupInfo.nameDetail) {
@@ -138,16 +143,14 @@
         } else {
             [self.portrait sd_setImageWithURL:[NSURL URLWithString:user.portraitUrl] placeholderImage:user.placeholderImage];
         }
-        if (!BTD_isEmptyString(user.alias)) {
-            self.nameLabel.text = user.alias;
-        } else if (!BTD_isEmptyString(user.nickName)) {
-            self.nameLabel.text = user.nickName;
-        } else {
-            self.nameLabel.text = [NSString stringWithFormat:@"用户%lld", chatUID];
-        }
+        self.nameLabel.text = [BIMUICommonUtility getShowNameWithUser:user];
     } else {
         self.nameLabel.text = kValidStr(msgInConvInfo.conversation.name) ? msgInConvInfo.conversation.name : @"未命名群聊";
-        [self.portrait sd_setImageWithURL:nil placeholderImage:kIMAGE_IN_BUNDLE_NAMED(@"icon_avatar_group")];
+        NSURL *portraitURL = nil;
+        if (!BTD_isEmptyString(msgInConvInfo.conversation.portraitURL)) {
+            portraitURL = [NSURL URLWithString:msgInConvInfo.conversation.portraitURL];
+        }
+        [self.portrait sd_setImageWithURL: portraitURL placeholderImage:kIMAGE_IN_BUNDLE_NAMED(@"icon_avatar_group")];
     }
     if (msgInConvInfo.count > 1) {
         self.subTitleLabel.text = [NSString stringWithFormat:@"%lld条聊天记录", msgInConvInfo.count];
@@ -170,13 +173,7 @@
     } else {
         [self.portrait sd_setImageWithURL:[NSURL URLWithString:user.portraitUrl] placeholderImage:user.placeholderImage];
     }
-    if (!BTD_isEmptyString(user.alias)) {
-        self.nameLabel.text = user.alias;
-    } else if (!BTD_isEmptyString(user.nickName)) {
-        self.nameLabel.text = user.nickName;
-    } else {
-        self.nameLabel.text = [NSString stringWithFormat:@"用户%lld", sendId];
-    }
+    self.nameLabel.text = [BIMUICommonUtility getShowNameWithUser:user];
     self.subTitleLabel.attributedText = ({
         NSMutableAttributedString *astrm = [[NSMutableAttributedString alloc] initWithString:@""];
         BIMSearchDetail *searchDeatil = msgInfo.searchDetail;
@@ -242,7 +239,9 @@
 - (BIMSearchDetail *)getSearchDetailWithMemberInfo:(BIMSearchMemberInfo *)memberInfo
 {
     BIMSearchDetail *searchDeatil;
-    if (memberInfo.friendAliasDetail) {
+    if (memberInfo.memberAliasDetail) {
+        searchDeatil = memberInfo.memberAliasDetail;
+    } else if (memberInfo.friendAliasDetail) {
         searchDeatil = memberInfo.friendAliasDetail;
     } else if (memberInfo.nickNameDetail) {
         searchDeatil = memberInfo.nickNameDetail;

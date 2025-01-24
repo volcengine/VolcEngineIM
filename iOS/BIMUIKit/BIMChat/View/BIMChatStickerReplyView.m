@@ -10,6 +10,7 @@
 #import "BIMUIDefine.h"
 #import "BIMStickerDataManager.h"
 #import "BIMUIClient.h"
+#import "BIMUICommonUtility.h"
 
 #import <Masonry/Masonry.h>
 
@@ -96,13 +97,7 @@
 - (void)appendReplyText:(NSMutableString *)replyText withPropertyItem:(BIMMessagePropertyItem *)item
 {
     BIMUser *user = [BIMUIClient sharedInstance].userProvider(item.sender);
-    NSString *appendString = user.alias;
-    if (!appendString.length) {
-        appendString = user.nickName;
-    }
-    if (!appendString.length) {
-        appendString = [NSString stringWithFormat:@"用户%lld",item.sender];
-    }
+    NSString *appendString = [BIMUICommonUtility getShowNameWithUser:user];
     [replyText appendString:appendString];
 }
 

@@ -22,7 +22,7 @@
 #import <imsdk-tob/BIMClient+conversation.h>
 #import <imsdk-tob/BIMClient+Friend.h>
 #import <im-uikit-tob/BIMToastView.h>
-
+#import <im-uikit-tob/BIMUICommonUtility.h>
 
 @interface BIMFriendListController () <UITableViewDelegate, UITableViewDataSource, BIMFriendListUserCellDelegate, BIMFriendListDataSourceDelegate, UITextFieldDelegate>
 
@@ -133,10 +133,7 @@
         
         // 分组
         [allFriends enumerateObjectsUsingBlock:^(BIMUserFullInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            NSString *displayName = (obj.alias && obj.alias.length) ? obj.alias : obj.nickName;
-            if (!displayName.length) {
-                displayName = [NSString stringWithFormat:@"用户%@", @(obj.uid)];
-            }
+            NSString *displayName = [BIMUICommonUtility getShowNameWithUserFullInfo:obj];
             NSString *firstLetter = [self getFirstPinyinLetterWithString:displayName];
             if ([localizedSectionsTitles containsObject:firstLetter]) {
                 [indexedData[[localizedSectionsTitles indexOfObject:firstLetter]] addObject:obj];

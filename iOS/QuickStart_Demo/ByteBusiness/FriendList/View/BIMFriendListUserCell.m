@@ -10,6 +10,7 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 
 #import <imsdk-tob/BIMClient+Friend.h>
+#import <im-uikit-tob/BIMUICommonUtility.h>
 
 @interface BIMFriendListUserCell ()
 
@@ -28,11 +29,7 @@
     _friendInfo = friendInfo;
     
     [self.portrait sd_setImageWithURL:[NSURL URLWithString:friendInfo.portraitUrl] placeholderImage:[UIImage imageNamed:@"icon_recommend_user_default"]];
-    NSString *nickName = friendInfo.alias.length ? friendInfo.alias : friendInfo.nickName;
-    if (!nickName.length) {
-        nickName = [NSString stringWithFormat:@"用户%@", @(friendInfo.uid).stringValue];
-    }
-    self.nameLabel.text = nickName;
+    self.nameLabel.text = [BIMUICommonUtility getShowNameWithUserFullInfo:friendInfo];
     self.subTitleLabel.text = nil;
 
     [self setupConstraints];

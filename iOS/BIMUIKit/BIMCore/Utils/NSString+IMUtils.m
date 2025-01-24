@@ -34,4 +34,17 @@
 
     return labelSize;
 }
+
+/// 字符串是否为 nil、空字符串或仅由空格组成
++ (BOOL)im_isBlankString:(NSString *)string
+{
+    if (!string.length) {
+        return YES;
+    }
+    if ([[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0) {
+        return YES;
+    }
+    return NO;
+}
+
 @end

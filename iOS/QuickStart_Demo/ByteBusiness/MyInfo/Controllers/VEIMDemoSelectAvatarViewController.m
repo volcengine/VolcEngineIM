@@ -50,18 +50,25 @@ static CGFloat const kMargin = 33;
 
 @implementation VEIMDemoSelectAvatarViewController
 
-- (instancetype)init
+- (instancetype)initWithType:(VEIMDemoSelectAvatarType)type
 {
     self = [super init];
     if (self) {
-        _dataArray = @[
-        @"https://lf3-static.bytednsdoc.com/obj/eden-cn/nuhbopldnuhf/im-demo-avatar/avatar1.png",
-        @"https://lf3-static.bytednsdoc.com/obj/eden-cn/nuhbopldnuhf/im-demo-avatar/avatar2.png",
-        @"https://lf3-static.bytednsdoc.com/obj/eden-cn/nuhbopldnuhf/im-demo-avatar/avatar3.png",
-        @"https://lf3-static.bytednsdoc.com/obj/eden-cn/nuhbopldnuhf/im-demo-avatar/avatar4.png",
-        @"https://lf3-static.bytednsdoc.com/obj/eden-cn/nuhbopldnuhf/im-demo-avatar/avatar5.png",
-        @"https://lf3-static.bytednsdoc.com/obj/eden-cn/nuhbopldnuhf/im-demo-avatar/avatar6.png",
-        ];
+        if (type == VEIMDemoSelectAvatarTypeUserProfile) {
+            _dataArray = @[
+                @"https://lf3-static.bytednsdoc.com/obj/eden-cn/nuhbopldnuhf/im-demo-avatar/avatar1.png",
+                @"https://lf3-static.bytednsdoc.com/obj/eden-cn/nuhbopldnuhf/im-demo-avatar/avatar2.png",
+                @"https://lf3-static.bytednsdoc.com/obj/eden-cn/nuhbopldnuhf/im-demo-avatar/avatar3.png",
+                @"https://lf3-static.bytednsdoc.com/obj/eden-cn/nuhbopldnuhf/im-demo-avatar/avatar4.png",
+                @"https://lf3-static.bytednsdoc.com/obj/eden-cn/nuhbopldnuhf/im-demo-avatar/avatar5.png",
+                @"https://lf3-static.bytednsdoc.com/obj/eden-cn/nuhbopldnuhf/im-demo-avatar/avatar6.png",
+            ];
+        } else if (type == VEIMDemoSelectAvatarTypeGroup) {
+            _dataArray = @[
+                @"https://lf3-static.bytednsdoc.com/obj/eden-cn/fkeh7nuptbo/im_group_icon_1.png",
+                @"https://lf3-static.bytednsdoc.com/obj/eden-cn/fkeh7nuptbo/im_group_icon_2.png",
+            ];
+        }
     }
     return self;
 }

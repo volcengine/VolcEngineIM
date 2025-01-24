@@ -19,6 +19,8 @@
 #import <im-uikit-tob/BIMToastView.h>
 #import <MBProgressHUD/MBProgressHUD.h>
 
+//FOUNDATION_EXTERN NSString * const kVEIMDemoAppID;
+
 typedef enum : NSUInteger {
     VEIMDemoMyinfoSectionTypeInfo,
     VEIMDemoMyinfoSectionTypeAppInfo,

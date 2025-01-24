@@ -11,7 +11,8 @@
 #import "VEIMDemoUserManager.h"
 #import "VEIMDemoDefine.h"
 #import "BIMToastView.h"
-
+#import <im-uikit-tob/BIMUIClient.h>
+#import <im-uikit-tob/BIMUICommonUtility.h>
 
 @implementation VEIMDemoIMManager (Conversation)
 
@@ -20,19 +21,22 @@
         return;
     }
     NSMutableOrderedSet *orderSet = [NSMutableOrderedSet orderedSet];
-    NSMutableString *systemMsg = [@"" mutableCopy];
+    BIMUser *currentUser = [BIMUIClient sharedInstance].userProvider([VEIMDemoUserManager sharedManager].currentUser.userID);
+    NSString *msgStr = [NSString stringWithFormat:@"%@邀请", [BIMUICommonUtility getSystemMessageUserNameWithUser:currentUser]];
     for (VEIMDemoUser *user in users) {
         [orderSet addObject:@(user.userID)];
+        BIMUser *u = [BIMUIClient sharedInstance].userProvider(user.userID);
+        NSString *userName = [BIMUICommonUtility getSystemMessageUserNameWithUser:u];
         if (users.lastObject != user) {
-            [systemMsg appendFormat:@"%@、",user.name];
+            msgStr = [msgStr stringByAppendingFormat:@"%@、", userName];
         }else{
-            [systemMsg appendFormat:@"%@加入群聊",user.name];
+            msgStr = [msgStr stringByAppendingFormat:@"%@加入群聊", userName];
         }
     }
     
     [[BIMClient sharedInstance] addGroupMemberList:con.conversationID memberList:orderSet completion:^(NSSet<NSNumber *> * _Nonnull participants, BIMError * _Nullable error) {
         if (!error) {
-            [self sendSystemMessage:systemMsg convId:con.conversationID completion:nil];
+            [self sendSystemMessage:msgStr convId:con.conversationID completion:nil];
         }
         if (completion) {
             completion(error);
@@ -48,7 +52,8 @@
     NSMutableString *systemMsg = [@"" mutableCopy];
     for (VEIMDemoUser *user in users) {
         [set addObject:@(user.userID)];
-        NSString *userName = [@"用户" stringByAppendingString:@(user.userID).stringValue];
+        BIMUser *u = [BIMUIClient sharedInstance].userProvider(user.userID);
+        NSString *userName = [BIMUICommonUtility getSystemMessageUserNameWithUser:u];
         if (users.lastObject != user) {
             [systemMsg appendFormat:@"%@、", userName];
         }else{
@@ -68,7 +73,10 @@
 }
 
 - (void)quitCon:(BIMConversation *)con completion:(void (^ _Nullable)(NSError * _Nullable))completion{
-    [self sendSystemMessage:[NSString stringWithFormat:@"%@退出聊天",[VEIMDemoUserManager sharedManager].currentUser.name] convId:con.conversationID completion:^(NSError * _Nullable error) {
+    long long userID = [VEIMDemoUserManager sharedManager].currentUser.userID;
+    BIMUser *u = [BIMUIClient sharedInstance].userProvider(userID);
+    NSString *userName = [BIMUICommonUtility getSystemMessageUserNameWithUser:u];
+    [self sendSystemMessage:[NSString stringWithFormat:@"%@退出聊天", userName] convId:con.conversationID completion:^(NSError * _Nullable error) {
         if (!error){
             [[BIMClient sharedInstance] leaveGroup:con.conversationID completion:^(BIMError * _Nullable error) {
                 if (error) {
@@ -144,7 +152,9 @@
     
     [[BIMClient sharedInstance] setGroupMemberRole:con.conversationID uidList:[NSSet setWithObject:@(userID)] role: BIM_MEMBER_ROLE_ADMIN completion:^(BIMError * _Nullable error) {
         if (!error) {
-            NSString *sysMsg = [NSString stringWithFormat:@"%@成为管理员", [[VEIMDemoUserManager sharedManager] nicknameForTestUser:userID]];
+            BIMUser *u = [BIMUIClient sharedInstance].userProvider(userID);
+            NSString *userName = [BIMUICommonUtility getSystemMessageUserNameWithUser:u];
+            NSString *sysMsg = [NSString stringWithFormat:@"%@成为管理员", userName];
             [self sendSystemMessage:sysMsg convId:con.conversationID completion:nil];
         }
         if (completion) {
@@ -171,7 +181,9 @@
     
     [[BIMClient sharedInstance] setGroupMemberRole:con.conversationID uidList:[NSSet setWithObject:@(userID)] role:BIM_MEMBER_ROLE_NORMAL completion:^(BIMError * _Nullable error) {
         if (!error) {
-            NSString *sysMsg = [NSString stringWithFormat:@"%@被取消管理员", [[VEIMDemoUserManager sharedManager] nicknameForTestUser:userID]];
+            BIMUser *u = [BIMUIClient sharedInstance].userProvider(userID);
+            NSString *userName = [BIMUICommonUtility getSystemMessageUserNameWithUser:u];
+            NSString *sysMsg = [NSString stringWithFormat:@"%@被取消管理员", userName];
             [self sendSystemMessage:sysMsg convId:con.conversationID completion:nil];
         }
         if (completion) {

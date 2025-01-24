@@ -18,8 +18,12 @@
 //#import "BIMClient.h"
 
 #import <imsdk-tob/BIMSDK.h>
+#import <OneKit/ByteDanceKit.h>
 
-@interface BIMBaseConversationListController () <UITableViewDelegate, UITableViewDataSource, BIMConversationListDataSourceDelegate, BIMConversationCellDelegate, BIMFriendListener>
+@interface BIMBaseConversationListController () <UITableViewDelegate, UITableViewDataSource, BIMConversationListDataSourceDelegate, BIMConversationCellDelegate, BIMFriendListener, BIMGroupMemberListener>
+
+@property (nonatomic, strong) NSMutableDictionary<NSString *, id<BIMMember>> *convMemberDict;
+
 @end
 
 @implementation BIMBaseConversationListController
@@ -29,6 +33,7 @@
     self = [super init];
     if (self) {
         self.isNeedLeftBack = NO;
+        self.convMemberDict = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -36,6 +41,7 @@
 - (void)dealloc
 {
     [[BIMClient sharedInstance] removeFriendListener:self];
+    [[BIMClient sharedInstance] removeGroupMemberListener:self];
 }
 
 - (void)viewDidLoad 
@@ -103,6 +109,7 @@
     self.conversationDataSource.pageSize = 100;
     
     [[BIMClient sharedInstance] addFriendListener:self];
+    [[BIMClient sharedInstance] addGroupMemberListener:self];
 }
 
 /// @override
@@ -141,7 +148,32 @@
         conv = self.conversationDataSource.conversationList[indexPath.row];
     }
     cell.delegate = self;
-    [cell refreshWithConversation:conv];
+    if (conv.conversationType == BIM_CONVERSATION_TYPE_GROUP_CHAT) {
+        long long userID = conv.lastMessage.senderUID;
+        id<BIMMember> member = [self.convMemberDict btd_objectForKey:conv.conversationID default:nil];
+        if (!userID || member.userID == userID) {
+            [cell refreshWithConversation:conv member:member];
+        } else {
+            [cell refreshWithConversation:conv];
+            @weakify(self);
+            [[BIMClient sharedInstance] getConversationMemberList:@[@(userID)] inConversationId:conv.conversationID completion:^(NSArray<id<BIMMember>> * _Nullable members, BIMError * _Nullable error) {
+                @strongify(self);
+                id<BIMMember> newMember = members.firstObject;
+                if (!newMember || error) {
+                    return;
+                }
+                btd_dispatch_async_on_main_queue(^{
+                    if (![cell.conversation.conversationID isEqualToString:newMember.conversationID]) {
+                        return;
+                    }
+                    [self.convMemberDict btd_setObject:newMember forKey:conv.conversationID];
+                    [cell refreshWithConversation:conv member:newMember];
+                });
+            }];
+        }
+    } else {
+        [cell refreshWithConversation:conv];
+    }
     return cell;
 }
 
@@ -202,6 +234,21 @@
     [alertVC addAction:cancel];
 
     [self presentViewController:alertVC animated:YES completion:nil];
+}
+
+#pragma mark - BIMGroupMemberListener
+
+- (void)onBatchMemberInfoChanged:(BIMConversation *)conversation members:(NSArray<id<BIMMember>> *)members
+{
+    id<BIMMember> oldMember = [self.convMemberDict btd_objectForKey:conversation.conversationID default:nil];
+    if (oldMember) {
+        [members enumerateObjectsUsingBlock:^(id<BIMMember>  _Nonnull member, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (member.userID == oldMember.userID) {
+                [self.convMemberDict btd_setObject:member forKey:conversation.conversationID];
+                *stop = YES;
+            }
+        }];
+    }
 }
 
 #pragma mark - BIMFriendListener

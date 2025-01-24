@@ -8,8 +8,9 @@
 
 #import "BIMParticipantsInConversationDataSource.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <OneKit/ByteDanceKit.h>
 
-@interface BIMParticipantsInConversationDataSource ()<BIMConversationListListener>
+@interface BIMParticipantsInConversationDataSource ()<BIMConversationListListener, BIMGroupMemberListener>
 @property (nonatomic, strong) NSString *conversationID;
 @property (nonatomic, strong) NSArray<id<BIMMember>> *participants;
 @property (nonatomic, strong) NSArray<id<BIMMember>> *admParticipants;
@@ -27,6 +28,7 @@
 
         self.participants = [[BIMClient sharedInstance] getConversationMemberList:conversationID];
         [[BIMClient sharedInstance] addConversationListener:self];
+        [[BIMClient sharedInstance] addGroupMemberListener:self];
         [self fetchAllAdministrator];
     }
     return self;
@@ -71,6 +73,37 @@
         NSError *error = [NSError errorWithDomain:@"parameter error" code:-2 userInfo:nil];
         completion(@[], error);
     });
+}
+
+#pragma mark - BIMGroupMemberListener
+
+- (void)onBatchMemberInfoChanged:(BIMConversation *)conversation members:(NSArray<id<BIMMember>> *)members
+{
+    if (![conversation.conversationID isEqualToString:self.conversationID]) {
+        return;
+    }
+    
+    NSMutableDictionary<NSNumber *, id<BIMMember>> *memberDict = [NSMutableDictionary dictionary];
+    [members enumerateObjectsUsingBlock:^(id<BIMMember>  _Nonnull member, NSUInteger idx, BOOL * _Nonnull stop) {
+        [memberDict btd_setObject:member forKey:@(member.userID)];
+    }];
+    
+    NSMutableArray *participants = [NSMutableArray array];
+    [self.participants enumerateObjectsUsingBlock:^(id<BIMMember>  _Nonnull participant, NSUInteger idx, BOOL * _Nonnull stop) {
+        id<BIMMember> member = [memberDict btd_objectForKey:@(participant.userID) default:nil];
+        if (member) {
+            [participants btd_addObject:member];
+        } else {
+            [participants btd_addObject:participant];
+        }
+    }];
+    self.participants = [participants copy];
+    [self fetchAllAdministrator];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(participantsDataSourceDidUpdate:)]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate participantsDataSourceDidUpdate:self];
+        });
+    }
 }
 
 #pragma mark - BIMConversationListListener

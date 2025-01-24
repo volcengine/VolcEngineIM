@@ -10,6 +10,7 @@
 #import "BIMToastView.h"
 #import "VEIMDemoDefine.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <im-uikit-tob/BIMUIClient.h>
 
 @implementation VEIMDemoIMManager (Message)
 

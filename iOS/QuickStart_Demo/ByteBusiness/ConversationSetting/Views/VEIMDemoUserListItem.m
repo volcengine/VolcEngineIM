@@ -11,6 +11,7 @@
 #import <imsdk-tob/BIMSDK.h>
 #import "BIMUIClient.h"
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <im-uikit-tob/BIMUICommonUtility.h>
 
 @implementation VEIMDemoUserListItem
 
@@ -45,11 +46,7 @@
 
 - (void)refreshWithParticipant:(id<BIMMember>)participant {
     BIMUser *user = [BIMUIClient sharedInstance].userProvider(participant.userID);
-    NSString *alias = user.alias.length ? user.alias : participant.alias;
-    if (!alias.length) {
-        alias = user.nickName;
-    }
-    self.userName.text = alias;
+    self.userName.text = [BIMUICommonUtility getShowNameInGroupWithUser:user member:participant];
 //    self.userPortrait.image = [UIImage imageNamed:[[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID]];
     NSString *avatarURL = participant.avatarURL;
     if (!avatarURL.length) {

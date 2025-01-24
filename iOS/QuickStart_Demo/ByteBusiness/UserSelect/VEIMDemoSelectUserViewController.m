@@ -17,6 +17,7 @@
 #import <Onekit/NSString+BTDAdditions.h>
 #import "VEIMDemoMemberModel.h"
 #import "BIMUIClient.h"
+#import <im-uikit-tob/BIMUICommonUtility.h>
 
 static NSInteger const kMaxCount = 5;
 
@@ -214,15 +215,19 @@ static NSInteger const kMaxCount = 5;
     }
     
     NSMutableSet *usersSet = [NSMutableSet setWithArray:self.users];
-    NSString *msgStr = [NSString stringWithFormat:@"%@邀请", [VEIMDemoUserManager sharedManager].currentUser.name];
+    BIMUser *currentUser = [BIMUIClient sharedInstance].userProvider([VEIMDemoUserManager sharedManager].currentUser.userID);
+    NSString *msgStr = [NSString stringWithFormat:@"%@邀请", [BIMUICommonUtility getSystemMessageUserNameWithUser:currentUser]];
 
     for (int i = 0; i < self.users.count; i++) {
-        NSNumber *user = self.users[i];
-        NSString *name = [[VEIMDemoUserManager sharedManager] nicknameForTestUser:user.longLongValue];
-        if (i == (self.users.count - 1)) {
-            msgStr = [msgStr stringByAppendingFormat:@"%@",name];
-        } else {
-            msgStr = [msgStr stringByAppendingFormat:@"%@、",name];
+        @autoreleasepool {
+            NSNumber *user = self.users[i];
+            BIMUser *u = [BIMUIClient sharedInstance].userProvider(user.longLongValue);
+            NSString *name = [BIMUICommonUtility getSystemMessageUserNameWithUser:u];
+            if (i == (self.users.count - 1)) {
+                msgStr = [msgStr stringByAppendingFormat:@"%@",name];
+            } else {
+                msgStr = [msgStr stringByAppendingFormat:@"%@、",name];
+            }
         }
     }
     msgStr = [msgStr stringByAppendingFormat:@"加入群聊"];
@@ -298,8 +303,7 @@ static NSInteger const kMaxCount = 5;
         VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
         user.userID = userID.longLongValue;
         user.isNeedSelection = YES;
-        NSString *alias = u.alias.length ? u.alias : u.nickName;
-        user.name = alias.length ? alias : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:userID.longLongValue];
+        user.name = [BIMUICommonUtility getShowNameWithUser:u];
         user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:userID.longLongValue];
         user.avatarUrl = u.portraitUrl;
         [users addObject:user];

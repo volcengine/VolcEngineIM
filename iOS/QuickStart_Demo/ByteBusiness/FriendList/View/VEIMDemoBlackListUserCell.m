@@ -11,6 +11,7 @@
 #import <imsdk-tob/BIMClient+Friend.h>
 #import <Masonry/Masonry.h>
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <im-uikit-tob/BIMUICommonUtility.h>
 
 @interface VEIMDemoBlackListUserCell ()
 
@@ -31,11 +32,7 @@
 - (void)setBlackInfo:(BIMUserFullInfo *)blackInfo
 {
     _blackInfo = blackInfo;
-    NSString *nickName = blackInfo.alias.length ? blackInfo.alias : blackInfo.nickName;
-    if (!nickName.length) {
-        nickName = [NSString stringWithFormat:@"用户%@", @(blackInfo.uid).stringValue];
-    }
-    self.nameLabel.text = nickName;;
+    self.nameLabel.text = [BIMUICommonUtility getShowNameWithUserFullInfo:blackInfo];
     [self.portrait sd_setImageWithURL:[NSURL URLWithString:blackInfo.portraitUrl] placeholderImage:[UIImage imageNamed:@"icon_recommend_user_default"]];
     self.subTitleLabel.text = nil;
     

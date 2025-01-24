@@ -24,6 +24,9 @@
 #import "VEIMDemoConversationExtController.h"
 #import "VEIMDemoConversationDetailDebugViewController.h"
 #import "VEIMDemoSearchResultContainer.h"
+#import "VEIMDemoSelectAvatarViewController.h"
+#import <im-uikit-tob/BIMUICommonUtility.h>
+#import <im-uikit-tob/NSString+IMUtils.h>
 
 typedef enum : NSUInteger {
     VEIMDemoConversationActionTypeDefault = 0,
@@ -63,11 +66,12 @@ typedef enum : NSUInteger {
     @weakify(self);
     if (self.conversation.conversationType != BIM_CONVERSATION_TYPE_ONE_CHAT) {
         //群聊名称
-        NSString *detail = self.conversation.name.length ? self.conversation.name : @"未命名群聊";
+        NSString *detail = [BIMUICommonUtility getShowNameWithConversation:self.conversation];
         VEIMDemoSettingModel *nameSetting = [VEIMDemoSettingModel settingWithTitle:@"群聊名称" detail:detail isNeedSwitch:NO switchOn:NO];
         nameSetting.clickHandler = ^() {
             @strongify(self);
             VEIMDemoInputController *vc = [[VEIMDemoInputController alloc] initWithTitle:@"群聊名称" text:detail maxWordCount:10 editable:self.currentParticant.role == BIM_MEMBER_ROLE_OWNER handler:^(NSString * _Nonnull text) {
+                text = [text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
                 [[BIMClient sharedInstance] setGroupName:self.conversation.conversationID name:text completion:^(BIMError * _Nullable error) {
                     if (error) {
                         if (error.code == BIM_SERVER_SET_GROUP_INFO_REJECT) {
@@ -85,7 +89,7 @@ typedef enum : NSUInteger {
         [self.settings addObject:nameSetting];
         
         //群公告
-        VEIMDemoSettingModel *noticeSetting = [VEIMDemoSettingModel settingWithTitle:@"群公告" detail:self.conversation.notice.length?self.conversation.notice:@"未设置公告" isNeedSwitch:NO switchOn:NO];
+        VEIMDemoSettingModel *noticeSetting = [VEIMDemoSettingModel settingWithTitle:@"群公告" detail:![NSString im_isBlankString:self.conversation.notice]?self.conversation.notice:@"未设置公告" isNeedSwitch:NO switchOn:NO];
         noticeSetting.clickHandler = ^() {
             @strongify(self);
             VEIMDemoInputController *vc = [[VEIMDemoInputController alloc] initWithTitle:@"群公告" text:self.conversation.notice maxWordCount:100 editable:self.currentParticant.role == BIM_MEMBER_ROLE_OWNER handler:^(NSString * _Nonnull text) {
@@ -105,6 +109,62 @@ typedef enum : NSUInteger {
         };
         [self.settings addObject:noticeSetting];
         
+        if (self.currentParticant.role == BIM_MEMBER_ROLE_OWNER || self.currentParticant.role == BIM_MEMBER_ROLE_ADMIN) {
+            //修改群头像
+            VEIMDemoSettingModel *iconSetting = [VEIMDemoSettingModel settingWithTitle:@"修改群头像" detail:@"" isNeedSwitch:NO switchOn:NO];
+            iconSetting.clickHandler = ^{
+                @strongify(self);
+                VEIMDemoSelectAvatarViewController *vc = [[VEIMDemoSelectAvatarViewController alloc] initWithType:VEIMDemoSelectAvatarTypeGroup];
+                vc.title = @"修改群头像";
+                vc.selectCallBack = ^(NSString * _Nonnull url) {
+                    BIMGroupInfo *groupInfo = [[BIMGroupInfo alloc] init];
+                    groupInfo.avatarURL = url;
+                    [[BIMClient sharedInstance] setGroupInfo:self.conversation.conversationID groupInfo:groupInfo completion:^(BIMError * _Nullable error) {
+                        @strongify(self);
+                        if (error) {
+                            [BIMToastView toast:[NSString stringWithFormat:@"更改群头像失败: %@", error.localizedDescription]];
+                            return;
+                        }
+                        
+                        BIMUser *user = [BIMUIClient sharedInstance].userProvider(self.currentParticant.userID);
+                        NSString *name = [BIMUICommonUtility getSystemMessageUserNameWithUser:user member:self.currentParticant];
+                        NSString *msgStr = [NSString stringWithFormat:@"%@修改了群头像", name];
+                        BIMMessage *msg = [[BIMClient sharedInstance] createCustomMessage:@{@"text":msgStr, @"type":@(kBIMMessageTypeSystem)}];
+                        [[BIMClient sharedInstance] sendMessage:msg conversationId:self.conversation.conversationID saved:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {} progress:^(int progress) {} completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {}];
+                        [self createSettingModels];
+                    }];
+                };
+                [self.navigationController pushViewController:vc animated:YES];
+            };
+            [self.settings addObject:iconSetting];
+            
+            //修改群描述
+            VEIMDemoSettingModel *descSetting = [VEIMDemoSettingModel settingWithTitle:@"群描述" detail:self.conversation.desc isNeedSwitch:NO switchOn:NO];
+            descSetting.clickHandler = ^{
+                @strongify(self);
+                VEIMDemoInputController *vc = [[VEIMDemoInputController alloc] initWithTitle:@"群描述" text:self.conversation.desc maxWordCount:100 editable:YES handler:^(NSString * _Nonnull text) {
+                    BIMGroupInfo *groupInfo = [[BIMGroupInfo alloc] init];
+                    groupInfo.desc = text;
+                    [[BIMClient sharedInstance] setGroupInfo:self.conversation.conversationID groupInfo:groupInfo completion:^(BIMError * _Nullable error) {
+                        @strongify(self);
+                        if (error) {
+                            [BIMToastView toast:[NSString stringWithFormat:@"更改群描述失败: %@", error.localizedDescription]];
+                            return;
+                        } 
+                        
+                        BIMUser *user = [BIMUIClient sharedInstance].userProvider(self.currentParticant.userID);
+                        NSString *name = [BIMUICommonUtility getSystemMessageUserNameWithUser:user member:self.currentParticant];
+                        NSString *msgStr = [NSString stringWithFormat:@"%@修改了群描述", name];
+                        BIMMessage *msg = [[BIMClient sharedInstance] createCustomMessage:@{@"text":msgStr, @"type":@(kBIMMessageTypeSystem)}];
+                        [[BIMClient sharedInstance] sendMessage:msg conversationId:self.conversation.conversationID saved:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {} progress:^(int progress) {} completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {}];
+                        [self createSettingModels];
+                    }];
+                }];
+                [self.navigationController pushViewController:vc animated:YES];
+            };
+            [self.settings addObject:descSetting];
+        }
+        
         //群主管理
         if (self.currentParticant.role == BIM_MEMBER_ROLE_OWNER) {
             VEIMDemoSettingModel *ownerSetting = [VEIMDemoSettingModel settingWithTitle:@"设置管理员" detail:@"" isNeedSwitch:NO switchOn:NO];
@@ -117,9 +177,7 @@ typedef enum : NSUInteger {
                 for (id <BIMMember> participant in participants) {
                     VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
                     BIMUser *u = [BIMUIClient sharedInstance].userProvider(participant.userID);
-                    NSString *alias = u.alias;
-                    alias = alias.length ? alias : (participant.alias.length ? participant.alias : u.nickName);
-                    user.name = alias;
+                    user.name = [BIMUICommonUtility getShowNameInGroupWithUser:u member:participant];
                     user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
                     user.avatarUrl = participant.avatarURL.length ? participant.avatarURL : u.portraitUrl;
                     user.userID = participant.userID;
@@ -148,8 +206,37 @@ typedef enum : NSUInteger {
             [self.settings addObject:ownerSetting];
         }
 
-        
+        //群昵称
+        VEIMDemoSettingModel *myAlias = [VEIMDemoSettingModel settingWithTitle:@"我的群昵称" detail:self.currentParticant.alias ?: @"" isNeedSwitch:NO switchOn:NO];
+        myAlias.clickHandler = ^{
+            @strongify(self);
+            VEIMDemoInputController *vc = [[VEIMDemoInputController alloc] initWithTitle:@"我的群昵称" text:self.currentParticant.alias ?: @"" maxWordCount:100 editable:YES handler:^(NSString * _Nonnull text) {
+                NSString *alias = [text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                if (alias.length == 0 && text.length > 0) {
+                    /// 昵称不能为纯空格，可以为 @""
+                    [BIMToastView toast:@"昵称不可为空"];
+                    return;
+                }
+                [[BIMClient sharedInstance] setUserSelfGroupMemberAlias:self.conversation.conversationID alias:text completion:^(BIMError * _Nullable error) {
+                    @strongify(self);
+                    if (error) {
+                        if (error.code == BIM_SERVER_SET_GROUP_INFO_REJECT) {
+                            [BIMToastView toast:@"文本中可能包含敏感词，请修改后重试"];
+                        } else {
+                            [BIMToastView toast:[NSString stringWithFormat:@"更改群昵称失败: %@", error.localizedDescription]];
+                        }
+                    } else {
+                        /// 刷新当前群成员信息
+                        self.currentParticant = self.conversation.currentMember;
+                        [self createSettingModels];
+                    }
+                }];
+            }];
+            [self.navigationController pushViewController:vc animated:YES];
+        };
+        [self.settings addObject:myAlias];
     }
+    
     //置顶
     VEIMDemoSettingModel *stickTop = [VEIMDemoSettingModel settingWithTitle:@"置顶聊天" detail:@"" isNeedSwitch:YES switchOn:self.conversation.isStickTop];
     stickTop.switchHandler = ^(UISwitch * _Nonnull swt) {
@@ -391,9 +478,7 @@ typedef enum : NSUInteger {
                     VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
                     user.userID = participant.userID;
                     BIMUser *u = [BIMUIClient sharedInstance].userProvider(participant.userID);
-                    NSString *alias = u.alias;
-                    alias = alias.length ? alias : (participant.alias.length ? participant.alias : u.nickName);
-                    user.name = alias;
+                    user.name = [BIMUICommonUtility getShowNameInGroupWithUser:u member:participant];
                     user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
                     user.avatarUrl = participant.avatarURL.length ? participant.avatarURL : u.portraitUrl;
                     user.isNeedSelection = YES;
@@ -429,9 +514,7 @@ typedef enum : NSUInteger {
             for (id <BIMMember> participant in participants) {
                 VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
                 BIMUser *u = [BIMUIClient sharedInstance].userProvider(participant.userID);
-                NSString *alias = u.alias;
-                alias = alias.length ? alias : (participant.alias.length ? participant.alias : u.nickName);
-                user.name = alias;
+                user.name = [BIMUICommonUtility getShowNameInGroupWithUser:u member:participant];
                 user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
                 user.avatarUrl = participant.avatarURL.length ? participant.avatarURL : u.portraitUrl;
                 user.userID = participant.userID;
@@ -477,9 +560,7 @@ typedef enum : NSUInteger {
         for (id <BIMMember> participant in participants) {
             VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
             BIMUser *u = [BIMUIClient sharedInstance].userProvider(participant.userID);
-            NSString *alias = u.alias;
-            alias = alias.length ? alias : (participant.alias.length ? participant.alias : u.nickName);
-            user.name = alias;
+            user.name = [BIMUICommonUtility getShowNameInGroupWithUser:u member:participant];
             user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
             user.avatarUrl = participant.avatarURL.length ? participant.avatarURL : u.portraitUrl;
             user.userID = participant.userID;

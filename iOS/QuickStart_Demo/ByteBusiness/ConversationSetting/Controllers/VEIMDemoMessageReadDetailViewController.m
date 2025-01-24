@@ -15,6 +15,7 @@
 #import <im-uikit-tob/BIMUIDefine.h>
 #import <im-uikit-tob/BIMToastView.h>
 #import <im-uikit-tob/BIMUIClient.h>
+#import <im-uikit-tob/BIMUICommonUtility.h>
 
 #import "VEIMDemoUser.h"
 #import "VEIMDemoUserManager.h"
@@ -117,10 +118,7 @@ typedef NS_ENUM(NSInteger, BIMMessageReadDetailType) {
     user.userID = uid;
     user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:uid];
     id<BIMMember> member = [memberDict btd_objectForKey:@(uid) default:nil];
-    NSString *alias = u.alias;
-    alias = alias.length ? alias : (member.alias.length ? member.alias : u.nickName);
-    alias = alias.length ? alias : [NSString stringWithFormat:@"用户%lld", uid];
-    user.name = alias;
+    user.name = [BIMUICommonUtility getShowNameInGroupWithUser:u member:member];
     user.avatarUrl = member.avatarURL.length ? member.avatarURL : user.avatarUrl;
     if (member.role == BIM_MEMBER_ROLE_ADMIN) {
         user.role = @"管理员";
