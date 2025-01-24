@@ -137,8 +137,8 @@ export class BIMMessageWrapper {
       } else {
         this.commonInfo.refText = BIMUIUtils.generateRefHint(ref.getHint(), msg)
       }
-      if (this.commonInfo.refText == "[暂不支持]" && ref.getHint()) {
-        this.commonInfo.refText = ref.getHint() + "(兜底)"
+      if (this.commonInfo.refText.indexOf("[暂不支持]")>=0  && ref.getHint()) {
+        this.commonInfo.refText = ref.getHint() + "(已编辑)"+"(兜底)"
       }
     } else {
       this.commonInfo.isShowRef = false

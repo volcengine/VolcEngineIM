@@ -50,7 +50,7 @@ export class BIMMsgListDataSource extends BasicDataSource<BIMMessageWrapper> {
     let findIndex = this.findIndex(msg)
     let insertIndex = 0
     if (findIndex >= 0) {
-      console.debug(this.tag, `insertOrUpdateMsg msg:${msg.getUuid()} findIndex:${findIndex}`)
+      console.debug(this.tag, `insertOrUpdateMsg update msg:${msg.getUuid()} order:${msg.getOrderIndex()} findIndex:${findIndex} content:${msg.getContentData()}`)
       if (isUpdateUI) {
         this.data[findIndex] = new BIMMessageWrapper(msg)
         this.notifyDataChange(findIndex)
@@ -58,9 +58,9 @@ export class BIMMsgListDataSource extends BasicDataSource<BIMMessageWrapper> {
         this.data[findIndex].msg = msg
       }
     } else {
-      console.debug(this.tag, `insertOrUpdateMsg msg:${msg.getUuid()} insertIndex:${insertIndex}`)
       let curWrap = new BIMMessageWrapper(msg)
       insertIndex = this.findInsertIndex(curWrap) //插入新数据
+      console.debug(this.tag, `insertOrUpdateMsg insert msg:${msg.getUuid()} order:${msg.getOrderIndex()} insertIndex:${insertIndex} content:${msg.getContentData()}`)
       this.addDataWrap(insertIndex, curWrap) //刷新
     }
   }
@@ -166,7 +166,7 @@ export class BIMMsgListDataSource extends BasicDataSource<BIMMessageWrapper> {
     for (let i = this.data.length - 1; i >= 0; i--) {
       let curOrder = this.data[i].msg?.getOrderIndex() ?? "0"
       if (this.isCurBigger(curOrder, wrapSortOrder)) {
-        return i;
+        return i + 1;
       }
     }
     return 0;
