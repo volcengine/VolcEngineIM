@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.im.core.api.enums.BIMMessageType;
+import com.bytedance.im.core.api.enums.BIMReferenceMessageStatus;
 import com.bytedance.im.core.api.model.BIMEditInfo;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.model.inner.msg.BIMAudioElement;
@@ -70,18 +71,19 @@ public class TextMessageUI extends BaseCustomElementUI {
         if (bimMessage.getReferenceInfo() != null) {
             replayTxt.setVisibility(View.VISIBLE);
             String replay = "引用:";
-            if (bimMessage.getReferenceInfo().getStatus() == MessageStatus.AVAILABLE) {
+            BIMReferenceMessageStatus refStatus = bimMessage.getReferenceInfo().getRefStatus();
+            if (refStatus == BIMReferenceMessageStatus.BIM_REFERENCE_MESSAGE_STATUS_AVAILABLE) {
                 BIMMessage refMessage = bimMessage.getReferenceInfo().getRefMessage();
                 if (refMessage != null) {
                     replay += getRefHint(v.getContext(), refMessage);
                 } else {
-                    replay += bimMessage.getReferenceInfo().getHint() +"(兜底)";
+                    replay += bimMessage.getReferenceInfo().getHint() + "(兜底)";
                 }
-            } else if (bimMessage.getReferenceInfo().getStatus() == MessageStatus.DELETED) {
+            } else if (refStatus == BIMReferenceMessageStatus.BIM_REFERENCE_MESSAGE_STATUS_DELETED) {
                 replay += "消息已被删除";
-            } else if (bimMessage.getReferenceInfo().getStatus() == MessageStatus.RECALLED) {
+            } else if (refStatus == BIMReferenceMessageStatus.BIM_REFERENCE_MESSAGE_STATUS_RECALLED) {
                 replay += "消息已被撤回";
-            } else if (bimMessage.getReferenceInfo().getStatus() == MessageStatus.INVISIBLE) {
+            } else if (refStatus == BIMReferenceMessageStatus.BIM_REFERENCE_MESSAGE_STATUS_INVISIBLE) {
                 replay += "消息不可见";
             }
             replayTxt.setText(replay);
@@ -121,13 +123,13 @@ public class TextMessageUI extends BaseCustomElementUI {
         return bimMessage.isSelf();
     }
 
-    private String getRefHint(Context context,BIMMessage refMessage) {
+    private String getRefHint(Context context, BIMMessage refMessage) {
         String refHint = "";
-        Log.i(TAG,"getRefHint element: "+refMessage.getElement());
+        Log.i(TAG, "getRefHint element: " + refMessage.getElement());
         switch (refMessage.getMsgType()) {
             case BIM_MESSAGE_TYPE_TEXT:
                 if (!(refMessage.getElement() instanceof BIMTextElement)) {
-                    Toast.makeText(context, "出现错误！element: "+refMessage.getElement(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "出现错误！element: " + refMessage.getElement(), Toast.LENGTH_SHORT).show();
                     return refHint;
                 }
                 BIMTextElement textElement = (BIMTextElement) refMessage.getElement();

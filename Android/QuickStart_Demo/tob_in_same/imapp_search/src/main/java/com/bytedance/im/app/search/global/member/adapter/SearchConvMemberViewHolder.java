@@ -48,10 +48,13 @@ public class SearchConvMemberViewHolder extends RecyclerView.ViewHolder {
         BIMUIUser user = memberWrapper.getUser();
         BIMMember member = searchMemberInfo.getMember();
         BIMSearchDetail friendAliasDetail = searchMemberInfo.getFriendAliasDetail();
+        BIMSearchDetail memberAliasDetail = searchMemberInfo.getMemberAliasDetail();
         BIMSearchDetail nickNameDetail = searchMemberInfo.getNickNameDetail();
         BIMSearchDetail uidNameDetail = searchMemberInfo.getUidDetail();
         SpannableString name = null;
-        if (friendAliasDetail != null) {
+         if (memberAliasDetail != null) {
+            name = SearchUIUtils.getSearchSpanString(memberAliasDetail, memberAliasDetail.getSearchContent());
+        } else if (friendAliasDetail != null) {
             name = SearchUIUtils.getSearchSpanString(friendAliasDetail, friendAliasDetail.getSearchContent());
         } else if (nickNameDetail != null) {
             name = SearchUIUtils.getSearchSpanString(nickNameDetail, nickNameDetail.getSearchContent());

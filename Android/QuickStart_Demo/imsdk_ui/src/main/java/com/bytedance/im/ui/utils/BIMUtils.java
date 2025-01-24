@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.bytedance.im.core.api.enums.BIMConversationType;
+import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.model.BIMMessage;
@@ -66,7 +67,11 @@ public class BIMUtils {
         return "";
     }
 
-    public static String generateRecallHint(BIMMessage bimMessage,BIMUIUser user) {
+    public static String generateRecallHint(BIMMessage bimMessage, BIMUIUser user) {
+        return generateRecallHint(bimMessage, user, null);
+    }
+
+    public static String generateRecallHint(BIMMessage bimMessage, BIMUIUser user, BIMMember member) {
         String r = "";
         if (BIMClient.getInstance().getCurrentUserID() == bimMessage.getSenderUID()) {
             r = "你 撤回了一条消息";
@@ -74,10 +79,7 @@ public class BIMUtils {
             r = "对方 撤回了一条消息";
         } else {
             if (user != null) {
-                String name = "用户" + user.getUid();
-                if(!TextUtils.isEmpty(user.getNickName())){
-                    name = user.getNickName();
-                }
+                String name = BIMUINameUtils.getShowNameInGroup(member, user);
                 r = name + " 撤回了一条消息";
             }
         }

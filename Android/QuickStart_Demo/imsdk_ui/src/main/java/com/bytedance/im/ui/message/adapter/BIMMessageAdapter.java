@@ -12,9 +12,9 @@ import com.bytedance.im.core.api.interfaces.BIMDownloadCallback;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 
 import com.bytedance.im.core.api.model.BIMConversation;
-import com.bytedance.im.core.model.inner.msg.BIMCustomElement;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
+import com.bytedance.im.ui.member.BIMGroupMemberProvider;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.core.api.model.BIMMessage;
@@ -41,6 +41,8 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
     private RecyclerView recyclerView;
     private BIMConversation bimConversation;
     private OnDownloadListener onDownloadListener;
+
+    private BIMGroupMemberProvider bimMemberProvider;
     public interface OnRefreshListener {
         void refreshMediaMessage(BIMMessage bimMessage, BIMResultCallback<BIMMessage> callback);
     }
@@ -49,12 +51,15 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
         void downLoadMessage(BIMMessage bimMessage, String url, boolean needNotify, BIMDownloadCallback callback);
     }
 
-    public BIMMessageAdapter(RecyclerView recyclerView, BIMUserProvider provider, OnMessageItemClickListener listener, OnMessageItemLongClickListener longClickListener,
+    public BIMMessageAdapter(RecyclerView recyclerView, BIMUserProvider provider,
+                             BIMGroupMemberProvider bimMemberProvider,
+                             OnMessageItemClickListener listener, OnMessageItemLongClickListener longClickListener,
                              OnRefreshListener onRefreshListener,
                              OnDownloadListener onDownloadListener) {
         this.recyclerView = recyclerView;
         this.userProvider = provider;
         onMessageItemClickListener = listener;
+        this.bimMemberProvider = bimMemberProvider;
         onMessageItemLongClickListener = longClickListener;
         this.onRefreshListener = onRefreshListener;
         this.onDownloadListener = onDownloadListener;
@@ -68,7 +73,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
         FrameLayout messageContainer = root.findViewById(R.id.container);
 //        messageContainer.setBackground(new DynamicGradientDrawable((RecyclerView) parent, root, messageContainer));
         layoutInflater.inflate(viewType, messageContainer, true);
-        return new BIMMessageViewHolder(root, recyclerView, userProvider, onMessageItemClickListener, onMessageItemLongClickListener, onRefreshListener,onDownloadListener);
+        return new BIMMessageViewHolder(root, recyclerView, userProvider, bimMemberProvider, onMessageItemClickListener, onMessageItemLongClickListener, onRefreshListener,onDownloadListener);
     }
 
     @Override

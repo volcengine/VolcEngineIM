@@ -25,6 +25,7 @@ import com.bytedance.im.core.api.model.BIMUnReadInfo;
 import com.bytedance.im.core.internal.utils.IMLog;
 import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 import com.bytedance.im.ui.api.interfaces.BIMUserExistChecker;
+import com.bytedance.im.ui.member.BIMGroupMemberProvider;
 import com.bytedance.im.ui.message.BIMMessageListFragment;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyMessageUI;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMP2PTypingElement;
@@ -56,6 +57,8 @@ public class BIMUIClient {
     private static final String TAG = "BIMUIClient";
     private ModuleStarter moduleStarter;
     private BIMUserExistChecker userExistChecker;
+
+    private BIMGroupMemberProvider bimGroupMemberProvider = new BIMGroupMemberProvider();
 
     /**
      * @hidden
@@ -114,6 +117,7 @@ public class BIMUIClient {
             registerMessageElement("2", BIMGroupNotifyElement.class);
             registerMessageElement("1000", BIMP2PTypingElement.class);
             getUserProvider().init(application);
+            getBimGroupMemberProvider().init();
         }
         IMLog.i(TAG, "initUISDK end initVersion: " + getVersion() + " imSDK initVersion: " + BIMClient.getInstance().getVersion());
     }
@@ -511,6 +515,10 @@ public class BIMUIClient {
 
     public void setUserExistChecker(BIMUserExistChecker userExistChecker) {
         this.userExistChecker = userExistChecker;
+    }
+
+    public BIMGroupMemberProvider getBimGroupMemberProvider() {
+        return bimGroupMemberProvider;
     }
 }
 

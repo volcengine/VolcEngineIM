@@ -7,19 +7,19 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMGroupInfo;
-import com.bytedance.im.ui.BIMUIClient;
+import com.bytedance.im.core.api.model.BIMMember;
 
-public class VEEditGroupNoticeActivity extends VEEditActivity {
+public class VEEditGroupDescActivity extends VEEditActivity {
     private ProgressDialog waitDialog;
 
     public static void start(Context context, String conversationId) {
-        Intent intent = new Intent(context, VEEditGroupNoticeActivity.class);
+        Intent intent = new Intent(context, VEEditGroupDescActivity.class);
         intent.putExtra(CONVERSATION_ID, conversationId);
         context.startActivity(intent);
     }
@@ -36,47 +36,50 @@ public class VEEditGroupNoticeActivity extends VEEditActivity {
 
     @Override
     protected String initTitle(boolean isOwner) {
-        if (isOwner) {
-            return "编辑群公告";
-        } else {
-            return "群公告";
-        }
+        return "群描述";
     }
 
     @Override
     protected String onUpdateEditText(BIMConversation conversation) {
-        return conversation.getNotice();
+        return conversation.getDescription();
+    }
+
+    @Override
+    protected boolean needTrim() {
+        return false;
     }
 
     @Override
     protected void onConfirmClick(String text) {
-        setNotice(text);
+        setDesc(text);
+    }
+
+    @Override
+    protected boolean enableEdit(BIMMember self, BIMConversation conversation) {
+        return self != null && (self.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN || self.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER);
     }
 
     /**
-     * 修改群公告
+     * 修改群描述
      */
-    private void setNotice(String text) {
-        waitDialog = ProgressDialog.show(VEEditGroupNoticeActivity.this, "群公告修改中, 稍等...", "");
+    private void setDesc(String desc) {
+        waitDialog = ProgressDialog.show(VEEditGroupDescActivity.this, "群描述修改中, 稍等...", "");
+
         BIMGroupInfo info = new BIMGroupInfo.BIMGroupInfoBuilder()
-                .notice(text)
+                .description(desc)
                 .build();
         BIMClient.getInstance().setGroupInfo(conversationId, info, new BIMSimpleCallback() {
             @Override
             public void onSuccess() {
                 waitDialog.dismiss();
-                Toast.makeText(VEEditGroupNoticeActivity.this, "群公告修改成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VEEditGroupDescActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
                 finish();
             }
 
             @Override
             public void onFailed(BIMErrorCode code) {
                 waitDialog.dismiss();
-                String failReason = "名称修改失败";
-                if (code == BIMErrorCode.BIM_SERVER_SET_GROUP_INFO_REJECT) {
-                    failReason = "文本中可能包含敏感词,请修改后重试";
-                }
-                Toast.makeText(VEEditGroupNoticeActivity.this, failReason, Toast.LENGTH_SHORT).show();
+                Toast.makeText(VEEditGroupDescActivity.this, "操作失败: " + code.getValue(), Toast.LENGTH_SHORT).show();
                 finish();
             }
         });

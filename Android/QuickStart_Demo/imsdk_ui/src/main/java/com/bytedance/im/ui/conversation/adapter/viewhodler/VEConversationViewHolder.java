@@ -17,12 +17,14 @@ import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.api.enums.BIMPushStatus;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.core.model.inner.msg.BIMCustomElement;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.conversation.adapter.VEViewHolder;
 import com.bytedance.im.ui.conversation.model.VEConvBaseWrapper;
+import com.bytedance.im.ui.member.BIMGroupMemberProvider;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
 import com.bytedance.im.core.service.manager.BIMMessageManager;
 import com.bytedance.im.ui.utils.BIMUINameUtils;
@@ -46,7 +48,7 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
     private ImageView conversationMute;
     private ImageView conversationTop;
     private View root;
-    private RecyclerView recyclerView;;
+    private RecyclerView recyclerView;
 
     public VEConversationViewHolder(@NonNull View itemView,RecyclerView recyclerView) {
         super(itemView);
@@ -88,7 +90,14 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
             } else {
                 name = "未命名群聊";
             }
-            userHeadImg.setImageResource(R.drawable.default_icon_group);
+            if (TextUtils.isEmpty(bimConversation.getPortraitURL())) {
+                userHeadImg.setImageResource(R.drawable.default_icon_group);
+            } else {
+                Glide.with(userHeadImg.getContext()).load(bimConversation.getPortraitURL())
+                        .placeholder(R.drawable.default_icon_group)
+                        .error(R.drawable.default_icon_group)
+                        .into(userHeadImg);
+            }
         }
         nickName.setText(name);
         int textColor = R.color.business_im_222;
@@ -156,8 +165,10 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
                 if (user == null) {
                     return;
                 }
+
+                BIMMember member = getBIMMemberAsyncRefresh(lastMessage.getSenderUID(), lastMessage.getConversationID());
                 if (lastMessage.isRecalled()) {
-                    lastMsg.setText(BIMUtils.generateRecallHint(lastMessage, user));
+                    lastMsg.setText(BIMUtils.generateRecallHint(lastMessage, user, member));
                 } else {
                     BIMBaseElement content = null;
                     if (lastMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_CUSTOM) { //自定义消息解析
@@ -169,7 +180,7 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
                     } else {
                         content = lastMessage.getElement();
                     }
-                    String prefix = BIMUINameUtils.getShowName(user) + ": ";
+                    String prefix = BIMUINameUtils.getShowNameInGroup(member, user) + ": ";
                     if (content instanceof BIMGroupNotifyElement) {
                         prefix = "";
                     }
@@ -211,5 +222,25 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
             });
         }
         return user;
+    }
+
+    private BIMMember getBIMMemberAsyncRefresh(long uid, String conversationId) {
+        BIMGroupMemberProvider groupMemberProvider = BIMUIClient.getInstance().getBimGroupMemberProvider();
+        BIMMember member = groupMemberProvider.getMember(conversationId, uid);
+
+        if (member == null) {
+            groupMemberProvider.getMemberAsync(conversationId, uid, new BIMResultCallback<BIMMember>() {
+                @Override
+                public void onSuccess(BIMMember member) {
+                    recyclerView.getAdapter().notifyItemChanged(getAdapterPosition());
+                }
+
+                @Override
+                public void onFailed(BIMErrorCode code) {
+
+                }
+            });
+        }
+        return member;
     }
 }

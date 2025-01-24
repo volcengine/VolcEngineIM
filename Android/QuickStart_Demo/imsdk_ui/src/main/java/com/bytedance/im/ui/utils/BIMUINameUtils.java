@@ -40,19 +40,26 @@ public class BIMUINameUtils {
     //群内名称  好友备注>群内备注>用户资料>兜底uid
     public static String getShowNameInGroup(BIMMember member, BIMUIUser user) {
         if (user == null) {
+            if (member != null && !TextUtils.isEmpty(member.getAlias())) {
+                return member.getAlias();
+            }
             return "用户" + member.getUserID();
+        } else {
+            String name = "用户" + user.getUid();         //用户ID
+            if (!TextUtils.isEmpty(user.getNickName())) { //用户资料名
+                name = user.getNickName();
+            }
+            if (!TextUtils.isEmpty(user.getMemberAlias())) {          //直播群内名称
+                name = user.getMemberAlias();
+            }
+            if (member != null && !TextUtils.isEmpty(member.getAlias())) {
+                name = member.getAlias();
+            }
+            if (!TextUtils.isEmpty(user.getAlias())) {  //好友备注名
+                name = user.getAlias();
+            }
+            return name;
         }
-        String name = "用户" + user.getUid();         //用户ID
-        if (!TextUtils.isEmpty(user.getNickName())) { //用户资料名
-            name = user.getNickName();
-        }
-        if (!TextUtils.isEmpty(user.getMemberAlias())) {          //群内名称
-            name = user.getMemberAlias();
-        }
-        if (!TextUtils.isEmpty(user.getAlias())) {  //好友备注名
-            name = user.getAlias();
-        }
-        return name;
     }
 
     //头像展示 群内备注>用户资料

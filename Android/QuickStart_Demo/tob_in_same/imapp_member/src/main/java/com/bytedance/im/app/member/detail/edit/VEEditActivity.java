@@ -38,7 +38,7 @@ public class VEEditActivity extends Activity {
         findViewById(R.id.back).setOnClickListener(v -> finish());
         confirm.setOnClickListener(v -> {
             String text = editText.getText().toString();
-            if (!TextUtils.isEmpty(text)) {
+            if (needTrim() && !TextUtils.isEmpty(text)) {
                 text = text.trim();
             }
             onConfirmClick(text);
@@ -48,10 +48,10 @@ public class VEEditActivity extends Activity {
             public void onSuccess(BIMConversation conversation) {
                 editText.setText(onUpdateEditText(conversation));
                 BIMMember mySelf = conversation.getCurrentMember();
-                boolean isSelfOwner = mySelf != null && mySelf.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER;
-                editText.setEnabled(isSelfOwner);
-                title.setText(initTitle(isSelfOwner));
-                if (isSelfOwner) {
+                boolean isEnableEdit = enableEdit(mySelf, conversation);
+                editText.setEnabled(isEnableEdit);
+                title.setText(initTitle(isEnableEdit));
+                if (isEnableEdit) {
                     confirm.setVisibility(View.VISIBLE);
                 } else {
                     confirm.setVisibility(View.GONE);
@@ -63,6 +63,14 @@ public class VEEditActivity extends Activity {
 
             }
         });
+    }
+
+    protected boolean needTrim() {
+        return true;
+    }
+
+    protected boolean enableEdit(BIMMember self, BIMConversation conversation){
+        return self != null && self.getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER;
     }
 
     protected String initTitle(boolean isOwner){

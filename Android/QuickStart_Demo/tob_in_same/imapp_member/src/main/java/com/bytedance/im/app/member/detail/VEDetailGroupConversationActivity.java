@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -26,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bytedance.im.app.member.BuildConfig;
 import com.bytedance.im.app.member.R;
+import com.bytedance.im.app.member.detail.edit.VEEditGroupDescActivity;
 import com.bytedance.im.app.member.group.VEDetailController;
 import com.bytedance.im.app.member.group.MemberListViewModel;
 import com.bytedance.im.app.member.group.adapter.MemberWrapper;
@@ -34,6 +34,7 @@ import com.bytedance.im.app.member.VEDebugConversationDetailActivity;
 import com.bytedance.im.app.member.detail.edit.VEEditGroupNameActivity;
 import com.bytedance.im.app.member.detail.edit.VEEditGroupNoticeActivity;
 import com.bytedance.im.app.member.detail.ext.VEDebugExtActivity;
+import com.bytedance.im.app.profile.VEProfileEditCommonActivity;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMClearConversationMessageType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -42,8 +43,8 @@ import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSendCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
-import com.bytedance.im.core.api.model.BIMClearConversationOption;
 import com.bytedance.im.core.api.model.BIMConversation;
+import com.bytedance.im.core.api.model.BIMGroupInfo;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.ui.BIMUIClient;
@@ -63,6 +64,8 @@ public class VEDetailGroupConversationActivity extends Activity {
     private static final int REQUEST_CODE_ADD_USER = 1000;
     private static final int REQUEST_CODE_REMOVE_USER = 1001;
     private static final int REQUEST_CODE_SET_ADMIN = 1002;
+    private static final int REQUEST_CODE_SET_AVATAR = 1003;
+    private static final int REQUEST_CODE_SET_ALIAS = 1004;
 
     private String conversationId;
     private RecyclerView recyclerView;
@@ -88,6 +91,12 @@ public class VEDetailGroupConversationActivity extends Activity {
     private ArrayList<Long> adminIdList;
     private View queryConv;
     private View btnMore;
+
+    private View flEditAlias;
+
+    private View flChangeAvatar;
+    private View flChangeDesc;
+    private TextView tvDesc;
     public static void startForResult(Activity activity, String cid, int requestCode) {
         Intent intent = new Intent(activity, VEDetailGroupConversationActivity.class);
         intent.putExtra(ModuleStarter.MODULE_KEY_CID, cid);
@@ -116,6 +125,11 @@ public class VEDetailGroupConversationActivity extends Activity {
         flSearch = findViewById(R.id.fl_search_msg);
         customLayout = findViewById(R.id.fl_custom);
         clearConvView = findViewById(R.id.clear_conv);
+        flChangeAvatar = findViewById(R.id.cl_set_avatar);
+        flChangeDesc = findViewById(R.id.cl_set_desc);
+        flEditAlias = findViewById(R.id.cl_edit_alias);
+        clearConvView = findViewById(R.id.clear_conv);
+        tvDesc = findViewById(R.id.tv_group_desc_show);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         adapter = new VEMemberHozionAdapter(this, new VEMemberHozionAdapter.OnClickListener() {
@@ -157,6 +171,25 @@ public class VEDetailGroupConversationActivity extends Activity {
         customLayout.setOnClickListener(v -> VEDebugExtActivity.start(VEDetailGroupConversationActivity.this, conversationId));
         BIMUIClient.getInstance().addConversationListener(conversationListener);
 
+        flEditAlias.setOnClickListener(v -> {
+            BIMUIClient.getInstance().getBimGroupMemberProvider().getMemberAsync(conversationId, BIMClient.getInstance().getCurrentUserID(), new BIMResultCallback<BIMMember>() {
+                @Override
+                public void onSuccess(BIMMember member) {
+                    VEProfileEditCommonActivity.startForResult(VEDetailGroupConversationActivity.this, "修改昵称", member.getAlias(), 10, REQUEST_CODE_SET_ALIAS);
+                }
+
+                @Override
+                public void onFailed(BIMErrorCode code) {
+
+                }
+            });
+        });
+        flChangeAvatar.setOnClickListener(v -> {
+            VEAvatarSelectActivity.startForResult(VEDetailGroupConversationActivity.this, REQUEST_CODE_SET_AVATAR);
+        });
+        flChangeDesc.setOnClickListener(v -> {
+            VEEditGroupDescActivity.start(VEDetailGroupConversationActivity.this, conversationId);
+        });
         queryConv = findViewById(R.id.query_conv);
         queryConv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -264,6 +297,7 @@ public class VEDetailGroupConversationActivity extends Activity {
                 String notice = VEDetailController.getNotice(conversation);
                 tvGroupName.setText(name);
                 tvNotice.setText(notice);
+                tvDesc.setText(VEDetailController.getDescription(conversation));
             }
 
             @Override
@@ -297,10 +331,20 @@ public class VEDetailGroupConversationActivity extends Activity {
                 if (curMember != null) {
                     if (curMember.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
                         optionDissolveGroup.setVisibility(View.VISIBLE);
+                        flChangeAvatar.setVisibility(View.VISIBLE);
+                        flChangeDesc.setVisibility(View.VISIBLE);
                         optionManager.setVisibility(View.VISIBLE);
                     } else {
                         optionDissolveGroup.setVisibility(View.GONE);
                         optionManager.setVisibility(View.GONE);
+
+                        if (curMember.getMember().getRole() == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN) {
+                            flChangeAvatar.setVisibility(View.VISIBLE);
+                            flChangeDesc.setVisibility(View.VISIBLE);
+                        } else {
+                            flChangeAvatar.setVisibility(View.GONE);
+                            flChangeDesc.setVisibility(View.GONE);
+                        }
                     }
                 }
             }
@@ -462,6 +506,12 @@ public class VEDetailGroupConversationActivity extends Activity {
             } else if (requestCode == REQUEST_CODE_SET_ADMIN) {
                 ArrayList<Long> uidList = (ArrayList<Long>) data.getSerializableExtra(ModuleStarter.MODULE_KEY_UID_LIST);
                 updateAdminList(uidList);
+            } else if (requestCode == REQUEST_CODE_SET_AVATAR) {
+                String url = data.getStringExtra(VEAvatarSelectActivity.RESULT_PORTRAIT_URL);
+                updateGroupAvatar(url);
+            } else if (requestCode == REQUEST_CODE_SET_ALIAS) {
+                String alias = data.getStringExtra(VEProfileEditCommonActivity.RESULT_TEXT);
+                updateSelfAlias(alias);
             }
         }
     }
@@ -577,6 +627,58 @@ public class VEDetailGroupConversationActivity extends Activity {
             @Override
             public void onFailed(BIMErrorCode code) {
 
+            }
+        });
+    }
+
+    protected void updateSelfAlias(String alias) {
+        if (!TextUtils.isEmpty(alias) && alias.trim().length() == 0) {
+            Toast.makeText(VEDetailGroupConversationActivity.this, "昵称不可为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        BIMClient.getInstance().setUserSelfGroupMemberAlias(conversationId, alias, new BIMSimpleCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(VEDetailGroupConversationActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+                Toast.makeText(VEDetailGroupConversationActivity.this, "操作失败: " + code.getValue(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    protected void updateGroupAvatar(String url) {
+        BIMGroupInfo info = new BIMGroupInfo.BIMGroupInfoBuilder()
+                .avatarUrl(url)
+                .build();
+        BIMClient.getInstance().setGroupInfo(conversationId, info, new BIMSimpleCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(VEDetailGroupConversationActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
+
+                long uid = BIMClient.getInstance().getCurrentUserID();
+                BIMMember member = bimConversation.getCurrentMember();
+                BIMUIClient.getInstance().getUserProvider().getUserInfoAsync(uid, new BIMResultCallback<BIMUIUser>() {
+                    @Override
+                    public void onSuccess(BIMUIUser bimuiUser) {
+                        String name = BIMUINameUtils.getShowNameInGroup(member, bimuiUser);
+                        String text = "" + name + "修改了群头像";
+                        BIMGroupNotifyElement content = new BIMGroupNotifyElement();
+                        content.setText(text);
+                        BIMMessage notice = BIMUIClient.getInstance().createCustomMessage(content);
+                        BIMUIClient.getInstance().sendMessage(notice, conversationId, null);
+                    }
+                    @Override
+                    public void onFailed(BIMErrorCode code) {
+                    }
+                });
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+                Toast.makeText(VEDetailGroupConversationActivity.this, "操作失败: " + code.getValue(), Toast.LENGTH_SHORT).show();
             }
         });
     }

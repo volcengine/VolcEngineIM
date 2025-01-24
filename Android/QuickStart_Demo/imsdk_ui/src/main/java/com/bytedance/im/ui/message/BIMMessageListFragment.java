@@ -57,6 +57,7 @@ import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.emoji.EmojiInfo;
 import com.bytedance.im.ui.log.BIMLog;
+import com.bytedance.im.ui.member.BIMGroupMemberProvider;
 import com.bytedance.im.ui.message.adapter.BIMMessageAdapter;
 import com.bytedance.im.ui.message.adapter.ui.custom.BIMShareElement;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.VEInPutView;
@@ -112,6 +113,8 @@ public class BIMMessageListFragment extends Fragment {
     private String startMsgId;
     private BIMUserProvider userProvider;
     private boolean isShowKeyBoard = false;
+
+    private BIMGroupMemberProvider bimMemberProvider = null;
     public interface OnPortraitClickListener {
         void onClick(long uid);
     }
@@ -156,7 +159,10 @@ public class BIMMessageListFragment extends Fragment {
             }
         });
         userProvider = BIMUIClient.getInstance().getUserProvider(); //单聊
-        adapter = new BIMMessageAdapter(recyclerView, userProvider, new BIMMessageAdapter.OnMessageItemClickListener() {
+
+        bimMemberProvider = BIMUIClient.getInstance().getBimGroupMemberProvider();
+        bimMemberProvider.initGroupMembers(conversationId);
+        adapter = new BIMMessageAdapter(recyclerView, userProvider, bimMemberProvider, new BIMMessageAdapter.OnMessageItemClickListener() {
             @Override
             public void onPortraitClick(BIMMessage message) {
                 if (onPortraitClickListener != null) {
