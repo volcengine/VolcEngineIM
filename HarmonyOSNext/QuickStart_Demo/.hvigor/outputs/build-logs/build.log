@@ -13578,3 +13578,736 @@ Warning: ScaleImage failed, error message: INVALID_PARAMETERS, file path = /User
 [2025-01-24T16:19:48.860] [DEBUG] debug-file - worker[6] exits with exit code 1.
 [2025-01-24T16:19:48.860] [DEBUG] debug-file - worker[7] exits with exit code 1.
 [2025-01-24T16:19:48.860] [DEBUG] debug-file - worker[8] exits with exit code 1.
+[2025-02-05T16:50:28.395] [DEBUG] debug-file - session manager: set active socket. socketId=MFwTdVeEnxKUyNcVAAAl
+[2025-02-05T16:50:28.399] [DEBUG] debug-file - watch worker: worker id should be larger than 0. Nothing will be sent to any worker thread.
+[2025-02-05T16:50:28.414] [DEBUG] debug-file - Hvigor init with startParameters:{
+  hvigorfileTypeCheck: false,
+  parallelExecution: true,
+  incrementalExecution: true,
+  printStackTrace: false,
+  daemon: true,
+  analyze: 0,
+  logLevel: Level { level: 20000, levelStr: 'INFO', colour: 'green' }
+}
+[2025-02-05T16:50:28.493] [DEBUG] debug-file - Cache service initialization finished in 79 ms 
+[2025-02-05T16:50:28.503] [DEBUG] debug-file - hvigorfile, resolving /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/hvigorfile.ts
+[2025-02-05T16:50:28.511] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2025-02-05T16:50:28.511] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2025-02-05T16:50:28.527] [DEBUG] debug-file - Start initialize project's product build option map with build mode debug.
+[2025-02-05T16:50:28.527] [DEBUG] debug-file - Picking option from product 'default' with build mode 'debug'.
+[2025-02-05T16:50:28.527] [DEBUG] debug-file - Product 'default' build option: {}
+[2025-02-05T16:50:28.528] [DEBUG] debug-file - End initialize project's product build option map with build mode 'debug'.
+[2025-02-05T16:50:28.528] [DEBUG] debug-file - Product 'default' using build option: {
+  "debuggable": true,
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  }
+} in this build.
+[2025-02-05T16:50:28.539] [DEBUG] debug-file - No signingConfig found, initRemoteHspCache failed.
+[2025-02-05T16:50:28.544] [DEBUG] debug-file - Start recording SDK configuration permission data.
+[2025-02-05T16:50:28.556] [DEBUG] debug-file - Sdk init in 17 ms 
+[2025-02-05T16:50:28.571] [DEBUG] debug-file - Project task initialization takes 15 ms 
+[2025-02-05T16:50:28.571] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2025-02-05T16:50:28.571] [DEBUG] debug-file - hvigorfile, no custom plugins were found in /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/hvigorfile.ts
+[2025-02-05T16:50:28.571] [DEBUG] debug-file - hvigorfile, resolve finished /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/hvigorfile.ts
+[2025-02-05T16:50:28.574] [DEBUG] debug-file - hvigorfile, resolving /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/entry/hvigorfile.ts
+[2025-02-05T16:50:28.576] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2025-02-05T16:50:28.576] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2025-02-05T16:50:28.581] [DEBUG] debug-file - Start initialize module-target build option map, moduleName=entry, buildMode=debug
+[2025-02-05T16:50:28.581] [DEBUG] debug-file - Target 'default' config: {}
+[2025-02-05T16:50:28.581] [DEBUG] debug-file - Target 'ohosTest' config: {}
+[2025-02-05T16:50:28.581] [DEBUG] debug-file - Module 'entry' target 'default' build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "arkOptions": {
+    "runtimeOnly": {
+      "sources": [],
+      "packages": [
+        "@imcloud/imapp_tob",
+        "@imcloud/imapp_member",
+        "@imcloud/im_sdk_ui"
+      ]
+    }
+  },
+  "name": "debug"
+}
+[2025-02-05T16:50:28.581] [DEBUG] debug-file - Module 'entry' target 'ohosTest' build option: {
+  "debuggable": true,
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "arkOptions": {
+    "runtimeOnly": {
+      "sources": [],
+      "packages": [
+        "@imcloud/imapp_tob",
+        "@imcloud/imapp_member",
+        "@imcloud/im_sdk_ui"
+      ]
+    }
+  },
+  "name": "default"
+}
+[2025-02-05T16:50:28.582] [DEBUG] debug-file - End initialize module-target build option map, moduleName=entry
+[2025-02-05T16:50:28.582] [DEBUG] debug-file - Module 'entry' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "arkOptions": {
+    "runtimeOnly": {
+      "sources": [],
+      "packages": [
+        "@imcloud/imapp_tob",
+        "@imcloud/imapp_member",
+        "@imcloud/im_sdk_ui"
+      ]
+    }
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.584] [DEBUG] debug-file - Module entry task initialization takes 1 ms 
+[2025-02-05T16:50:28.584] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2025-02-05T16:50:28.584] [DEBUG] debug-file - hvigorfile, no custom plugins were found in /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/entry/hvigorfile.ts
+[2025-02-05T16:50:28.584] [DEBUG] debug-file - hvigorfile, resolve finished /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/entry/hvigorfile.ts
+[2025-02-05T16:50:28.589] [DEBUG] debug-file - hvigorfile, resolving /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/imapp_router/hvigorfile.ts
+[2025-02-05T16:50:28.590] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2025-02-05T16:50:28.591] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2025-02-05T16:50:28.596] [DEBUG] debug-file - Start initialize module-target build option map, moduleName=imapp_router, buildMode=debug
+[2025-02-05T16:50:28.596] [DEBUG] debug-file - Target 'default' config: {}
+[2025-02-05T16:50:28.596] [DEBUG] debug-file - Target 'ohosTest' config: {}
+[2025-02-05T16:50:28.596] [DEBUG] debug-file - Module 'imapp_router' target 'default' build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+}
+[2025-02-05T16:50:28.596] [DEBUG] debug-file - Module 'imapp_router' target 'ohosTest' build option: {
+  "debuggable": true,
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "default"
+}
+[2025-02-05T16:50:28.596] [DEBUG] debug-file - End initialize module-target build option map, moduleName=imapp_router
+[2025-02-05T16:50:28.596] [DEBUG] debug-file - Module 'imapp_router' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.597] [DEBUG] debug-file - Module imapp_router task initialization takes 1 ms 
+[2025-02-05T16:50:28.597] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2025-02-05T16:50:28.597] [DEBUG] debug-file - hvigorfile, no custom plugins were found in /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/imapp_router/hvigorfile.ts
+[2025-02-05T16:50:28.597] [DEBUG] debug-file - hvigorfile, resolve finished /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/imapp_router/hvigorfile.ts
+[2025-02-05T16:50:28.603] [DEBUG] debug-file - hvigorfile, resolving /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/im_sdk_ui/hvigorfile.ts
+[2025-02-05T16:50:28.604] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2025-02-05T16:50:28.604] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2025-02-05T16:50:28.607] [DEBUG] debug-file - Start initialize module-target build option map, moduleName=im_sdk_ui, buildMode=debug
+[2025-02-05T16:50:28.607] [DEBUG] debug-file - Target 'default' config: {}
+[2025-02-05T16:50:28.607] [DEBUG] debug-file - Target 'ohosTest' config: {}
+[2025-02-05T16:50:28.607] [DEBUG] debug-file - Module 'im_sdk_ui' target 'default' build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+}
+[2025-02-05T16:50:28.607] [DEBUG] debug-file - Module 'im_sdk_ui' target 'ohosTest' build option: {
+  "debuggable": true,
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "default"
+}
+[2025-02-05T16:50:28.607] [DEBUG] debug-file - End initialize module-target build option map, moduleName=im_sdk_ui
+[2025-02-05T16:50:28.607] [DEBUG] debug-file - Module 'im_sdk_ui' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.608] [DEBUG] debug-file - Module im_sdk_ui task initialization takes 1 ms 
+[2025-02-05T16:50:28.608] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2025-02-05T16:50:28.608] [DEBUG] debug-file - hvigorfile, no custom plugins were found in /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/im_sdk_ui/hvigorfile.ts
+[2025-02-05T16:50:28.608] [DEBUG] debug-file - hvigorfile, resolve finished /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/im_sdk_ui/hvigorfile.ts
+[2025-02-05T16:50:28.612] [DEBUG] debug-file - hvigorfile, resolving /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob_in_same/imapp_member/hvigorfile.ts
+[2025-02-05T16:50:28.613] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2025-02-05T16:50:28.613] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2025-02-05T16:50:28.619] [DEBUG] debug-file - Start initialize module-target build option map, moduleName=imapp_member, buildMode=debug
+[2025-02-05T16:50:28.619] [DEBUG] debug-file - Target 'default' config: {}
+[2025-02-05T16:50:28.619] [DEBUG] debug-file - Target 'ohosTest' config: {}
+[2025-02-05T16:50:28.619] [DEBUG] debug-file - Module 'imapp_member' target 'default' build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+}
+[2025-02-05T16:50:28.619] [DEBUG] debug-file - Module 'imapp_member' target 'ohosTest' build option: {
+  "debuggable": true,
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "default"
+}
+[2025-02-05T16:50:28.619] [DEBUG] debug-file - End initialize module-target build option map, moduleName=imapp_member
+[2025-02-05T16:50:28.619] [DEBUG] debug-file - Module 'imapp_member' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.621] [DEBUG] debug-file - Module imapp_member task initialization takes 1 ms 
+[2025-02-05T16:50:28.621] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2025-02-05T16:50:28.621] [DEBUG] debug-file - hvigorfile, no custom plugins were found in /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob_in_same/imapp_member/hvigorfile.ts
+[2025-02-05T16:50:28.621] [DEBUG] debug-file - hvigorfile, resolve finished /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob_in_same/imapp_member/hvigorfile.ts
+[2025-02-05T16:50:28.624] [DEBUG] debug-file - hvigorfile, resolving /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_live/hvigorfile.ts
+[2025-02-05T16:50:28.625] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2025-02-05T16:50:28.625] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2025-02-05T16:50:28.628] [DEBUG] debug-file - Start initialize module-target build option map, moduleName=imapp_live, buildMode=debug
+[2025-02-05T16:50:28.628] [DEBUG] debug-file - Target 'default' config: {}
+[2025-02-05T16:50:28.628] [DEBUG] debug-file - Target 'ohosTest' config: {}
+[2025-02-05T16:50:28.628] [DEBUG] debug-file - Module 'imapp_live' target 'default' build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+}
+[2025-02-05T16:50:28.628] [DEBUG] debug-file - Module 'imapp_live' target 'ohosTest' build option: {
+  "debuggable": true,
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "default"
+}
+[2025-02-05T16:50:28.629] [DEBUG] debug-file - End initialize module-target build option map, moduleName=imapp_live
+[2025-02-05T16:50:28.629] [DEBUG] debug-file - Module 'imapp_live' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.631] [DEBUG] debug-file - Module imapp_live task initialization takes 1 ms 
+[2025-02-05T16:50:28.631] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2025-02-05T16:50:28.631] [DEBUG] debug-file - hvigorfile, no custom plugins were found in /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_live/hvigorfile.ts
+[2025-02-05T16:50:28.631] [DEBUG] debug-file - hvigorfile, resolve finished /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_live/hvigorfile.ts
+[2025-02-05T16:50:28.637] [DEBUG] debug-file - hvigorfile, resolving /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_contact/hvigorfile.ts
+[2025-02-05T16:50:28.639] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2025-02-05T16:50:28.639] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2025-02-05T16:50:28.642] [DEBUG] debug-file - Start initialize module-target build option map, moduleName=imapp_contact, buildMode=debug
+[2025-02-05T16:50:28.642] [DEBUG] debug-file - Target 'default' config: {}
+[2025-02-05T16:50:28.642] [DEBUG] debug-file - Target 'ohosTest' config: {}
+[2025-02-05T16:50:28.642] [DEBUG] debug-file - Module 'imapp_contact' target 'default' build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+}
+[2025-02-05T16:50:28.642] [DEBUG] debug-file - Module 'imapp_contact' target 'ohosTest' build option: {
+  "debuggable": true,
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "default"
+}
+[2025-02-05T16:50:28.642] [DEBUG] debug-file - End initialize module-target build option map, moduleName=imapp_contact
+[2025-02-05T16:50:28.642] [DEBUG] debug-file - Module 'imapp_contact' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.643] [DEBUG] debug-file - Module imapp_contact task initialization takes 1 ms 
+[2025-02-05T16:50:28.643] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2025-02-05T16:50:28.643] [DEBUG] debug-file - hvigorfile, no custom plugins were found in /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_contact/hvigorfile.ts
+[2025-02-05T16:50:28.643] [DEBUG] debug-file - hvigorfile, resolve finished /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_contact/hvigorfile.ts
+[2025-02-05T16:50:28.646] [DEBUG] debug-file - hvigorfile, resolving /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_tob/hvigorfile.ts
+[2025-02-05T16:50:28.648] [DEBUG] debug-file - hvigorfile, require result:  { default: { plugins: [] } }
+[2025-02-05T16:50:28.648] [DEBUG] debug-file - hvigorfile, binding system plugins null
+[2025-02-05T16:50:28.653] [DEBUG] debug-file - Start initialize module-target build option map, moduleName=imapp_tob, buildMode=debug
+[2025-02-05T16:50:28.653] [DEBUG] debug-file - Target 'default' config: {}
+[2025-02-05T16:50:28.653] [DEBUG] debug-file - Target 'ohosTest' config: {}
+[2025-02-05T16:50:28.653] [DEBUG] debug-file - Module 'imapp_tob' target 'default' build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+}
+[2025-02-05T16:50:28.653] [DEBUG] debug-file - Module 'imapp_tob' target 'ohosTest' build option: {
+  "debuggable": true,
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "default"
+}
+[2025-02-05T16:50:28.653] [DEBUG] debug-file - End initialize module-target build option map, moduleName=imapp_tob
+[2025-02-05T16:50:28.653] [DEBUG] debug-file - Module 'imapp_tob' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.654] [DEBUG] debug-file - Module imapp_tob task initialization takes 1 ms 
+[2025-02-05T16:50:28.654] [DEBUG] debug-file - hvigorfile, binding custom plugins []
+[2025-02-05T16:50:28.654] [DEBUG] debug-file - hvigorfile, no custom plugins were found in /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_tob/hvigorfile.ts
+[2025-02-05T16:50:28.654] [DEBUG] debug-file - hvigorfile, resolve finished /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_tob/hvigorfile.ts
+[2025-02-05T16:50:28.694] [DEBUG] debug-file - hvigorfile, resolve hvigorfile dependencies in 40 ms 
+[2025-02-05T16:50:28.695] [DEBUG] debug-file - project has submodules:entry,imapp_router,im_sdk_ui,imapp_member,imapp_live,imapp_contact,imapp_tob
+[2025-02-05T16:50:28.695] [DEBUG] debug-file - module:imapp_router no need to execute packageHap
+[2025-02-05T16:50:28.695] [DEBUG] debug-file - module:im_sdk_ui no need to execute packageHap
+[2025-02-05T16:50:28.695] [DEBUG] debug-file - module:imapp_member no need to execute packageHap
+[2025-02-05T16:50:28.695] [DEBUG] debug-file - module:imapp_live no need to execute packageHap
+[2025-02-05T16:50:28.695] [DEBUG] debug-file - module:imapp_contact no need to execute packageHap
+[2025-02-05T16:50:28.695] [DEBUG] debug-file - module:imapp_tob no need to execute packageHap
+[2025-02-05T16:50:28.697] [DEBUG] debug-file - start to load updatedOhPackageInfo to the disk
+[2025-02-05T16:50:28.708] [DEBUG] debug-file - load to the disk finished
+[2025-02-05T16:50:28.710] [DEBUG] debug-file - Module QuickStart_Demo Collected Dependency: 
+[2025-02-05T16:50:28.710] [DEBUG] debug-file - Module QuickStart_Demo's total dependency: 0
+[2025-02-05T16:50:28.717] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.718] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.719] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.719] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.720] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.725] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.725] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.726] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.730] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.730] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.730] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.731] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.731] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.731] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.732] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.732] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.732] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.733] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.733] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.733] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.734] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.734] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.734] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.735] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.735] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.735] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.736] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.736] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.736] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.737] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.737] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.737] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.737] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.738] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.738] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.738] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.739] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.739] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.739] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.740] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.740] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.740] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.741] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.742] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.742] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.742] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.743] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.743] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.744] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.744] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.744] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.747] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.747] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.747] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.748] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.748] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.748] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.748] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.749] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.749] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.749] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.750] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.750] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.750] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.750] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.751] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.751] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.751] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.752] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.752] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.752] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.752] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.753] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.753] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.753] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.753] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.754] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.754] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.754] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.755] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.756] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.756] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.757] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.757] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.757] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.758] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.758] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.758] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.759] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.759] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.759] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.759] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.760] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.760] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.760] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.761] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.761] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.761] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.761] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.762] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.762] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.762] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.763] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.763] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.763] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.763] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.764] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.764] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.764] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.764] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.765] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.765] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.765] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.766] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.767] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.767] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.767] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.768] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.768] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.768] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.768] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.769] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.769] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.769] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.769] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.770] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.770] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.770] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.770] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.771] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.771] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.771] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.771] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.772] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.772] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.772] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.772] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.772] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.773] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.773] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.773] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.773] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.774] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.774] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.774] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.774] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.775] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.775] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.776] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.776] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.776] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.777] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.777] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.777] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.777] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.778] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.778] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.778] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.778] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.779] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.781] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.782] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.782] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.782] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.783] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.783] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.783] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.784] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.784] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.784] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.785] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.785] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.785] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.785] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.786] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.786] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.786] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.786] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.787] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.787] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.787] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.788] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.788] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.788] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.788] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.789] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.789] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.789] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.789] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.789] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.790] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.790] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.790] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.791] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.791] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.792] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.792] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.792] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.792] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.793] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.793] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.793] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.793] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.794] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.794] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.794] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.794] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.795] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.795] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.795] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.796] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.796] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.796] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.796] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.797] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.797] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.798] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.798] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.799] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.799] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.799] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.799] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.800] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.800] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.800] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.800] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.801] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.801] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.801] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.802] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.802] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.802] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.802] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.803] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.803] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.803] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.804] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.804] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.804] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.804] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.805] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.805] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.805] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.805] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.806] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.806] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.806] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.806] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.807] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.807] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.807] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.808] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.808] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.808] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.808] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.809] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.809] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.809] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.809] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.809] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.810] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.810] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.811] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.811] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.811] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.811] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.812] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.812] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.812] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.812] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.813] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.813] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.813] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.813] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.814] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.814] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.814] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.815] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.815] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.815] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.815] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.816] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.816] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.817] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.817] [WARN] debug-file - The current module 'entry' has dependency which is not installed at its oh-package.json5.
+[2025-02-05T16:50:28.818] [DEBUG] debug-file - Module entry Collected Dependency: /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_tob,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob_in_same/imapp_member,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/im_sdk_ui,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/imapp_router,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@imcloud+imsdk@1.0.0-alpha.41/oh_modules/@imcloud/imsdk,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_live,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_contact,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/long@5.2.1/oh_modules/long,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/json-bigint@1.0.0/oh_modules/json-bigint,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_env@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_env,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_log@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_log,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_ttnet@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_ttnet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_uploader@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_uploader,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_ws@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_ws,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@imcloud+imsdk_common@1.0.0-alpha.41/oh_modules/@imcloud/imsdk_common,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/protobufjs@6.11.3/oh_modules/protobufjs,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/bignumber.js@9.1.0/oh_modules/bignumber.js,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@pie+log4a@1.5.13/oh_modules/@pie/log4a,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@volcengine+apmplus_crash_lite@2.0.8/oh_modules/@volcengine/apmplus_crash_lite,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@volcengine+applog@1.1.0-beta2-fix-onlinle-without-bytehar/oh_modules/@volcengine/applog,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/pako@2.1.0/oh_modules/pako,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+ttnet@0.0.11/oh_modules/@bytedance/ttnet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+bduploader@0.0.1-alpha.3-tob/oh_modules/@bytedance/bduploader,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+wschannel@0.0.1/oh_modules/@bytedance/wschannel,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+aspromise@1.1.2/oh_modules/@protobufjs/aspromise,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+base64@1.1.2/oh_modules/@protobufjs/base64,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+codegen@2.0.4/oh_modules/@protobufjs/codegen,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+eventemitter@1.1.0/oh_modules/@protobufjs/eventemitter,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+fetch@1.1.0/oh_modules/@protobufjs/fetch,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+float@1.0.2/oh_modules/@protobufjs/float,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+inquire@1.1.0/oh_modules/@protobufjs/inquire,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+path@1.1.2/oh_modules/@protobufjs/path,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+pool@1.1.0/oh_modules/@protobufjs/pool,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+utf8@1.1.0/oh_modules/@protobufjs/utf8,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@types+long@4.0.2/oh_modules/@types/long,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@types+node@18.15.11/oh_modules/@types/node,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@volcengine+applog@1.1.0-beta2-fix-onlinle-without-bytehar/oh_modules/@volcengine/applog/src/main/ets/types/libapplogh,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+cronet@0.0.11/oh_modules/@bytedance/cronet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@ttnet+boringssl@0.0.1/oh_modules/@ttnet/boringssl,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@vcloud+vcbasekit@0.4.1/oh_modules/@vcloud/vcbasekit,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+bduploader@0.0.1-alpha.3-tob/oh_modules/@bytedance/bduploader/src/main/cpp,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+cronet@0.0.11/oh_modules/@bytedance/cronet/src/main/cpp/types/libcronet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@vcloud+vcbasekit@0.4.1/oh_modules/@vcloud/vcbasekit/src/main/cpp
+[2025-02-05T16:50:28.818] [DEBUG] debug-file - Module entry's total dependency: 43
+[2025-02-05T16:50:28.821] [DEBUG] debug-file - Module imapp_router Collected Dependency: 
+[2025-02-05T16:50:28.821] [DEBUG] debug-file - Module imapp_router's total dependency: 0
+[2025-02-05T16:50:28.823] [DEBUG] debug-file - Module im_sdk_ui Collected Dependency: /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@imcloud+imsdk@1.0.0-alpha.41/oh_modules/@imcloud/imsdk,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/json-bigint@1.0.0/oh_modules/json-bigint,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/imapp_router,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_env@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_env,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_log@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_log,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_ttnet@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_ttnet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_uploader@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_uploader,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_ws@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_ws,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@imcloud+imsdk_common@1.0.0-alpha.41/oh_modules/@imcloud/imsdk_common,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/long@5.2.1/oh_modules/long,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/protobufjs@6.11.3/oh_modules/protobufjs,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/bignumber.js@9.1.0/oh_modules/bignumber.js,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@pie+log4a@1.5.13/oh_modules/@pie/log4a,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@volcengine+apmplus_crash_lite@2.0.8/oh_modules/@volcengine/apmplus_crash_lite,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@volcengine+applog@1.1.0-beta2-fix-onlinle-without-bytehar/oh_modules/@volcengine/applog,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/pako@2.1.0/oh_modules/pako,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+ttnet@0.0.11/oh_modules/@bytedance/ttnet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+bduploader@0.0.1-alpha.3-tob/oh_modules/@bytedance/bduploader,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+wschannel@0.0.1/oh_modules/@bytedance/wschannel,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+aspromise@1.1.2/oh_modules/@protobufjs/aspromise,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+base64@1.1.2/oh_modules/@protobufjs/base64,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+codegen@2.0.4/oh_modules/@protobufjs/codegen,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+eventemitter@1.1.0/oh_modules/@protobufjs/eventemitter,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+fetch@1.1.0/oh_modules/@protobufjs/fetch,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+float@1.0.2/oh_modules/@protobufjs/float,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+inquire@1.1.0/oh_modules/@protobufjs/inquire,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+path@1.1.2/oh_modules/@protobufjs/path,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+pool@1.1.0/oh_modules/@protobufjs/pool,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+utf8@1.1.0/oh_modules/@protobufjs/utf8,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@types+long@4.0.2/oh_modules/@types/long,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@types+node@18.15.11/oh_modules/@types/node,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@volcengine+applog@1.1.0-beta2-fix-onlinle-without-bytehar/oh_modules/@volcengine/applog/src/main/ets/types/libapplogh,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+cronet@0.0.11/oh_modules/@bytedance/cronet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@ttnet+boringssl@0.0.1/oh_modules/@ttnet/boringssl,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@vcloud+vcbasekit@0.4.1/oh_modules/@vcloud/vcbasekit,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+bduploader@0.0.1-alpha.3-tob/oh_modules/@bytedance/bduploader/src/main/cpp,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+cronet@0.0.11/oh_modules/@bytedance/cronet/src/main/cpp/types/libcronet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@vcloud+vcbasekit@0.4.1/oh_modules/@vcloud/vcbasekit/src/main/cpp
+[2025-02-05T16:50:28.823] [DEBUG] debug-file - Module im_sdk_ui's total dependency: 38
+[2025-02-05T16:50:28.824] [DEBUG] debug-file - Module imapp_member Collected Dependency: /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/imapp_router,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/im_sdk_ui,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@imcloud+imsdk@1.0.0-alpha.41/oh_modules/@imcloud/imsdk,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/long@5.2.1/oh_modules/long,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/json-bigint@1.0.0/oh_modules/json-bigint,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_env@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_env,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_log@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_log,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_ttnet@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_ttnet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_uploader@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_uploader,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_ws@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_ws,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@imcloud+imsdk_common@1.0.0-alpha.41/oh_modules/@imcloud/imsdk_common,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/protobufjs@6.11.3/oh_modules/protobufjs,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/bignumber.js@9.1.0/oh_modules/bignumber.js,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@pie+log4a@1.5.13/oh_modules/@pie/log4a,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@volcengine+apmplus_crash_lite@2.0.8/oh_modules/@volcengine/apmplus_crash_lite,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@volcengine+applog@1.1.0-beta2-fix-onlinle-without-bytehar/oh_modules/@volcengine/applog,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/pako@2.1.0/oh_modules/pako,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+ttnet@0.0.11/oh_modules/@bytedance/ttnet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+bduploader@0.0.1-alpha.3-tob/oh_modules/@bytedance/bduploader,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+wschannel@0.0.1/oh_modules/@bytedance/wschannel,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+aspromise@1.1.2/oh_modules/@protobufjs/aspromise,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+base64@1.1.2/oh_modules/@protobufjs/base64,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+codegen@2.0.4/oh_modules/@protobufjs/codegen,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+eventemitter@1.1.0/oh_modules/@protobufjs/eventemitter,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+fetch@1.1.0/oh_modules/@protobufjs/fetch,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+float@1.0.2/oh_modules/@protobufjs/float,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+inquire@1.1.0/oh_modules/@protobufjs/inquire,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+path@1.1.2/oh_modules/@protobufjs/path,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+pool@1.1.0/oh_modules/@protobufjs/pool,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+utf8@1.1.0/oh_modules/@protobufjs/utf8,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@types+long@4.0.2/oh_modules/@types/long,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@types+node@18.15.11/oh_modules/@types/node,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@volcengine+applog@1.1.0-beta2-fix-onlinle-without-bytehar/oh_modules/@volcengine/applog/src/main/ets/types/libapplogh,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+cronet@0.0.11/oh_modules/@bytedance/cronet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@ttnet+boringssl@0.0.1/oh_modules/@ttnet/boringssl,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@vcloud+vcbasekit@0.4.1/oh_modules/@vcloud/vcbasekit,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+bduploader@0.0.1-alpha.3-tob/oh_modules/@bytedance/bduploader/src/main/cpp,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+cronet@0.0.11/oh_modules/@bytedance/cronet/src/main/cpp/types/libcronet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@vcloud+vcbasekit@0.4.1/oh_modules/@vcloud/vcbasekit/src/main/cpp
+[2025-02-05T16:50:28.824] [DEBUG] debug-file - Module imapp_member's total dependency: 39
+[2025-02-05T16:50:28.826] [DEBUG] debug-file - Module imapp_live Collected Dependency: 
+[2025-02-05T16:50:28.826] [DEBUG] debug-file - Module imapp_live's total dependency: 0
+[2025-02-05T16:50:28.827] [DEBUG] debug-file - Module imapp_contact Collected Dependency: 
+[2025-02-05T16:50:28.827] [DEBUG] debug-file - Module imapp_contact's total dependency: 0
+[2025-02-05T16:50:28.828] [DEBUG] debug-file - Module imapp_tob Collected Dependency: /Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/imapp_router,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/im_sdk_ui,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@imcloud+imsdk@1.0.0-alpha.41/oh_modules/@imcloud/imsdk,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_live,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/tob/imapp_contact,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/json-bigint@1.0.0/oh_modules/json-bigint,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_env@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_env,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_log@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_log,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_ttnet@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_ttnet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_uploader@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_uploader,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+imsdk_ws@1.0.0-alpha.41/oh_modules/@bytedance/imsdk_ws,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@imcloud+imsdk_common@1.0.0-alpha.41/oh_modules/@imcloud/imsdk_common,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/long@5.2.1/oh_modules/long,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/protobufjs@6.11.3/oh_modules/protobufjs,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/bignumber.js@9.1.0/oh_modules/bignumber.js,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@pie+log4a@1.5.13/oh_modules/@pie/log4a,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@volcengine+apmplus_crash_lite@2.0.8/oh_modules/@volcengine/apmplus_crash_lite,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@volcengine+applog@1.1.0-beta2-fix-onlinle-without-bytehar/oh_modules/@volcengine/applog,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/pako@2.1.0/oh_modules/pako,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+ttnet@0.0.11/oh_modules/@bytedance/ttnet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+bduploader@0.0.1-alpha.3-tob/oh_modules/@bytedance/bduploader,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+wschannel@0.0.1/oh_modules/@bytedance/wschannel,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+aspromise@1.1.2/oh_modules/@protobufjs/aspromise,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+base64@1.1.2/oh_modules/@protobufjs/base64,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+codegen@2.0.4/oh_modules/@protobufjs/codegen,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+eventemitter@1.1.0/oh_modules/@protobufjs/eventemitter,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+fetch@1.1.0/oh_modules/@protobufjs/fetch,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+float@1.0.2/oh_modules/@protobufjs/float,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+inquire@1.1.0/oh_modules/@protobufjs/inquire,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+path@1.1.2/oh_modules/@protobufjs/path,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+pool@1.1.0/oh_modules/@protobufjs/pool,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@protobufjs+utf8@1.1.0/oh_modules/@protobufjs/utf8,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@types+long@4.0.2/oh_modules/@types/long,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@types+node@18.15.11/oh_modules/@types/node,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@volcengine+applog@1.1.0-beta2-fix-onlinle-without-bytehar/oh_modules/@volcengine/applog/src/main/ets/types/libapplogh,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+cronet@0.0.11/oh_modules/@bytedance/cronet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@ttnet+boringssl@0.0.1/oh_modules/@ttnet/boringssl,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@vcloud+vcbasekit@0.4.1/oh_modules/@vcloud/vcbasekit,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+bduploader@0.0.1-alpha.3-tob/oh_modules/@bytedance/bduploader/src/main/cpp,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@bytedance+cronet@0.0.11/oh_modules/@bytedance/cronet/src/main/cpp/types/libcronet,/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/QuickStart_Demo/oh_modules/.ohpm/@vcloud+vcbasekit@0.4.1/oh_modules/@vcloud/vcbasekit/src/main/cpp
+[2025-02-05T16:50:28.828] [DEBUG] debug-file - Module imapp_tob's total dependency: 41
+[2025-02-05T16:50:28.837] [DEBUG] debug-file - Configuration phase cost:342 ms 
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - Configuration task cost before running: 438 ms 
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - Executing task :entry:init
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - entry : init cost memory 0.01264190673828125
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - runTaskFromQueue task cost before running: 438 ms 
+[2025-02-05T16:50:28.840] [INFO] debug-file - Finished :entry:init... after 1 ms 
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - Executing task :imapp_router:init
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - imapp_router : init cost memory 0.01155853271484375
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - runTaskFromQueue task cost before running: 438 ms 
+[2025-02-05T16:50:28.840] [INFO] debug-file - Finished :imapp_router:init... after 1 ms 
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - Executing task :im_sdk_ui:init
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - im_sdk_ui : init cost memory 0.01158905029296875
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - runTaskFromQueue task cost before running: 438 ms 
+[2025-02-05T16:50:28.840] [INFO] debug-file - Finished :im_sdk_ui:init... after 1 ms 
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - Executing task :imapp_member:init
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - imapp_member : init cost memory 0.01155853271484375
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - runTaskFromQueue task cost before running: 438 ms 
+[2025-02-05T16:50:28.840] [INFO] debug-file - Finished :imapp_member:init... after 1 ms 
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - Executing task :imapp_live:init
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - imapp_live : init cost memory 0.0115966796875
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - runTaskFromQueue task cost before running: 438 ms 
+[2025-02-05T16:50:28.840] [INFO] debug-file - Finished :imapp_live:init... after 1 ms 
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - Executing task :imapp_contact:init
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - imapp_contact : init cost memory 0.01155853271484375
+[2025-02-05T16:50:28.840] [DEBUG] debug-file - runTaskFromQueue task cost before running: 438 ms 
+[2025-02-05T16:50:28.841] [INFO] debug-file - Finished :imapp_contact:init... after 1 ms 
+[2025-02-05T16:50:28.841] [DEBUG] debug-file - Executing task :imapp_tob:init
+[2025-02-05T16:50:28.841] [DEBUG] debug-file - imapp_tob : init cost memory 0.01158905029296875
+[2025-02-05T16:50:28.841] [DEBUG] debug-file - runTaskFromQueue task cost before running: 439 ms 
+[2025-02-05T16:50:28.841] [INFO] debug-file - Finished :imapp_tob:init... after 1 ms 
+[2025-02-05T16:50:28.841] [DEBUG] debug-file - Executing task ::init
+[2025-02-05T16:50:28.841] [DEBUG] debug-file - QuickStart_Demo : init cost memory 0.0115203857421875
+[2025-02-05T16:50:28.841] [DEBUG] debug-file - runTaskFromQueue task cost before running: 439 ms 
+[2025-02-05T16:50:28.841] [INFO] debug-file - Finished ::init... after 1 ms 
+[2025-02-05T16:50:28.845] [DEBUG] debug-file - Module 'entry' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "arkOptions": {
+    "runtimeOnly": {
+      "sources": [],
+      "packages": [
+        "@imcloud/imapp_tob",
+        "@imcloud/imapp_member",
+        "@imcloud/im_sdk_ui"
+      ]
+    }
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.847] [DEBUG] debug-file - Module 'entry' target 'ohosTest' using build option: {
+  "debuggable": true,
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "arkOptions": {
+    "runtimeOnly": {
+      "sources": [],
+      "packages": [
+        "@imcloud/imapp_tob",
+        "@imcloud/imapp_member",
+        "@imcloud/im_sdk_ui"
+      ]
+    }
+  },
+  "name": "default"
+} in this build.
+[2025-02-05T16:50:28.851] [DEBUG] debug-file - Module 'imapp_router' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.854] [DEBUG] debug-file - Module 'im_sdk_ui' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.856] [DEBUG] debug-file - Module 'imapp_member' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.861] [DEBUG] debug-file - Module 'imapp_live' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.863] [DEBUG] debug-file - Module 'imapp_contact' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.865] [DEBUG] debug-file - Module 'imapp_tob' target 'default' using build option: {
+  "debuggable": true,
+  "copyFrom": "default",
+  "strictMode": {
+    "useNormalizedOHMUrl": true
+  },
+  "name": "debug"
+} in this build.
+[2025-02-05T16:50:28.868] [DEBUG] debug-file - hvigor build process will be closed.
+[2025-02-05T16:50:28.904] [DEBUG] debug-file - session manager: send message to worker process.
+[2025-02-05T16:50:28.904] [DEBUG] debug-file - session manager: send message to worker process.
+[2025-02-05T16:50:28.904] [DEBUG] debug-file - watch worker: worker id should be larger than 0. Nothing will be sent to any worker thread.
+[2025-02-05T16:50:28.904] [DEBUG] debug-file - watch worker: worker id should be larger than 0. Nothing will be sent to any worker thread.
