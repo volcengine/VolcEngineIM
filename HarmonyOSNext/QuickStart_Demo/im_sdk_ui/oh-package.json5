@@ -6,7 +6,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@imcloud/imsdk": '1.0.0-alpha.0',
+    "@imcloud/imsdk": '1.0.1',
     "json-bigint": "1.0.0",
     "@imcloud/imapp_router": "file:../imapp_router",
   }
