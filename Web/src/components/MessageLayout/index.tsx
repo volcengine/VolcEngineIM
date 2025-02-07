@@ -402,7 +402,7 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
       'message-position-right': message.isFromMe,
     });
   }, [message, isHover, className, isLast, isRecalled]);
-
+  console.log('message111', message);
   return (
     <MessageWrap id={`index${indexInConversation?.toString()}`} className="im-message-wrap" {...otherProps}>
       {renderMessageTimestamp()}

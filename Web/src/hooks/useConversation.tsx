@@ -29,8 +29,8 @@ const useConversation = () => {
         return conv;
       }
     } catch (error) {
-      console.log(`根据id: ${id}获取会话失败`);
-      throw Error(`根据id: ${id}获取会话失败`);
+      console.error(`根据id: ${id}获取会话失败`);
+      // throw Error(`根据id: ${id}获取会话失败`);
     }
   };
 
@@ -40,15 +40,14 @@ const useConversation = () => {
    * @param bizExt
    */
   const createGroupConversation = async (ids, bizExt) => {
+    const userId = bytedIMInstance.option.userId;
     const params = {
       type: ConversationType.GROUP_CHAT,
-      participants: [bizExt.userId, ...ids],
+      participants: [userId, ...ids],
       name: bizExt.name,
     };
+    const { payload, success, checkCode, statusCode, statusMsg } = await bytedIMInstance?.createConversation?.(params);
     try {
-      const { payload, success, checkCode, statusCode, statusMsg } = await bytedIMInstance?.createConversation?.(
-        params
-      );
       if (
         [
           ConversationOperationStatus.MORE_THAN_USER_CONVERSATION_COUNT_LIMITS,
@@ -59,18 +58,21 @@ const useConversation = () => {
         Message.error(`${info?.moreThanConversationCountLimitUserIds} 加群个数超过上限`);
         return false;
       }
-      if (success === false && checkCode.toNumber() === CheckCode.SENSITIVE_WORDS) {
+      if (success === false && checkCode?.toNumber?.() === CheckCode.SENSITIVE_WORDS) {
         Message.error('文本中可能包含敏感词，请修改后重试');
         return false;
       }
-      setCurrentConversation(payload);
-      await sendSystemMessage(
-        payload,
-        `${ACCOUNTS_INFO[bizExt.userId].realName} 邀请 ${ids
-          .map(id => ACCOUNTS_INFO[id]?.realName)
-          .join('、')} 加入群聊`
-      );
-      return true;
+      if (payload) {
+        setCurrentConversation(payload);
+        await sendSystemMessage(
+          payload,
+          `${ACCOUNTS_INFO[bizExt.userId].realName} 邀请 ${ids
+            .map(id => ACCOUNTS_INFO[id]?.realName)
+            .join('、')} 加入群聊`
+        );
+        return true;
+      }
+      return false;
     } catch (e) {
       console.error('创建群聊失败', e);
     }

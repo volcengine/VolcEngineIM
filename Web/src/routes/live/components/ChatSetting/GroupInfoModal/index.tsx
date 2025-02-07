@@ -8,22 +8,36 @@ const { TextArea } = Input;
 
 interface GroupInfoModalProps {
   defaultName: string;
+  defaultAvatar?: string;
   defaultDesc: string;
   ref: any;
 }
 
 const GroupInfoModal: FC<GroupInfoModalProps> = React.forwardRef((props, ref) => {
-  const { defaultName, defaultDesc } = props;
+  const { defaultName, defaultDesc, defaultAvatar } = props;
   const nameInputRef = useRef<RefInputType>();
   const descInputRef = useRef<HTMLTextAreaElement>();
+  const avatarInputRef = useRef<RefInputType>();
 
   useImperativeHandle(ref, () => ({
     nameRef: nameInputRef,
     descRef: descInputRef,
+    avatarRef: avatarInputRef,
   }));
 
   return (
     <GroupInfoModalBox>
+      <div className="form-item">
+        <div className="form-item-label">群头像</div>
+        <Input
+          className="input-wrapper"
+          type="text"
+          placeholder="请输入群头像"
+          ref={avatarInputRef}
+          showWordLimit
+          defaultValue={defaultAvatar}
+        />
+      </div>
       <div className="form-item">
         <div className="form-item-label">群名称</div>
         <Input

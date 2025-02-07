@@ -19,6 +19,7 @@ import {
   LiveConversationMemberCount,
   LiveConversationOwner,
   UserId,
+  UserIdStr,
 } from '../../../../store';
 import { getConversationAvatar, getConversationName } from '../../../../utils';
 
@@ -58,6 +59,7 @@ const ModalMap = {
   [ModalType.Transfer]: {
     title: '转让群主',
     width: 420,
+    okStringText: 'string uid 确定',
     footer: false,
   },
   [ModalType.MuteList]: {
@@ -91,16 +93,18 @@ interface ChatSettingProps {}
 
 export const ChatSetting: FC<ChatSettingProps> = props => {
   const currentConversation = useRecoilValue(CurrentConversation);
-  const { id, onlineMemberCount, coreInfo, isBlocked, userInfo } = currentConversation;
-  const { name, desc, owner } = coreInfo || {};
+  const { id, onlineMemberCount, coreInfo, userInfo } = currentConversation;
+  const { name, desc, owner, icon } = coreInfo || {};
   const userId = useRecoilValue(UserId);
-
+  const strUserId = useRecoilValue(UserIdStr);
   const liveConversationMemberCount = useRecoilValue(LiveConversationMemberCount);
   const liveConversationOwner = useRecoilValue(LiveConversationOwner);
   const memberCount = liveConversationMemberCount ?? onlineMemberCount;
   const isOwner = liveConversationOwner ? userId === liveConversationOwner : userId === owner;
   const isManageable = userInfo.role === ROLE.Owner || userInfo.role === ROLE.Manager;
   const [modalVisible, setModalVisible] = useState(false);
+  const [updateKey, setUpdateKey] = useState(0);
+  const [isBlocked, setIsBlocked] = useState(currentConversation.isBlocked);
   const [modalInfo, setModalInfo] = useState<any>(null);
 
   const modalType = useRef<ModalType>();
@@ -117,10 +121,11 @@ export const ChatSetting: FC<ChatSettingProps> = props => {
     loading: selfInfoLoading,
     mutate: mutateEditInfo,
   } = useRequest(
-    async () => {
+    async (useString?: boolean) => {
       const resp = await bytedIMInstance.getLiveParticipantDetailOnline({
         conversation: currentConversation,
-        participantIds: [userId],
+        participantIds: [useString ? strUserId : userId],
+        useInt64: !useString,
       });
       return resp[0];
     },
@@ -171,22 +176,28 @@ export const ChatSetting: FC<ChatSettingProps> = props => {
   };
 
   const handleModalOk = useCallback(
-    async e => {
+    async (e, useStringUid) => {
       switch (modalType.current) {
         case ModalType.Info:
           const name = childRef.current.nameRef.current.dom.value.trim() || '未命名群聊';
           const desc = childRef.current.descRef.current.dom.value;
+          const icon = childRef.current.avatarRef.current.dom.value.trim();
           try {
-            await configLiveConversationCoreInfo(currentConversation, { name, desc });
+            await configLiveConversationCoreInfo(currentConversation, { name, desc, icon });
           } catch (err) {
             Message.error('保存失败');
           }
           break;
         case ModalType.Transfer:
           const userId = childRef.current.nameRef.current.dom.value; // 10001
-          updateGroupParticipant('0', userId, {
-            role: 1,
-          });
+          updateGroupParticipant(
+            '0',
+            userId,
+            {
+              role: 1,
+            },
+            useStringUid
+          );
           break;
         default:
           break;
@@ -205,7 +216,7 @@ export const ChatSetting: FC<ChatSettingProps> = props => {
 
     switch (modalType.current) {
       case ModalType.Info:
-        component = <GroupInfoModal defaultName={name} defaultDesc={desc} ref={childRef} />;
+        component = <GroupInfoModal defaultName={name} defaultAvatar={icon} defaultDesc={desc} ref={childRef} />;
         break;
       case ModalType.MemberList:
         component = <GroupMemberListModal />;
@@ -300,6 +311,18 @@ export const ChatSetting: FC<ChatSettingProps> = props => {
               <IconRight />
             </div>
           </div>
+          <div
+            className="select-item-wrapper"
+            onClick={() => {
+              onEditInfo(true);
+            }}
+          >
+            <div className="item-name-wrapper">{selfInfoLoading ? '加载中' : 'string uid 修改我的直播群资料'}</div>
+
+            <div className="item-icon-wrapper">
+              <IconRight />
+            </div>
+          </div>
           {isManageable && (
             <div
               className="select-item-wrapper"
@@ -329,12 +352,14 @@ export const ChatSetting: FC<ChatSettingProps> = props => {
 
           {
             <CheckBox
-              onChange={() => {
-                setConversationMute({
+              onChange={async () => {
+                const result = await setConversationMute({
                   conversation: currentConversation,
                   block: !isBlocked,
                 });
+                setIsBlocked(!isBlocked);
               }}
+              key={updateKey}
               checked={isBlocked}
               disabled={!isManageable}
             >
@@ -379,6 +404,7 @@ export const ChatSetting: FC<ChatSettingProps> = props => {
       <Modal
         title={modalInfo?.title}
         visible={modalVisible}
+        stringOkText={modalInfo?.okStringText}
         modalStyle={{ width: modalInfo?.width }}
         wrapClassName={modalInfo?.wrapClassName}
         onOk={handleModalOk}

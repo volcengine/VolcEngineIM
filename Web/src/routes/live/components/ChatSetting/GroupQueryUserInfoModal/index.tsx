@@ -16,24 +16,27 @@ const GroupQueryUserInfoModal: FC<GroupQueryUserInfoModalProps> = React.forwardR
   const currentConversation = useRecoilValue(CurrentConversation);
 
   const { loading, data, run, mutate } = useRequest(
-    () => {
+    (useString?: boolean) => {
       return bytedIMInstance.getLiveParticipantInfoOnline({
         participantIds: groupIds,
         conversation: currentConversation,
+        useInt64: !useString,
       });
     },
     { manual: true }
   );
 
-  console.log(data);
+  const keys = data ? Object.keys(data) : null;
+
   return data ? (
     <div>
       <List
         height={300}
         size="small"
-        dataSource={groupIds}
+        dataSource={keys}
         render={(id, index) => {
           const item = data[id];
+          console.log('data111', data, id);
           return (
             <List.Item key={index}>
               <div className={styles['user-list-line']}>
@@ -66,7 +69,10 @@ const GroupQueryUserInfoModal: FC<GroupQueryUserInfoModalProps> = React.forwardR
       <UserIdsInput groupIds={groupIds} setGroupIds={setGroupIds} disabled={loading}></UserIdsInput>
       <div style={{ marginTop: 20, display: 'flex', justifyContent: 'end' }}>
         <Button type={'primary'} loading={loading} onClick={() => run()} disabled={!groupIds.length}>
-          查询
+          int64查询 查询
+        </Button>
+        <Button type={'primary'} loading={loading} onClick={() => run(true)} disabled={!groupIds.length}>
+          stringUid查询
         </Button>
       </div>
     </div>

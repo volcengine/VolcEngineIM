@@ -10,6 +10,7 @@ import {
   SendMessagePriority,
   UserId,
   EditMessage,
+  UserIdStr,
 } from '../store';
 import { CalcVideo, getImageSize, getMessagePreview } from '../utils';
 import { Message as ArcoMessage } from '@arco-design/web-react';
@@ -26,6 +27,9 @@ function sendMessageCheckCode(result) {
       break;
     case im_proto.StatusCode.AlREADY_IN_BLACK:
       ArcoMessage.error('对方已拒收你的消息');
+      break;
+    case im_proto.StatusCode.MESSAGE_FREQ:
+      ArcoMessage.error('消息被限频：78');
       break;
     case 3:
       if (result.checkCode.eq(100)) {
@@ -47,8 +51,8 @@ const useMessage = () => {
 
   const setFileUploadProcess = useSetRecoilState(FileUploadProcessStore);
   const userId = useRecoilValue(UserId);
+  const userIdStr = useRecoilValue(UserIdStr);
   const priority = useRecoilValue(SendMessagePriority);
-
   /**
    * 重发消息
    * @param message
@@ -63,6 +67,7 @@ const useMessage = () => {
         const resp = await bytedIMInstance.getLiveParticipantDetailOnline({
           conversation: currentConversation,
           participantIds: [userId],
+          useInt64: true,
         });
         const { avatarUrl, alias } = resp[0];
         ext[EXT_ALIAS_NAME] = alias;
@@ -95,8 +100,8 @@ const useMessage = () => {
     if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
       bytedIMInstance?.event?.emit?.(IMEvent.MessageUpsert, null, message);
     }
-
-    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
+    const result = await bytedIMInstance.sendMessage({ message, priority });
+    sendMessageCheckCode(result);
     setReferenceMessage(null);
   };
   const editTextMessage = async (message: Message, content: string) => {

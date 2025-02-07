@@ -18,7 +18,7 @@ const MarkUserModal: FC<MarkUserModalProps> = React.forwardRef((props, ref) => {
   const currentConversation = useRecoilValue(CurrentConversation);
 
   const { loading, data, runAsync } = useRequest(
-    async (mode: im_proto.MarkAction) => {
+    async (mode: im_proto.MarkAction, useInt64?: boolean) => {
       console.log(groupIds, marks);
       if (groupIds.length) {
         return bytedIMInstance.updateLiveParticipantsMarks({
@@ -26,6 +26,7 @@ const MarkUserModal: FC<MarkUserModalProps> = React.forwardRef((props, ref) => {
           conversation: currentConversation,
           participantIds: groupIds,
           markTypes: marks,
+          useInt64: useInt64,
         });
       } else {
         return bytedIMInstance.updateLiveConversationMarks({
@@ -74,7 +75,7 @@ const MarkUserModal: FC<MarkUserModalProps> = React.forwardRef((props, ref) => {
           loading={loading}
           onClick={async () => {
             try {
-              await runAsync(im_proto.MarkAction.DELETE);
+              await runAsync(im_proto.MarkAction.DELETE, true);
               Message.success('删除标记成功');
               props.onClose();
             } catch (e) {
@@ -87,7 +88,44 @@ const MarkUserModal: FC<MarkUserModalProps> = React.forwardRef((props, ref) => {
         >
           删除标记
         </Button>
+        <Button
+          status={'danger'}
+          loading={loading}
+          onClick={async () => {
+            try {
+              await runAsync(im_proto.MarkAction.DELETE);
+              Message.success('删除标记成功');
+              props.onClose();
+            } catch (e) {
+              if (e.type === im_proto.StatusCode.CONVERSATION_MARK_TYPE_MORE_THAN_LIMIT)
+                Message.error('标记数量超过限制');
+              else Message.error(e.msg);
+            }
+          }}
+          disabled={!marks.length}
+        >
+          string ID 删除标记
+        </Button>
 
+        <Button
+          type={'primary'}
+          status={'default'}
+          loading={loading}
+          onClick={async () => {
+            try {
+              await runAsync(im_proto.MarkAction.ADD, true);
+              Message.success('添加标记成功');
+              props.onClose();
+            } catch (e) {
+              if (e.type === im_proto.StatusCode.CONVERSATION_MARK_TYPE_MORE_THAN_LIMIT)
+                Message.error('标记数量超过限制');
+              else Message.error(e.msg);
+            }
+          }}
+          disabled={!marks.length}
+        >
+          添加标记
+        </Button>
         <Button
           type={'primary'}
           status={'default'}
@@ -105,7 +143,7 @@ const MarkUserModal: FC<MarkUserModalProps> = React.forwardRef((props, ref) => {
           }}
           disabled={!marks.length}
         >
-          添加标记
+          stringId 添加标记
         </Button>
       </Space>
     </Form>

@@ -44,7 +44,7 @@ function useBlockList() {
       refreshOnWindowFocus: true,
     }
   );
-  const handleAddBlockUser = async (blockId: string) => {
+  const handleAddBlockUser = async (blockId: string, useString?: boolean) => {
     if (!blockId) {
       return;
     }
@@ -52,15 +52,18 @@ function useBlockList() {
       memberIds: blockId,
       blockTime: 3600,
       block: true,
+      useString: useString,
     });
     void requestHook.run();
     return true;
   };
 
-  const handleRemoveBlockUser = async blockId => {
+  const handleRemoveBlockUser = async (blockId, useString) => {
+    console.log('handleRemoveBlockUser', blockId, useString);
     const result = await setParticipantBlockTime({
       memberIds: blockId,
       block: false,
+      useString: useString,
     });
     requestHook.run();
   };
@@ -77,23 +80,26 @@ function useMuteList() {
   const { getMuteParticipantsOnline, setParticipantMuteTime } = useParticipant();
   const [participants, setParticipants] = useState([]);
 
-  const handleMemberAdd = async userId => {
+  const handleMemberAdd = async (userId: string, useStringId?: boolean) => {
     if (!userId) {
       return;
     }
+    console.log('handleMemberAdd', useStringId);
     const result = await setParticipantMuteTime({
       memberIds: userId,
       blockTime: 3600,
       block: true,
+      useString: useStringId,
     });
     void requestHook.run();
     return true;
   };
 
-  const handleMemberDelete = async userId => {
+  const handleMemberDelete = async (userId, useStringId?: boolean) => {
     await setParticipantMuteTime({
       memberIds: userId,
       block: false,
+      useStringId: useStringId,
     });
     requestHook.run();
   };
@@ -129,17 +135,17 @@ function useMuteWhiteList() {
     useParticipant();
   const [participants, setParticipants] = useState([]);
 
-  const handleMemberAdd = async userId => {
+  const handleMemberAdd = async (userId, useString) => {
     if (!userId) {
       return;
     }
-    const result = await addLiveParticipantMuteWhiteList([userId]);
+    const result = await addLiveParticipantMuteWhiteList([userId], useString);
     void requestHook.run();
     return true;
   };
 
-  const handleMemberDelete = async userId => {
-    await removeLiveParticipantMuteWhiteList([userId]);
+  const handleMemberDelete = async (userId, useString) => {
+    await removeLiveParticipantMuteWhiteList([userId], useString);
     requestHook.run();
   };
 
@@ -172,8 +178,8 @@ function useMuteWhiteList() {
 const GroupSubListModalHoc =
   (x: {
     useListHook: () => {
-      handleAdd: (memberId: string) => Promise<boolean>;
-      handleRemove: (memberId: any) => Promise<void>;
+      handleAdd: (memberId: string, useInt64?: boolean) => Promise<boolean>;
+      handleRemove: (memberId: any, useInt64?: boolean) => Promise<void>;
       participants: any[];
       requestHook: ReturnType<typeof useRequest>;
     };
@@ -203,12 +209,21 @@ const GroupSubListModalHoc =
               showWordLimit
               value={inputId}
               onChange={value => {
-                setInputId(value.replace(/\D/g, ''));
+                // setInputId(value.replace(/\D/g, ''));
+                setInputId(value);
               }}
             />
 
             <Button className="btn" type="primary" size="small" onClick={() => handleAdd(inputId) && setInputId('')}>
               添加
+            </Button>
+            <Button
+              className="btn"
+              type="primary"
+              size="small"
+              onClick={() => handleAdd(inputId, true) && setInputId('')}
+            >
+              添加 stringUid
             </Button>
             <Button
               className="btn"
@@ -236,6 +251,7 @@ const GroupSubListModalHoc =
                         <span
                           className={classNames('group-option-icon', 'group-option-icon-delete')}
                           onClick={() => {
+                            console.log('11112233', handleRemove);
                             handleRemove(item.userId.toString());
                           }}
                           data-id={id}

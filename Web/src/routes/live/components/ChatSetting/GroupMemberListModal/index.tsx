@@ -95,11 +95,10 @@ export function MemberNameDisplay({
   let displayName = ACCOUNTS_INFO[participant.userId]?.hasFriendAlias
     ? ACCOUNTS_INFO[participant.userId]?.name
     : participant.alias || realName;
-
   return (
     <>
       <div className="group-auth-avatar">
-        <ProfilePopover userId={participant.userId}>
+        <ProfilePopover userId={participant.userId} other={true} userIdStr={participant?.ext?.['s:UserId']}>
           {avatarUrl ? <Avatar size={32} url={avatarUrl} /> : <i>无头像</i>}
         </ProfilePopover>
       </div>
@@ -169,13 +168,14 @@ export const GroupMemberListModal: FC<GroupSearchModalProps> = props => {
     getList();
   };
 
-  const handleMemberMute = async () => {
+  const handleMemberMute = async (useStringId?: boolean) => {
     const participant = sortParticipants[muteSettingIndex];
 
     await setParticipantMuteTime({
       memberIds: participant.userId,
       blockTime: muteTime,
       block: true,
+      useString: useStringId,
     });
 
     setMuteSettingIndex(-1);
@@ -207,13 +207,18 @@ export const GroupMemberListModal: FC<GroupSearchModalProps> = props => {
   );
 
   const [inputId, setInputId] = useState('');
-  const handleAdd = (userId: string) => {
+  const handleAdd = (userId: string, isString?: boolean) => {
     if (!userId) {
       return;
     }
-    updateGroupParticipant(currentConversation.id, userId, {
-      role: ROLE.Manager,
-    }).then(() => getList());
+    updateGroupParticipant(
+      currentConversation.id,
+      userId,
+      {
+        role: ROLE.Manager,
+      },
+      isString
+    ).then(() => getList());
     return true;
   };
 
@@ -237,15 +242,25 @@ export const GroupMemberListModal: FC<GroupSearchModalProps> = props => {
             showWordLimit
             value={inputId}
             onChange={value => {
-              setInputId(value.replace(/\D/g, ''));
+              setInputId(value);
             }}
           />
         )}
 
         {selfPermissionKey === 'owner' && (
-          <Button className="btn" type="primary" size="small" onClick={() => handleAdd(inputId) && setInputId('')}>
-            添加
-          </Button>
+          <>
+            <Button
+              className="btn"
+              type="primary"
+              size="small"
+              onClick={() => handleAdd(inputId, true) && setInputId('')}
+            >
+              string Uid 添加
+            </Button>
+            <Button className="btn" type="primary" size="small" onClick={() => handleAdd(inputId) && setInputId('')}>
+              int65 UID添加
+            </Button>
+          </>
         )}
         <Button className="btn" size="small" loading={loading} onClick={() => getList()}>
           刷新
@@ -363,8 +378,23 @@ export const GroupMemberListModal: FC<GroupSearchModalProps> = props => {
                                   ))}
                                 </Select>
 
-                                <Button type="primary" size="small" onClick={handleMemberMute}>
+                                <Button
+                                  type="primary"
+                                  size="small"
+                                  onClick={() => {
+                                    handleMemberMute();
+                                  }}
+                                >
                                   确定
+                                </Button>
+                                <Button
+                                  type="primary"
+                                  size="small"
+                                  onClick={() => {
+                                    handleMemberMute(true);
+                                  }}
+                                >
+                                  stringI d确定
                                 </Button>
                                 <Button
                                   size="small"

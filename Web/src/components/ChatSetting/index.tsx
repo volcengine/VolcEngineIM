@@ -88,9 +88,10 @@ const ChatSetting: FC<ChatSettingProps> = props => {
       switch (modalType.current) {
         case ModalType.Info: {
           const name = childRef.current.nameRef.current.dom.value.trim() || '未命名群聊';
+          const avatarUrl = childRef.current.avatarRef.current.dom.value.trim();
           const desc = childRef.current.descRef.current.dom.value;
           try {
-            await configGroupConversationCoreInfo(id, { name, desc });
+            await configGroupConversationCoreInfo(id, { name, desc, icon: avatarUrl });
           } catch (err) {
             Message.error('保存失败');
           }

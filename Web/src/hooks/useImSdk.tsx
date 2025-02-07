@@ -24,6 +24,7 @@ import {
   Messages,
   Participants,
   UserId,
+  UserIdStr,
   LiveConversations,
   IsMuted,
   LiveConversationMemberCount,
@@ -43,16 +44,24 @@ import { Storage, computedVisibleTime } from '../utils';
 import { useLive } from './useLive';
 import { useNavigate } from '@modern-js/runtime/router';
 import { sleep } from '../utils/sleep';
+import { set } from 'lodash';
 
 const { ConversationType } = im_proto;
 
-const init = ({ userId, deviceId }) => {
+const init = ({ userId, userStrId, deviceId }) => {
   const option = SDK_OPTION;
-
+  let extParam: any = {
+    userId,
+  };
+  if (userStrId) {
+    extParam = {
+      userIdStr: userStrId,
+    };
+  }
   const params: IMOption = {
     ...option,
-    deviceId: deviceId ?? userId, // 影响推送，
-    userId,
+    deviceId: deviceId ?? (userStrId || userId), // 影响推送，
+    ...extParam,
     debug: true,
     debugEnablePollRequestLog: true,
     
@@ -62,6 +71,7 @@ const init = ({ userId, deviceId }) => {
       getToken({
         appId: APP_ID,
         userId,
+        userIDString: userStrId,
       }),
   };
 
@@ -70,8 +80,8 @@ const init = ({ userId, deviceId }) => {
   return new BytedIM(params, plugins);
 };
 
-const getToken = async ({ appId, userId }) => {
-  const reqbody = await fetchToken({ appId, userId });
+const getToken = async ({ appId, userId, userIDString }) => {
+  const reqbody = await fetchToken({ appId, userId, userIDString });
   const token = reqbody.Token;
   Storage.set(IM_TOKEN_KEY, token);
   return token;
@@ -80,6 +90,7 @@ const getToken = async ({ appId, userId }) => {
 const useInit = () => {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useRecoilState(UserId);
+  const [userStrId, setUserStrId] = useRecoilState(UserIdStr);
   const [bytedIMInstance, setBytedIMInstance] = useRecoilState(BytedIMInstance);
   const [conversations, setConversations] = useRecoilState(Conversations);
   const setUnReadTotal = useSetRecoilState(UnReadTotal);
@@ -144,14 +155,19 @@ const useInit = () => {
   // 实例化im
   useEffect(() => {
     (async () => {
-      if (!userId) return;
-      const im: BytedIM = await init({ userId, deviceId: userId });
+      if (!userId && !userStrId) return;
+      const im: BytedIM = await init({ userId, userStrId, deviceId: userId });
+      // 如果是字符串类型 则设置当前的int64 userId 为了避免代码大面积兼容所改造
+
       setBytedIMInstance(() => im);
       im?.event?.subscribe?.(IMEvent.InitFinish, () => {
         setTimeout(() => setLoading(false), 20);
       });
-
+      console.log('im 实例', im);
       const resp = await im?.init();
+      if (userStrId) {
+        setUserId(im.option.userId);
+      }
       if (resp !== 3) {
         alert('IM SDK 初始化失败，请检查 SDK 配置或 Token 是否有误');
         Storage.set(USER_ID_KEY, '');
@@ -163,7 +179,7 @@ const useInit = () => {
     return () => {
       bytedIMInstance?.dispose();
     };
-  }, [userId]);
+  }, [userId, userStrId]);
 
   const navigate = useNavigate();
 
@@ -191,6 +207,7 @@ const useInit = () => {
 
             navigate('/login');
             setUserId('');
+            setUserStrId('');
             isShowExpiredToast.current = false;
           },
         });
@@ -295,6 +312,7 @@ const useInit = () => {
         }
         const participant = participants?.find(p => String(p.userId) === userId);
         if (participant && operatorType === 2) {
+          bytedIMInstance.leaveLiveGroup({ conversation: currentConversation });
           Modal.warning({
             title: '你已被踢出该群组',
             okText: '确定',

@@ -32,12 +32,12 @@ export const useLiveConversation = () => {
    */
   const createLiveConversation = async (params: { name: string }) => {
     const { name } = params;
+    const { payload, success, checkCode, statusCode, statusMsg } = await bytedIMInstance?.createConversation?.({
+      participants: [],
+      type: ConversationType.MASS_CHAT,
+      name,
+    });
     try {
-      const { payload, success, checkCode, statusCode, statusMsg } = await bytedIMInstance?.createConversation?.({
-        participants: [],
-        type: ConversationType.MASS_CHAT,
-        name,
-      });
       if ([ConversationOperationStatus.MASS_CONV_TOUCH_LIMIT].includes(statusCode)) {
         Message.error('创建直播群超过上限');
         return false;
@@ -48,6 +48,7 @@ export const useLiveConversation = () => {
       }
       return payload;
     } catch (e) {
+      console.log('创建直播群失败', e);
       Message.error('创建直播群聊失败');
     }
     return false;
@@ -66,6 +67,7 @@ export const useLiveConversation = () => {
       block,
       normalOnly,
     });
+    setCurrentConversation(result);
     return result;
   };
 
@@ -80,6 +82,7 @@ export const useLiveConversation = () => {
   ) => {
     if (conv?.id) {
       const { name, desc, icon, notice } = config;
+      console.log('configLiveConversationCoreInfo', config);
       const { success, checkCode } = await bytedIMInstance?.setConversationCoreInfo({
         conversation: conv,
         name,
