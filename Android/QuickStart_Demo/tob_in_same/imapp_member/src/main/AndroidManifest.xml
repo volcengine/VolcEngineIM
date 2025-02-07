@@ -79,11 +79,19 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.imApp" />
         <activity
+            android:name=".detail.VEAvatarSelectActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
             android:name=".detail.edit.VEEditGroupNameActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.imApp" />
         <activity
             android:name=".detail.edit.VEEditGroupNoticeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".detail.edit.VEEditGroupDescActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.imApp" />
         <activity

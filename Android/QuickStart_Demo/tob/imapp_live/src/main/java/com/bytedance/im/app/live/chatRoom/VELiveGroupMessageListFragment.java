@@ -300,7 +300,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
 
         recyclerView = v.findViewById(R.id.message_list);
         inPutView = v.findViewById(R.id.inputView);
-        adapter = new BIMMessageAdapter(recyclerView,liveUserProvider, new BIMMessageAdapter.OnMessageItemClickListener() {
+        adapter = new BIMMessageAdapter(recyclerView,liveUserProvider, null, new BIMMessageAdapter.OnMessageItemClickListener() {
             public void onPortraitClick(BIMMessage message) {
                 BIMUIClient.getInstance().getModuleStarter().startProfileModule(getActivity(), message.getSenderUID());
             }

@@ -135,10 +135,13 @@ export class BIMMessageWrapper {
       } else if (ref.getRefStatus() == BIMReferenceMessageStatus.BIM_REFERENCE_MESSAGE_STATUS_DELETED) {
         this.commonInfo.refText = "消息已被删除"
       } else {
-        this.commonInfo.refText = BIMUIUtils.generateRefHint(ref.getHint(), msg)
-      }
-      if (this.commonInfo.refText.indexOf("[暂不支持]")>=0  && ref.getHint()) {
-        this.commonInfo.refText = ref.getHint() + "(已编辑)"+"(兜底)"
+        let refShow = BIMUIUtils.generateRefHint(ref.getHint(), msg)
+        let editInfo = msg?.getEditInfo();
+        if (editInfo && editInfo.isEdit()) { //已编辑
+          this.commonInfo.refText = refShow + "(已编辑)"
+        } else {
+          this.commonInfo.refText = refShow
+        }
       }
     } else {
       this.commonInfo.isShowRef = false

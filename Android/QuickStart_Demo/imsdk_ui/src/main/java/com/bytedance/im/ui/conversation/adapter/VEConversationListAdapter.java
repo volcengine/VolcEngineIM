@@ -263,8 +263,12 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
             data.add(wrapper);
             notifyItemInserted(data.size());
         } else {
-            data.add(index, wrapper);
-            notifyItemInserted(index);
+            if (index < data.size()) {
+                data.add(index, wrapper);
+                notifyItemInserted(index);
+            } else {
+                BIMLog.i(TAG, "insertIndex() index is bigger than size: " + data.size() + "index" + index);
+            }
         }
 
         if (conversationInsertListener != null) {

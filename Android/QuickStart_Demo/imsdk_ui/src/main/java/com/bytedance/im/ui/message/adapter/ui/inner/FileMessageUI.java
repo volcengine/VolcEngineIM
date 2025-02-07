@@ -92,7 +92,7 @@ public class FileMessageUI extends BaseCustomElementUI {
         if (bimMessage.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_LIVE_CHAT) {
             Toast.makeText(v.getContext(), "暂不支持文件预览", Toast.LENGTH_SHORT).show();
         } else {
-            if (new File(localFile).exists()) {
+            if (localFile != null && new File(localFile).exists()) {
                 showFileInfo(v.getContext(), localFile);
             } else {
                 BIMClient.getInstance().downloadFile(messageWrapper.getBimMessage(), fileElement.getURL(), new BIMDownloadCallback() {

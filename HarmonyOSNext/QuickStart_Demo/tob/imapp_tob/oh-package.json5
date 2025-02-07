@@ -8,7 +8,7 @@
   "dependencies": {
     "@imcloud/imapp_router": "file:../../imapp_router",
     "@imcloud/im_sdk_ui": "file:../../im_sdk_ui",
-    "@imcloud/imsdk": '1.0.0-alpha.0',
+    "@imcloud/imsdk": '1.0.2',
     "@imcloud/imapp_live": "file:../imapp_live",
     "@imcloud/imapp_contact": "file:../imapp_contact",
   }

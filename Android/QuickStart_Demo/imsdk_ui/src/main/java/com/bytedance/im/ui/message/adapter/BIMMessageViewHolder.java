@@ -18,11 +18,13 @@ import com.bytedance.im.core.api.enums.BIMMessageStatus;
 import com.bytedance.im.core.api.interfaces.BIMDownloadCallback;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
+import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.core.api.model.BIMMessagePropertyItem;
 import com.bytedance.im.core.internal.utils.IMLog;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.emoji.EmojiManager;
 import com.bytedance.im.ui.log.BIMLog;
+import com.bytedance.im.ui.member.BIMGroupMemberProvider;
 import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.convert.manager.BIMMessageUIManager;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
@@ -61,7 +63,11 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
     private TextView tvPropertyLeft, tvPropertyRight;
     private TextView tvReadReceipt;
 
-    public BIMMessageViewHolder(@NonNull View itemView,RecyclerView recyclerView, BIMUserProvider provider, BIMMessageAdapter.OnMessageItemClickListener l,
+    private BIMGroupMemberProvider bimMemberProvider;
+
+    public BIMMessageViewHolder(@NonNull View itemView,RecyclerView recyclerView, BIMUserProvider provider,
+                                BIMGroupMemberProvider memberProvider,
+                                BIMMessageAdapter.OnMessageItemClickListener l,
                                 BIMMessageAdapter.OnMessageItemLongClickListener longClickListener,
                                 BIMMessageAdapter.OnRefreshListener mediaMessageLoadListener,
                                 BIMMessageAdapter.OnDownloadListener downloadListener) {
@@ -72,6 +78,7 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         onMessageItemLongClickListener = longClickListener;
         onRefreshListener = mediaMessageLoadListener;
         onDownloadListener = downloadListener;
+        bimMemberProvider = memberProvider;
         portraitLeft = itemView.findViewById(R.id.iv_msg_head_receive);
         portraitRight = itemView.findViewById(R.id.iv_msg_head_send);
         mTime = itemView.findViewById(R.id.tv_common_msg_time);
@@ -93,16 +100,20 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         BIMUIUser user = userProvider.getUserInfo(sendUID);
         int portraitRes = R.drawable.icon_recommend_user_default;
         String portraitUrl = "";
+        BIMMember member = null;
         String userName = "";
         if (user != null) {
             portraitUrl = user.getPortraitUrl();
-            userName = BIMUINameUtils.getShowNameInGroup(null, user);
+            if (bimMemberProvider != null) {
+                member = bimMemberProvider.getMember(bimMessage.getConversationID(), sendUID);
+            }
+            userName = BIMUINameUtils.getShowNameInGroup(member, user);
         }
         //撤回
         if (bimMessage.isRecalled()) {
             recall.setVisibility(View.VISIBLE);
             msgContainer.setVisibility(View.GONE);
-            recall.setText(BIMUtils.generateRecallHint(bimMessage,user));
+            recall.setText(BIMUtils.generateRecallHint(bimMessage, user, member));
             headContainerLeft.setVisibility(View.GONE);
             headContainerRight.setVisibility(View.GONE);
             senStatus.setVisibility(View.GONE);

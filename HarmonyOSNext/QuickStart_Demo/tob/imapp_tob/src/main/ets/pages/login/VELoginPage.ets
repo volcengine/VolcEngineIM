@@ -38,6 +38,8 @@ export struct VELoginPage {
       promptAction.showToast({ message: `登录成功` })
       this.gotoMain()
       return true
+    } else {
+      promptAction.showToast({ message: `登录失败` })
     }
     return false
   }

@@ -221,6 +221,9 @@ public class VideoMessageUI extends BaseCustomElementUI {
     }
 
     private void startPlay(Context context, String playUrl) {
+        if (playUrl == null) {
+            return;
+        }
         startPlay(context, Uri.parse(playUrl));
     }
 

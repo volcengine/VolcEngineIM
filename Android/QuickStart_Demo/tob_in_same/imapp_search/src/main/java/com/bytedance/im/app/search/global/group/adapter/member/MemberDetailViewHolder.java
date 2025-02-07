@@ -23,11 +23,14 @@ public class MemberDetailViewHolder extends RecyclerView.ViewHolder {
 
     public void update(BIMSearchMemberInfo searchMemberInfo) {
         BIMMember member = searchMemberInfo.getMember();
+        BIMSearchDetail memberAliasDetail = searchMemberInfo.getMemberAliasDetail();
         BIMSearchDetail aliasDetail = searchMemberInfo.getFriendAliasDetail();
         BIMSearchDetail nickDetail = searchMemberInfo.getNickNameDetail();
         BIMSearchDetail uidDetail = searchMemberInfo.getUidDetail();
         SpannableString spannableString = null;
-        if (aliasDetail != null) {
+        if (memberAliasDetail != null) {
+            spannableString = SearchUIUtils.getSearchSpanString(memberAliasDetail, memberAliasDetail.getSearchContent());
+        } else if (aliasDetail != null) {
             spannableString = SearchUIUtils.getSearchSpanString(aliasDetail, aliasDetail.getSearchContent());
         } else if (nickDetail != null) {
             spannableString = SearchUIUtils.getSearchSpanString(nickDetail, nickDetail.getSearchContent());
