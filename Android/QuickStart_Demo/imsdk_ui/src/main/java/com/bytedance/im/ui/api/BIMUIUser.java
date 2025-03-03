@@ -9,6 +9,10 @@ public class BIMUIUser {
      * @hidden
      */
     private long uid;
+    /**
+     * @hidden
+     */
+    private String uidString;
 
     /**
      * @hidden
@@ -129,6 +133,14 @@ public class BIMUIUser {
         return memberAlias;
     }
 
+    public String getUidString() {
+        return uidString;
+    }
+
+    public void setUidString(String uidString) {
+        this.uidString = uidString;
+    }
+
     public void setMemberAlias(String memberAlias) {
         this.memberAlias = memberAlias;
     }
@@ -144,6 +156,7 @@ public class BIMUIUser {
         user.setBlock(this.isBlock());
         user.setMemberAlias(this.getMemberAlias());
         user.setMemberPortraitUrl(this.getMemberPortraitUrl());
+        user.setUidString(this.getUidString());
         return user;
     }
 }

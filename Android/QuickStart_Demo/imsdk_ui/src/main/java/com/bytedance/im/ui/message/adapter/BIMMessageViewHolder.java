@@ -105,7 +105,7 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         if (user != null) {
             portraitUrl = user.getPortraitUrl();
             if (bimMemberProvider != null) {
-                member = bimMemberProvider.getMember(bimMessage.getConversationID(), sendUID);
+                member = bimMemberProvider.getMember(bimConversation.getConversationID(), sendUID);
             }
             userName = BIMUINameUtils.getShowNameInGroup(member, user);
         }

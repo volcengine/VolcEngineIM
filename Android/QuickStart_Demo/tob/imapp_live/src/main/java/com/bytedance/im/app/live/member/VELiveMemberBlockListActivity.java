@@ -3,10 +3,12 @@ package com.bytedance.im.app.live.member;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,7 +62,7 @@ public class VELiveMemberBlockListActivity extends Activity {
         adapter = new VELiveMemberListAdapter(this, memberWrapper -> showOperation(memberWrapper), false, false);
         recyclerView.setAdapter(adapter);
         findViewById(R.id.tv_more).setVisibility(View.VISIBLE);
-        findViewById(R.id.tv_more).setOnClickListener((view) -> VEEditCommonActivity.startForResult(this, "添加进群黑名单", "",19, REQUEST_EDIT_UID));
+        findViewById(R.id.tv_more).setOnClickListener((view) -> VEEditCommonActivity.startForResult(this, "添加进群黑名单", "", 19, REQUEST_EDIT_UID));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -75,17 +77,19 @@ public class VELiveMemberBlockListActivity extends Activity {
 
     private void showOperation(VELiveMemberWrapper memberWrapper) {
         List dialogInfo = new ArrayList<android.util.Pair<String, VELiveGroupDialogUtils.BottomInputDialogListener>>();
-        dialogInfo.add(new android.util.Pair("移出成员", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> BIMClient.getInstance().getService(BIMLiveExpandService.class).removeLiveGroupMemberBlockList(conversationShortId, Collections.singletonList(memberWrapper.getMember().getUserID()), new BIMSimpleCallback() {
-            public void onSuccess() {
-                Toast.makeText(VELiveMemberBlockListActivity.this, "移出禁言黑名单成功" + BIMUINameUtils.getShowNameInGroup(memberWrapper.getMember(),memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
-                adapter.remove(memberWrapper.getMember().getUserID());
-            }
+        dialogInfo.add(new android.util.Pair("移出成员", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> {
+            BIMSimpleCallback removeBlockCallback = new BIMSimpleCallback() {
+                public void onSuccess() {
+                    Toast.makeText(VELiveMemberBlockListActivity.this, "移出禁言黑名单成功" + BIMUINameUtils.getShowNameInGroup(memberWrapper.getMember(), memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
+                    adapter.remove(memberWrapper.getMember().getUserID());
+                }
 
-            public void onFailed(BIMErrorCode code) {
-                Toast.makeText(VELiveMemberBlockListActivity.this, "移出禁言黑名单失败" + BIMUINameUtils.getShowNameInGroup(memberWrapper.getMember(),memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
-            }
-
-        })));
+                public void onFailed(BIMErrorCode code) {
+                    Toast.makeText(VELiveMemberBlockListActivity.this, "移出禁言黑名单失败" + BIMUINameUtils.getShowNameInGroup(memberWrapper.getMember(), memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
+                }
+            };
+            BIMClient.getInstance().getService(BIMLiveExpandService.class).removeLiveGroupMemberBlockListString(conversationShortId, Collections.singletonList(memberWrapper.getMember().getUserIDString()), removeBlockCallback);
+        }));
         dialogInfo.add(new android.util.Pair("取消", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> Toast.makeText(VELiveMemberBlockListActivity.this, "取消", Toast.LENGTH_SHORT).show()));
         VELiveGroupDialogUtils.showBottomMultiItemDialog(this, dialogInfo);
     }
@@ -120,16 +124,7 @@ public class VELiveMemberBlockListActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQUEST_EDIT_UID) {
-            long uid = -1;
-            try {
-                uid = Long.parseLong(data.getStringExtra(VEEditCommonActivity.RESULT_TEXT));
-            } catch (Exception e) {
-                Toast.makeText(this, "请输入用户id", Toast.LENGTH_SHORT).show();
-            }
-            List<Long> uidList = new ArrayList<>();
-            uidList.add(uid);
-            long blocktime = 24 * 60 * 60;//one day
-            BIMClient.getInstance().getService(BIMLiveExpandService.class).addLiveGroupMemberBlockList(conversationShortId, uidList, blocktime, new BIMSimpleCallback() {
+            BIMSimpleCallback addBlockCallback = new BIMSimpleCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(VELiveMemberBlockListActivity.this, "添加进群黑名单成功", Toast.LENGTH_SHORT).show();
@@ -140,11 +135,15 @@ public class VELiveMemberBlockListActivity extends Activity {
                 public void onFailed(BIMErrorCode code) {
                     Toast.makeText(VELiveMemberBlockListActivity.this, "添加进群黑名单失败", Toast.LENGTH_SHORT).show();
                 }
-            });
+            };
+            long blockTime = 24 * 60 * 60;//one day
+            String uidStr = data.getStringExtra(VEEditCommonActivity.RESULT_TEXT);
+            BIMClient.getInstance().getService(BIMLiveExpandService.class).addLiveGroupMemberBlockListString(conversationShortId, Collections.singletonList(uidStr), blockTime, addBlockCallback);
         }
     }
 
-    private void initData(){
+
+    private void initData() {
         hasMore = true;
         cursor = -1L;
         adapter.clear();

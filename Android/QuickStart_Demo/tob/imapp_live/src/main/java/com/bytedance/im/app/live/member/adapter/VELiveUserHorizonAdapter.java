@@ -49,11 +49,11 @@ public class VELiveUserHorizonAdapter extends RecyclerView.Adapter<VELiveUserHor
         return subData.size();
     }
 
-    public void insertData(BIMUIUser userFullInfo) {
+    public void insertData(BIMUIUser uiUser) {
         if (data.isEmpty()) {
-            data.add(userFullInfo);
+            data.add(uiUser);
         } else {
-            data.add(0, userFullInfo);
+            data.add(0, uiUser);
         }
         notifyDataSetWithSubChanged();
     }
@@ -63,6 +63,17 @@ public class VELiveUserHorizonAdapter extends RecyclerView.Adapter<VELiveUserHor
         while (iterator.hasNext()) {
             BIMUIUser user = iterator.next();
             if (removed.contains(user.getUid())) {
+                iterator.remove();
+            }
+        }
+        notifyDataSetWithSubChanged();
+    }
+
+    public void removeDataStr(List<String> removed) {
+        Iterator<BIMUIUser> iterator = data.iterator();
+        while (iterator.hasNext()) {
+            BIMUIUser user = iterator.next();
+            if (removed.contains(user.getUidString())) {
                 iterator.remove();
             }
         }
@@ -81,7 +92,15 @@ public class VELiveUserHorizonAdapter extends RecyclerView.Adapter<VELiveUserHor
         return uidList;
     }
 
-    public void notifyDataSetWithSubChanged(){
+    public ArrayList<String> getUserStrIDList() {
+        ArrayList<String> uidList = new ArrayList<>();
+        for (BIMUIUser user : data) {
+            uidList.add(user.getUidString());
+        }
+        return uidList;
+    }
+
+    public void notifyDataSetWithSubChanged() {
         if (data.size() >= 5) {
             subData = new ArrayList<>(data.subList(0, 5));
         } else {

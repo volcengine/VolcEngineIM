@@ -7,9 +7,9 @@ public class Constants {
 
     public static final int APP_ID = 0; //国内appID
 
-    public static final String token = "";  //token
+    public static final String token = "9uw9nZrOANMHUTHGhfNFXT15jYAGRpna175HU3LbQlQeBim9U3B18w";  //token
 
-    public static final long uid = 0L;      //用户uid
+    public static final long uid = 1031791415668816L;      //用户uid
 
 
     /**
@@ -51,6 +51,6 @@ public class Constants {
     /**
      *
      */
-    public static final BIMAccountProvider accountProvider = new VEDefaultAccountProvider();
+    public static BIMAccountProvider accountProvider = new VEDefaultAccountProvider();
 
 }

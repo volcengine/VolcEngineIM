@@ -25,7 +25,12 @@ public class BIMUINameUtils {
         if (user == null) {
             return "default";
         }
-        String name = "用户" + user.getUid();         //用户ID
+        String name = "";
+        if (!TextUtils.isEmpty(user.getUidString())) {
+            name = "用户" + user.getUidString();
+        } else {
+            name = "用户" + user.getUid();
+        }
         if (user != null) {
             if (!TextUtils.isEmpty(user.getNickName())) { //用户资料名
                 name = user.getNickName();
@@ -39,27 +44,29 @@ public class BIMUINameUtils {
 
     //群内名称  好友备注>群内备注>用户资料>兜底uid
     public static String getShowNameInGroup(BIMMember member, BIMUIUser user) {
-        if (user == null) {
-            if (member != null && !TextUtils.isEmpty(member.getAlias())) {
-                return member.getAlias();
-            }
-            return "用户" + member.getUserID();
-        } else {
-            String name = "用户" + user.getUid();         //用户ID
-            if (!TextUtils.isEmpty(user.getNickName())) { //用户资料名
-                name = user.getNickName();
-            }
-            if (!TextUtils.isEmpty(user.getMemberAlias())) {          //直播群内名称
+        String name = "";
+        if (user != null) {
+            if (!TextUtils.isEmpty(user.getMemberAlias())) {  //群内资料
                 name = user.getMemberAlias();
-            }
-            if (member != null && !TextUtils.isEmpty(member.getAlias())) {
-                name = member.getAlias();
-            }
-            if (!TextUtils.isEmpty(user.getAlias())) {  //好友备注名
+            } else if (!TextUtils.isEmpty(user.getAlias())) {  //好友备注
                 name = user.getAlias();
+            } else if (!TextUtils.isEmpty(user.getNickName())) {   //用户资料
+                name = user.getNickName();
+            } else if (!TextUtils.isEmpty(user.getUidString())) {     //用户uidStr
+                name = user.getUidString();
+            } else {
+                name = "用户" + user.getUid();
             }
-            return name;
+        } else if (member != null) {
+            if (!TextUtils.isEmpty(member.getAlias())) {
+                name = member.getAlias();
+            } else if (!TextUtils.isEmpty(member.getUserIDString())) {
+                name = "用户" + user.getUidString();
+            } else {
+                name = "用户" + user.getUid();
+            }
         }
+        return name;
     }
 
     //头像展示 群内备注>用户资料

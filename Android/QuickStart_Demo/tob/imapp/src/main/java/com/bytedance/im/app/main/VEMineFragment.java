@@ -29,6 +29,7 @@ import com.bytedance.im.app.constants.SpUtils;
 import com.bytedance.im.app.in.login.VELoginActivity;
 import com.bytedance.im.app.in.login.model.UserToken;
 import com.bytedance.im.app.utils.VECancelUtils;
+import com.bytedance.im.app.utils.VEUtils;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMConnectStatus;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
@@ -56,6 +57,7 @@ public class VEMineFragment extends Fragment {
     private View topPanel;
     private View flDId;
     private View govRecord;
+    private View flDeleteAccount;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -75,10 +77,25 @@ public class VEMineFragment extends Fragment {
         flPermission = view.findViewById(R.id.fl_permission);
         flDId = view.findViewById(R.id.fl_sdk_did);
         govRecord = view.findViewById(R.id.gov_record_number);
+        flDeleteAccount = view.findViewById(R.id.fl_delete_account);
+        if (VEUtils.isSourceCode()) {
+            flProto.setVisibility(View.GONE);
+            flPolicy.setVisibility(View.GONE);
+            flPermission.setVisibility(View.GONE);
+            govRecord.setVisibility(View.GONE);
+            flDeleteAccount.setVisibility(View.GONE);
+        }
+
         Log.i(TAG, "uikit version: " + BIMUIClient.getInstance().getVersion());
         Log.i(TAG, " imSdk version: " + BIMClient.getInstance().getVersion());
 
-        tvUid.setText(String.valueOf(BIMClient.getInstance().getCurrentUserID()));
+        String uidStr = BIMClient.getInstance().getCurrentUserIDString();
+        if (TextUtils.isEmpty(uidStr)) {
+            tvUid.setText(String.valueOf(BIMClient.getInstance().getCurrentUserID())); //数字uid
+        } else {
+            tvUid.setText(uidStr);  //字符串uid
+        }
+
         tvAppId.setText(String.valueOf(BIMUIClient.getInstance().getAppId()));
         tvAppVersionName.setText(BuildConfig.VERSION_NAME);
         tvSDKVersionName.setText(BIMUIClient.getInstance().getVersion());
@@ -173,6 +190,7 @@ public class VEMineFragment extends Fragment {
     private void doLogout() {
         BIMUIClient.getInstance().logout();
         SpUtils.getInstance().setLoginUserInfo(null);
+        SpUtils.getInstance().setLoginUserStrInfo(null);
         VELoginActivity.start(getActivity());
         getActivity().finish();
     }
@@ -194,7 +212,13 @@ public class VEMineFragment extends Fragment {
     }
 
     private void copyUidToBoard(Context context) {
-        String mineUid = "" + BIMClient.getInstance().getCurrentUserID();
+        String uidStr = BIMClient.getInstance().getCurrentUserIDString();
+        String mineUid = "";
+        if (TextUtils.isEmpty(uidStr)) {
+            mineUid = "" + BIMClient.getInstance().getCurrentUserID();//数字uid
+        } else {
+            mineUid = uidStr;   //字符串uid
+        }
         ClipData mClipData = ClipData.newPlainText("UID", mineUid);
         ((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(mClipData);
         Toast.makeText(getActivity(), "已复制 uid: " + mineUid, Toast.LENGTH_SHORT).show();

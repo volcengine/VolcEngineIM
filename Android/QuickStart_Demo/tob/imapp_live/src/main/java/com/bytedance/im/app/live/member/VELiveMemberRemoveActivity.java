@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,24 +61,27 @@ public class VELiveMemberRemoveActivity extends VELiveMemberSelectListActivity {
             return;
         }
         List<Long> uidList = new ArrayList<>();
+        List<String> uidStrList = new ArrayList<>();
         for (VELiveMemberWrapper wrapper : selectList) {
             uidList.add(wrapper.getMember().getUserID());
+            uidStrList.add(wrapper.getMember().getUserIDString());
         }
         waitDialog = ProgressDialog.show(VELiveMemberRemoveActivity.this, "移出中,稍等...", "");
-        BIMClient.getInstance().getService(BIMLiveExpandService.class).kickLiveGroupMemberList(conversationId, uidList, new BIMSimpleCallback() {
+        BIMSimpleCallback removeCallback = new BIMSimpleCallback() {
             @Override
             public void onSuccess() {
                 waitDialog.dismiss();
-                Toast.makeText(VELiveMemberRemoveActivity.this,"移出成功",Toast.LENGTH_SHORT).show();
+                Toast.makeText(VELiveMemberRemoveActivity.this, "移出成功", Toast.LENGTH_SHORT).show();
                 finish();
             }
 
             @Override
             public void onFailed(BIMErrorCode code) {
                 waitDialog.dismiss();
-                Toast.makeText(VELiveMemberRemoveActivity.this,"移出失败",Toast.LENGTH_SHORT).show();
+                Toast.makeText(VELiveMemberRemoveActivity.this, "移出失败", Toast.LENGTH_SHORT).show();
                 finish();
             }
-        });
+        };
+        BIMClient.getInstance().getService(BIMLiveExpandService.class).kickLiveGroupMemberListString(conversationId, uidStrList, removeCallback);
     }
 }

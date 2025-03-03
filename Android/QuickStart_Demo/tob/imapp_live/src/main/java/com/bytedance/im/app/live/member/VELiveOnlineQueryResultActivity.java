@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -29,6 +31,7 @@ import java.util.Map;
 public class VELiveOnlineQueryResultActivity extends Activity {
     private static String CONVERSATION_SHORT_ID = "conversation_short_id";
     private static String UID_LIST = "uid_list";
+    private static String UID_STR_LIST = "uid_str_list";
     private static String KEY_UID = "uid";
     private static String KEY_JOIN_TIME = "join_time";
     private static String KEY_IS_IN_GROUP = "is_in_group";
@@ -37,10 +40,10 @@ public class VELiveOnlineQueryResultActivity extends Activity {
     private SimpleAdapter adapter;
     private List<Map<String, String>> data = new ArrayList<>();
 
-    public static void start(Activity activity, long conversationShorId, ArrayList<Long> uidList) {
+    public static void startStrUidList(Activity activity, long conversationShorId, ArrayList<String> uidStrList) {
         Intent intent = new Intent(activity, VELiveOnlineQueryResultActivity.class);
         intent.putExtra(CONVERSATION_SHORT_ID, conversationShorId);
-        intent.putExtra(UID_LIST, uidList);
+        intent.putExtra(UID_STR_LIST, uidStrList);
         activity.startActivity(intent);
     }
 
@@ -50,11 +53,11 @@ public class VELiveOnlineQueryResultActivity extends Activity {
         setContentView(R.layout.ve_im_live_activity_query_online_result);
         findViewById(R.id.back).setOnClickListener(v -> finish());
         long conversationShortId = getIntent().getLongExtra(CONVERSATION_SHORT_ID, 0);
-        ArrayList<Long> uidList = (ArrayList<Long>) getIntent().getSerializableExtra(UID_LIST);
         adapter = getAdapter();
         listView = findViewById(R.id.rv_list);
         listView.setAdapter(adapter);
-        BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroupMemberOnlineInfo(conversationShortId, uidList, new BIMResultCallback<List<BIMLiveMemberOnlineInfo>>() {
+        ArrayList<String> uidStrList = (ArrayList<String>) getIntent().getSerializableExtra(UID_STR_LIST);
+        BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroupMemberOnlineInfoString(conversationShortId, uidStrList, new BIMResultCallback<List<BIMLiveMemberOnlineInfo>>() {
             @Override
             public void onSuccess(List<BIMLiveMemberOnlineInfo> list) {
                 refreshData(list);
@@ -78,7 +81,11 @@ public class VELiveOnlineQueryResultActivity extends Activity {
             } else {
                 inStr = "不在群";
             }
-            map.put(KEY_UID, "" + info.getUserID());
+            if (!TextUtils.isEmpty(info.getUserIDString())) {
+                map.put(KEY_UID, "" + info.getUserIDString());
+            } else {
+                map.put(KEY_UID, "" + info.getUserID());
+            }
             map.put(KEY_IS_IN_GROUP, inStr);
             map.put(KEY_JOIN_TIME, format.format(info.getJoinTime()) + " 进群");
             map.put(KEY_LAST_PING_TIME, format.format(info.getLastPingTime()) + " 退群");

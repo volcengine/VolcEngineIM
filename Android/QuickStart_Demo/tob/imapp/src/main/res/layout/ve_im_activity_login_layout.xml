@@ -34,46 +34,34 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/tv_nick_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
             android:id="@+id/tv_token"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/init_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:orientation="vertical"
         android:layout_marginBottom="90dp">
-
-        <LinearLayout
-            android:id="@+id/agree"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/agree_check"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:src="@drawable/icon_im_radio_unchecked"
-                android:textSize="15sp" />
+        <FrameLayout
+            android:id="@+id/init_btn"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/shape_im_conversation_msg_send_bg">
 
             <TextView
-                android:id="@+id/tv_protocol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:text="@string/login_agree_des" />
-        </LinearLayout>
-
+                android:layout_gravity="center"
+                android:text="@string/init_text"
+                android:textSize="22sp" />
+        </FrameLayout>
         <FrameLayout
             android:id="@+id/login_btn"
             android:layout_width="match_parent"

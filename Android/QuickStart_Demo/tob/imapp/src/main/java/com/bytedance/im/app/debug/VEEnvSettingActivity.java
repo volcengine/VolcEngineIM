@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -26,7 +28,7 @@ public class VEEnvSettingActivity extends Activity {
     private int curEnv;
     private Switch swALog;
     private Switch swAPM;
-
+    private Switch swUidStr;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, VEEnvSettingActivity.class);
@@ -45,6 +47,7 @@ public class VEEnvSettingActivity extends Activity {
         mEnvGroup = findViewById(R.id.env_group);
         swALog = findViewById(R.id.sw_event);
         swAPM = findViewById(R.id.sw_local_log);
+        swUidStr = findViewById(R.id.sw_str_uid);
         curEnv = SpUtils.getInstance().getEnv();
         initEnvCheck();
         updateSwimLane();
@@ -124,9 +127,12 @@ public class VEEnvSettingActivity extends Activity {
     private void updateModuleSwitch() {
         swALog.setChecked(SpUtils.getInstance().isEnableALog());
         swAPM.setChecked(SpUtils.getInstance().isEnableAPM());
+        swUidStr.setChecked(SpUtils.getInstance().isEnableDebugLogin());
     }
+
     private void saveModuleSwitch() {
         SpUtils.getInstance().setEnableALog(swALog.isChecked());
         SpUtils.getInstance().setEnableAPM(swAPM.isChecked());
+        SpUtils.getInstance().setEnableDebugLogin(swUidStr.isChecked());
     }
 }

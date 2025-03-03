@@ -8,11 +8,9 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
-import com.bytedance.im.core.api.model.BIMGroupInfo;
 import com.bytedance.im.ui.BIMUIClient;
 
 public class VEEditGroupNoticeActivity extends VEEditActivity {
@@ -58,10 +56,7 @@ public class VEEditGroupNoticeActivity extends VEEditActivity {
      */
     private void setNotice(String text) {
         waitDialog = ProgressDialog.show(VEEditGroupNoticeActivity.this, "群公告修改中, 稍等...", "");
-        BIMGroupInfo info = new BIMGroupInfo.BIMGroupInfoBuilder()
-                .notice(text)
-                .build();
-        BIMClient.getInstance().setGroupInfo(conversationId, info, new BIMSimpleCallback() {
+        BIMUIClient.getInstance().setGroupNotice(conversationId, text, new BIMSimpleCallback() {
             @Override
             public void onSuccess() {
                 waitDialog.dismiss();

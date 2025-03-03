@@ -1,9 +1,5 @@
 package com.bytedance.im.ui.conversation;
 
-import static com.bytedance.im.core.api.enums.BIMClearConversationMessageType.BIM_CLEAR_CONVERSATION_MESSAGE_TYPE_ALL_MY_DEVICE;
-import static com.bytedance.im.core.api.enums.BIMClearConversationMessageType.BIM_CLEAR_CONVERSATION_MESSAGE_TYPE_LOCAL_DEVICE;
-import static com.bytedance.im.ui.message.adapter.ui.widget.pop.DialogUtil.showClearConversationMsgDialog;
-
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -21,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bytedance.im.core.api.BIMClient;
-import com.bytedance.im.core.api.enums.BIMClearConversationMessageType;
 import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMConversationListListener;
@@ -341,53 +336,23 @@ public class BIMConversationListFragment extends Fragment {
         BIMLog.i(TAG, "showConversationOperation cid: " + conversation.getConversationID() + " name: " + conversation.getName());
         String[] conversationOptionType = new String[]{
                 "删除",
-                "清空会话消息"
         };
         new AlertDialog.Builder(getActivity())
                 .setItems(conversationOptionType, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) {
-                            BIMClient.getInstance().deleteConversation(conversation.getConversationID(), new BIMSimpleCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    Toast.makeText(getActivity(), "删除成功", Toast.LENGTH_SHORT).show();
-                                }
+                        BIMClient.getInstance().deleteConversation(conversation.getConversationID(), new BIMSimpleCallback() {
+                            @Override
+                            public void onSuccess() {
+                                Toast.makeText(getActivity(), "删除成功", Toast.LENGTH_SHORT).show();
+                            }
 
-                                @Override
-                                public void onFailed(BIMErrorCode code) {
-                                    Toast.makeText(getActivity(), "删除失败", Toast.LENGTH_SHORT).show();
+                            @Override
+                            public void onFailed(BIMErrorCode code) {
+                                Toast.makeText(getActivity(), "删除失败", Toast.LENGTH_SHORT).show();
 
-                                }
-                            });
-                        } else if (which == 1) {
-                            showClearConversationMsgDialog(getActivity(), new BIMResultCallback<Boolean>() {
-                                @Override
-                                public void onSuccess(Boolean deleteFromServer) {
-                                    BIMClearConversationMessageType deleteType = deleteFromServer ? BIM_CLEAR_CONVERSATION_MESSAGE_TYPE_ALL_MY_DEVICE : BIM_CLEAR_CONVERSATION_MESSAGE_TYPE_LOCAL_DEVICE;
-                                    BIMClient.getInstance().clearConversationMessage(conversation.getConversationID(), deleteType, new BIMSimpleCallback() {
-                                        @Override
-                                        public void onSuccess() {
-                                            if (BIMConversationListFragment.this.isAdded()) {
-                                                Toast.makeText(getActivity(), "操作成功", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailed(BIMErrorCode code) {
-                                            if (BIMConversationListFragment.this.isAdded()) {
-                                                Toast.makeText(getActivity(), "操作失败：" + code.getValue(), Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onFailed(BIMErrorCode code) {
-
-                                }
-                            });
-                        }
+                            }
+                        });
                     }
                 })
                 .create().show();

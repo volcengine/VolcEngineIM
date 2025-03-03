@@ -9,6 +9,7 @@ import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,21 +21,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bytedance.im.app.live.R;
 import com.bytedance.im.app.live.member.adapter.VELiveUserHorizonAdapter;
-import com.bytedance.im.core.api.enums.BIMErrorCode;
-import com.bytedance.im.core.api.interfaces.BIMResultCallback;
-import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUIUser;
-import com.bytedance.im.ui.api.interfaces.BIMUserExistChecker;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class VELiveUserAddActivity extends Activity {
+public class VELiveUserStringAddActivity extends Activity {
     private static final String TAG = "VECreateGroupActivity";
-    private static final int REQUEST_CODE_REMOVE = 100;
+    public static String RESULT_UID_STR_LIST = "result_uid_str_list";
     public static String ACTION_TITLE = "action_title";
-    public static final String RESULT_IDS = "result_ids";
+    private static final int REQUEST_CODE_REMOVE = 100;
     private RecyclerView recyclerView;
     private EditText editText;
     private TextView tvAdd;
@@ -59,16 +55,18 @@ public class VELiveUserAddActivity extends Activity {
         adapter = new VELiveUserHorizonAdapter(this);
         recyclerView.setAdapter(adapter);
         editText = findViewById(R.id.edit);
-        editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
+        editText.setHint("请输入用户ID[字符串类型]");
+        editText.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+        editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(100)});
         tvAdd = findViewById(R.id.add);
         horizonLayout = findViewById(R.id.horizon_user_layout);
         tvUserCount = findViewById(R.id.user_count);
         findViewById(R.id.back).setOnClickListener(v -> finish());
         findViewById(R.id.tv_confirm).setOnClickListener(v -> {
-            onConfirmClick(adapter.getUserIDList());
+            onConfirmClick(adapter.getUserStrIDList());
         });
         findViewById(R.id.iv_goto_member).setOnClickListener(v -> {
-            VELiveUserSelectActivity.startForResult(this, adapter.getUserIDList(), REQUEST_CODE_REMOVE);
+            VELiveUserSelectActivity.startForStrResult(this, adapter.getUserStrIDList(), REQUEST_CODE_REMOVE);
         });
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -90,79 +88,37 @@ public class VELiveUserAddActivity extends Activity {
                 }
             }
         });
-        tvAdd.setOnClickListener(v -> {
-            try {
-                long uid = Long.parseLong(editText.getText().toString());
-                //用户已经在群组
-                if (checkMemberExist(uid)) {
-                    return;
-                }
-
-//                if (BIMUIClient.getInstance().getCurUserId() == uid) {
-//                    Toast.makeText(VELiveUserAddActivity.this, "您已在群聊中", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-
-                if (adapter.getUserIDList().size() >= 20) {
-                    Toast.makeText(this, "已添加 20 个用户", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (adapter.getUserIDList().contains(uid)) {
-                    Toast.makeText(this, "群成员已添加", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                //服务检查用户是否存在
-                BIMUserExistChecker checker = BIMUIClient.getInstance().getUserExistChecker();
-                if (checker != null) {
-                    List<Long> uidList = new ArrayList<>();
-                    uidList.add(uid);
-                    checker.check(uidList, new BIMResultCallback<Map<Long, Boolean>>() {
-                        @Override
-                        public void onSuccess(Map<Long, Boolean> map) {
-                            if (map.get(uid)) {
-                                insertUser(uid);
-                            } else {
-                                Toast.makeText(VELiveUserAddActivity.this, "该用户不存在", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        @Override
-                        public void onFailed(BIMErrorCode code) {
-                            Toast.makeText(VELiveUserAddActivity.this, "该用户不存在", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    insertUser(uid);
-                }
-            } catch (Exception e) {
-                Toast.makeText(this, "请输入数字", Toast.LENGTH_SHORT).show();
-            }
-        });
+        tvAdd.setOnClickListener(v -> onAddClick());
         updateHorizonView();
     }
 
-    protected void insertUserToSelected(long uid) {
-        insertUser(uid);
-    }
-
-    private void insertUser(long uid) {
-        if (adapter.getUserIDList().contains(uid)) {
+    protected void onAddClick() {
+        String uidStr = editText.getText().toString();
+        if (TextUtils.isEmpty(uidStr)) {
+            Toast.makeText(this, "请输入uid", Toast.LENGTH_SHORT).show();
             return;
         }
-        BIMUIClient.getInstance().getUserProvider().getUserInfoAsync(uid, new BIMResultCallback<BIMUIUser>() {
-            @Override
-            public void onSuccess(BIMUIUser user) {
-                adapter.insertData(user);
-                updateHorizonView();
-                editText.setText("");
-            }
+        if (adapter.getItemCount() >= 20) {
+            Toast.makeText(this, "已添加 20 个用户", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (adapter.getUserStrIDList().contains(uidStr)) {
+            Toast.makeText(this, "群成员已添加", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        insertUidStr(uidStr);
+    }
 
-            @Override
-            public void onFailed(BIMErrorCode code) {
-
-            }
-        });
+    private void insertUidStr(String uidStr) {
+        if (adapter.getUserStrIDList().contains(uidStr)) {
+            return;
+        }
+        BIMUIUser user = new BIMUIUser();
+        user.setUidString(uidStr);
+        user.setNickName("用户" + uidStr);
+        adapter.insertData(user);
+        updateHorizonView();
+        editText.setText("");
     }
 
     private void updateHorizonView() {
@@ -175,19 +131,14 @@ public class VELiveUserAddActivity extends Activity {
         }
     }
 
-    protected void onConfirmClick(List<Long> uidList) {
+    protected void onConfirmClick(ArrayList<String> uidList) {
         hideKeyBoard(editText);
-        Intent intent = new Intent();
-        long[] result = new long[uidList.size()];
-
-        for (int i = 0; i < uidList.size(); i++) {
-            result[i] = uidList.get(i);
+        if (!uidList.isEmpty()) {
+            Intent intent = new Intent();
+            intent.putExtra(RESULT_UID_STR_LIST, uidList);
+            setResult(RESULT_OK, intent);
         }
-
-        intent.putExtra(RESULT_IDS, result);
-        setResult(RESULT_OK, intent);
         finish();
-
     }
 
     protected boolean checkMemberExist(long uid) {
@@ -198,8 +149,8 @@ public class VELiveUserAddActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_REMOVE) {
-            ArrayList<Long> removedList = (ArrayList<Long>) data.getSerializableExtra(VELiveUserSelectActivity.SELECT_RESULT);
-            adapter.removeData(removedList);
+            ArrayList<String> removedList = data.getStringArrayListExtra(VELiveUserSelectActivity.SELECT_RESULT);
+            adapter.removeDataStr(removedList);
             updateHorizonView();
         }
     }

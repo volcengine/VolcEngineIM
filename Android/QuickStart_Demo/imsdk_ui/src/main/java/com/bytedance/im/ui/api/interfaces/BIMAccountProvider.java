@@ -4,8 +4,6 @@ package com.bytedance.im.ui.api.interfaces;
 import android.app.Application;
 import android.app.Fragment;
 
-import com.bytedance.im.ui.user.BIMUserProvider;
-
 /**
  * 账号提供者
  */

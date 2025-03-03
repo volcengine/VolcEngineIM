@@ -10,11 +10,9 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
-import com.bytedance.im.core.api.model.BIMGroupInfo;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 
@@ -64,11 +62,12 @@ public class VEEditGroupNameActivity extends VEEditActivity {
      * @param text
      */
     private void setGroupName(String text) {
+//        if (TextUtils.isEmpty(text)) {
+//            Toast.makeText(VEEditGroupNameActivity.this, "名称无效", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
         waitDialog = ProgressDialog.show(VEEditGroupNameActivity.this, "名称修改中, 稍等...", "");
-        BIMGroupInfo info = new BIMGroupInfo.BIMGroupInfoBuilder()
-                .name(text)
-                .build();
-        BIMClient.getInstance().setGroupInfo(conversationId, info, new BIMSimpleCallback() {
+        BIMUIClient.getInstance().setGroupName(conversationId, text, new BIMSimpleCallback() {
             @Override
             public void onSuccess() {
                 waitDialog.dismiss();

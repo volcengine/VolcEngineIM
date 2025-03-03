@@ -18,9 +18,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bytedance.im.app.live.R;
 import com.bytedance.im.app.live.VELiveMemberUtils;
+import com.bytedance.im.app.live.detail.VELiveDetailActivity;
 import com.bytedance.im.app.live.member.adapter.VELiveMemberListAdapter;
 import com.bytedance.im.app.live.member.adapter.VELiveMemberWrapper;
 import com.bytedance.im.app.live.utils.VELiveUtils;
@@ -105,12 +107,14 @@ public class VELiveMemberListActivity extends Activity {
     BIMLiveGroupMarkTypeListener markTypeListener = new BIMLiveGroupMarkTypeListener() {
         @Override
         public void onMarkTypesAdd(BIMConversation conversation, BIMLiveGroupMarkTypeChangeInfo changeInfo) {
+            Log.i(TAG,"onMarkTypesAdd conversation "+conversation.getConversationID()+"changeInfo uid: "+changeInfo.getOperatorUid() +" changeInfo uidStr: "+changeInfo.getOperatorUidString());
             markTypes.addAll(changeInfo.getMarkType());
             refreshTab(markTypes);
         }
 
         @Override
         public void onMarkTypesDeleted(BIMConversation conversation, BIMLiveGroupMarkTypeChangeInfo changeInfo) {
+            Log.i(TAG,"onMarkTypesDeleted conversation "+conversation.getConversationID()+"changeInfo uid: "+changeInfo.getOperatorUid() +" changeInfo uidStr: "+changeInfo.getOperatorUidString());
             if (changeInfo.getMarkType() != null && !changeInfo.getMarkType().isEmpty()) {
                 boolean needSwitchToDefault = false;
                 for (String deleteMarkType : changeInfo.getMarkType()) {
@@ -223,6 +227,18 @@ public class VELiveMemberListActivity extends Activity {
         BIMMember member = memberWrapper.getMember();
         needRefreshId = member.getUserID();
         //todo 跳转到个人页面
+        BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroupMemberInfoString(conversationId, member.getUserIDString(), new BIMResultCallback<BIMMember>() {
+            @Override
+            public void onSuccess(BIMMember member) {
+                String info = "uid:" + member.getUserID() + " uidStr:" + member.getUserIDString() + " alias:" + member.getAlias();
+                Toast.makeText(VELiveMemberListActivity.this, info, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        });
 //        VEUserProfileEditActivity.start(VELiveMemberListActivity.this, member.getUserID(), member.getAlias(), member.getAvatarUrl()); //打开个人页面后会同步服务端用户资料
     }
 

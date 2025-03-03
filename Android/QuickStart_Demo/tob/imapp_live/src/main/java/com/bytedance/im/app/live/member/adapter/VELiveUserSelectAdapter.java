@@ -39,7 +39,7 @@ public class VELiveUserSelectAdapter extends RecyclerView.Adapter<VELiveBaseSele
         View view = LayoutInflater.from(context).inflate(data.get(i).layoutId, viewGroup, false);
         VELiveBaseSelectViewHolder baseSelectViewHolder = null;
         if (data.get(i).getLayoutId() == R.layout.ve_im_live_recycler_view_item_user_select_notid) {
-            baseSelectViewHolder = new VELiveBaseSelectViewHolder(view);
+            baseSelectViewHolder = new VELiveUserSelectViewHolder(view);
         }
         return baseSelectViewHolder;
     }

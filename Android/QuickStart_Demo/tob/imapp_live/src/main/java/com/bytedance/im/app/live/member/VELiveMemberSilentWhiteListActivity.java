@@ -3,10 +3,12 @@ package com.bytedance.im.app.live.member;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,7 +64,9 @@ public class VELiveMemberSilentWhiteListActivity extends Activity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(null);
         conversationShortId = getIntent().getLongExtra(CONVERSATION_SHORT_ID, 0L);
-        adapter = new VELiveMemberListAdapter(this, memberWrapper -> { showOperation(memberWrapper); },true,false);
+        adapter = new VELiveMemberListAdapter(this, memberWrapper -> {
+            showOperation(memberWrapper);
+        }, true, false);
         recyclerView.setAdapter(adapter);
         more = findViewById(R.id.tv_more);
         more.setOnClickListener((view) -> VEEditCommonActivity.startForResult(this, "添加禁言白名单", "", 19, REQUEST_EDIT_UID));
@@ -84,17 +88,19 @@ public class VELiveMemberSilentWhiteListActivity extends Activity {
             BIMMemberRole role = mConversation.getCurrentMember().getRole();
             if (role == BIMMemberRole.BIM_MEMBER_ROLE_ADMIN || role == BIMMemberRole.BIM_MEMBER_ROLE_OWNER) {
                 List dialogInfo = new ArrayList<android.util.Pair<String, VELiveGroupDialogUtils.BottomInputDialogListener>>();
-                dialogInfo.add(new android.util.Pair("移出成员", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> BIMClient.getInstance().getService(BIMLiveExpandService.class).removeLiveGroupMemberSilentWhiteList(conversationShortId, Collections.singletonList(memberWrapper.getMember().getUserID()), new BIMSimpleCallback() {
-                    public void onSuccess() {
-                        Toast.makeText(VELiveMemberSilentWhiteListActivity.this, "移出禁言白名单成功" + BIMUINameUtils.getShowNameInGroup(memberWrapper.getMember(),memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
-                        adapter.remove(memberWrapper.getMember().getUserID());
-                    }
+                dialogInfo.add(new android.util.Pair("移出成员", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> {
+                    List<String> uidStrList = Collections.singletonList(memberWrapper.getMember().getUserIDString());
+                    BIMClient.getInstance().getService(BIMLiveExpandService.class).removeLiveGroupMemberSilentWhiteListString(conversationShortId, uidStrList, new BIMSimpleCallback() {
+                        public void onSuccess() {
+                            Toast.makeText(VELiveMemberSilentWhiteListActivity.this, "移出禁言白名单成功" + BIMUINameUtils.getShowNameInGroup(memberWrapper.getMember(), memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
+                            adapter.remove(memberWrapper.getMember().getUserID());
+                        }
 
-                    public void onFailed(BIMErrorCode code) {
-                        Toast.makeText(VELiveMemberSilentWhiteListActivity.this, "移出禁言白名单失败" + BIMUINameUtils.getShowNameInGroup(memberWrapper.getMember(),memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
-                    }
-
-                })));
+                        public void onFailed(BIMErrorCode code) {
+                            Toast.makeText(VELiveMemberSilentWhiteListActivity.this, "移出禁言白名单失败" + BIMUINameUtils.getShowNameInGroup(memberWrapper.getMember(), memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }));
                 dialogInfo.add(new android.util.Pair("取消", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> Toast.makeText(VELiveMemberSilentWhiteListActivity.this, "取消", Toast.LENGTH_SHORT).show()));
                 VELiveGroupDialogUtils.showBottomMultiItemDialog(this, dialogInfo);
             }
@@ -131,17 +137,10 @@ public class VELiveMemberSilentWhiteListActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQUEST_EDIT_UID) {
-            long uid = -1;
-            try {
-                uid = Long.parseLong(data.getStringExtra(VEEditCommonActivity.RESULT_TEXT));
-            } catch (Exception e) {
-                Toast.makeText(this, "请输入用户id", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            List<Long> uidList = new ArrayList<>();
-            uidList.add(uid);
-            long blocktime = 24 * 60 * 60;//one day
-            BIMClient.getInstance().getService(BIMLiveExpandService.class).addLiveGroupMemberSilentWhiteList(conversationShortId, uidList, new BIMSimpleCallback() {
+            String uidStr = data.getStringExtra(VEEditCommonActivity.RESULT_TEXT);
+            List<String> uidStrList = new ArrayList<>();
+            uidStrList.add(uidStr);
+            BIMClient.getInstance().getService(BIMLiveExpandService.class).addLiveGroupMemberSilentWhiteListString(conversationShortId, uidStrList, new BIMSimpleCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(VELiveMemberSilentWhiteListActivity.this, "添加禁言白名单成功", Toast.LENGTH_SHORT).show();
@@ -156,7 +155,8 @@ public class VELiveMemberSilentWhiteListActivity extends Activity {
         }
     }
 
-    private void updateUI(){
+
+    private void updateUI() {
         BIMClient.getInstance().getService(BIMLiveExpandService.class).getLiveGroup(conversationShortId, new BIMResultCallback<BIMConversation>() {
             @Override
             public void onSuccess(BIMConversation conversation) {
@@ -176,7 +176,7 @@ public class VELiveMemberSilentWhiteListActivity extends Activity {
         });
     }
 
-    private void initData(){
+    private void initData() {
         hasMore = true;
         cursor = -1L;
         adapter.clear();

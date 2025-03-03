@@ -2,6 +2,7 @@
     <string name="login_title_welcome">欢迎登录 IM Demo</string>
     <string name="login_title_des">请从以下账号中选择一个进行登录</string>
     <string name="login_agree_des">以阅读并同意 xx协议 和 xx协议</string>
+    <string name="init_text">初始化</string>
     <string name="login_text">登录</string>
     <string name="login_must_select_user">请选择用户登录</string>
     <string name="login_must_agree_proto">请先同意协议</string>

@@ -61,7 +61,6 @@
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
             android:hint="请输入用户ID"
-            android:inputType="number"
             android:singleLine="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/add"

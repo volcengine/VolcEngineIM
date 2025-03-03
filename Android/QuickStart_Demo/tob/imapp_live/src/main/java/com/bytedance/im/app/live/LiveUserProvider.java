@@ -106,6 +106,7 @@ public class LiveUserProvider implements BIMUserProvider {
         if (bimuiUser != null && map.containsKey(bimuiUser.getUid())) {
             LiveUserInfo liveUserInfo = map.get(bimuiUser.getUid());
             bimuiUser.setMemberAlias(liveUserInfo.getLiveAlias());
+            bimuiUser.setUidString(liveUserInfo.uidStr);
             if (!TextUtils.isEmpty(liveUserInfo.getLivePortraitUrl())) {
                 bimuiUser.setPortraitUrl(liveUserInfo.getLivePortraitUrl());
             }
@@ -123,11 +124,13 @@ public class LiveUserProvider implements BIMUserProvider {
 
     public static class LiveUserInfo {
         private long uid;
+        private String uidStr;
         private String liveAlias;
         private String livePortraitUrl;
 
-        public LiveUserInfo(long uid, String liveAlias, String liveUrl) {
+        public LiveUserInfo(long uid, String uidStr, String liveAlias, String liveUrl) {
             this.uid = uid;
+            this.uidStr = uidStr;
             this.liveAlias = liveAlias;
             this.livePortraitUrl = liveUrl;
         }

@@ -24,15 +24,7 @@ public class VEEditLiveOwnerActivity extends VEEditLiveActivity {
     @Override
     protected void onConfirmClick(String text) {
         super.onConfirmClick(text);
-        long uid = -1;
-        try {
-            uid = Long.parseLong(text);
-        } catch (Exception e) {
-            Toast.makeText(VEEditLiveOwnerActivity.this, "", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        BIMClient.getInstance().getService(BIMLiveExpandService.class).transLiveGroupOwner(conversationId, uid, new BIMSimpleCallback() {
+        BIMClient.getInstance().getService(BIMLiveExpandService.class).transLiveGroupOwnerString(conversationId, text, new BIMSimpleCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(VEEditLiveOwnerActivity.this, "转让群主成功", Toast.LENGTH_SHORT).show();
@@ -49,6 +41,5 @@ public class VEEditLiveOwnerActivity extends VEEditLiveActivity {
                 finish();
             }
         });
-
     }
 }

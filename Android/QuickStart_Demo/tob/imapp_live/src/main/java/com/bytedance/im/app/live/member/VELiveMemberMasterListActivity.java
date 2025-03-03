@@ -3,10 +3,12 @@ package com.bytedance.im.app.live.member;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
@@ -26,7 +28,6 @@ import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.live.BIMLiveExpandService;
 import com.bytedance.im.live.api.model.BIMLiveMemberListResult;
 import com.bytedance.im.ui.log.BIMLog;
-import com.bytedance.im.ui.utils.BIMUINameUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,7 +59,7 @@ public class VELiveMemberMasterListActivity extends Activity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(null);
         conversationShortId = getIntent().getLongExtra(CONVERSATION_SHORT_ID, 0L);
-        adapter = new VELiveMemberListAdapter(this, memberWrapper -> showOperation(memberWrapper), true,true);
+        adapter = new VELiveMemberListAdapter(this, memberWrapper -> showOperation(memberWrapper), true, true);
         recyclerView.setAdapter(adapter);
         findViewById(R.id.tv_more).setVisibility(View.VISIBLE);
         findViewById(R.id.tv_more).setOnClickListener((view) -> VEEditCommonActivity.startForResult(this, "添加群管理员", "", 19, REQUEST_EDIT_UID));
@@ -76,17 +77,21 @@ public class VELiveMemberMasterListActivity extends Activity {
 
     private void showOperation(VELiveMemberWrapper memberWrapper) {
         List dialogInfo = new ArrayList<Pair<String, VELiveGroupDialogUtils.BottomInputDialogListener>>();
-        dialogInfo.add(new android.util.Pair("移出管理员", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> BIMClient.getInstance().getService(BIMLiveExpandService.class).removeLiveGroupAdmin(conversationShortId, Collections.singletonList(memberWrapper.getMember().getUserID()), new BIMSimpleCallback() {
-            public void onSuccess() {
-                Toast.makeText(VELiveMemberMasterListActivity.this, "移出管理员成功 ", Toast.LENGTH_SHORT).show();
-                adapter.remove(memberWrapper.getMember().getUserID());
-            }
+        dialogInfo.add(new android.util.Pair("移出管理员", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> {
 
-            public void onFailed(BIMErrorCode code) {
-                Toast.makeText(VELiveMemberMasterListActivity.this, "移出管理员失败 ", Toast.LENGTH_SHORT).show();
-            }
+            BIMSimpleCallback removeMemberCallback = new BIMSimpleCallback() {
+                public void onSuccess() {
+                    Toast.makeText(VELiveMemberMasterListActivity.this, "移出管理员成功 ", Toast.LENGTH_SHORT).show();
+                    adapter.remove(memberWrapper.getMember().getUserID());
+                }
 
-        })));
+                public void onFailed(BIMErrorCode code) {
+                    Toast.makeText(VELiveMemberMasterListActivity.this, "移出管理员失败 ", Toast.LENGTH_SHORT).show();
+                }
+
+            };
+            BIMClient.getInstance().getService(BIMLiveExpandService.class).removeLiveGroupAdminString(conversationShortId, Collections.singletonList(memberWrapper.getMember().getUserIDString()), removeMemberCallback);
+        }));
         dialogInfo.add(new android.util.Pair("取消", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> Toast.makeText(VELiveMemberMasterListActivity.this, "取消", Toast.LENGTH_SHORT).show()));
         VELiveGroupDialogUtils.showBottomMultiItemDialog(this, dialogInfo);
     }
@@ -120,15 +125,8 @@ public class VELiveMemberMasterListActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQUEST_EDIT_UID) {
-            long uid = -1;
-            try {
-                uid = Long.parseLong(data.getStringExtra(VEEditCommonActivity.RESULT_TEXT));
-            } catch (Exception e) {
-                Toast.makeText(this, "请输入用户id", Toast.LENGTH_SHORT).show();
-            }
-            List<Long> uidList = new ArrayList<>();
-            uidList.add(uid);
-            BIMClient.getInstance().getService(BIMLiveExpandService.class).addLiveGroupAdmin(conversationShortId, uidList, new BIMSimpleCallback() {
+            String uidStr = data.getStringExtra(VEEditCommonActivity.RESULT_TEXT);
+            BIMClient.getInstance().getService(BIMLiveExpandService.class).addLiveGroupAdminString(conversationShortId, Collections.singletonList(uidStr), new BIMSimpleCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(VELiveMemberMasterListActivity.this, "设置管理员成功", Toast.LENGTH_SHORT).show();
@@ -141,6 +139,7 @@ public class VELiveMemberMasterListActivity extends Activity {
 
                 }
             });
+
         }
     }
 

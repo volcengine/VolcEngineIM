@@ -25,7 +25,7 @@ public class VELiveMemberUtils {
         BIMClient.getInstance().getConversationMemberList(conversationId, new BIMResultCallback<List<BIMMember>>() {
             @Override
             public void onSuccess(List<BIMMember> members) {
-                getMemberWrapperList(members,callback);
+                getMemberWrapperList(members, callback);
             }
 
             @Override
@@ -39,10 +39,11 @@ public class VELiveMemberUtils {
 
     /**
      * 拼接成员和用户资料
+     *
      * @param members
      * @param callback
      */
-    public static void getMemberWrapperList(List<BIMMember> members, BIMResultCallback<List<VELiveMemberWrapper>> callback){
+    public static void getMemberWrapperList(List<BIMMember> members, BIMResultCallback<List<VELiveMemberWrapper>> callback) {
         if (members == null) {
             callback.onFailed(BIMErrorCode.BIM_PARAMETER_ERROR);
             return;
@@ -61,7 +62,12 @@ public class VELiveMemberUtils {
                         map.put(userFullInfo.getUid(), userFullInfo);
                     }
                     for (BIMMember bimMember : members) {
-                        data.add(new VELiveMemberWrapper(bimMember, map.get(bimMember.getUserID()), VELiveMemberWrapper.TYPE_NORMAL));
+                        BIMUIUser bimuiUser = map.get(bimMember.getUserID());
+                        if (bimuiUser != null) {
+                            bimuiUser.setMemberAlias(bimMember.getAlias());
+                            bimuiUser.setUidString(bimMember.getUserIDString());
+                        }
+                        data.add(new VELiveMemberWrapper(bimMember, bimuiUser, VELiveMemberWrapper.TYPE_NORMAL));
                     }
                 }
                 if (callback != null) {
@@ -87,7 +93,7 @@ public class VELiveMemberUtils {
         Collections.sort(data, (o1, o2) -> {
             int tr = o1.getOrder() - o2.getOrder();
             if (tr == 0) {
-                return (int) (o1.getMember().getUserID() - (int)o2.getMember().getUserID());
+                return (int) (o1.getMember().getUserID() - (int) o2.getMember().getUserID());
             } else {
                 return tr;
             }

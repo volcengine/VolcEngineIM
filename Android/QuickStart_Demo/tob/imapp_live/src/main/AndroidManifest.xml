@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bytedance.im.app.live">
+
     <application>
         <activity
             android:name=".chatRoom.VELiveGroupChatRoomActivity"
@@ -21,10 +22,6 @@
             android:theme="@style/Theme.imApp" />
         <activity
             android:name=".create.VEEditCommonActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.imApp" />
-        <activity
-            android:name=".edit.VEEditLiveMemberActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.imApp" />
         <activity
@@ -99,7 +96,16 @@
             android:name=".edit.VEEditLiveMemberNameActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.imApp" />
-        <activity android:name=".member.VELiveUserAddActivity"
+        <activity
+            android:name=".member.VELiveUserAddActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".member.VELiveUserSelectActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.imApp" />
+        <activity
+            android:name=".member.VELiveUserStringAddActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.imApp" />
     </application>

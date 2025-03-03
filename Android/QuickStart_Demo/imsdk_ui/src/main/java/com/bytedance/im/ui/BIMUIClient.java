@@ -133,7 +133,7 @@ public class BIMUIClient {
      * @hidden
      */
     public void registerMessageElement(String type, Class<? extends BaseCustomElement> cls) {
-        BIMClient.getInstance().registerMessageElement(type,cls);
+        BIMClient.getInstance().registerMessageElement(type, cls);
     }
 
     /**
@@ -180,6 +180,13 @@ public class BIMUIClient {
      */
     public void login(long uid, String token, BIMSimpleCallback callback) {
         BIMClient.getInstance().login(uid, token, callback);
+    }
+
+    /**
+     * @hidden
+     */
+    public void login(String uidStr, String token, BIMSimpleCallback callback) {
+        BIMClient.getInstance().loginWithUIDString(uidStr, token, callback);
     }
 
     /**
@@ -289,7 +296,7 @@ public class BIMUIClient {
     /**
      * @hidden
      */
-    public void addP2PMessageListener(BIMP2PMessageListener listener){
+    public void addP2PMessageListener(BIMP2PMessageListener listener) {
         BIMClient.getInstance().addP2PMessageListener(listener);
     }
 
@@ -297,8 +304,8 @@ public class BIMUIClient {
     /**
      * @hidden
      */
-    public void removeP2PMessageListener(BIMP2PMessageListener listener){
-       BIMClient.getInstance().removeP2PMessageListener(listener);
+    public void removeP2PMessageListener(BIMP2PMessageListener listener) {
+        BIMClient.getInstance().removeP2PMessageListener(listener);
     }
 
 
