@@ -162,7 +162,7 @@ public class BIMMessageListFragment extends Fragment {
 
         bimMemberProvider = BIMUIClient.getInstance().getBimGroupMemberProvider();
         bimMemberProvider.initGroupMembers(conversationId);
-        adapter = new BIMMessageAdapter(recyclerView, userProvider, bimMemberProvider, new BIMMessageAdapter.OnMessageItemClickListener() {
+        adapter = new BIMMessageAdapter(conversationId,recyclerView, userProvider, bimMemberProvider, new BIMMessageAdapter.OnMessageItemClickListener() {
             @Override
             public void onPortraitClick(BIMMessage message) {
                 if (onPortraitClickListener != null) {

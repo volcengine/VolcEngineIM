@@ -4,7 +4,8 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.bytedance.im.smslogin.BIMSMSAccountProvider;
+
+import com.bytedance.im.app.constants.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -109,7 +110,7 @@ public class TokenHelper {
                     @Override
                     public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                         try {
-                            Log.i(TAG, "get token request uid: " + uid + " appId: " + BIMSMSAccountProvider.appID + " url: " + call.request().url());
+                            Log.i(TAG, "get token request uid: " + uid + " appId: " + Constants.APP_ID + " url: " + call.request().url());
                             Log.i(TAG, "get token response: " + response.body() + " code: " + response.code());
                             JSONObject jsonObject = new JSONObject(response.body().string());
                             String token = jsonObject.optString("Token");
@@ -138,7 +139,7 @@ public class TokenHelper {
                     @Override
                     public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                         try {
-                            Log.i(TAG, "get token request uidStr: " + uidStr + " appId: " + BIMSMSAccountProvider.appID + " url: " + call.request().url());
+                            Log.i(TAG, "get token request uidStr: " + uidStr + " appId: " + Constants.APP_ID + " url: " + call.request().url());
                             Log.i(TAG, "get token response: " + response.body() + " code: " + response.code());
                             JSONObject jsonObject = new JSONObject(response.body().string());
                             String token = jsonObject.optString("Token");

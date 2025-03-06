@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.bytedance.im.app.search.tab.SearchTab;
+import com.bytedance.im.app.search.types.SearchDayFragment;
 import com.bytedance.im.app.search.types.SearchFileFragment;
 import com.bytedance.im.app.search.types.SearchTextFragment;
 import com.bytedance.im.app.search.types.TypeMediaFragment;
@@ -59,8 +60,9 @@ public class VESearchResultActivity extends Activity {
         searchTabList.add(new SearchTab(this, "文件", BIMMessageType.BIM_MESSAGE_TYPE_FILE, SearchFileFragment.create(conversationID, BIMMessageType.BIM_MESSAGE_TYPE_FILE, pullDirection)));
         searchTabList.add(new SearchTab(this, "图片", BIMMessageType.BIM_MESSAGE_TYPE_IMAGE, TypeMediaFragment.create(conversationID, BIMMessageType.BIM_MESSAGE_TYPE_IMAGE, pullDirection)));
         searchTabList.add(new SearchTab(this, "视频", BIMMessageType.BIM_MESSAGE_TYPE_VIDEO, TypeMediaFragment.create(conversationID, BIMMessageType.BIM_MESSAGE_TYPE_VIDEO, pullDirection)));
+        searchTabList.add(new SearchTab(this, "日期", BIMMessageType.BIM_MESSAGE_TYPE_CUSTOM, SearchDayFragment.create(conversationID)));
         tabLinearLayout = findViewById(R.id.tab_container);
-        tabLinearLayout.setWeightSum(4);
+        tabLinearLayout.setWeightSum(searchTabList.size());
         FragmentTransaction fragmentTransaction = getFragmentManager()
                 .beginTransaction();
         for (SearchTab searchTab : searchTabList) {

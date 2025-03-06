@@ -94,7 +94,8 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         tvReadReceipt = itemView.findViewById(R.id.tv_read_receipt);
     }
     //conversation 是异步设置的因此可能为 null
-    public void update(BIMMessageWrapper wrapper, BIMMessageWrapper preWrapper, BIMConversation bimConversation) {
+    //bimConversation 因为时序问题，可能为空
+    public void update(BIMMessageWrapper wrapper, BIMMessageWrapper preWrapper, String conversationId, BIMConversation bimConversation) {
         BIMMessage bimMessage = wrapper.getBimMessage();
         long sendUID = bimMessage.getSenderUID();
         BIMUIUser user = userProvider.getUserInfo(sendUID);
@@ -105,7 +106,7 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
         if (user != null) {
             portraitUrl = user.getPortraitUrl();
             if (bimMemberProvider != null) {
-                member = bimMemberProvider.getMember(bimConversation.getConversationID(), sendUID);
+                member = bimMemberProvider.getMember(conversationId, sendUID);
             }
             userName = BIMUINameUtils.getShowNameInGroup(member, user);
         }

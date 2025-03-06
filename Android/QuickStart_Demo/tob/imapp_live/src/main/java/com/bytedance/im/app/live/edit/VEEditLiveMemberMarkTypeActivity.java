@@ -43,7 +43,6 @@ public class VEEditLiveMemberMarkTypeActivity extends Activity {
 
     private long conversationShortId;
     private BIMLiveExpandService service;
-    private List<Long> addUser = new ArrayList<>();
     private List<String> addUserStrList = new ArrayList<>();
 
     private List<String> addMarkType = new ArrayList<>();
@@ -133,7 +132,7 @@ public class VEEditLiveMemberMarkTypeActivity extends Activity {
     private String splitToken = " ";
 
     private boolean isUpdateUser() {
-        return (addUser != null && !addUser.isEmpty()) || (addUserStrList != null && !addUserStrList.isEmpty());
+        return addUserStrList != null && !addUserStrList.isEmpty();
     }
 
     @Override
@@ -142,10 +141,10 @@ public class VEEditLiveMemberMarkTypeActivity extends Activity {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_EDIT_UID) {
                 long[] ids = data.getLongArrayExtra(VELiveUserAddActivity.RESULT_IDS);
-                addUser.clear();
+                addUserStrList.clear();
                 if (ids != null) {
                     for (long id : ids) {
-                        addUser.add(id);
+                        addUserStrList.add(""+id);
                     }
                 }
             } else if (requestCode == REQUEST_EDIT_UID_STR) {
@@ -176,13 +175,19 @@ public class VEEditLiveMemberMarkTypeActivity extends Activity {
 
     //使用字符串 uid 操作
     private void confirmWithStringUid() {
-        service.markLiveGroupMemberListString(conversationShortId, addUserStrList, swMarkOption.isChecked() ? BIMLiveGroupMarkTypeAction.ADD : BIMLiveGroupMarkTypeAction.DELETE,
+        BIMLiveGroupMarkTypeAction action = swMarkOption.isChecked() ? BIMLiveGroupMarkTypeAction.ADD : BIMLiveGroupMarkTypeAction.DELETE;
+        service.markLiveGroupMemberListString(conversationShortId, addUserStrList, action,
                 addMarkType, new BIMResultCallback<List<BIMLiveGroupMarkMemberFailedInfo>>() {
                     @Override
                     public void onSuccess(List<BIMLiveGroupMarkMemberFailedInfo> bimLiveGroupMarkMemberFailedInfos) {
-                        addUser.clear();
+                        addUserStrList.clear();
                         addMarkType.clear();
-                        Toast.makeText(VEEditLiveMemberMarkTypeActivity.this, "标记成功", Toast.LENGTH_SHORT).show();
+                        if (action == BIMLiveGroupMarkTypeAction.ADD) {
+                            Toast.makeText(VEEditLiveMemberMarkTypeActivity.this, "标记成功", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(VEEditLiveMemberMarkTypeActivity.this, "删除用户标记完成", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
 
                     @Override

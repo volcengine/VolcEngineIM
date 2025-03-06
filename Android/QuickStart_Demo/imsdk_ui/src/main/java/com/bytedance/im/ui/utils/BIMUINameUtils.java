@@ -44,29 +44,30 @@ public class BIMUINameUtils {
 
     //群内名称  好友备注>群内备注>用户资料>兜底uid
     public static String getShowNameInGroup(BIMMember member, BIMUIUser user) {
-        String name = "";
-        if (user != null) {
-            if (!TextUtils.isEmpty(user.getMemberAlias())) {  //群内资料
-                name = user.getMemberAlias();
-            } else if (!TextUtils.isEmpty(user.getAlias())) {  //好友备注
-                name = user.getAlias();
-            } else if (!TextUtils.isEmpty(user.getNickName())) {   //用户资料
-                name = user.getNickName();
-            } else if (!TextUtils.isEmpty(user.getUidString())) {     //用户uidStr
-                name = user.getUidString();
-            } else {
-                name = "用户" + user.getUid();
-            }
-        } else if (member != null) {
-            if (!TextUtils.isEmpty(member.getAlias())) {
-                name = member.getAlias();
-            } else if (!TextUtils.isEmpty(member.getUserIDString())) {
-                name = "用户" + user.getUidString();
-            } else {
-                name = "用户" + user.getUid();
-            }
+        if (user != null && !TextUtils.isEmpty(user.getAlias())) {  //好友备注
+            return user.getAlias();
         }
-        return name;
+
+        if (member != null && !TextUtils.isEmpty(member.getAlias())) { //群内备注
+            return member.getAlias();
+        }
+
+        if (user != null && !TextUtils.isEmpty(user.getNickName())) { //用户资料
+            return user.getNickName();
+        }
+        if (user != null && !TextUtils.isEmpty(user.getUidString())) { //兜底用户uidStr
+            return user.getUidString();
+        }
+        if (member != null && !TextUtils.isEmpty(member.getUserIDString())) {//兜底memberuidStr
+            return member.getUserIDString();
+        }
+        if (user != null) {
+            return "用户" + user.getUid();//兜底用户uid
+        }
+        if (member != null) {
+            return "用户" + member.getUserID();//兜底memberuid
+        }
+        return "";
     }
 
     //头像展示 群内备注>用户资料

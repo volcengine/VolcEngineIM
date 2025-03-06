@@ -39,6 +39,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
     private OnRefreshListener onRefreshListener;
     private BIMUserProvider userProvider;
     private RecyclerView recyclerView;
+    private String conversationId;
     private BIMConversation bimConversation;
     private OnDownloadListener onDownloadListener;
 
@@ -51,11 +52,12 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
         void downLoadMessage(BIMMessage bimMessage, String url, boolean needNotify, BIMDownloadCallback callback);
     }
 
-    public BIMMessageAdapter(RecyclerView recyclerView, BIMUserProvider provider,
+    public BIMMessageAdapter(String conversationId,RecyclerView recyclerView, BIMUserProvider provider,
                              BIMGroupMemberProvider bimMemberProvider,
                              OnMessageItemClickListener listener, OnMessageItemLongClickListener longClickListener,
                              OnRefreshListener onRefreshListener,
                              OnDownloadListener onDownloadListener) {
+        this.conversationId = conversationId;
         this.recyclerView = recyclerView;
         this.userProvider = provider;
         onMessageItemClickListener = listener;
@@ -83,7 +85,7 @@ public class BIMMessageAdapter extends RecyclerView.Adapter<BIMMessageViewHolder
         if (position + 1 < data.size()) {
             preWrapper = data.get(position + 1);
         }
-        holder.update(wrapper, preWrapper, bimConversation);
+        holder.update(wrapper, preWrapper, conversationId, bimConversation);
         BIMMessageUIManager.getInstance().getMessageUI(wrapper.getContentClass()).onBindView(holder, holder.itemView, wrapper, preWrapper);
     }
 

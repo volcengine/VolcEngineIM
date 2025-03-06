@@ -348,7 +348,7 @@ public class VELiveGroupMessageListFragment extends Fragment {
 
         recyclerView = v.findViewById(R.id.message_list);
         inPutView = v.findViewById(R.id.inputView);
-        adapter = new BIMMessageAdapter(recyclerView, liveUserProvider, null, new BIMMessageAdapter.OnMessageItemClickListener() {
+        adapter = new BIMMessageAdapter(conversationShortId+"",recyclerView, liveUserProvider, null, new BIMMessageAdapter.OnMessageItemClickListener() {
             public void onPortraitClick(BIMMessage message) {
                 BIMUIClient.getInstance().getModuleStarter().startProfileModule(getActivity(), message.getSenderUID());
             }
@@ -593,6 +593,8 @@ public class VELiveGroupMessageListFragment extends Fragment {
                     failedText += "当前会话被禁言";
                 } else if (code == BIMErrorCode.BIM_SERVER_ERROR_SEND_MESSAGE_TOO_LARGE) {
                     failedText += "消息体过大";
+                } else if (code == BIMErrorCode.BIM_SERVER_MESSAGE_FREQUENCY) {
+                    failedText += "发送消息过于频繁";
                 } else if (bimMessage.getCheckMessage() != null) {
                     failedText = "checkCode:" + bimMessage.getCheckCode() + ", checkMessage:" + bimMessage.getCheckMessage();
                 } else {
