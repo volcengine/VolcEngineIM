@@ -30,8 +30,8 @@ export function UserIdsInput({
   const [inputUserId, setInputUserId] = useState('');
   let exceedMaxCount = groupIds.length >= maxCount;
   const { run, loading } = useRequest(
-    async () => {
-      let data = await checkAccount({ uids: [inputUserId] });
+    async (useString?: boolean) => {
+      let data = await checkAccount({ uids: [inputUserId], useString });
       if (!data[inputUserId]) {
         Message.error(`该用户不存在`);
         return;
@@ -49,7 +49,8 @@ export function UserIdsInput({
         placeholder={exceedMaxCount ? '最多只能选择' + maxCount + '个用户' : placeholder ?? '请输入用户 ID'}
         value={inputUserId}
         onChange={v => {
-          if (!v || /^\d+$/.test(v)) setInputUserId(v);
+          setInputUserId(v);
+          // if (!v || /^\d+$/.test(v)) setInputUserId(v);
         }}
         maxLength={20}
         showWordLimit
@@ -70,6 +71,22 @@ export function UserIdsInput({
               disabled={exceedMaxCount || disabled}
             >
               添加
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                if (inputUserId) {
+                  if (groupIds.includes(inputUserId)) {
+                    Message.error('该 UserID 已添加');
+                  } else {
+                    run(true);
+                  }
+                }
+              }}
+              loading={loading}
+              disabled={exceedMaxCount || disabled}
+            >
+              string uid 添加
             </Button>
           </>
         }
@@ -120,7 +137,7 @@ const CreateConversationModel: FC<CreateConversationModelProps> = props => {
       const not = groupIds.filter(i => !data[i]);
       if (not.length) {
         setNotExistIds(not);
-        Message.error('有不存在的用户');
+        Message.error('有不存在的用户11');
         return;
       }
 

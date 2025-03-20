@@ -1,7 +1,7 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { im_proto, Conversation } from '@volcengine/im-web-sdk';
 
-import { BytedIMInstance, CurrentConversation } from '../store';
+import { BytedIMInstance, CurrentConversation, UserIdType } from '../store';
 import { CheckCode } from '../constant';
 import { Message } from '@arco-design/web-react';
 import { useLive } from './useLive';
@@ -10,6 +10,7 @@ const { ConversationOperationStatus, ConversationType } = im_proto;
 
 export const useLiveConversation = () => {
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
+  const userIdType = useRecoilValue(UserIdType);
   const setCurrentConversation = useSetRecoilState(CurrentConversation);
   const { clearCurrentLiveConversationStatus } = useLive();
 
@@ -32,12 +33,13 @@ export const useLiveConversation = () => {
    */
   const createLiveConversation = async (params: { name: string }) => {
     const { name } = params;
+    const { payload, success, checkCode, statusCode, statusMsg } = await bytedIMInstance?.createConversation?.({
+      participants: [],
+      type: ConversationType.MASS_CHAT,
+      name,
+      useInt64: userIdType === 'int64',
+    });
     try {
-      const { payload, success, checkCode, statusCode, statusMsg } = await bytedIMInstance?.createConversation?.({
-        participants: [],
-        type: ConversationType.MASS_CHAT,
-        name,
-      });
       if ([ConversationOperationStatus.MASS_CONV_TOUCH_LIMIT].includes(statusCode)) {
         Message.error('创建直播群超过上限');
         return false;
@@ -48,6 +50,7 @@ export const useLiveConversation = () => {
       }
       return payload;
     } catch (e) {
+      console.log('创建直播群失败', e);
       Message.error('创建直播群聊失败');
     }
     return false;
@@ -66,6 +69,7 @@ export const useLiveConversation = () => {
       block,
       normalOnly,
     });
+    setCurrentConversation(result);
     return result;
   };
 
@@ -80,6 +84,7 @@ export const useLiveConversation = () => {
   ) => {
     if (conv?.id) {
       const { name, desc, icon, notice } = config;
+      console.log('configLiveConversationCoreInfo', config);
       const { success, checkCode } = await bytedIMInstance?.setConversationCoreInfo({
         conversation: conv,
         name,

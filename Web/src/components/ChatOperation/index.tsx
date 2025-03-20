@@ -44,8 +44,8 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
 
   
   const handleSubmit = useCallback(
-    (richText: IRichText) => {
-      sendTextMessage?.({ ...richText });
+    (richText: IRichText, mentionedUsers?: string[]) => {
+      sendTextMessage?.({ ...richText }, mentionedUsers);
       scrollRef?.current?.scrollToBottom();
     },
     [sendTextMessage, scrollRef]

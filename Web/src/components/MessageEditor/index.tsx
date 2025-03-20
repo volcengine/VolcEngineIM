@@ -8,8 +8,8 @@ import { IRichText } from './interface';
 import { EDITOR_TYPE, KeyCode } from '../../constant';
 import { getMessagePreview } from '../../utils';
 import { useAccountsInfo, useMessage } from '../../hooks';
-import { CurrentConversation } from '../../store';
-import { useRecoilValue } from 'recoil';
+import { CurrentConversation, CurrentEditorMentionedUsers } from '../../store';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 interface ImEditorProps {
   style?: CSSProperties;
@@ -18,7 +18,7 @@ interface ImEditorProps {
   repliedMessage?: Message;
   editingMessage?: Message;
   ref?: any;
-  onSubmit?: (richText?: IRichText) => void;
+  onSubmit?: (richText?: IRichText, mentionedUsers?: string[]) => void;
   changeReplyMessage?: (message) => void;
   onEditorStateChange?: (richText?: IRichText) => void;
   onMessageTyping?: () => void;
@@ -48,6 +48,7 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
   const isEditorIsEmpty = useRef(true);
   const { sendFileMessage, sendImageMessage, sendVideoMessage, sendAudioMessage, sendVolcMessage, sendCouponMessage } =
     useMessage();
+  const [currentEditorMentionedUsers, setCurrentEditorMentionedUsers] = useRecoilState(CurrentEditorMentionedUsers);
 
   const focus = () => {
     cancelAnimationFrame(focusAnimationFrame.current);
@@ -72,7 +73,7 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
         key: 'Mention',
         use: true,
         params: {
-          suggestions: suggestions,
+          suggestions,
         },
       },
       {
@@ -170,13 +171,14 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
   };
 
   const handleSubmit = () => {
-    onSubmit?.({ text: baseEditor.current?.value });
+    onSubmit?.({ text: baseEditor.current?.value }, currentEditorMentionedUsers);
   };
 
   const clearEditor = () => {
     requestAnimationFrame(() => {
       baseEditor.current.value = '';
     });
+    setCurrentEditorMentionedUsers([]);
   };
 
   let submit = () => {

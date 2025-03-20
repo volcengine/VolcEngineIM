@@ -14,7 +14,7 @@ interface DialogProps {
   /** 关闭弹出框的回调 */
   onCancel?: () => void;
   /** 点击确认按钮的回调 */
-  onOk?: (e?: MouseEvent) => Promise<any> | void;
+  onOk?: (e?: MouseEvent, useStringUid?: boolean) => Promise<any> | void;
   /** 指定弹出框挂载的父节点 [[() => document.body]] */
   getPopupContainer?: () => Element;
   /** 弹出框的标题 */
@@ -25,6 +25,8 @@ interface DialogProps {
   mask?: boolean;
   /** 确认按钮文案 */
   okText?: string;
+  /** 字符串确认按钮文案 */
+  stringOkText?: string;
   /** 取消按钮文案 */
   cancelText?: string;
   /** 自定义页脚，传入 null 则不显示 */
@@ -86,6 +88,7 @@ const Dialog = (props: DialogProps, ref) => {
     wrapStyle,
     wrapClassName,
     okText,
+    stringOkText,
     cancelText,
     footer,
     onCancel: _onCancel,
@@ -112,8 +115,8 @@ const Dialog = (props: DialogProps, ref) => {
   const haveOriginTransformOrigin = useRef<boolean>(false);
 
   const onConfirm = useCallback(
-    e => {
-      onOk?.(e);
+    (e, useStringUid = false) => {
+      onOk?.(e, useStringUid);
     },
     [onOk]
   );
@@ -155,9 +158,24 @@ const Dialog = (props: DialogProps, ref) => {
               </Button>
             )}
             {!hideOk && (
-              <Button type="primary" size="small" className="im-button" onClick={onConfirm}>
-                {okText || '确定'}
-              </Button>
+              <>
+                <Button type="primary" size="small" className="im-button" onClick={onConfirm}>
+                  {okText || '确定'}
+                </Button>
+
+                {stringOkText && (
+                  <Button
+                    type="primary"
+                    size="small"
+                    className="im-button"
+                    onClick={e => {
+                      onConfirm(e, true);
+                    }}
+                  >
+                    {stringOkText}
+                  </Button>
+                )}
+              </>
             )}
           </>
         )}

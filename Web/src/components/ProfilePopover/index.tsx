@@ -4,18 +4,26 @@ import { IconEdit } from '@arco-design/web-react/icon';
 import React from 'react';
 import { ACCOUNTS_INFO } from '../../constant';
 import { useAccountsInfo } from '../../hooks';
+import { useRecoilValue } from 'recoil';
+
+import { UserIdStr } from '../../store';
 function ProfilePopover({
   onEdit,
   userId,
+  other,
+  userIdStr,
   children,
   position,
 }: {
   onEdit?: () => void;
   userId: string;
+  other?: boolean;
+  userIdStr?: string;
   children?: React.ReactNode;
   position?: 'top' | 'tl' | 'tr' | 'bottom' | 'bl' | 'br' | 'left' | 'lt' | 'lb' | 'right' | 'rt' | 'rb';
 }) {
   const ACCOUNTS_INFO = useAccountsInfo();
+  const selfUserIdStr = useRecoilValue(UserIdStr);
   let userInfo = ACCOUNTS_INFO[userId];
 
   return (
@@ -45,6 +53,9 @@ function ProfilePopover({
               )}
             </div>
             ID: <Typography.Text copyable>{userInfo.id}</Typography.Text>
+            <div>
+              strUserID: <Typography.Text copyable>{other ? userIdStr : selfUserIdStr}</Typography.Text>
+            </div>
           </div>
         </Space>
       }

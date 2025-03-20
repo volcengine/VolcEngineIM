@@ -130,11 +130,13 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
     },
     [modifyProperty, message]
   );
-
+  console.log('renderAvatar message:', message);
   const renderAvatar = () => {
     const avatarUrl =
       participants.find(i => i.userId === sender)?.avatarUrl || ext[EXT_AVATAR_URL] || ACCOUNTS_INFO[sender]?.url;
-    return <MessageAvatar onClick={handleAvatarClick} source={avatarUrl} desc={sender} />;
+    return (
+      <MessageAvatar onClick={handleAvatarClick} strUserId={message.ext['s:Sender']} source={avatarUrl} desc={sender} />
+    );
   };
 
   /** 每一个间隔的时间 */

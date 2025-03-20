@@ -27,7 +27,7 @@ const CreateConversationModel: FC<CreateConversationModelProps> = props => {
       }
       let data = await checkAccount({ uids: [inputUserId] });
       if (!data[inputUserId]) {
-        Message.error(props.notExistUidMessage ?? '该用户不存在');
+        Message.error(props.notExistUidMessage ?? '该用户不存在111');
         return;
       }
       const result = await props.onCreate(inputUserId);

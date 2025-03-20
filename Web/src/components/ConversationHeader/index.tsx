@@ -1,13 +1,13 @@
 import React, { FC, useCallback, useState } from 'react';
 import { Portal } from '..';
 import { GroupModal, OneOneModal } from '../ConversationModal';
+import { BytedIMInstance } from '../../store';
 
 import HeaderBox from './Styles';
 import { Button, Message, Modal, Tooltip } from '@arco-design/web-react';
-import { IconEmpty, IconUserAdd, IconUserGroup } from '@arco-design/web-react/icon';
-import { useRecoilValue } from 'recoil';
-import { BytedIMInstance } from '../../store';
+import { IconUserAdd, IconUserGroup, IconEmpty } from '@arco-design/web-react/icon';
 import { useRequest } from 'ahooks';
+import { useRecoilValue } from 'recoil';
 
 interface ConversationHeaderProps {
   createGroupConversation?: any;

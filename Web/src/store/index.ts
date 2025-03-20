@@ -4,14 +4,25 @@ import { BytedIM, Conversation, FileInfo, im_proto, Message, Participant } from 
 
 import { IScrollViewRef } from '../components/MessageList';
 import { Storage } from '../utils';
-import { USER_ID_KEY } from '../constant';
+import { USER_ID_KEY, STR_USER_ID_KEY } from '../constant';
 import { EmojiTypes, IMAccountInfoTypes, IMAccountsTypes, BlockItem } from '../types';
 
 const { content: cacheUserId } = Storage.get(USER_ID_KEY);
+const { content: cacheStrUserId } = Storage.get(STR_USER_ID_KEY);
 
 const UserId = atom({
   key: 'UserId',
   default: String(cacheUserId),
+});
+
+const UserIdStr = atom({
+  key: 'UserIdStr',
+  default: String(cacheStrUserId),
+});
+
+const UserIdType = atom<'int64' | 'string'>({
+  key: 'UserIdType',
+  default: 'int64',
 });
 
 const UserName = atom({
@@ -157,8 +168,16 @@ const ReadReceiptVersion = atom({
   default: 0,
 });
 
+const CurrentEditorMentionedUsers = atom<string[]>({
+  key: 'CurrentEditorMentionedUsers',
+  default: [],
+  dangerouslyAllowMutability: true,
+});
+
 export {
   UserId,
+  UserIdStr,
+  UserIdType,
   DefaultUserIds,
   ScrollRef,
   FileUploadProcessStore,
@@ -182,4 +201,5 @@ export {
   SendMessagePriority,
   AccountsInfoVersion,
   ReadReceiptVersion,
+  CurrentEditorMentionedUsers,
 };

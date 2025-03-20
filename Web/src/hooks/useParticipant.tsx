@@ -111,11 +111,13 @@ export const useParticipant = () => {
         ? await bytedIMInstance.leaveLiveGroup({
             conversation,
             bizExt,
+            // useInt64: true,
           })
         : await bytedIMInstance.removeParticipants({
             conversation,
             participant: participants,
             bizExt,
+            useInt64: true,
           });
     return true;
   };
@@ -187,7 +189,8 @@ export const useParticipant = () => {
         [key: string]: string;
       };
       avatarUrl?: string;
-    }
+    },
+    isStringUserId?: boolean
   ) => {
     try {
       if (currentConversation?.id) {
@@ -195,6 +198,7 @@ export const useParticipant = () => {
           conversation: currentConversation,
           userId,
           ...config,
+          useInt64: !isStringUserId,
         });
       }
     } catch (e) {
@@ -247,6 +251,7 @@ export const useParticipant = () => {
       limit,
       cursor,
     });
+    console.log('getLiveParticipantsOnline', result);
 
     return result;
   };
@@ -279,14 +284,14 @@ export const useParticipant = () => {
     if (!currentConversation?.id) {
       return {};
     }
-    const { memberIds, blockTime = 0, block } = params;
-
+    const { memberIds, blockTime = 0, block, useString } = params;
     return await bytedIMInstance.setParticipantMuteTime({
       conversation: currentConversation,
       blockDuration: {
         [memberIds]: blockTime,
       },
       block,
+      useInt64: !useString,
     });
   };
 
@@ -294,7 +299,7 @@ export const useParticipant = () => {
     if (!currentConversation?.id) {
       return {};
     }
-    const { memberIds, blockTime = 0, block } = params;
+    const { memberIds, blockTime = 0, block, useString } = params;
 
     return await bytedIMInstance.setParticipantBlockTime({
       conversation: currentConversation,
@@ -302,19 +307,22 @@ export const useParticipant = () => {
         [memberIds]: blockTime,
       },
       block,
+      useInt64: !useString,
     });
   };
 
-  const addLiveParticipantMuteWhiteList = async (pids: string[]) => {
+  const addLiveParticipantMuteWhiteList = async (pids: string[], useString?: boolean) => {
     return await bytedIMInstance.addLiveParticipantMuteWhiteList({
       conversation: currentConversation,
       participantIds: pids,
+      useInt64: !useString,
     });
   };
-  const removeLiveParticipantMuteWhiteList = async (pids: string[]) => {
+  const removeLiveParticipantMuteWhiteList = async (pids: string[], useString?: boolean) => {
     return await bytedIMInstance.removeLiveParticipantMuteWhiteList({
       conversation: currentConversation,
       participantIds: pids,
+      useInt64: !useString,
     });
   };
 

@@ -1,7 +1,7 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { im_proto, ConversationSettingWeakMuteInfo, PushStatus } from '@volcengine/im-web-sdk';
 
-import { BytedIMInstance, CurrentConversation, UserId } from '../store';
+import { BytedIMInstance, CurrentConversation, UserId, UserIdType } from '../store';
 import { CheckCode } from '../constant';
 import useMessage from './useMessage';
 import { Message } from '@arco-design/web-react';
@@ -13,6 +13,7 @@ const useConversation = () => {
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
   const setCurrentConversation = useSetRecoilState(CurrentConversation);
   const userId = useRecoilValue(UserId);
+  const userIdType = useRecoilValue(UserIdType);
   const { sendSystemMessage, editMessage, replyMessage } = useMessage();
   const ACCOUNTS_INFO = useAccountsInfo();
 
@@ -29,8 +30,8 @@ const useConversation = () => {
         return conv;
       }
     } catch (error) {
-      console.log(`根据id: ${id}获取会话失败`);
-      throw Error(`根据id: ${id}获取会话失败`);
+      console.error(`根据id: ${id}获取会话失败`);
+      // throw Error(`根据id: ${id}获取会话失败`);
     }
   };
 
@@ -40,15 +41,15 @@ const useConversation = () => {
    * @param bizExt
    */
   const createGroupConversation = async (ids, bizExt) => {
+    const userId = bytedIMInstance.option.userId;
     const params = {
       type: ConversationType.GROUP_CHAT,
-      participants: [bizExt.userId, ...ids],
+      participants: [userId, ...ids],
       name: bizExt.name,
+      useInt64: userIdType === 'int64',
     };
+    const { payload, success, checkCode, statusCode, statusMsg } = await bytedIMInstance?.createConversation?.(params);
     try {
-      const { payload, success, checkCode, statusCode, statusMsg } = await bytedIMInstance?.createConversation?.(
-        params
-      );
       if (
         [
           ConversationOperationStatus.MORE_THAN_USER_CONVERSATION_COUNT_LIMITS,
@@ -59,18 +60,21 @@ const useConversation = () => {
         Message.error(`${info?.moreThanConversationCountLimitUserIds} 加群个数超过上限`);
         return false;
       }
-      if (success === false && checkCode.toNumber() === CheckCode.SENSITIVE_WORDS) {
+      if (success === false && checkCode?.toNumber?.() === CheckCode.SENSITIVE_WORDS) {
         Message.error('文本中可能包含敏感词，请修改后重试');
         return false;
       }
-      setCurrentConversation(payload);
-      await sendSystemMessage(
-        payload,
-        `${ACCOUNTS_INFO[bizExt.userId].realName} 邀请 ${ids
-          .map(id => ACCOUNTS_INFO[id]?.realName)
-          .join('、')} 加入群聊`
-      );
-      return true;
+      if (payload) {
+        setCurrentConversation(payload);
+        await sendSystemMessage(
+          payload,
+          `${ACCOUNTS_INFO[bizExt.userId].realName} 邀请 ${ids
+            .map(id => ACCOUNTS_INFO[id]?.realName)
+            .join('、')} 加入群聊`
+        );
+        return true;
+      }
+      return false;
     } catch (e) {
       console.error('创建群聊失败', e);
     }
@@ -86,6 +90,7 @@ const useConversation = () => {
       const { payload } = await bytedIMInstance.createConversation({
         type: ConversationType.ONE_TO_ONE_CHAT,
         participants: uid,
+        useInt64: userIdType === 'int64',
       });
       setCurrentConversation(payload);
     } catch (e) {
@@ -225,22 +230,6 @@ const useConversation = () => {
     }
   };
 
-  /**
-   * 清空会话历史消息
-   * @param id
-   */
-  const clearConversationMessage = async (id: string) => {
-    const conv = getConversation(id);
-    if (conv?.id) {
-      try {
-        await bytedIMInstance?.clearConversationMessage({ conversation: conv });
-        Message.success('清空聊天记录请求成功');
-      } catch (e) {
-        Message.error('清空聊天记录请求失败');
-      }
-    }
-  };
-
   return {
     getConversation,
     selectConversation,
@@ -252,7 +241,6 @@ const useConversation = () => {
     configGroupConversationCoreInfo,
     configConversationSettingInfo,
     configConversationWeakMute,
-    clearConversationMessage,
   };
 };
 

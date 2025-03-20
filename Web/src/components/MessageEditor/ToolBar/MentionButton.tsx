@@ -5,7 +5,7 @@ import { IconAt } from '@arco-design/web-react/icon';
 import IconButtonMask from '../../IconButtonMask';
 import { useAccountsInfo } from '../../../hooks';
 import { useRecoilValue } from 'recoil';
-import { BytedIMInstance, CurrentConversation } from '../../../store';
+import { BytedIMInstance, CurrentConversation, CurrentEditorMentionedUsers } from '../../../store';
 import { im_proto } from '@volcengine/im-web-sdk';
 
 interface MentionButtonProps {
@@ -19,6 +19,7 @@ const MentionButton: FC<MentionButtonProps> = props => {
   const ACCOUNTS_INFO = useAccountsInfo();
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
   const currentConversation = useRecoilValue(CurrentConversation);
+  const currentEditorMentionedUsers = useRecoilValue(CurrentEditorMentionedUsers);
 
   return (
     <Select
@@ -26,6 +27,9 @@ const MentionButton: FC<MentionButtonProps> = props => {
       defaultActiveFirstOption={false}
       onChange={value => {
         editor.value += '@' + ACCOUNTS_INFO[value].realName;
+        // currentEditorMentionedUsers 未做严格判断，仅用于测试，业务有需要的情况自行实现闭环逻辑（可重复添加，删除 @昵称 文本时未做清空）
+        currentEditorMentionedUsers.push(value);
+        console.log('llll Select onChange value', value, editor, currentEditorMentionedUsers);
         if (currentConversation.type === im_proto.ConversationType.ONE_TO_ONE_CHAT) {
           bytedIMInstance.sendP2PMessage({
             conversation: currentConversation,

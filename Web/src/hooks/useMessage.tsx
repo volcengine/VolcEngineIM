@@ -9,7 +9,10 @@ import {
   ReferenceMessage,
   SendMessagePriority,
   UserId,
+  UserIdType,
   EditMessage,
+  UserIdStr,
+  CurAccountsInfo,
 } from '../store';
 import { CalcVideo, getImageSize, getMessagePreview } from '../utils';
 import { Message as ArcoMessage } from '@arco-design/web-react';
@@ -50,6 +53,9 @@ const useMessage = () => {
 
   const setFileUploadProcess = useSetRecoilState(FileUploadProcessStore);
   const userId = useRecoilValue(UserId);
+  const userIdStr = useRecoilValue(UserIdStr);
+  const userIdType = useRecoilValue(UserIdType);
+  const curAccountsInfo = useRecoilValue(CurAccountsInfo);
   const priority = useRecoilValue(SendMessagePriority);
 
   /**
@@ -66,6 +72,7 @@ const useMessage = () => {
         const resp = await bytedIMInstance.getLiveParticipantDetailOnline({
           conversation: currentConversation,
           participantIds: [userId],
+          useInt64: userIdType === 'int64',
         });
         const { avatarUrl, alias } = resp[0];
         ext[EXT_ALIAS_NAME] = alias;
@@ -79,7 +86,7 @@ const useMessage = () => {
    * 发送普通文本消息
    * @param msg
    */
-  const sendTextMessage = async (msg: object) => {
+  const sendTextMessage = async (msg: object, mentionedUsers?: string[]) => {
     if (editingMessage && editingMessage.type === im_proto.MessageType.MESSAGE_TYPE_TEXT) {
       await editTextMessage(editingMessage, JSON.stringify(msg));
       return;
@@ -90,11 +97,16 @@ const useMessage = () => {
       content: JSON.stringify(msg),
       referenceMessage,
       referenceHint: getMessagePreview(referenceMessage),
+      mentionedUsers,
       ext: {},
+      useInt64: userIdType === 'int64',
     };
     await insertAliasExtForMassChat(params.ext);
 
+    console.log('llll sendTextMessage-params:', params);
+
     const message = await bytedIMInstance.createTextMessage(params);
+    console.log('llll sendTextMessage-message:', message);
     if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
       bytedIMInstance?.event?.emit?.(IMEvent.MessageUpsert, null, message);
     }
@@ -224,10 +236,12 @@ const useMessage = () => {
   const sendSystemMessage = async (conversation, text: string) => {
     const message = await bytedIMInstance.createCustomMessage({
       conversation,
+      mentionedUsers: [userId], // 测试mentionedUsers
       content: JSON.stringify({
         type: 2,
         text,
       }),
+      useInt64: userIdType === 'int64',
     });
     sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
   };
@@ -238,15 +252,22 @@ const useMessage = () => {
   const sendVolcMessage = async () => {
     const ext = {};
     await insertAliasExtForMassChat(ext);
-    const message = await bytedIMInstance.createCustomMessage({
+
+    const params = {
       conversation: currentConversation,
+      mentionedUsers: [userId], // 测试mentionedUsers
       content: JSON.stringify({
         type: 1,
         link: 'https://www.volcengine.com/',
-        text: '欢迎体验火山引擎即时通讯 IM demo',
+        text: `欢迎${curAccountsInfo?.nickname || '您'}体验火山引擎即时通讯 IM demo`,
       }),
       ext: ext,
-    });
+      useInt64: userIdType === 'int64',
+    };
+
+    console.log('llll sendVolcMessage createCustomMessage', params);
+
+    const message = await bytedIMInstance.createCustomMessage(params);
     if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
       bytedIMInstance?.event?.emit?.(IMEvent.MessageUpsert, null, message);
     }
@@ -262,6 +283,7 @@ const useMessage = () => {
     await insertAliasExtForMassChat(ext);
     const message = await bytedIMInstance.createCustomMessage({
       conversation: currentConversation,
+      mentionedUsers: [userId], // 测试mentionedUsers
       content: JSON.stringify({
         detail: '这是一张优惠券,点击此处领取',
         start: 8,
@@ -269,6 +291,7 @@ const useMessage = () => {
         type: '3',
       }),
       ext: ext,
+      useInt64: userIdType === 'int64',
     });
 
     if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {

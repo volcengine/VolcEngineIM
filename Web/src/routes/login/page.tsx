@@ -9,6 +9,7 @@ import {
   Message,
   Checkbox,
   Link,
+  Radio,
   Input,
   Form,
 } from '@arco-design/web-react';
@@ -16,9 +17,16 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useNavigate } from '@modern-js/runtime/router';
 
 import styles from './index.module.scss';
-import { BUSINESS_BACKEND_TOKEN_ENABLE, IM_TOKEN_KEY, SDK_OPTION, SMS_ENABLE, USER_ID_KEY } from '../../constant';
+import {
+  BUSINESS_BACKEND_TOKEN_ENABLE,
+  IM_TOKEN_KEY,
+  SDK_OPTION,
+  SMS_ENABLE,
+  STR_USER_ID_KEY,
+  USER_ID_KEY,
+} from '../../constant';
 import { Storage } from '../../utils/storage';
-import { DefaultUserIds, UserId } from '../../store';
+import { DefaultUserIds, UserId, UserIdStr, UserIdType } from '../../store';
 
 const { Content } = Layout;
 const { Row, Col } = Grid;
@@ -29,9 +37,14 @@ import { useCountDown, useRequest } from 'ahooks';
 import classNames from 'classnames'; // 单站点登录Web接口
 import { sendCode, smsLogin } from './account';
 import { BytedIM } from '@volcengine/im-web-sdk';
-
+enum RadioValue {
+  int64 = '1',
+  string = '2',
+}
 const Login = () => {
   const setUserId = useSetRecoilState(UserId);
+  const setStrUserId = useSetRecoilState(UserIdStr);
+  const setUserIdType = useSetRecoilState(UserIdType);
   const navigate = useNavigate();
 
   const [targetDate, setTargetDate] = useState<number>();
@@ -48,28 +61,48 @@ const Login = () => {
       } catch {
         return;
       }
-
+      const isStringUid = form.getFieldValue('uid_type') === RadioValue.string;
       if (!SMS_ENABLE) {
         const userIdStr = form.getFieldValue('userId');
+        console.log('SMS_ENABLE isStringUid', isStringUid, userIdStr);
+        // if (isStringUid) {
+        //   Storage.set(STR_USER_ID_KEY, userIdStr, Date.now() + 7 * 24 * 60 * 60 * 1000);
+        // } else {
+        //   Storage.set(USER_ID_KEY, userIdStr, Date.now() + 7 * 24 * 60 * 60 * 1000);
+        // }
         Storage.set(USER_ID_KEY, userIdStr, Date.now() + 7 * 24 * 60 * 60 * 1000);
+        const extParam = isStringUid
+          ? {
+              userIdStr: userIdStr,
+            }
+          : {
+              userId: userIdStr,
+            };
+        const options = {
+          ...SDK_OPTION,
+          token: form.getFieldValue('userToken'),
+          deviceId: form.getFieldValue('userId'),
+          ...extParam,
+        };
         if (!BUSINESS_BACKEND_TOKEN_ENABLE) {
-          const instance = new BytedIM({
-            ...SDK_OPTION,
-            token: form.getFieldValue('userToken'),
-            userId: form.getFieldValue('userId'),
-            deviceId: form.getFieldValue('userId'),
-          });
+          const instance = new BytedIM(options);
           try {
             const resp = await instance.checkToken();
-            console.log(resp);
+            console.log('demo page login resp:', resp);
           } catch (error) {
-            console.log({ ...error });
+            console.log('demo page login error:', error);
             return Message.error('Token 校验失败，请重新生成 Token');
           }
 
           Storage.set(IM_TOKEN_KEY, form.getFieldValue('userToken'));
         }
-        setUserId(userIdStr);
+        if (isStringUid) {
+          setStrUserId(userIdStr);
+          setUserIdType('string');
+        } else {
+          setUserId(userIdStr);
+          setUserIdType('int64');
+        }
         navigate('/');
         return;
       }
@@ -80,14 +113,22 @@ const Login = () => {
           code: form.getFieldValue('code'),
         });
         Message.success('登录成功');
-        console.log('loginResult', loginResult);
+        console.log('smsLogin loginResult', loginResult);
 
         let userIdStr = loginResult.user_id_str;
-        Storage.set(USER_ID_KEY, userIdStr, Date.now() + 7 * 24 * 60 * 60 * 1000);
-        setUserId(userIdStr);
+
+        if (isStringUid) {
+          Storage.set(STR_USER_ID_KEY, userIdStr, Date.now() + 7 * 24 * 60 * 60 * 1000);
+          setStrUserId(userIdStr);
+          setUserIdType('string');
+        } else {
+          Storage.set(USER_ID_KEY, userIdStr, Date.now() + 7 * 24 * 60 * 60 * 1000);
+          setUserId(userIdStr);
+          setUserIdType('int64');
+        }
         navigate('/');
       } catch (error) {
-        console.log(error);
+        console.log('smsLogin error', error);
         if (error.code === 'ERR_NETWORK') {
           return Message.error('请先连接网络');
         }
@@ -100,9 +141,12 @@ const Login = () => {
   const [form] = Form.useForm<{
     phone: string;
     code: string;
+    uid_type: RadioValue;
     userId: string;
     userToken: string;
   }>();
+
+  const ageState = Form.useFormState('age', form) || {};
 
   const { run: getSmsCode, loading: smsCodeLoading } = useRequest(
     async () => {
@@ -227,9 +271,18 @@ const Login = () => {
             </div>
           ) : (
             <div className={styles['input-wrapper']}>
+              <Form.Item field="uid_type" label="uid 类型">
+                <Radio.Group defaultValue={'1'}>
+                  <Radio value={RadioValue.int64}>int64 Uid</Radio>
+                  <Radio value={RadioValue.string}>字符串 Uid</Radio>
+                </Radio.Group>
+              </Form.Item>
               <Form.Item
                 field="userId"
                 normalize={v => {
+                  if (form.getFieldValue('uid_type') === RadioValue.string) {
+                    return v;
+                  }
                   return v?.toString().replace(/\D/g, '').slice(0, 18) ?? v;
                 }}
                 rules={[

@@ -17,7 +17,7 @@ interface GroupSearchModalProps {
   role: number;
   ownUserId: string;
   removeGroupParticipants: (conversationId: string, userId: string[]) => void;
-  updateGroupParticipant: (conversationId: string, userId: string, config?: any) => void;
+  updateGroupParticipant: (conversationId: string, userId: string, config?: any, isStringUserId?: boolean) => void;
 }
 
 const sortMember = participants => {

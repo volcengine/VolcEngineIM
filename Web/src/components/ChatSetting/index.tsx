@@ -46,7 +46,6 @@ const ChatSetting: FC<ChatSettingProps> = props => {
     leaveGroupConversation,
     dissolveGroupConversation,
     configGroupConversationCoreInfo,
-    clearConversationMessage,
   } = useConversation();
 
   const { id, isStickOnTop, coreInfo, isMuted } = currentConversation;
@@ -89,9 +88,10 @@ const ChatSetting: FC<ChatSettingProps> = props => {
       switch (modalType.current) {
         case ModalType.Info: {
           const name = childRef.current.nameRef.current.dom.value.trim() || '未命名群聊';
+          const avatarUrl = childRef.current.avatarRef.current.dom.value.trim();
           const desc = childRef.current.descRef.current.dom.value;
           try {
-            await configGroupConversationCoreInfo(id, { name, desc });
+            await configGroupConversationCoreInfo(id, { name, desc, icon: avatarUrl });
           } catch (err) {
             Message.error('保存失败');
           }
@@ -203,19 +203,6 @@ const ChatSetting: FC<ChatSettingProps> = props => {
           >
             <p className="setting-item-title">置顶聊天</p>
           </CheckBox>
-
-          <div
-            className="select-item-wrapper"
-            onClick={() => {
-              clearConversationMessage(id);
-            }}
-          >
-            <div className="item-name-wrapper">清空聊天记录</div>
-
-            <div className="item-icon-wrapper">
-              <IconRight />
-            </div>
-          </div>
         </div>
       </div>
 

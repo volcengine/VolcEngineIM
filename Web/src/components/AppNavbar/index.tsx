@@ -22,6 +22,7 @@ import {
   IM_OVERSEA_KEY,
   IS_OVERSEA,
   USER_ID_KEY,
+  STR_USER_ID_KEY,
 } from '../../constant';
 import { Storage } from '../../utils/storage';
 import { BytedIMInstance, Conversations, Messages, Participants, UnReadTotal, UserId } from '../../store';
@@ -63,6 +64,7 @@ function DeleteAccountModal({ visible, setVisible }: { visible: boolean; setVisi
             }
             await deleteAccount();
             Storage.set(USER_ID_KEY, '');
+            // Storage.set(STR_USER_ID_KEY, '');
 
             location.reload();
           })(),
@@ -239,6 +241,7 @@ const AppNavBar: FC<AppNavBarProps> = props => {
             bytedIMInstance?.dispose();
 
             Storage.set(USER_ID_KEY, '');
+            // Storage.set(STR_USER_ID_KEY, '');
 
             setMessages([]);
             setParticipants([]);

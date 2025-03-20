@@ -49,6 +49,7 @@ export enum ROLE {
 }
 
 export const USER_ID_KEY = 'IM_USER_ID_KEY';
+export const STR_USER_ID_KEY = 'IM_STR_USER_ID_KEY';
 export const IM_TOKEN_KEY = 'IM_TOKEN_KEY';
 
 export const IM_OVERSEA_KEY = 'IM_OVERSEA_KEY';
@@ -110,6 +111,7 @@ export const ACCOUNTS_INFO = new Proxy(
   {} as {
     [id: string]: {
       id: string;
+      idString: string;
       /* 好友备注，realName */ name: string;
       url: string;
       /* 用户昵称，默认名称 */ realName: string;

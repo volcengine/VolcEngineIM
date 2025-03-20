@@ -88,7 +88,9 @@ function ApplyItem({ i, refresh }: { i: FriendApply; refresh: () => void }) {
         await bytedIMInstance.sendMessage({
           message: await bytedIMInstance.createTextMessage({
             content: JSON.stringify({ text: '我已通过你的好友申请' }),
-            conversation: (await bytedIMInstance.createConversation({ participants: [i.fromUserId] })).payload,
+            conversation: (
+              await bytedIMInstance.createConversation({ participants: [i.fromUserId], useInt64: true })
+            ).payload,
           }),
         });
       } else {
