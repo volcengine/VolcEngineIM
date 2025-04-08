@@ -3,9 +3,6 @@ package com.bytedance.im.ui.message.adapter.ui.widget.input;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Selection;
@@ -20,12 +17,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
+
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.core.model.Message;
 import com.bytedance.im.core.model.inner.msg.BIMTextElement;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
@@ -53,7 +53,6 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
     private int MAX_LENGTH = 500;
     private ImageView mEmojiIv;
     private EmojiGroupView mEmojiGroupView;
-    private Message longClickToMsg;
     private ViewPager moreInputOptional;
     private ImageView mVoiceIv;
     protected VoiceInputButton mVoiceInputTv;
@@ -76,6 +75,7 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
     private StateMachine stateMachine;
     private boolean isInit = false;
     private KeyBoardHeightHelper.OnMeasureCompleteListener onKeyboardListener;
+    private boolean forceShowSendButton = false;
 
     public VEInPutView(@NonNull Context context) {
         this(context, null);
@@ -89,6 +89,13 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
         super(context, attrs, defStyleAttr);
         inflate(getContext(), R.layout.bim_im_input_layout, this);
         init();
+    }
+
+    public void switchToOnlyText() {
+        forceShowSendButton = true;
+        mVoiceIv.setVisibility(View.GONE);
+        sendBtn.setVisibility(View.VISIBLE);
+        inputMenu.setVisibility(View.INVISIBLE);
     }
 
     private void init() {
@@ -194,6 +201,9 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
             return;
         }
         if (v == sendBtn) {
+            if (isTextInvalid(mInputEt.getText().toString())) {
+                return;
+            }
             if (listener != null) {
                 if (editMessage != null) {
                     listener.onSendEditClick(mInputEt.getText().toString(), editMessage, new ArrayList<>(mentionIds));
@@ -204,7 +214,9 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
                 closeReplayMsgTv.performClick();
             }
             mInputEt.getText().clear();
-            sendBtn.setVisibility(View.GONE);
+            if (!forceShowSendButton) {
+                sendBtn.setVisibility(View.GONE);
+            }
         } else if (v == mEmojiIv) {
             stateMachine.sendMsg(StateMachine.MSG_EMOJI_CLICK);
         } else if (v == inputMenu) {
@@ -275,8 +287,10 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (s == null || s.toString().isEmpty() || !isTextValid(s.toString())) {
-                sendBtn.setVisibility(View.GONE);
+            if (isTextInvalid(s.toString())) {
+                if (!forceShowSendButton) {
+                    sendBtn.setVisibility(View.GONE);
+                }
             } else {
                 sendBtn.setVisibility(View.VISIBLE);
             }
@@ -314,15 +328,22 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
         this.listener = listener;
     }
 
-    private boolean isTextValid(String text) {
-        if (null != text && !text.isEmpty()) {
+    private boolean isTextInvalid(String text) {
+        boolean isInvalid = (text == null || text.isEmpty() || text.trim().isEmpty());
+        if (!isInvalid) {
+            boolean hasNormalChar = false;
+            // 需要有一个非特殊字符
             for (char c : text.toCharArray()) {
-                if (c != ' ' && c != '\t' && c != '\n') {
-                    return true;
+                if (c != '\t' && c != '\n' && c != ' ') {
+                    hasNormalChar = true;
+                    break;
                 }
             }
+            if (!hasNormalChar) {
+                isInvalid = true;
+            }
         }
-        return false;
+        return isInvalid;
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

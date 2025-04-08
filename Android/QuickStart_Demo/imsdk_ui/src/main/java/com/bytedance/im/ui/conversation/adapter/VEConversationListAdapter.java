@@ -3,28 +3,24 @@ package com.bytedance.im.ui.conversation.adapter;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bytedance.im.core.api.enums.BIMPushStatus;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMStrangeBox;
-import com.bytedance.im.core.api.model.BIMUnReadInfo;
-import com.bytedance.im.core.stranger.StrangerBox;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.conversation.adapter.viewhodler.VEConversationDefaultViewHolder;
 import com.bytedance.im.ui.conversation.adapter.viewhodler.VEConversationViewHolder;
 import com.bytedance.im.ui.conversation.adapter.viewhodler.VEStrangeBoxViewHolder;
+import com.bytedance.im.ui.conversation.model.VEConvBaseStickTopWrapper;
 import com.bytedance.im.ui.conversation.model.VEConvBaseWrapper;
 import com.bytedance.im.ui.conversation.model.VEConversationWrapper;
 import com.bytedance.im.ui.conversation.model.VEStrangeBoxWrapper;
 import com.bytedance.im.ui.log.BIMLog;
-import com.bytedance.im.core.api.model.BIMConversation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -170,6 +166,18 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
             VEConversationWrapper wrapper = wrap(conversation);
             updateConversation(wrapper);
         }
+    }
+
+    /**
+     * 固定置顶一个conversation
+     * @param topConversation
+     */
+    public void insertOrUpdateTopConversation(BIMConversation topConversation) {
+        long orderStart = Long.MAX_VALUE;
+
+        VEConvBaseStickTopWrapper veConvBaseStickTopWrapper = new VEConvBaseStickTopWrapper(topConversation, R.layout.bim_im_item_conversation);
+        veConvBaseStickTopWrapper.setSortOrder(orderStart);
+        updateConversation(veConvBaseStickTopWrapper);
     }
 
     private void updateConversation(VEConvBaseWrapper wrapper){

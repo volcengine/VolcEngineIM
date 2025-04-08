@@ -4,6 +4,8 @@ import static com.bytedance.im.app.contact.mainList.item.ContactListActionItem.B
 import static com.bytedance.im.app.contact.mainList.item.ContactListActionItem.INVITE_LIST;
 import static com.bytedance.im.app.contact.mainList.item.ContactListActionItem.ITEM_BLOCK_LIST;
 import static com.bytedance.im.app.contact.mainList.item.ContactListActionItem.ITEM_INVITE_LIST;
+import static com.bytedance.im.app.contact.mainList.item.ContactListActionItem.ITEM_ROBOT_LIST;
+import static com.bytedance.im.app.contact.mainList.item.ContactListActionItem.ROBOT_LIST;
 
 import android.text.TextUtils;
 
@@ -41,6 +43,8 @@ public class ContactListDataInfo<T> {
             return new ContactListDataInfo<>(BLOCK_LIST, ContactListItemType.TYPE_BLACK_LIST, "", ITEM_BLOCK_LIST, "");
         } else if (type == ContactListItemType.TYPE_INVITE_LIST) {
             return new ContactListDataInfo<>(INVITE_LIST, ContactListItemType.TYPE_INVITE_LIST, "", ITEM_INVITE_LIST, "");
+        } else if (type ==ContactListItemType.TYPE_ROBOT_LIST) {
+            return new ContactListDataInfo<>(ROBOT_LIST, ContactListItemType.TYPE_ROBOT_LIST, "", ITEM_ROBOT_LIST, "");
         }
         return null;
     }

@@ -52,6 +52,10 @@ public class BIMUINameUtils {
             return member.getAlias();
         }
 
+        if (user != null &&!TextUtils.isEmpty(user.getMemberAlias())) { //用户资料
+            return user.getMemberAlias();
+        }
+
         if (user != null && !TextUtils.isEmpty(user.getNickName())) { //用户资料
             return user.getNickName();
         }

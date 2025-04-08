@@ -20,7 +20,8 @@ import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.core.api.model.BIMMessagePropertyItem;
-import com.bytedance.im.core.internal.utils.IMLog;
+import com.bytedance.im.imcloud.internal.utils.IMLog;
+import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.emoji.EmojiManager;
 import com.bytedance.im.ui.log.BIMLog;
@@ -281,6 +282,14 @@ public final class BIMMessageViewHolder extends RecyclerView.ViewHolder {
                 }
             });
         }
+
+        if (bimConversation != null && bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
+            BIMUIUser otherUser = BIMUIClient.getInstance().getUserProvider().getUserInfo(bimConversation.getOppositeUserID());
+            if (otherUser != null && otherUser.getIsRobot()) {
+                tvReadReceipt.setVisibility(View.GONE);
+            }
+        }
+
         bindProperty(bimMessage, curPropertyView);
     }
     /**

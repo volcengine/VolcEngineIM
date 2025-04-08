@@ -48,6 +48,7 @@ import java.util.List;
 
 public class BIMConversationListFragment extends Fragment {
     private static final String TAG = "VEConversationListFragment";
+    private static StickTopConversationChecker checker = null;
     private RecyclerView recyclerView;
     private long cursor = -1;
     private boolean hasMore = true;
@@ -193,6 +194,15 @@ public class BIMConversationListFragment extends Fragment {
             public void onSuccess(BIMConversationListResult bimConversationListResult) {
                 BIMLog.i(TAG, "onSuccess() hasMore: " + bimConversationListResult.isHasMore() + " nextCursor: " + bimConversationListResult.getNextCursor() + " conversationList size:" + bimConversationListResult.getConversationList().size());
                 List<BIMConversation> conversationList = bimConversationListResult.getConversationList();
+
+                for (BIMConversation conversation : conversationList) {
+                    if (isStickTopConversation(conversation)) {
+                        conversationList.remove(conversation);
+                        adapter.insertOrUpdateTopConversation(conversation);
+                        break;
+                    }
+                }
+
                 adapter.appendConversation(conversationList);
                 if (cursor == -1) {
                     //首次查询前收到delete信息
@@ -297,22 +307,37 @@ public class BIMConversationListFragment extends Fragment {
             @Override
             public void onNewConversation(List<BIMConversation> conversationList) {
                 BIMLog.i(TAG, "onNewConversation()");
+
+                for (BIMConversation conversation : conversationList) {
+                    if (isStickTopConversation(conversation)) {
+                        adapter.insertOrUpdateTopConversation(conversation);
+                        conversationList.remove(conversation);
+                        break;
+                    }
+                }
                 adapter.addNewConversation(conversationList);
             }
 
             @Override
             public void onConversationChanged(List<BIMConversation> conversationList) {
                 BIMLog.i(TAG, "onConversationChanged()");
+                BIMConversation stickTopConversation = null;
                 boolean isRecyclerViewTop = recyclerView.canScrollVertically(1);
                 List<BIMConversation> updateList = new ArrayList<>();
                 if (conversationList != null) {
                     for (BIMConversation conversation : conversationList) {
-                        if (conversation != null) {
+                        if (conversation != null && !isStickTopConversation(conversation)) {
                             updateList.add(conversation);
+                        } else if (isStickTopConversation(conversation)) {
+                            stickTopConversation = conversation;
                         }
                     }
                 }
                 adapter.updateConversation(updateList);
+
+                if (stickTopConversation != null) {
+                    adapter.insertOrUpdateTopConversation(stickTopConversation);
+                }
             }
 
             @Override
@@ -352,6 +377,11 @@ public class BIMConversationListFragment extends Fragment {
                                 @Override
                                 public void onSuccess() {
                                     Toast.makeText(getActivity(), "删除成功", Toast.LENGTH_SHORT).show();
+
+                                    BIMUIUser user = BIMUIClient.getInstance().getUserProvider().getUserInfo(conversation.getOppositeUserID());
+                                    if (user != null && user.getIsRobot()) {
+                                        BIMClient.getInstance().markNewChat(conversation.getConversationID(), false, null);
+                                    }
                                 }
 
                                 @Override
@@ -458,5 +488,21 @@ public class BIMConversationListFragment extends Fragment {
         if (listener != null) {
             BIMUIClient.getInstance().getUserProvider().removeUserUpdateListener(listener);
         }
+    }
+
+    public interface StickTopConversationChecker {
+        boolean isStickTopConversation(BIMConversation conversation);
+    }
+
+    public boolean isStickTopConversation(BIMConversation conversation) {
+        if (checker != null && conversation != null) {
+            return checker.isStickTopConversation(conversation);
+        } else {
+            return false;
+        }
+    }
+
+    public static void injectStickTopConversationChecker(StickTopConversationChecker stickTopConversationChecker) {
+        checker = stickTopConversationChecker;
     }
 }

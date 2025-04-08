@@ -13,10 +13,20 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 
 import com.bytedance.im.app.R;
+import com.bytedance.im.app.contact.robotList.VERobotListActivity;
 import com.bytedance.im.app.plugins.TabPluginManager;
 import com.bytedance.im.app.plugins.items.interfaces.TabPlugin;
 import com.bytedance.im.app.plugins.widget.TabView;
+import com.bytedance.im.core.BuildConfig;
+import com.bytedance.im.core.api.BIMClient;
+import com.bytedance.im.core.api.enums.BIMConversationType;
+import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.api.interfaces.BIMSupportUnread;
+import com.bytedance.im.ui.conversation.BIMConversationListFragment;
+import com.bytedance.im.user.BIMContactExpandService;
+import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +52,7 @@ public class VEIMMainActivity extends Activity {
         tabLayout = findViewById(R.id.cl_menu);
 
 
+        initRobotConversationEnv();
         TabPluginManager tabPluginManager = new TabPluginManager();
         tabLayout.setWeightSum(tabPluginManager.getTabPluginList().size());
         TabView defaultTab = null;
@@ -70,6 +81,40 @@ public class VEIMMainActivity extends Activity {
         selectTab(defaultTab);
     }
 
+    private static void initRobotConversationEnv() {
+        BIMClient.getInstance().getService(BIMContactExpandService.class).getAllRobotFullInfo(true, null);
+        BIMConversationListFragment.injectStickTopConversationChecker(new BIMConversationListFragment.StickTopConversationChecker() {
+            @Override
+            public boolean isStickTopConversation(BIMConversation conversation) {
+                return conversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT
+                        && conversation.getOppositeUserID() == 999880;
+            }
+        });
+
+        VERobotListActivity.injectUserChecker(new VERobotListActivity.UserChecker() {
+            @Override
+            public boolean isValid(BIMUserFullInfo fullInfo) {
+                if (!BuildConfig.DEBUG) {
+                    return fullInfo.getUid() == 999880 || fullInfo.getUid() == 999881;
+                } else {
+                    return true;
+                }
+            }
+        });
+        BIMClient.getInstance().createSingleConversation(999880, new BIMResultCallback<BIMConversation>() {
+            @Override
+            public void onSuccess(BIMConversation conversation) {
+                if (conversation.getLastMessage() == null) {
+                    BIMClient.getInstance().markNewChat(conversation.getConversationID(), false, null);
+                }
+            }
+
+            @Override
+            public void onFailed(BIMErrorCode code) {
+
+            }
+        });
+    }
 
     private void selectTab(TabView v) {
         if (curTab == v) {

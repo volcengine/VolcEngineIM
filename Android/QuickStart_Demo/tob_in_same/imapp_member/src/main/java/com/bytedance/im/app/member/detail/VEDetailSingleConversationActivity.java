@@ -81,8 +81,10 @@ public class VEDetailSingleConversationActivity extends Activity {
                 bimConversation = conversation;
                 Switch topSwitch = findViewById(R.id.switch_top);
                 Switch muteSwitch = findViewById(R.id.switch_mute);
+                View markNewChatView = findViewById(R.id.mark_new_chat);
                 VEDetailController.initStickSwitch(topSwitch, conversation, VEDetailSingleConversationActivity.this);
                 VEDetailController.initMuteSwitch(muteSwitch, conversation, VEDetailSingleConversationActivity.this);
+                VEDetailController.initMarkNewChat(markNewChatView, conversation, VEDetailSingleConversationActivity.this);
             }
 
             @Override

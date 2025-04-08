@@ -2,7 +2,7 @@ package com.bytedance.im.app.member.group.adapter;
 
 import com.bytedance.im.core.api.enums.BIMMemberRole;
 import com.bytedance.im.core.api.model.BIMMember;
-import com.bytedance.im.core.model.Member;
+import com.bytedance.im.imcloud.model.Member;
 
 import java.util.Collections;
 import java.util.List;

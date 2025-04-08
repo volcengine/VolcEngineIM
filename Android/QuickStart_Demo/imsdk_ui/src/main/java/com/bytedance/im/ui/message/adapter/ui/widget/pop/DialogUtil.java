@@ -62,6 +62,42 @@ public class DialogUtil {
         }
     }
 
+    public static void showMarkNewChatDialog(Context context, BIMResultCallback<Boolean> callback) {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setCancelable(false);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+            if (null != dialog.getWindow()) {
+                Window window = dialog.getWindow();
+
+                window.setGravity(Gravity.CENTER);
+                window.setContentView(R.layout.bim_im_mark_new_conversation_dialog);
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                TextView tvAgree = window.findViewById(R.id.tv_agree);
+                TextView tvDisagree = window.findViewById(R.id.tv_disagree);
+
+                AtomicReference<Boolean> deleteFromServer = new AtomicReference<>(false);
+                tvAgree.setOnClickListener(v -> {
+                    if (callback != null) {
+                        callback.onSuccess(true);
+                        dialog.dismiss();
+                    }
+                });
+                tvDisagree.setOnClickListener(v -> {
+                    if (callback != null) {
+                        callback.onFailed(null);
+                        dialog.dismiss();
+                    }
+                });
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
     public static void showFileInfoDialog(Context context, String fileType, String fileSize) {
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);

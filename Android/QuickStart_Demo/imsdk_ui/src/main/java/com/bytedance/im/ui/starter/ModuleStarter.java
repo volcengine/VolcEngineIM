@@ -109,6 +109,20 @@ public class ModuleStarter {
         }
         return false;
     }
+
+    //启动选机器人
+    public boolean startRobotSelectSingle(Fragment fragment, String title, int requestCode) {
+        Intent intent = new Intent();
+        intent.setAction("com.bytedance.im.app.contact.robotList.VERobotListActivity");
+        intent.addCategory("android.intent.category.DEFAULT");
+        intent.putExtra(MODULE_KEY_TITLE, title);
+        if (intent.resolveActivity(fragment.getActivity().getPackageManager()) != null) {
+            fragment.startActivityForResult(intent, requestCode);
+            return true;
+        }
+        return false;
+    }
+
     //启动查看列表
 
     public boolean startMemberModuleList(Activity activity, String title, String conversationId) {

@@ -112,6 +112,7 @@ public class BIMDefaultUserProvider implements BIMUserProvider {
         user.setPortraitUrl(fullInfo.getPortraitUrl());
         user.setFriend(user.isFriend());
         user.setBlock(fullInfo.isBlock());
+        user.setIsRobot(fullInfo.isRobot());
         return user;
     }
 

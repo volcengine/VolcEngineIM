@@ -45,6 +45,11 @@ public class BIMUIUser {
     private boolean isFriend;
 
     /**
+     * @hidde
+     */
+    private boolean isRobot = false;
+
+    /**
      * @return 用户昵称
      * @type api
      * @brief 获取用户头昵称
@@ -145,6 +150,14 @@ public class BIMUIUser {
         this.memberAlias = memberAlias;
     }
 
+    public void setIsRobot(boolean robot) {
+        isRobot = robot;
+    }
+
+    public boolean getIsRobot() {
+        return isRobot;
+    }
+
     //避免业务层直接修改内存缓存
     public BIMUIUser clone() {
         BIMUIUser user = new BIMUIUser();
@@ -154,6 +167,7 @@ public class BIMUIUser {
         user.setPortraitUrl(this.getPortraitUrl());
         user.setFriend(this.isFriend());
         user.setBlock(this.isBlock());
+        user.setIsRobot(this.getIsRobot());
         user.setMemberAlias(this.getMemberAlias());
         user.setMemberPortraitUrl(this.getMemberPortraitUrl());
         user.setUidString(this.getUidString());

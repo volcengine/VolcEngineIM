@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.api.enums.BIMReferenceMessageStatus;
 import com.bytedance.im.core.api.model.BIMEditInfo;
 import com.bytedance.im.core.api.model.BIMMessage;
@@ -19,7 +18,6 @@ import com.bytedance.im.core.model.inner.msg.BIMFileElement;
 import com.bytedance.im.core.model.inner.msg.BIMImageElement;
 import com.bytedance.im.core.model.inner.msg.BIMTextElement;
 import com.bytedance.im.core.model.inner.msg.BIMVideoElement;
-import com.bytedance.im.core.proto.MessageStatus;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.emoji.EmojiManager;
 import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
