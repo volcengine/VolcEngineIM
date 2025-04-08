@@ -17,6 +17,7 @@
 		2B0CF807292E4E93007FC3DE /* VEIMDemoConversationSettingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B0CF806292E4E93007FC3DE /* VEIMDemoConversationSettingController.m */; };
 		2B0CF80B292E50B0007FC3DE /* VEIMDemoUserListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B0CF80A292E50B0007FC3DE /* VEIMDemoUserListCell.m */; };
 		2B0CF80E292E50DA007FC3DE /* VEIMDemoUserListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B0CF80D292E50DA007FC3DE /* VEIMDemoUserListItem.m */; };
+		2B25FBBC2D794D8E000955B9 /* VEIMDemoRobotListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B25FBBB2D794D8E000955B9 /* VEIMDemoRobotListController.m */; };
 		2B3182D72A7CA6D3006973CD /* UIAlertController+Dismiss.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B3182D62A7CA6D3006973CD /* UIAlertController+Dismiss.m */; };
 		2B3ABB872684642600B114E2 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB842684642600B114E2 /* Debug.xcconfig */; };
 		2B3ABB882684642600B114E2 /* Release_inhouse.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2B3ABB852684642600B114E2 /* Release_inhouse.xcconfig */; };
@@ -99,6 +100,11 @@
 		2BD4DC902A4B02F400A08AA7 /* VEIMDemoAccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD4DC8F2A4B02F400A08AA7 /* VEIMDemoAccountManager.m */; };
 		2BDB358C2BBA5F9300664F7B /* VEIMDemoMessageReadDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDB358B2BBA5F9300664F7B /* VEIMDemoMessageReadDetailViewController.m */; };
 		2BDC4CC72A737107007F47B6 /* VEIMDemoFriendApplyListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDC4CC62A737107007F47B6 /* VEIMDemoFriendApplyListDataSource.m */; };
+		2BDF5E5E2D5F171E00DF2842 /* SSDebugViewControllerBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDF5E5A2D5F171E00DF2842 /* SSDebugViewControllerBase.m */; };
+		2BDF5E5F2D5F171E00DF2842 /* SSDebugViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDF5E582D5F171E00DF2842 /* SSDebugViewController.m */; };
+		2BDF5E602D5F171E00DF2842 /* TTDebugItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDF5E5C2D5F171E00DF2842 /* TTDebugItem.m */; };
+		2BDF5E632D5F1FE200DF2842 /* SSDebugManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDF5E622D5F1FE200DF2842 /* SSDebugManager.m */; };
+		2BF080252D2CD97E0004C377 /* VEIMDemoDateResultController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BF080242D2CD97E0004C377 /* VEIMDemoDateResultController.m */; };
 		2BF1BA0B29A5E7B6007145D0 /* VEIMDemoConversationListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BF1BA0A29A5E7B6007145D0 /* VEIMDemoConversationListController.m */; };
 		2BF1BA0E29A5FD01007145D0 /* VEIMDemoChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BF1BA0D29A5FD01007145D0 /* VEIMDemoChatViewController.m */; };
 		457951DB071238198779CE04 /* libPods-ByteBusinessUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8288577B75BD8F5CF5AA4F8A /* libPods-ByteBusinessUITests.a */; };
@@ -154,6 +160,8 @@
 		2B0CF80A292E50B0007FC3DE /* VEIMDemoUserListCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoUserListCell.m; sourceTree = "<group>"; };
 		2B0CF80C292E50DA007FC3DE /* VEIMDemoUserListItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoUserListItem.h; sourceTree = "<group>"; };
 		2B0CF80D292E50DA007FC3DE /* VEIMDemoUserListItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoUserListItem.m; sourceTree = "<group>"; };
+		2B25FBBA2D794D8E000955B9 /* VEIMDemoRobotListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoRobotListController.h; sourceTree = "<group>"; };
+		2B25FBBB2D794D8E000955B9 /* VEIMDemoRobotListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoRobotListController.m; sourceTree = "<group>"; };
 		2B3182D52A7CA6D3006973CD /* UIAlertController+Dismiss.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+Dismiss.h"; sourceTree = "<group>"; };
 		2B3182D62A7CA6D3006973CD /* UIAlertController+Dismiss.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+Dismiss.m"; sourceTree = "<group>"; };
 		2B3ABB842684642600B114E2 /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
@@ -314,6 +322,16 @@
 		2BDB358B2BBA5F9300664F7B /* VEIMDemoMessageReadDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoMessageReadDetailViewController.m; sourceTree = "<group>"; };
 		2BDC4CC52A737107007F47B6 /* VEIMDemoFriendApplyListDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoFriendApplyListDataSource.h; sourceTree = "<group>"; };
 		2BDC4CC62A737107007F47B6 /* VEIMDemoFriendApplyListDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoFriendApplyListDataSource.m; sourceTree = "<group>"; };
+		2BDF5E572D5F171E00DF2842 /* SSDebugViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSDebugViewController.h; sourceTree = "<group>"; };
+		2BDF5E582D5F171E00DF2842 /* SSDebugViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSDebugViewController.m; sourceTree = "<group>"; };
+		2BDF5E592D5F171E00DF2842 /* SSDebugViewControllerBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSDebugViewControllerBase.h; sourceTree = "<group>"; };
+		2BDF5E5A2D5F171E00DF2842 /* SSDebugViewControllerBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSDebugViewControllerBase.m; sourceTree = "<group>"; };
+		2BDF5E5B2D5F171E00DF2842 /* TTDebugItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TTDebugItem.h; sourceTree = "<group>"; };
+		2BDF5E5C2D5F171E00DF2842 /* TTDebugItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TTDebugItem.m; sourceTree = "<group>"; };
+		2BDF5E612D5F1FE200DF2842 /* SSDebugManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSDebugManager.h; sourceTree = "<group>"; };
+		2BDF5E622D5F1FE200DF2842 /* SSDebugManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSDebugManager.m; sourceTree = "<group>"; };
+		2BF080232D2CD97E0004C377 /* VEIMDemoDateResultController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoDateResultController.h; sourceTree = "<group>"; };
+		2BF080242D2CD97E0004C377 /* VEIMDemoDateResultController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoDateResultController.m; sourceTree = "<group>"; };
 		2BF1BA0929A5E7B6007145D0 /* VEIMDemoConversationListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoConversationListController.h; sourceTree = "<group>"; };
 		2BF1BA0A29A5E7B6007145D0 /* VEIMDemoConversationListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VEIMDemoConversationListController.m; sourceTree = "<group>"; };
 		2BF1BA0C29A5FD01007145D0 /* VEIMDemoChatViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VEIMDemoChatViewController.h; sourceTree = "<group>"; };
@@ -415,6 +433,7 @@
 				6261DB9924643D8C00FC11F8 /* ByteBusiness.entitlements */,
 				2B3ABB832684642600B114E2 /* xcconfig */,
 				2B4D32292C1054EC00B55445 /* IMDebug */,
+				2BDF5E5D2D5F171E00DF2842 /* Debug */,
 				25EE37402433167000AB5267 /* Info.plist */,
 				25EE37AF24332C7D00AB5267 /* PrefixHeader.pch */,
 				2BA798A82A94E8F60086FB90 /* UIWindow+FixCrashOnInputKeyboard.h */,
@@ -668,6 +687,8 @@
 				2B977F202A663D9900568407 /* VEIMDemoFriendApplyListController.m */,
 				2B977F282A678D9B00568407 /* VEIMDemoFriendBlackListController.h */,
 				2B977F292A678D9B00568407 /* VEIMDemoFriendBlackListController.m */,
+				2B25FBBA2D794D8E000955B9 /* VEIMDemoRobotListController.h */,
+				2B25FBBB2D794D8E000955B9 /* VEIMDemoRobotListController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -935,6 +956,8 @@
 				2B722DCC2CEC92AD005ED339 /* VEIMDemoGlobalSearchResultController.m */,
 				2B722DCF2CECC453005ED339 /* VEIMDemoGlobalSearchMoreResultController.h */,
 				2B722DD02CECC453005ED339 /* VEIMDemoGlobalSearchMoreResultController.m */,
+				2BF080232D2CD97E0004C377 /* VEIMDemoDateResultController.h */,
+				2BF080242D2CD97E0004C377 /* VEIMDemoDateResultController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -965,6 +988,21 @@
 				2BD3F9D32AA08EEC001A9427 /* VEIMDemoFTSViewController.m */,
 			);
 			path = FTS;
+			sourceTree = "<group>";
+		};
+		2BDF5E5D2D5F171E00DF2842 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				2BDF5E572D5F171E00DF2842 /* SSDebugViewController.h */,
+				2BDF5E582D5F171E00DF2842 /* SSDebugViewController.m */,
+				2BDF5E592D5F171E00DF2842 /* SSDebugViewControllerBase.h */,
+				2BDF5E5A2D5F171E00DF2842 /* SSDebugViewControllerBase.m */,
+				2BDF5E5B2D5F171E00DF2842 /* TTDebugItem.h */,
+				2BDF5E5C2D5F171E00DF2842 /* TTDebugItem.m */,
+				2BDF5E612D5F1FE200DF2842 /* SSDebugManager.h */,
+				2BDF5E622D5F1FE200DF2842 /* SSDebugManager.m */,
+			);
+			path = Debug;
 			sourceTree = "<group>";
 		};
 		6E67D12A448E561862444F0B /* Frameworks */ = {
@@ -1264,6 +1302,7 @@
 				2BA90DC12921EB2800154F35 /* VEIMDemoBaseView.m in Sources */,
 				2BA90DBB2921EB2800154F35 /* AppDelegate.m in Sources */,
 				2BB511ED2AC3446A00A4A34E /* VEIMDemoMemberModel.m in Sources */,
+				2BF080252D2CD97E0004C377 /* VEIMDemoDateResultController.m in Sources */,
 				2B6CF11C2B065AAC00534D7F /* VEIMDemoSelectAvatarViewController.m in Sources */,
 				2BA90DBD2921EB2800154F35 /* VEIMDemoNavigationViewController.m in Sources */,
 				2B977F2A2A678D9B00568407 /* VEIMDemoFriendBlackListController.m in Sources */,
@@ -1303,6 +1342,7 @@
 				2B8E543A292E734600A2A416 /* VEIMDemoConversationSettingCell.m in Sources */,
 				2B722DD42CECC87D005ED339 /* VEIMDemoGlobalSearchResultCell.m in Sources */,
 				2BA90DBA2921EB2800154F35 /* main.m in Sources */,
+				2BDF5E632D5F1FE200DF2842 /* SSDebugManager.m in Sources */,
 				2BA90DB32921EB2800154F35 /* VEIMDemoUserSelectionController.m in Sources */,
 				2BA90D982921EB2800154F35 /* VEIMDemoCommonMenu.m in Sources */,
 				2B4D325D2C1054EC00B55445 /* BDIMDebugNetworkRequestInfoView.m in Sources */,
@@ -1324,6 +1364,9 @@
 				2B4D32612C1054EC00B55445 /* BDIMDebugWeakProxy.m in Sources */,
 				2BA90D972921EB2800154F35 /* VEIMDemoRouter.m in Sources */,
 				2B8E543E292E748D00A2A416 /* VEIMDemoSettingModel.m in Sources */,
+				2BDF5E5E2D5F171E00DF2842 /* SSDebugViewControllerBase.m in Sources */,
+				2BDF5E5F2D5F171E00DF2842 /* SSDebugViewController.m in Sources */,
+				2BDF5E602D5F171E00DF2842 /* TTDebugItem.m in Sources */,
 				2B4F43762BAFD371001639B5 /* VEIMDemoConversationExtController.m in Sources */,
 				2B722DCD2CEC92AD005ED339 /* VEIMDemoGlobalSearchResultController.m in Sources */,
 				2BD4DC902A4B02F400A08AA7 /* VEIMDemoAccountManager.m in Sources */,
@@ -1334,6 +1377,7 @@
 				2B4D32582C1054EC00B55445 /* BDIMDebugNetworkManager.m in Sources */,
 				2B7897BC2BD0EECB001261E3 /* VEIMDemoConversationDetailDebugViewController.m in Sources */,
 				2B4D32602C1054EC00B55445 /* UIView+BDIMDebugToast.m in Sources */,
+				2B25FBBC2D794D8E000955B9 /* VEIMDemoRobotListController.m in Sources */,
 				2BA90DB52921EB2800154F35 /* VEIMDemoTabbarController.m in Sources */,
 				2B8E5441292E77A500A2A416 /* VEIMDemoInputController.m in Sources */,
 				2B4D326A2C1054EC00B55445 /* BDIMDebugManager.m in Sources */,
@@ -1458,7 +1502,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusinessRelease_inhouse.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CURRENT_PROJECT_VERSION = 1.21.0;
+				CURRENT_PROJECT_VERSION = 1.22.0;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XXHND5J98K;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -1484,7 +1528,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.21.0;
+				MARKETING_VERSION = 1.22.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1663,7 +1707,7 @@
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusiness.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.21.0;
+				CURRENT_PROJECT_VERSION = 1.22.0;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 5HG673Y488;
 				ENABLE_BITCODE = NO;
@@ -1691,7 +1735,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.21.0;
+				MARKETING_VERSION = 1.22.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1716,11 +1760,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ByteBusiness/ByteBusiness.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.21.0;
+				CURRENT_PROJECT_VERSION = 1.22.0;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3XMD9D6A65;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = CFXYR25646;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1745,7 +1789,7 @@
 					"$(PROJECT_DIR)/ByteBusiness/ConversationDetail/Views/InputTool/Audio",
 					"$(PROJECT_DIR)/ByteBusiness/BIMUISDK/BIMChat/View/InputTool/Audio",
 				);
-				MARKETING_VERSION = 1.21.0;
+				MARKETING_VERSION = 1.22.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1755,7 +1799,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.iphone.ucenter.cn.appstore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = im_appstore;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Cosign iOS with * (N4QQVQEN4C)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

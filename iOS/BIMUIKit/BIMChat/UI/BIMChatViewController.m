@@ -32,6 +32,7 @@
 #import <AVKit/AVPlayerViewController.h>
 #import <SDWebImage/SDWebImageError.h>
 #import <OneKit/BTDMacros.h>
+#import <OneKit/BTDResponder.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 
 #import <imsdk-tob/BIMSDK.h>
@@ -40,6 +41,8 @@
 @interface BIMMember : NSObject<BIMMember>
 
 @property (nonatomic, assign) long long userID;
+
+@property (nonatomic, copy) NSString *userIDString;
 
 @property (nonatomic, copy) NSString *conversationID;
 
@@ -174,6 +177,8 @@
         [self.inputTool setDraft:self.conversation.draftText];
     }
     
+    [[BIMClient sharedInstance] markConversationRead:self.conversation.conversationID completion:^(BIMError * _Nullable error) {}];
+    
 //    [self.tableview reloadData];
 //    [self authorizeIfNeed];
 }
@@ -204,7 +209,6 @@
 
 - (void)setupMsgs{
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
-        [[BIMClient sharedInstance] markConversationRead:self.conversation.conversationID completion:^(BIMError * _Nullable error) {}];
         [[BIMClient sharedInstance] markConversationMessagesRead:self.conversation.conversationID completion:^(BIMError * _Nullable error) {}];
     }
 
@@ -268,6 +272,10 @@
 #endif
     } else {
         self.inputTool.menuTypeArray = self.inputToolMenuTypeArray;
+    }
+    if ([BIMUICommonUtility isRobotConversation:self.conversation]) {
+        [self.inputTool hideAddInput];
+        [self.inputTool hideAudioInput];
     }
     [self.view addSubview:self.inputTool];
     
@@ -353,6 +361,7 @@
         playItem = [self playItemWithFile:(BIMVideoElement *)message.element];
     } else {
         playItem = [self playItemWithMessage:message];
+        [[BIMClient sharedInstance] sendMessageReadReceipts:@[message] completion:^(BIMError * _Nullable error) {}];
     }
     
     if (!playItem) {
@@ -361,7 +370,6 @@
         [self.player replaceCurrentItemWithPlayerItem:playItem];
         [self.player play];
     }
-    [[BIMClient sharedInstance] sendMessageReadReceipts:@[message] completion:^(BIMError * _Nullable error) {}];
 }
 
 
@@ -616,6 +624,10 @@
 
     // 新消息到来时滚动至底部
     if (scrollToBottom) {
+        UIViewController *topVC = [BTDResponder topViewController];
+        if ([topVC.childViewControllers containsObject:self]) {
+            [[BIMClient sharedInstance] markConversationRead:self.conversation.conversationID completion:^(BIMError * _Nullable error) {}];
+        }
         [self scrollViewToBottom:YES];
     }
 }
@@ -646,7 +658,7 @@
 //    BIMMessage *msg = [self.msgDataSource itemAtIndex:indexPath.row];
     BIMMessage *msg = [self.messageDataSource itemAtIndex:indexPath.row];
     /// 语音和视频消息需要点开才发送已读回执，可以根据需求调整。
-    if (msg.msgType != BIM_MESSAGE_TYPE_VIDEO && msg.msgType != BIM_MESSAGE_TYPE_AUDIO) {
+    if (msg.msgType != BIM_MESSAGE_TYPE_VIDEO && msg.msgType != BIM_MESSAGE_TYPE_AUDIO && self.conversation.conversationType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
         [[BIMClient sharedInstance] sendMessageReadReceipts:@[msg] completion:^(BIMError * _Nullable error) {}];
     }
 
@@ -659,10 +671,12 @@
     }
     
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP && !sender) {
-        NSDictionary *user = self.messageDataSource.userDict[@(msg.senderUID)];
+        NSString *senderUID = msg.senderUIDString;
+        NSDictionary *user = self.messageDataSource.userDict[senderUID];
         BIMMember *member = [[BIMMember alloc] init];
         member.conversationID = msg.conversationID;
         member.userID = msg.senderUID;
+        member.userIDString = msg.senderUIDString;
         member.alias = user[kAliasName];
         member.avatarURL = user[kAvatarUrl];
         sender = member;
@@ -1109,7 +1123,8 @@
 {
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.messageDataSource.userDict setObject:@{kAliasName: member.alias?:@"",kAvatarUrl: member.avatarURL ?:@""} forKey:@(member.userID)];
+            NSString *userID = member.userIDString;
+            [self.messageDataSource.userDict setObject:@{kAliasName: member.alias?:@"",kAvatarUrl: member.avatarURL ?:@""} forKey:userID];
             [self.tableview reloadData];
         });
     }
@@ -1132,7 +1147,8 @@
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [members enumerateObjectsUsingBlock:^(id<BIMMember>  _Nonnull member, NSUInteger idx, BOOL * _Nonnull stop) {
-                [self.messageDataSource.userDict setObject:@{kAliasName: member.alias ?: @"", kAvatarUrl : member.avatarURL ?: @""} forKey:@(member.userID)];
+                NSString *userID = member.userIDString ;
+                [self.messageDataSource.userDict setObject:@{kAliasName: member.alias ?: @"", kAvatarUrl : member.avatarURL ?: @""} forKey:userID];
             }];
             [self.tableview reloadData];
         });
@@ -1151,7 +1167,12 @@
 - (void)setExtWithSendMessage:(BIMMessage *)sendMessage
 {
     NSMutableDictionary *ext = [NSMutableDictionary dictionary];
-    long long currentUID = [BIMClient sharedInstance].getCurrentUserID.longLongValue;
+    NSString *currentUID = nil;
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) { // 直播群开启了字符串UID能力
+        currentUID = [BIMClient sharedInstance].getCurrentUserIDString;
+    } else {
+        currentUID = [BIMClient sharedInstance].getCurrentUserID;
+    }
     NSString *alias = self.conversation.currentMember.alias;
     if (alias) {
         [ext setObject:alias forKey:kAliasName];
@@ -1162,7 +1183,7 @@
         [ext setObject:avatarUrl forKey:kAvatarUrl];
     }
     
-    [self.messageDataSource.userDict setObject:ext forKey:@(currentUID)];
+    [self.messageDataSource.userDict setObject:ext forKey:currentUID];
     [ext addEntriesFromDictionary:sendMessage.ext];
     sendMessage.ext = ext.copy;
     

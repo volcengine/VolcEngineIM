@@ -72,4 +72,8 @@ typedef NS_ENUM(NSUInteger, BIMInputToolRecordStatus) {
 
 - (void)inputText: (NSString *)text;
 
+- (void)hideAudioInput;
+
+- (void)hideAddInput;
+
 @end

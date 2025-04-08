@@ -38,7 +38,7 @@ typedef enum : NSUInteger {
 
 @interface BDIMDebugNetworkManager : NSObject
 
-@property (nonatomic, assign) BDIMDebugNetworkCountryType country;
+@property (nonatomic, assign, readonly) BDIMDebugNetworkCountryType country;
 @property (nonatomic, assign) BDIMDebugNetworkEnvType env;
 @property (nonatomic, copy) NSString *netLane;
 @property (nonatomic, assign) BOOL disableApplog;

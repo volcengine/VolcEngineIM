@@ -12,11 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BIMUser : NSObject
 @property (nonatomic, assign) long long userID;
+@property (nonatomic, copy) NSString *userIDString;
 @property (nonatomic, copy) NSString *nickName;
 @property (nonatomic, copy) NSString *alias;
 @property (nonatomic, copy) NSString *portraitUrl;
 @property (nonatomic, strong) UIImage *placeholderImage;
-//@property (nonatomic, assign) BOOL isReady;
+@property (nonatomic, assign) BOOL isRobot;     /// 是否为机器人身份。
 @end
 
 NS_ASSUME_NONNULL_END

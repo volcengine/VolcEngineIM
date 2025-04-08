@@ -12,6 +12,7 @@
 #import "VEIMDemoAppInfoCell.h"
 #import "VEIMDemoAccountCancellationManager.h"
 #import "VEIMDemoProfileEditViewController.h"
+#import "VEIMDemoIMManager.h"
 
 #import <OneKit/UIApplication+BTDAdditions.h>
 #import <OneKit/BTDMacros.h>
@@ -36,25 +37,21 @@ static NSString *const VEIMMyInfoPrivacy = @"隐私政策";
 static NSString *const VEIMMyInfoPermissionList = @"权限清单";
 static NSString *const VEIMMyInfoICP = @"ICP备案号：京ICP备20018813号-193A";
 
+
+static NSString *const VEIMMyInfoCancelAccount = @"注销账户";
+static NSString *const VEIMMyInfoLogout = @"退出登录";
+
 @interface VEIMDemoMyinfoController ()<BIMFriendListener>
 
 @property (nonatomic, copy) NSArray *appInfoArr;
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
 @property (nonatomic, copy) NSString *did;
+@property (nonatomic, copy) NSArray *cancelAccountArray;
 
 @end
 
 @implementation VEIMDemoMyinfoController
 
-
-- (instancetype)initWithUser:(VEIMDemoUser *)user
-{
-    self = [super init];
-    if (self) {
-        self.isNeedLeftBack = YES;
-    }
-    return self;
-}
 
 - (instancetype)init
 {
@@ -103,14 +100,27 @@ static NSString *const VEIMMyInfoICP = @"ICP备案号：京ICP备20018813号-193
 - (void)setupUIElements{
     [super setupUIElements];
     
-    self.appInfoArr = @[VEIMMyInfoAppid,
-                        VEIMMyInfoAppVersionName,
-                        VEIMMyInfoIMSDKVersion,
-                        VEIMMyInfoIMSDKDid,
-                        VEIMMyInfoLongConnectStauts,
-                        VEIMMyInfoPrivacy,
-                        VEIMMyInfoPermissionList,
-                        VEIMMyInfoICP];
+    NSMutableArray *appInfoArr = [NSMutableArray array];
+    [appInfoArr addObject:VEIMMyInfoAppid];
+    [appInfoArr addObject:VEIMMyInfoAppVersionName];
+    [appInfoArr addObject:VEIMMyInfoIMSDKVersion];
+    [appInfoArr addObject:VEIMMyInfoIMSDKDid];
+    [appInfoArr addObject:VEIMMyInfoLongConnectStauts];
+    if ([VEIMDemoIMManager sharedManager].accountProvider.accountType != VEIMDemoAccountTypeOpenSource) {
+        [appInfoArr addObject:VEIMMyInfoPrivacy];
+        [appInfoArr addObject:VEIMMyInfoPermissionList];
+        [appInfoArr addObject:VEIMMyInfoICP];
+    }
+    self.appInfoArr = [appInfoArr copy];
+    
+    
+    NSMutableArray *cancelAccountArray = [NSMutableArray array];
+    if ([VEIMDemoIMManager sharedManager].accountProvider.accountType != VEIMDemoAccountTypeOpenSource) {
+        [cancelAccountArray addObject:VEIMMyInfoCancelAccount];
+    }
+    [cancelAccountArray addObject:VEIMMyInfoLogout];
+    self.cancelAccountArray = [cancelAccountArray copy];
+    
 
     [self.tableview registerClass:[VEIMDemoMyinfoHeaderCell class] forCellReuseIdentifier:@"VEIMDemoMyinfoHeaderCell"];
     [self.tableview registerClass:[UITableViewCell class] forCellReuseIdentifier:@"UITableViewCell"];
@@ -157,12 +167,10 @@ static NSString *const VEIMMyInfoICP = @"ICP备案号：京ICP备20018813号-193
             break;
         }
         case VEIMDemoMyinfoSectionTypeCancelAccountAndLogout:{
+            NSString *title = [self.cancelAccountArray objectAtIndex:indexPath.row];
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UITableViewCell"];
-            if (indexPath.row == 0) {
-                cell.textLabel.text = @"注销账户";
-            } else {
-                cell.textLabel.text = @"退出登录";
-            }
+            cell.textLabel.text = title;
+            
             return cell;
             break;
         }
@@ -175,7 +183,8 @@ static NSString *const VEIMMyInfoICP = @"ICP备案号：京ICP备20018813号-193
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == VEIMDemoMyinfoSectionTypeCancelAccountAndLogout) {
-        if (indexPath.row == 0) {
+        NSString *title = [self.cancelAccountArray objectAtIndex:indexPath.row];
+        if ([title isEqualToString:VEIMMyInfoCancelAccount]) {
             NSString *msg = @"注销后，当前账户的所有数据将会被删除且无法找回。\n注销后，当前账户所创建的群聊将自动转让群主后退出。\n注销一经开始将无法撤回。";
             NSMutableAttributedString *attMsg = [[NSMutableAttributedString alloc] initWithString:msg];
             NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
@@ -189,7 +198,8 @@ static NSString *const VEIMMyInfoICP = @"ICP备案号：京ICP备20018813号-193
             UIAlertAction *sureAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
                 VEIMDemoUser *curUser = [[VEIMDemoUserManager sharedManager] currentUser];
                 NSString *token = curUser.userToken;
-                NSString *uid = [NSString stringWithFormat:@"%lld", curUser.userID];
+                NSString *uid = [NSString stringWithFormat:@"%lld", curUser.userIDNumber];
+            
                 [self showLoading]; // 展示loading动画
                 @weakify(self);
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -211,7 +221,7 @@ static NSString *const VEIMMyInfoICP = @"ICP备案号：京ICP备20018813号-193
             [alertVC addAction:sureAction];
             [alertVC addAction:cancelAction];
             [self presentViewController:alertVC animated:YES completion:nil];
-        } else if (indexPath.row == 1) {
+        } else if ([title isEqualToString:VEIMMyInfoLogout]) {
             UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"确定要退出登录吗？" message:nil preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *sureAction = [UIAlertAction actionWithTitle:@"登出" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
                 [[VEIMDemoUserManager sharedManager] logout];
@@ -236,10 +246,17 @@ static NSString *const VEIMMyInfoICP = @"ICP备案号：京ICP备20018813号-193
             [BIMToastView toast:[NSString stringWithFormat:@"已复制Did:%@", self.did] withDuration:0.5];
         }
     } else if (indexPath.section == VEIMDemoMyinfoSectionTypeInfo) {
-        BIMUserProfile *profile = [VEIMDemoUserManager sharedManager].currentUserFullInfo.userProfile;
-        VEIMDemoProfileEditViewController *vc = [[VEIMDemoProfileEditViewController alloc] initWithUserProfile:profile];
-        vc.canSelfEdit = YES;
-        [self.navigationController pushViewController:vc animated:YES];
+        BOOL isUidStringLogin = [BIMClient sharedInstance].isUseStringUid;
+        if (isUidStringLogin) {
+            VEIMDemoProfileEditViewController *vc = [[VEIMDemoProfileEditViewController alloc] initWithUserIdString:[BIMClient sharedInstance].getCurrentUserIDString];
+            vc.canSelfEdit = NO;
+            [self.navigationController pushViewController:vc animated:YES];
+        } else {
+            BIMUserProfile *profile = [VEIMDemoUserManager sharedManager].currentUserFullInfo.userProfile;
+            VEIMDemoProfileEditViewController *vc = [[VEIMDemoProfileEditViewController alloc] initWithUserProfile:profile];
+            vc.canSelfEdit = YES;
+            [self.navigationController pushViewController:vc animated:YES];
+        }
      }
 }
 
@@ -252,7 +269,7 @@ static NSString *const VEIMMyInfoICP = @"ICP备案号：京ICP备20018813号-193
             return self.appInfoArr.count;
             break;
         case VEIMDemoMyinfoSectionTypeCancelAccountAndLogout:
-            return 2;
+            return self.cancelAccountArray.count;
             break;
         default:
             break;

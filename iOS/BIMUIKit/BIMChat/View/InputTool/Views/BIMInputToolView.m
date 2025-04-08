@@ -415,6 +415,16 @@ typedef NS_ENUM(NSInteger, IMTextAudioType) {
     self.stickerKeyboard.alpha = 0.5;
 }
 
+- (void)hideAddInput
+{
+    self.addBtn.hidden = YES;
+}
+
+- (void)hideAudioInput
+{
+    self.textAudioBtn.hidden = YES;
+}
+
 - (void)referCleanClicked: (id)sender{
     [self setReferMessage:nil];
 }

@@ -13,6 +13,10 @@
 
 - (void)chatListDidProcessed:(NSArray<BIMConversation *> *_Nullable)chatList;
 
+@optional
+
+- (BOOL)filterConversation:(BIMConversation *_Nullable)conversation;
+
 @end
 
 @interface BIMConversationListManager : NSObject

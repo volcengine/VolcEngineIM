@@ -10,6 +10,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, VEIMDemoAccountType) {
+    VEIMDemoAccountTypeInHouse,
+    VEIMDemoAccountTypeOpenSource,
+};
+
 @protocol VEIMDemoAccountProtocol <NSObject>
 @property (nonatomic, copy) void(^agreeUserPirvacyAgreementCompletion)(void);
 
@@ -17,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)agreeUserPirvacyAgreement;
 - (void)showLoginVC;
 - (void)checkUserExist:(long long)uid completion:(void (^)(BOOL exist, NSError *error))completion;
+- (VEIMDemoAccountType)accountType;
 @end
 
 NS_ASSUME_NONNULL_END

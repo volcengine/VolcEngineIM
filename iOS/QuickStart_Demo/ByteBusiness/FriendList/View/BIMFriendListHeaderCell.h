@@ -11,6 +11,7 @@
 typedef NS_ENUM(NSInteger, BIMFriendListHeaderCellType) {
     BIMFriendListHeaderApply = 1,  // 好友申请
     BIMFriendListHeaderBlackList = 2,  // 黑名单
+    BIMFriendListHeaderRobotList = 3,  // 机器人
 };
 
 @interface BIMFriendListHeaderCell : BIMPortraitBaseCell

@@ -46,7 +46,8 @@
             [[BIMClient sharedInstance] addLiveGroupMessageListener:self];
             _userDict = [NSMutableDictionary dictionary];
             id<BIMMember> member = self.conversation.currentMember;
-            [self.userDict setObject:@{kAliasName: member.alias?:@"",kAvatarUrl: member.avatarURL ?:@""} forKey:@(member.userID)];
+            NSString *uid = member.userIDString;
+            [self.userDict setObject:@{kAliasName: member.alias?:@"",kAvatarUrl: member.avatarURL ?:@""} forKey:uid];
         } else {
             [[BIMClient sharedInstance] addMessageListener:self];
         }
@@ -169,10 +170,16 @@
 - (void)addOlderMessages:(NSArray<BIMMessage *> *)messages {
     
     for (BIMMessage *message in messages) {
-        NSDictionary *user = self.userDict[@(message.senderUID)];
+        NSString *senderUID = message.senderUIDString ?: @(message.senderUID).stringValue;
+        if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP && [BIMClient sharedInstance].isUseStringUid) {
+            senderUID = !BTD_isEmptyString(message.senderUIDString) ? message.senderUIDString : @(message.senderUID).stringValue;
+        } else {
+            senderUID = @(message.senderUID).stringValue;
+        }
+        NSDictionary *user = self.userDict[senderUID];
         if (!user) {
             user = @{kAliasName: message.ext[kAliasName]?:@"",kAvatarUrl: message.ext[kAvatarUrl] ?:@""};
-            [self.userDict setObject:user forKey:@(message.senderUID)];
+            [self.userDict setObject:user forKey:senderUID];
         }
     }
     
@@ -300,10 +307,16 @@
         return;
     }
     
-    NSDictionary *oldUser = self.userDict[@(message.senderUID)];
+    NSString *senderUID = message.senderUIDString ?: @(message.senderUID).stringValue;
+    if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP && [BIMClient sharedInstance].isUseStringUid) {
+        senderUID = !BTD_isEmptyString(message.senderUIDString) ? message.senderUIDString : @(message.senderUID).stringValue;
+    } else {
+        senderUID = @(message.senderUID).stringValue;
+    }
+    NSDictionary *oldUser = self.userDict[senderUID];
     NSDictionary *newUser = @{kAliasName: message.ext[kAliasName]?:@"",kAvatarUrl: message.ext[kAvatarUrl] ?:@""};
     if (![oldUser isEqualToDictionary:newUser]) {
-        [self.userDict setObject:newUser forKey:@(message.senderUID)];
+        [self.userDict setObject:newUser forKey:senderUID];
     }
     
     [self p_insertMessage:message];

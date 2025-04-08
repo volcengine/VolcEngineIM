@@ -20,7 +20,7 @@
 #import <im-uikit-tob/BIMFriendConversationListController.h>
 #import <Masonry/View+MASShorthandAdditions.h>
 #import "VEIMDemoGlobalSearchResultController.h"
-#import "VEIMDemoGlobalSearchResultController.h"
+#import "VEIMDemoRobotListController.h"
 
 @interface VEIMDemoConversationListController () <VEIMDemoUserSelectionControllerDelegate, BIMConversationListControllerDelegate, VEIMDemoConversationListSelectionDelegate>
 @property (nonatomic, strong) VEIMDemoCommonMenu *menu;
@@ -60,8 +60,10 @@
 
 - (void)setupConvListControllers
 {
-    self.allConvListController = [[BIMConversationListController alloc] init];
-    self.allConvListController.delegate = self;
+    BIMConversationListController *allConvListController = [[BIMConversationListController alloc] init];
+    allConvListController.delegate = self;
+    allConvListController.stickOnTopRobotUserID = @(999880);
+    self.allConvListController = allConvListController;
     /// 默认选择全部会话列表
     self.curConvListController = self.allConvListController;
     [self addChildViewController:self.curConvListController];
@@ -128,6 +130,9 @@
         }
         [self updateTabUnreadCount:unreadCount];
     }];
+    
+    /// 首次登录后刷新一次所有机器人信息，防止低版本升级到高版本没有主动拉取机器人，导致会话展示错误
+    [[VEIMDemoUserManager sharedManager] getAllRobotFullInfoWithSyncServer:YES completion:^(NSArray<BIMUserFullInfo *> * _Nullable infos, BIMError * _Nullable error) {}];
 }
 
 - (void)userDidLogout
@@ -151,7 +156,11 @@
         clearAllUnreacCountModel.titleStr = @"清除未读";
         clearAllUnreacCountModel.imgStr = @"icon_group";
         
-        NSArray *ary = @[ oneModel, groupModel, clearAllUnreacCountModel ];
+        VEIMDemoCommonMenuItemModel *oneRobotModel = [[VEIMDemoCommonMenuItemModel alloc] init];
+        oneRobotModel.titleStr = @"发起机器人单聊";
+        oneRobotModel.imgStr = @"icon_oneToOne";
+        
+        NSArray *ary = @[ oneModel, groupModel, clearAllUnreacCountModel, oneRobotModel ];
         
         kWeakSelf(self);
         self.menu = [[VEIMDemoCommonMenu alloc] initWithListArray:ary selectBlock:^(NSInteger index) {
@@ -184,6 +193,11 @@
         UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
         [alertVC addAction:cancel];
         [self presentViewController:alertVC animated:YES completion:nil];
+        return;
+    } else if (index == 3) {
+        VEIMDemoRobotListController *robotListVC = [[VEIMDemoRobotListController alloc] init];
+        [self.navigationController pushViewController:robotListVC
+                                             animated:YES];
         return;
     }
     [self.navigationController pushViewController:vc animated:YES];

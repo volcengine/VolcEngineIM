@@ -15,6 +15,7 @@
 #import "BIMConversationListDataSourceProtocol.h"
 #import "BIMBaseConversationListController+Private.h"
 #import "BIMUIClient.h"
+#import "BIMUICommonUtility.h"
 //#import "BIMClient.h"
 
 #import <imsdk-tob/BIMSDK.h>
@@ -101,7 +102,7 @@
         return;
     }
     // 登录
-    if (![BIMClient sharedInstance].getCurrentUserID) {
+    if (![BIMClient sharedInstance].getToken) {
         return;
     }
     [self setupDataSource];
@@ -147,33 +148,7 @@
     if (self.conversationDataSource.conversationList.count) {
         conv = self.conversationDataSource.conversationList[indexPath.row];
     }
-    cell.delegate = self;
-    if (conv.conversationType == BIM_CONVERSATION_TYPE_GROUP_CHAT) {
-        long long userID = conv.lastMessage.senderUID;
-        id<BIMMember> member = [self.convMemberDict btd_objectForKey:conv.conversationID default:nil];
-        if (!userID || member.userID == userID) {
-            [cell refreshWithConversation:conv member:member];
-        } else {
-            [cell refreshWithConversation:conv];
-            @weakify(self);
-            [[BIMClient sharedInstance] getConversationMemberList:@[@(userID)] inConversationId:conv.conversationID completion:^(NSArray<id<BIMMember>> * _Nullable members, BIMError * _Nullable error) {
-                @strongify(self);
-                id<BIMMember> newMember = members.firstObject;
-                if (!newMember || error) {
-                    return;
-                }
-                btd_dispatch_async_on_main_queue(^{
-                    if (![cell.conversation.conversationID isEqualToString:newMember.conversationID]) {
-                        return;
-                    }
-                    [self.convMemberDict btd_setObject:newMember forKey:conv.conversationID];
-                    [cell refreshWithConversation:conv member:newMember];
-                });
-            }];
-        }
-    } else {
-        [cell refreshWithConversation:conv];
-    }
+    [self prepareCell:cell forConverastion:conv];
     return cell;
 }
 
@@ -184,6 +159,46 @@
 
     if ([self.delegate respondsToSelector:@selector(conversationListController:didSelectConversation:)]) {
         [self.delegate conversationListController:self didSelectConversation:conv];
+    }
+}
+
+#pragma mark - Private
+
+- (void)reloadData
+{
+    btd_dispatch_async_on_main_queue(^{
+        [self.tableview reloadData];
+    });
+}
+
+- (void)prepareCell:(BIMConversationCell *)cell forConverastion:(BIMConversation *)converastion
+{
+    cell.delegate = self;
+    if (converastion.conversationType == BIM_CONVERSATION_TYPE_GROUP_CHAT) {
+        long long userID = converastion.lastMessage.senderUID;
+        id<BIMMember> member = [self.convMemberDict btd_objectForKey:converastion.conversationID default:nil];
+        if (!userID || member.userID == userID) {
+            [cell refreshWithConversation:converastion member:member];
+        } else {
+            [cell refreshWithConversation:converastion];
+            @weakify(self);
+            [[BIMClient sharedInstance] getConversationMemberList:@[@(userID)] inConversationId:converastion.conversationID completion:^(NSArray<id<BIMMember>> * _Nullable members, BIMError * _Nullable error) {
+                @strongify(self);
+                id<BIMMember> newMember = members.firstObject;
+                if (!newMember || error) {
+                    return;
+                }
+                btd_dispatch_async_on_main_queue(^{
+                    if (![cell.conversation.conversationID isEqualToString:newMember.conversationID]) {
+                        return;
+                    }
+                    [self.convMemberDict btd_setObject:newMember forKey:converastion.conversationID];
+                    [cell refreshWithConversation:converastion member:newMember];
+                });
+            }];
+        }
+    } else {
+        [cell refreshWithConversation:converastion];
     }
 }
 
@@ -204,15 +219,18 @@
 - (void)cellDidLongPress:(BIMConversationCell *)cell
 {
     UIAlertController *alertVC = [[UIAlertController alloc] init];
-
+    /// 先取出 cell 对应会话，防止之后从 cell 被复用取出错误会话
+    BIMConversation *conversation = cell.conversation;
+    
     UIAlertAction *delete = [UIAlertAction actionWithTitle:@"删除" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-        if (cell.conversation.conversationID.length) {
-            kWeakSelf(self);
-            [[BIMClient sharedInstance] deleteConversation:cell.conversation.conversationID completion:^(BIMError * _Nullable error) {
+        if (conversation.conversationID.length) {
+            @weakify(self);
+            [[BIMClient sharedInstance] deleteConversation:conversation.conversationID completion:^(BIMError * _Nullable error) {
+                @strongify(self);
                 if (error) {
                     [BIMToastView toast:[NSString stringWithFormat:@"删除失败: %@",error.localizedDescription]];
                 }else{
-                    [weakself.tableview reloadData];
+                    [self.tableview reloadData];
                 }
             }];
         }
@@ -220,20 +238,69 @@
     [alertVC addAction:delete];
 #ifdef UI_INTERNAL_TEST
     UIAlertAction *queryUnreadMessage = [UIAlertAction actionWithTitle:@"查询未读消息" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        if (cell.conversation.conversationID.length) {
-            kWeakSelf(self);
+        if (conversation.conversationID.length) {
             BIMUnreadMessageListViewController *vc = [[BIMUnreadMessageListViewController alloc] init];
-            vc.conversation = cell.conversation;
+            vc.conversation = conversation;
             [self.navigationController pushViewController:vc animated:YES];
         }
     }];
     [alertVC addAction:queryUnreadMessage];
 #endif
 
+    @weakify(self);
+    UIAlertAction *clearMessage = [UIAlertAction actionWithTitle:@"清空聊天记录" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        @strongify(self);
+        NSString *conversationID = conversation.conversationID;
+        if (BTD_isEmptyString(conversationID)) {
+            return;
+        }
+        UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"确定后将删除本地聊天记录" message:@" " preferredStyle:UIAlertControllerStyleAlert];
+        UIView *customView = [[UIView alloc] initWithFrame:CGRectMake(0, 30, 270, 40)];
+        UIButton *checkMark = [UIButton buttonWithType:UIButtonTypeCustom];
+        checkMark.frame = CGRectMake(50, 20, 30, 30);
+        [checkMark setImage:[UIImage imageNamed:@"icon_duoxuan_normal"] forState:UIControlStateNormal];
+        [checkMark setImage:[UIImage imageNamed:@"icon_duoxuan_sel"] forState:UIControlStateSelected];
+        [checkMark addTarget:self action:@selector(checkMarkClick:) forControlEvents:UIControlEventTouchUpInside];
+        [customView addSubview:checkMark];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(80, 20, 200, 30)];
+        label.text = @"同时删除漫游聊天记录";
+        label.font = [UIFont systemFontOfSize:14];
+        [customView addSubview:label];
+        [alertVC.view addSubview:customView];
+        UIAlertAction *sure = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+            @strongify(self);
+            NSString *conversationID = conversation.conversationID;
+            if (BTD_isEmptyString(conversationID)) {
+                return;
+            }
+            BIMClearConversationMessageType type = BIMClearConversationMessageTypeLocalDevice;
+            if (checkMark.isSelected) {
+                type = BIMClearConversationMessageTypeAllMyDevices;
+            }
+            [[BIMClient sharedInstance] clearConversationMessage:conversationID type:type completion:^(BIMError * _Nullable error) {
+                if (error) {
+                    [BIMToastView toast:[NSString stringWithFormat:@"清空聊天记录失败：%@",error.localizedDescription]];
+                }
+            }];
+        }];
+        [alertVC addAction:sure];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+        [alertVC addAction:cancel];
+        [self presentViewController:alertVC animated:YES completion:nil];
+    }];
+    [alertVC addAction:clearMessage];
+    
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
     [alertVC addAction:cancel];
 
     [self presentViewController:alertVC animated:YES completion:nil];
+}
+
+#pragma mark - Action
+
+- (void)checkMarkClick: (UIButton *)sender
+{
+    sender.selected = !sender.selected;
 }
 
 #pragma mark - BIMGroupMemberListener

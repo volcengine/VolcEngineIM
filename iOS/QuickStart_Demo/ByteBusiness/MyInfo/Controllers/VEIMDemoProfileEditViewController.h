@@ -11,8 +11,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface VEIMDemoProfileEditViewController : BIMBaseViewController
+
 - (instancetype)initWithUserProfile:(BIMUserProfile *)userProfile;
+
+- (instancetype)initWithUserIdString:(NSString *)userIdString;
+
 @property (nonatomic, assign) BOOL canSelfEdit;
+
 @end
 
 NS_ASSUME_NONNULL_END

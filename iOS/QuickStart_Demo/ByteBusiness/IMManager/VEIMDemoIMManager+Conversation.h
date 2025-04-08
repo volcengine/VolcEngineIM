@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface VEIMDemoIMManager (Conversation)
 
 - (void)addUsers: (NSArray <VEIMDemoUser *> *)users con: (BIMConversation *)con completion:( void (^ _Nullable)(NSError *_Nullable error))completion;
-- (void)removeUsers: (NSArray <VEIMDemoUser *> *)users con: (BIMConversation *)con completion:(void (^ _Nullable)(NSError *_Nullable error))completion;;
+- (void)removeUsers: (NSArray <VEIMDemoUser *> *)users con: (BIMConversation *)con completion:(void (^ _Nullable)(NSError *_Nullable error))completion;
 
 - (void)setAdmins: (NSArray <VEIMDemoUser *>*)users con: (BIMConversation *)con completion:(void(^ _Nullable)(NSError *_Nullable error))completion;
 
@@ -25,9 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)dismissCon: (BIMConversation *)con completion:(void (^ _Nullable)(NSError * _Nullable))completion;
 
 /// 设置管理员
-- (void)promoteUser:(long long)userID con: (BIMConversation *)con completion:(void(^ _Nullable)(NSError *_Nullable error))completion;;
+- (void)promoteUser:(long long)userID con: (BIMConversation *)con completion:(void(^ _Nullable)(NSError *_Nullable error))completion;
 /// 降级管理员
-- (void)downgradeUser:(long long)userID con: (BIMConversation *)con completion:(void(^ _Nullable)(NSError *_Nullable error))completion;;
+- (void)downgradeUser:(long long)userID con: (BIMConversation *)con completion:(void(^ _Nullable)(NSError *_Nullable error))completion;
 
 @end
 

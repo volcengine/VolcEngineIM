@@ -12,7 +12,7 @@
 #import <OneKit/UIView+BTDAdditions.h>
 
 static CGFloat kTableView_margin = 8;
-static CGFloat kTableView_width = 150;
+static CGFloat kTableView_width = 180;
 static CGFloat kTableView_cell_height = 53;
 
 

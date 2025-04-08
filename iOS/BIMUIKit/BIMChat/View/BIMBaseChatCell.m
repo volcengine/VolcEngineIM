@@ -114,7 +114,12 @@
     self.converstaion = conversation;
     self.sender = sender;
     
-    self.isSelfMsg = message.senderUID == [BIMClient sharedInstance].getCurrentUserID.longLongValue;
+    
+    if (self.converstaion.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        self.isSelfMsg = [message.senderUIDString isEqualToString:[BIMClient sharedInstance].getCurrentUserIDString];
+    } else {
+        self.isSelfMsg = message.senderUID == [BIMClient sharedInstance].getCurrentUserID.longLongValue;
+    }
     
     self.dateLabel.text = [self convertDate:message.createdTime];
     
@@ -170,7 +175,7 @@
     self.nameLabel.text = [BIMUICommonUtility getShowNameInGroupWithUser:user member:sender];
     UIImage *portrait = user.placeholderImage;
     if (!portrait) {
-        portrait = [UIImage im_avatarWithUserId:@(user.userID).stringValue];
+        portrait = [UIImage im_avatarWithUserId:@(sender.userID).stringValue]; 
     }
     // 直播群sender为空
     NSString *avatarURL = sender.avatarURL.length ? sender.avatarURL : user.portraitUrl;
@@ -365,7 +370,7 @@
 {
     self.readLabel.hidden = YES;
     self.readLabel.userInteractionEnabled = NO;
-    if (!self.isSelfMsg || (self.message.msgStatus != BIM_MESSAGE_STATUS_SUCCESS && self.message.msgStatus != BIM_MESSAGE_STATUS_NORMAL) || !self.converstaion.isEnableReadReceipt) {
+    if (!self.isSelfMsg || (self.message.msgStatus != BIM_MESSAGE_STATUS_SUCCESS && self.message.msgStatus != BIM_MESSAGE_STATUS_NORMAL) || !self.converstaion.isEnableReadReceipt || [BIMUICommonUtility isRobotConversation:self.converstaion]) {
         return;
     }
     /// 和自己的单聊不展示已读回执文案

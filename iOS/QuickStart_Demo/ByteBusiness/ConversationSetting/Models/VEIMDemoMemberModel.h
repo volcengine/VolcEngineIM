@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface VEIMDemoMemberModel : NSObject <BIMMember>
 @property (nonatomic, assign) long long userID;
+@property (nonatomic, copy) NSString *userIDString;
 @property (nonatomic, copy) NSString *conversationID;
 @property (nonatomic, assign) long long sortOrder;
 @property (nonatomic, assign) BIMMemberRole role;

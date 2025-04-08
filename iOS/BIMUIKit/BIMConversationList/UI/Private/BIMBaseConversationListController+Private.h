@@ -7,6 +7,8 @@
 
 #import "BIMBaseConversationListController.h"
 
+@class BIMConversationCell;
+
 @interface BIMBaseConversationListController()
 
 @property (nonatomic, strong, nullable) id<BIMConversationListDataSourceProtocol> conversationDataSource;
@@ -22,5 +24,9 @@
 - (void)loadNexPageConversations;
 
 - (void)conversationDataSourceDidReloadAllConversations:(id<BIMConversationListDataSourceProtocol> _Nullable)dataSource;
+
+- (void)reloadData;
+
+- (void)prepareCell:(BIMConversationCell *_Nullable)cell forConverastion:(BIMConversation *_Nullable)converastion;
 
 @end

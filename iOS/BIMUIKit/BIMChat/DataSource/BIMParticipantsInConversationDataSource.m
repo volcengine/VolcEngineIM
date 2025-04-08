@@ -59,7 +59,7 @@
     }
     if (participants) {
         NSArray *filtersArray = [self.participants filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id<BIMMember> _Nullable participant, NSDictionary<NSString *, id> *_Nullable bindings) {
-                                                       if ([participants containsObject:@(participant.userID)]) {
+            if ([participants containsObject:@(participant.userID)]) {
                                                            return YES;
                                                        }
                                                        return NO;

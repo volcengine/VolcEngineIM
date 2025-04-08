@@ -115,7 +115,6 @@ typedef NS_ENUM(NSInteger, BIMMessageReadDetailType) {
     BIMUser *u = [BIMUIClient sharedInstance].userProvider(uid);
     user.isNeedSelection = YES;
     user.avatarUrl = u.portraitUrl;
-    user.userID = uid;
     user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:uid];
     id<BIMMember> member = [memberDict btd_objectForKey:@(uid) default:nil];
     user.name = [BIMUICommonUtility getShowNameInGroupWithUser:u member:member];
@@ -125,6 +124,8 @@ typedef NS_ENUM(NSInteger, BIMMessageReadDetailType) {
     }else if (member.role == BIM_MEMBER_ROLE_OWNER){
         user.role = @"群主";
     }
+    user.userIDNumber = uid;
+    user.userIDString = member.userIDString;
     return user;
 }
 
@@ -237,7 +238,7 @@ typedef NS_ENUM(NSInteger, BIMMessageReadDetailType) {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     VEIMDemoUser *user = [(self.detailType == DetailTypeRead ? self.readUsers : self.unreadUsers) objectAtIndex:indexPath.row];
 
-    long long uid = user.userID;
+    long long uid = user.userIDNumber;
     BIMUserProfile *profile = [[VEIMDemoUserManager sharedManager] fullInfoWithUserID:uid].userProfile;;
     if (!profile) {
         profile = [[BIMUserProfile alloc] init];

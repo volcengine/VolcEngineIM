@@ -51,8 +51,6 @@
 	<string>为方便您将拍摄的照片发送出去，请允许我们访问摄像头进行照片拍摄</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>为方便您发送语音消息，请允许我们使用麦克风进行录音</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>想访问你的照片</string>
 	<key>SSAppID</key>
 	<string>1991</string>
 	<key>UILaunchStoryboardName</key>

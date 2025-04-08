@@ -127,6 +127,7 @@ typedef enum : NSUInteger {
                         }
                         
                         BIMUser *user = [BIMUIClient sharedInstance].userProvider(self.currentParticant.userID);
+                        
                         NSString *name = [BIMUICommonUtility getSystemMessageUserNameWithUser:user member:self.currentParticant];
                         NSString *msgStr = [NSString stringWithFormat:@"%@修改了群头像", name];
                         BIMMessage *msg = [[BIMClient sharedInstance] createCustomMessage:@{@"text":msgStr, @"type":@(kBIMMessageTypeSystem)}];
@@ -153,6 +154,7 @@ typedef enum : NSUInteger {
                         } 
                         
                         BIMUser *user = [BIMUIClient sharedInstance].userProvider(self.currentParticant.userID);
+                        
                         NSString *name = [BIMUICommonUtility getSystemMessageUserNameWithUser:user member:self.currentParticant];
                         NSString *msgStr = [NSString stringWithFormat:@"%@修改了群描述", name];
                         BIMMessage *msg = [[BIMClient sharedInstance] createCustomMessage:@{@"text":msgStr, @"type":@(kBIMMessageTypeSystem)}];
@@ -180,13 +182,15 @@ typedef enum : NSUInteger {
                     user.name = [BIMUICommonUtility getShowNameInGroupWithUser:u member:participant];
                     user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
                     user.avatarUrl = participant.avatarURL.length ? participant.avatarURL : u.portraitUrl;
-                    user.userID = participant.userID;
+                    user.userIDNumber = participant.userID;
+                    user.userIDString = participant.userIDString;
+                    
                     user.isNeedSelection = YES;
                     if (participant.role == BIM_MEMBER_ROLE_ADMIN) {
                         user.role = @"管理员";
                         user.isSelected = YES;
                         [self.oldManagers addObject:user];
-                    }else if (participant.role == BIM_MEMBER_ROLE_OWNER){
+                    } else if (participant.role == BIM_MEMBER_ROLE_OWNER) {
                         user.role = @"群主";
                         user.isSelected = YES;
                         user.isNeedSelection = NO;
@@ -354,6 +358,34 @@ typedef enum : NSUInteger {
         [self presentViewController:alertVC animated:YES completion:nil];
     };
     [self.settings addObject:deleteAllLocalMsgsExt];
+    
+    if ([BIMUICommonUtility isRobotConversation:self.conversation]) {
+        VEIMDemoSettingModel *markNewChat = [VEIMDemoSettingModel settingWithTitle:@"清除上下文" detail:@"" isNeedSwitch:NO switchOn:NO];
+        markNewChat.clickHandler = ^() {
+            @strongify(self);
+            UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"清除上下文" message:@"是否确认清除上下文内容，开启新的对话？" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *sure = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+                [[VEIMDemoIMManager sharedManager] sendSystemMessage:@"已清除上下文" convId:self.conversation.conversationID completion:^(NSError * _Nullable error) {
+                    if (error) {
+                        return;
+                    }
+                    
+                    [[BIMClient sharedInstance] markNewChat:self.conversation.conversationID needNotice:YES completion:^(BIMError * _Nullable bimError) {
+                        NSError *error;
+                        if (bimError) {
+                            error = [NSError errorWithDomain:kVEIMDemoErrorDomain code:bimError.code userInfo:@{NSLocalizedDescriptionKey : bimError.localizedDescription}];
+                            [BIMToastView toast:[NSString stringWithFormat:@"清除上下文失败：%@", error.localizedDescription]];
+                        }
+                    }];
+                }];
+            }];
+            [alertVC addAction:sure];
+            UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+            [alertVC addAction:cancel];
+            [self presentViewController:alertVC animated:YES completion:nil];
+        };
+        [self.settings addObject:markNewChat];
+    }
 
     VEIMDemoSettingModel *setExt = [VEIMDemoSettingModel settingWithTitle:@"自定义字段" detail:@"" isNeedSwitch:NO switchOn:NO];
     setExt.clickHandler = ^() {
@@ -469,14 +501,15 @@ typedef enum : NSUInteger {
             BIMMemberRole currentUserRole;
             
             for (id<BIMMember> participant in participants) {
-                if (participant.userID != [VEIMDemoUserManager sharedManager].currentUser.userID) {
+                if (participant.userID != [VEIMDemoUserManager sharedManager].currentUser.userIDNumber) {
                     if (participant.role == BIM_MEMBER_ROLE_OWNER) {
 //                        user.role = @"群主";
 //                        user.isNeedSelection = NO;
                         continue;
                     }
                     VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
-                    user.userID = participant.userID;
+                    user.userIDNumber = participant.userID;
+                    user.userIDString = participant.userIDString;
                     BIMUser *u = [BIMUIClient sharedInstance].userProvider(participant.userID);
                     user.name = [BIMUICommonUtility getShowNameInGroupWithUser:u member:participant];
                     user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
@@ -512,12 +545,13 @@ typedef enum : NSUInteger {
             NSMutableArray *users = [NSMutableArray array];
             NSArray *participants = [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID];
             for (id <BIMMember> participant in participants) {
-                VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
                 BIMUser *u = [BIMUIClient sharedInstance].userProvider(participant.userID);
+                VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
+                user.userIDNumber = participant.userID;
+                user.userIDString = participant.userIDString;
                 user.name = [BIMUICommonUtility getShowNameInGroupWithUser:u member:participant];
                 user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
                 user.avatarUrl = participant.avatarURL.length ? participant.avatarURL : u.portraitUrl;
-                user.userID = participant.userID;
                 user.isNeedSelection = YES;
                 if (participant.role == BIM_MEMBER_ROLE_ADMIN) {
                     user.role = @"管理员";
@@ -563,7 +597,8 @@ typedef enum : NSUInteger {
             user.name = [BIMUICommonUtility getShowNameInGroupWithUser:u member:participant];
             user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID];
             user.avatarUrl = participant.avatarURL.length ? participant.avatarURL : u.portraitUrl;
-            user.userID = participant.userID;
+            user.userIDNumber = participant.userID;
+            user.userIDString = participant.userIDString;
             user.isNeedSelection = NO;
             if (participant.role == BIM_MEMBER_ROLE_ADMIN) {
                 user.role = @"管理员";
@@ -641,7 +676,7 @@ typedef enum : NSUInteger {
 
 - (void)userSelectVC:(VEIMDemoUserSelectionController *)vc didChooseUser:(VEIMDemoUser *)user
 {
-    [self jumpToProfileViewControllerWithUid:user.userID];
+    [self jumpToProfileViewControllerWithUid:user.userIDNumber];
 }
 
 - (void)jumpToProfileViewControllerWithUid:(long long)uid

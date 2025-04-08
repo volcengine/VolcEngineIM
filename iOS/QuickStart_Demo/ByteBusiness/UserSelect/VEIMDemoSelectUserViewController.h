@@ -20,7 +20,7 @@ typedef NS_ENUM(NSUInteger, VEIMDemoSelectUserShowType) {
 
 @optional
 
-- (void)didSelectUidList:(NSArray<NSNumber *> *_Nullable)uidList;
+- (void)didSelectUidList:(NSArray<NSString *> *_Nullable)uidList;
 
 @end
 

@@ -15,6 +15,7 @@
 #import "VEIMDemoSearchResultContainer.h"
 #import "VEIMDemoSearchResultController.h"
 #import "VEIMDemoMediaResultController.h"
+#import "VEIMDemoDateResultController.h"
 #import "NSArray+BTDAdditions.h"
 
 typedef NS_ENUM(NSInteger, VEIMDemoSelectedSegment) {
@@ -54,9 +55,10 @@ typedef NS_ENUM(NSInteger, VEIMDemoSelectedSegment) {
         VEIMDemoSearchResultController *vc_file = [[VEIMDemoSearchResultController alloc] initWithConversationID:conversationID msgType:BIM_MESSAGE_TYPE_FILE direction:direction];
         VEIMDemoMediaResultController *vc_image = [[VEIMDemoMediaResultController alloc] initWithConversationID:conversationID convtype:convType msgType:BIM_MESSAGE_TYPE_IMAGE direction:direction];
         VEIMDemoMediaResultController *vc_video = [[VEIMDemoMediaResultController alloc] initWithConversationID:conversationID convtype:convType msgType:BIM_MESSAGE_TYPE_VIDEO direction:direction];
+        VEIMDemoDateResultController *vc_date = [[VEIMDemoDateResultController alloc] initWithConversationID:conversationID];
         
         _currentController = BTD_DYNAMIC_CAST(UIViewController, vc_text);
-        _controllers = @[vc_text, vc_file, vc_image, vc_video];
+        _controllers = @[vc_text, vc_file, vc_image, vc_video, vc_date];
         [self addChildViewController:_currentController];
     }
     
@@ -102,7 +104,7 @@ typedef NS_ENUM(NSInteger, VEIMDemoSelectedSegment) {
 - (UISegmentedControl *)segmentedControl
 {
     if (!_segmentedControl) {
-        UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"消息", @"文件", @"图片", @"视频"]];
+        UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"消息", @"文件", @"图片", @"视频", @"日期"]];
         segmentedControl.selectedSegmentIndex = VEIM_SELECTED_TEXT;
         segmentedControl.apportionsSegmentWidthsByContent = YES;
         

@@ -9,6 +9,9 @@
 
 @class BIMError, BIMConversation;
 
+// 数据源通用 filterBlock
+typedef BOOL(^BIMConversationListDataSourceFilterBlock)(BIMConversation *conversation);
+
 @protocol BIMConversationListDataSourceProtocol;
 
 @protocol BIMConversationListDataSourceDelegate <NSObject>
@@ -33,6 +36,8 @@
 @property (nonatomic, assign, readonly) NSUInteger totalUnreadCount;
 
 @property (nonatomic, strong, readonly, nullable) NSArray<BIMConversation *> *conversationList;
+
+@property (nonatomic, copy, nullable) BIMConversationListDataSourceFilterBlock filterBlock;
 
 - (void)loadNexPageConversationsWithCompletion:(void (^_Nullable)(BIMError *_Nullable error))completion;
 

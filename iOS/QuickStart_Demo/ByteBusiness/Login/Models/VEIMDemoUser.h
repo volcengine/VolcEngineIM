@@ -19,7 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSString *role;
 
-@property (nonatomic, assign) long long userID;
+@property (nonatomic, assign) long long userIDNumber; // 全量字符串接口后，移除该字段
+@property (nonatomic, copy) NSString *userIDString;
 @property (nonatomic, copy) NSString *userToken;
 
 @property (nonatomic, assign) BOOL isNeedSelection;

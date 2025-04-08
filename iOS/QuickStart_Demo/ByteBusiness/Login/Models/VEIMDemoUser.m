@@ -13,7 +13,8 @@
 {
     [coder encodeObject:self.name forKey:@"name"];
     [coder encodeObject:self.portrait forKey:@"portrait"];
-    [coder encodeInt64:self.userID forKey:@"userID"];
+    [coder encodeInt64:self.userIDNumber forKey:@"userID"];
+    [coder encodeObject:self.userIDString forKey:@"userIDString"];
     [coder encodeObject:self.userToken forKey:@"userToken"];
 }
 
@@ -27,7 +28,8 @@
     if (self) {
         self.name = [coder decodeObjectForKey:@"name"];
         self.portrait = [coder decodeObjectForKey:@"portrait"];
-        self.userID = [coder decodeInt64ForKey:@"userID"];
+        self.userIDNumber = [coder decodeInt64ForKey:@"userID"];
+        self.userIDString = [coder decodeObjectForKey:@"userIDString"];
         self.userToken = [coder decodeObjectForKey:@"userToken"];
     }
     return self;
@@ -39,11 +41,17 @@
     if (self == object) return YES;
     if (![object isMemberOfClass:self.class]) return NO;
     
-    return self.userID == object.userID;
+    if ([self.userIDString isEqualToString:object.userIDString]) {
+        return YES;
+    }
+    return self.userIDNumber == object.userIDNumber;
 }
 
 - (NSUInteger)hash {
-    return self.userID;
+    if (self.userIDString) {
+        return self.userIDString.hash;
+    }
+    return self.userIDNumber;
 }
 
 @end

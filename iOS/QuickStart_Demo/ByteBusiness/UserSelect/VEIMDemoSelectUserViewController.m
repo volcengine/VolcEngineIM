@@ -26,7 +26,7 @@ static NSInteger const kMaxCount = 5;
 @property(nonatomic, strong) UIButton *addButton;
 @property (nonatomic, assign) NSInteger maxLength;
 @property (nonatomic, strong) NSMutableArray *users;
-@property (nonatomic, strong) NSArray<NSNumber *> *members;
+@property (nonatomic, strong) NSArray *members;
 
 @end
 
@@ -36,8 +36,13 @@ static NSInteger const kMaxCount = 5;
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     if (self.showType == VEIMDemoSelectUserShowTypeAddParticipants) {
-        self.members = [[[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID] valueForKey:@"userID"];
         self.conversationType = self.conversation.conversationType;
+        
+        NSMutableArray *members = [NSMutableArray array];
+        for (id<BIMMember> m in [[BIMClient sharedInstance] getConversationMemberList:self.conversation.conversationID]) {
+            [members addObject:m.userIDString];
+        }
+        self.members = members;
     }
 }
 
@@ -68,16 +73,17 @@ static NSInteger const kMaxCount = 5;
         [self addNeedMarkUsers];
         return;
     }
-    NSNumber *uid = @(self.textField.text.longLongValue);
+    NSString *uid = self.textField.text;
     if ([self.users containsObject:uid]) {
         [BIMToastView toast:@"群成员已添加"];
         return;
     }
     
-    if (uid.longLongValue == [VEIMDemoUserManager sharedManager].currentUser.userID) {
+    if ([uid isEqualToString:[BIMClient sharedInstance].getCurrentUserIDString]) {
         [BIMToastView toast:@"您已在群聊中"];
         return;
     }
+    
     
     if (self.showType == VEIMDemoSelectUserShowTypeAddParticipants && [self.members containsObject:uid]) {
         [BIMToastView toast:@"用户已在群"];
@@ -92,7 +98,7 @@ static NSInteger const kMaxCount = 5;
     self.addButton.enabled = NO;
     
     @weakify(self);
-    [[VEIMDemoUserManager sharedManager] getUserFullInfoList:@[uid] syncServer:NO completion:^(NSArray<BIMUserFullInfo *> * _Nullable infos, BIMError * _Nullable error) {
+    [[VEIMDemoUserManager sharedManager] getUserFullInfoList:@[@(uid.longLongValue)] syncServer:NO completion:^(NSArray<BIMUserFullInfo *> * _Nullable infos, BIMError * _Nullable error) {
         if (error) {
             [BIMToastView toast:[NSString stringWithFormat:@"查询用户失败:%@", error.localizedDescription]];
             return;
@@ -112,7 +118,7 @@ static NSInteger const kMaxCount = 5;
 
 - (void)addNeedMarkUsers
 {
-    NSNumber *uid = @(self.textField.text.longLongValue);
+    NSString *uid = self.textField.text;
     if ([self.users containsObject:uid]) {
         [BIMToastView toast:@"用户已添加"];
         return;
@@ -215,7 +221,7 @@ static NSInteger const kMaxCount = 5;
     }
     
     NSMutableSet *usersSet = [NSMutableSet setWithArray:self.users];
-    BIMUser *currentUser = [BIMUIClient sharedInstance].userProvider([VEIMDemoUserManager sharedManager].currentUser.userID);
+    BIMUser *currentUser = [BIMUIClient sharedInstance].userProvider([VEIMDemoUserManager sharedManager].currentUser.userIDNumber);
     NSString *msgStr = [NSString stringWithFormat:@"%@邀请", [BIMUICommonUtility getSystemMessageUserNameWithUser:currentUser]];
 
     for (int i = 0; i < self.users.count; i++) {
@@ -269,10 +275,15 @@ static NSInteger const kMaxCount = 5;
         return;
     }
     NSMutableArray *users = [NSMutableArray array];
-    for (NSNumber *userID in self.users) {
+    for (NSString *userID in self.users) {
         BIMUser *u = [BIMUIClient sharedInstance].userProvider(userID.longLongValue);
         VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
-        user.userID = userID.longLongValue;
+        user.userIDString = userID;
+        if (self.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        } else {
+            user.userIDNumber = userID.longLongValue;
+        }
+        
         user.isNeedSelection = YES;
         user.name = u.nickName;
         user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:userID.longLongValue];
@@ -298,10 +309,18 @@ static NSInteger const kMaxCount = 5;
 - (void)jumpToUserSelectionPage
 {
     NSMutableArray *users = [NSMutableArray array];
-    for (NSNumber *userID in self.users) {
-        BIMUser *u = [BIMUIClient sharedInstance].userProvider(userID.longLongValue);
+    for (NSString *userID in self.users) {
+        BIMUser *u = nil;
         VEIMDemoUser *user = [[VEIMDemoUser alloc] init];
-        user.userID = userID.longLongValue;
+        user.userIDString = userID;
+        if ([BIMClient sharedInstance].isUseStringUid && self.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+            u = [[BIMUser alloc] init];
+            u.userIDString = userID;
+        } else {
+            user.userIDNumber = userID.longLongValue;
+            u = [BIMUIClient sharedInstance].userProvider(userID.longLongValue);
+        }
+        
         user.isNeedSelection = YES;
         user.name = [BIMUICommonUtility getShowNameWithUser:u];
         user.portrait = [[VEIMDemoUserManager sharedManager] portraitForTestUser:userID.longLongValue];
@@ -350,9 +369,14 @@ static NSInteger const kMaxCount = 5;
     }
     
     NSMutableArray *members = [NSMutableArray array];
-    for (NSNumber *u in participants) {
+    for (NSString *u in participants) {
         VEIMDemoMemberModel *m = [VEIMDemoMemberModel new];
-        m.userID = u.longLongValue;
+        if ([BIMClient sharedInstance].isUseStringUid  && self.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+            m.userIDString = u;
+        } else {
+            m.userID = u.longLongValue;
+            m.userIDString = u;
+        }
         [members addObject:m];
     }
     [cell refreshWithConversationParticipants:members];
@@ -375,12 +399,14 @@ static NSInteger const kMaxCount = 5;
 
 #pragma mark - User Selection Delegate
 
-- (void)userSelectVC:(VEIMDemoUserSelectionController *)vc didSelectUsers:(NSArray<VEIMDemoUser *> *)users{
+- (void)userSelectVC:(VEIMDemoUserSelectionController *)vc didSelectUsers:(NSArray<VEIMDemoUser *> *)users {
     if (!users.count) {
         return;
     }
-    
-    NSArray *userIDs = [users valueForKey:@"userID"];
+    NSMutableArray *userIDs = [NSMutableArray array];
+    for (VEIMDemoUser *user in users) {
+        [userIDs addObject:user.userIDString];
+    }
     [self.users removeObjectsInArray:userIDs];
     [self.tableview reloadData];
 }
@@ -388,9 +414,14 @@ static NSInteger const kMaxCount = 5;
 #pragma mark - UITextFieldDelegate
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    if ([BIMClient sharedInstance].isUseStringUid && self.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+        return YES;
+    }
+    
     if (![string btd_containsNumberOnly]) {
         return NO;
     }
+    
     if(range.length + range.location > textField.text.length) {
         return NO;
     }
@@ -437,7 +468,12 @@ static NSInteger const kMaxCount = 5;
         _textField.backgroundColor = [UIColor whiteColor];
         _textField.placeholder = self.conversationType == BIM_CONVERSATION_TYPE_GROUP_CHAT ? @"请输入用户ID 添加群成员" : @"请输入用户ID";
         _textField.borderStyle = UITextBorderStyleRoundedRect;
-        _textField.keyboardType = UIKeyboardTypeNumberPad;
+        if ([BIMClient sharedInstance].isUseStringUid && self.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+            _textField.keyboardType = UIKeyboardTypeDefault;
+        } else {
+            _textField.keyboardType = UIKeyboardTypeNumberPad;
+        }
+        
         _textField.rightView = self.addButton;
         _textField.rightViewMode = UITextFieldViewModeAlways;
         _textField.delegate = self;

@@ -21,11 +21,12 @@
         return;
     }
     NSMutableOrderedSet *orderSet = [NSMutableOrderedSet orderedSet];
-    BIMUser *currentUser = [BIMUIClient sharedInstance].userProvider([VEIMDemoUserManager sharedManager].currentUser.userID);
+    
+    BIMUser *currentUser = [BIMUIClient sharedInstance].userProvider([VEIMDemoUserManager sharedManager].currentUser.userIDNumber);
     NSString *msgStr = [NSString stringWithFormat:@"%@邀请", [BIMUICommonUtility getSystemMessageUserNameWithUser:currentUser]];
     for (VEIMDemoUser *user in users) {
-        [orderSet addObject:@(user.userID)];
-        BIMUser *u = [BIMUIClient sharedInstance].userProvider(user.userID);
+        [orderSet addObject:@(user.userIDNumber)];
+        BIMUser *u = [BIMUIClient sharedInstance].userProvider(user.userIDNumber);
         NSString *userName = [BIMUICommonUtility getSystemMessageUserNameWithUser:u];
         if (users.lastObject != user) {
             msgStr = [msgStr stringByAppendingFormat:@"%@、", userName];
@@ -51,8 +52,8 @@
     NSMutableSet *set = [NSMutableSet set];
     NSMutableString *systemMsg = [@"" mutableCopy];
     for (VEIMDemoUser *user in users) {
-        [set addObject:@(user.userID)];
-        BIMUser *u = [BIMUIClient sharedInstance].userProvider(user.userID);
+        [set addObject:@(user.userIDNumber)];
+        BIMUser *u = [BIMUIClient sharedInstance].userProvider(user.userIDNumber);
         NSString *userName = [BIMUICommonUtility getSystemMessageUserNameWithUser:u];
         if (users.lastObject != user) {
             [systemMsg appendFormat:@"%@、", userName];
@@ -73,7 +74,7 @@
 }
 
 - (void)quitCon:(BIMConversation *)con completion:(void (^ _Nullable)(NSError * _Nullable))completion{
-    long long userID = [VEIMDemoUserManager sharedManager].currentUser.userID;
+    long long userID = [VEIMDemoUserManager sharedManager].currentUser.userIDNumber;
     BIMUser *u = [BIMUIClient sharedInstance].userProvider(userID);
     NSString *userName = [BIMUICommonUtility getSystemMessageUserNameWithUser:u];
     [self sendSystemMessage:[NSString stringWithFormat:@"%@退出聊天", userName] convId:con.conversationID completion:^(NSError * _Nullable error) {
@@ -120,12 +121,12 @@
         for (int i = 0; i<oldManagers.count; i++) {
             NSNumber *userIDN = oldManagers[i];
             long long userID = [userIDN longLongValue];
-            if (user.userID == userID) {
+            if (user.userIDNumber == userID) {
                 [oldManagers removeObject:userIDN];
                 break;
             }
         }
-        [self promoteUser:user.userID con:con completion:completion];
+        [self promoteUser:user.userIDNumber con:con completion:completion];
     }
     
     for (NSNumber *userIdN in oldManagers) {

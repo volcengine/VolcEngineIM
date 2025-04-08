@@ -74,14 +74,15 @@
     
     self.countryBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     self.countryBtn.layer.cornerRadius = 8;
-    self.countryBtn.titleLabel.font = [UIFont systemFontOfSize:12];
-    self.countryBtn.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0.5 alpha:0.5];
-    [self.countryBtn addTarget:self action:@selector(countryBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    self.countryBtn.titleLabel.font = [UIFont systemFontOfSize:14];
+    [self.countryBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+//    self.countryBtn.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0.5 alpha:0.5];
+//    [self.countryBtn addTarget:self action:@selector(countryBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.countryBtn];
     [self.countryBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.countryLabel.mas_right).with.offset(12);
         make.centerY.equalTo(self.countryLabel);
-        make.width.mas_greaterThanOrEqualTo(100);
+        make.width.mas_greaterThanOrEqualTo(40);
     }];
     self.envBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.view addSubview:self.envBtn];
@@ -238,7 +239,7 @@
 }
 
 - (void)countryBtnClick: (id)sender{
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Choose country" message:@"choose country to switch" preferredStyle:UIAlertControllerStyleActionSheet];
+//    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Choose country" message:@"choose country to switch" preferredStyle:UIAlertControllerStyleActionSheet];
 //    UIAlertAction *chinaAc = [UIAlertAction actionWithTitle:@"China" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 //        [[BDIMDebugNetworkManager sharedManager] setCountry:BDIMDebugNetworkCountryTypeChina];
 //    }];
@@ -256,19 +257,19 @@
 //    }];
 //    [alertController addAction:USEastRedAc];
     
-    UIAlertAction *tob = [UIAlertAction actionWithTitle:@"Tob" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [[BDIMDebugNetworkManager sharedManager] setCountry:BDIMDebugNetworkCountryTypeTob];
-    }];
-    [alertController addAction:tob];
-    
-    UIAlertAction *overseas = [UIAlertAction actionWithTitle:@"Overseas" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [[BDIMDebugNetworkManager sharedManager] setCountry:BDIMDebugNetworkCountryTypeOverseas];
-    }];
-    [alertController addAction:overseas];
-    
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
-    [alertController addAction:cancel];
-    [self presentViewController:alertController animated:YES completion:nil];
+//    UIAlertAction *tob = [UIAlertAction actionWithTitle:@"Tob" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//        [[BDIMDebugNetworkManager sharedManager] setCountry:BDIMDebugNetworkCountryTypeTob];
+//    }];
+//    [alertController addAction:tob];
+//    
+//    UIAlertAction *overseas = [UIAlertAction actionWithTitle:@"Overseas" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//        [[BDIMDebugNetworkManager sharedManager] setCountry:BDIMDebugNetworkCountryTypeOverseas];
+//    }];
+//    [alertController addAction:overseas];
+//    
+//    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+//    [alertController addAction:cancel];
+//    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 - (void)httpSwitch: (UISwitch *)swit{

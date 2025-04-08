@@ -62,6 +62,16 @@ NSString *const kBIMUserProfileUpdateNotification = @"kBIMUserProfileUpdateNotif
     }];
 }
 
+- (void)loginWithUIDString:(NSString *)userIDSting token:(NSString *)token completion:(BIMCompletion)completion
+{
+    [[BIMClient sharedInstance] loginWithUIDString:userIDSting token:token completion:^(BIMError * _Nullable error) {
+        if (completion) {
+            completion(error);
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:kUserDidLoginNotification object:nil];
+    }];
+}
+
 /**
  * @type api
  * @brief 登出服务器。

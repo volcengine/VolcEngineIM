@@ -68,6 +68,11 @@
     if (!chat || chat.conversationID == 0) {
         return;
     }
+    if ([self.delegate respondsToSelector:@selector(filterConversation:)]) {
+        if (![self.delegate filterConversation:chat]) {
+            return;
+        }
+    }
 
     BIMConversation *oldChat = self.chatDict[chat.conversationID];
     [self.chatDict setValue:chat forKey:chat.conversationID];

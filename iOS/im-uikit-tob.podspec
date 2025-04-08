@@ -9,7 +9,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "im-uikit-tob"
-  spec.version      = "1.21.0"
+  spec.version      = "1.22.0"
   spec.summary      = "IM UIKit"
   spec.description  = <<-DESC
        TODO: Add long description of the pod here.
@@ -33,7 +33,7 @@ Pod::Spec.new do |spec|
   spec.dependency 'Masonry'
   spec.dependency 'MJRefresh'
   spec.dependency 'SDWebImage'
-  #spec.dependency 'imsdk-tob', '1.21.0'
+  #spec.dependency 'imsdk-tob', '1.22.0'
 
   spec.requires_arc = true
 

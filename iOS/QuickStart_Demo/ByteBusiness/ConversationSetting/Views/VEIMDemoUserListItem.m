@@ -46,6 +46,7 @@
 
 - (void)refreshWithParticipant:(id<BIMMember>)participant {
     BIMUser *user = [BIMUIClient sharedInstance].userProvider(participant.userID);
+    user.userIDString = participant.userIDString;
     self.userName.text = [BIMUICommonUtility getShowNameInGroupWithUser:user member:participant];
 //    self.userPortrait.image = [UIImage imageNamed:[[VEIMDemoUserManager sharedManager] portraitForTestUser:participant.userID]];
     NSString *avatarURL = participant.avatarURL;

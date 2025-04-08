@@ -42,4 +42,9 @@
  */
 + (NSString *)getSystemMessageUserNameWithUser:(BIMUser *)user member:(id<BIMMember>)member;
 
+/**
+ * 判断会话是否为机器人会话
+ */
++ (BOOL)isRobotConversation:(BIMConversation *)conversation;
+
 @end

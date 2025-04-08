@@ -54,4 +54,9 @@
     }
 }
 
+- (VEIMDemoAccountType)accountType
+{
+    return VEIMDemoAccountTypeOpenSource;
+}
+
 @end

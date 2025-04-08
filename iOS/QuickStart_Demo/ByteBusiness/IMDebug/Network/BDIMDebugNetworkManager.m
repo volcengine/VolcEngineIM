@@ -175,19 +175,19 @@ static NSString *kApmDisableKey = @"kApmDisableKey";
     [[NSNotificationCenter defaultCenter] postNotificationName:BDIMDebugNetworkChangeNotification object:nil userInfo:@{kBDIMDebugNetworkCountryIsOverseasSwitch:@(NO)}];
 }
 
-- (void)setCountry:(BDIMDebugNetworkCountryType)country{
-    if (_country == country) {
-        return;
-    }
-    BOOL isOverseaSwitch = NO;
-    if ((_country == BDIMDebugNetworkCountryTypeChina && country != BDIMDebugNetworkCountryTypeChina) || (_country != BDIMDebugNetworkCountryTypeChina && _country == BDIMDebugNetworkCountryTypeChina)) {
-        isOverseaSwitch = YES;
-    }
-    _country = country;
-    [[NSUserDefaults standardUserDefaults] setObject:@(country) forKey:kBDIMDebugNetworkCountry];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    [[NSNotificationCenter defaultCenter] postNotificationName:BDIMDebugNetworkChangeNotification object:nil userInfo:@{kBDIMDebugNetworkCountryIsOverseasSwitch:@(isOverseaSwitch)}];
-}
+//- (void)setCountry:(BDIMDebugNetworkCountryType)country{
+//    if (_country == country) {
+//        return;
+//    }
+//    BOOL isOverseaSwitch = NO;
+//    if ((_country == BDIMDebugNetworkCountryTypeChina && country != BDIMDebugNetworkCountryTypeChina) || (_country != BDIMDebugNetworkCountryTypeChina && _country == BDIMDebugNetworkCountryTypeChina)) {
+//        isOverseaSwitch = YES;
+//    }
+//    _country = country;
+//    [[NSUserDefaults standardUserDefaults] setObject:@(country) forKey:kBDIMDebugNetworkCountry];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:BDIMDebugNetworkChangeNotification object:nil userInfo:@{kBDIMDebugNetworkCountryIsOverseasSwitch:@(isOverseaSwitch)}];
+//}
 
 - (void)setNetLane:(NSString *)netLane
 {
@@ -217,7 +217,13 @@ static NSString *kApmDisableKey = @"kApmDisableKey";
 
 - (void)loadNetworkConfig{
     _config = [[NSDictionary alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"BDIMNetworkConfig" ofType:@"plist"]];
-    _country = [[[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkCountry] intValue];
+//    _country = [[[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkCountry] intValue];
+    if (NSClassFromString(@"TIMInnerConfigCN")) {
+        _country = BDIMDebugNetworkCountryTypeTob;
+    } else {
+        _country = BDIMDebugNetworkCountryTypeOverseas;
+    }
+    
     _env = [[[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkEnv] intValue];
     _netLane = [[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkLane];
     

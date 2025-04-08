@@ -13,6 +13,7 @@
 #import "BIMFriendListUserCell.h"
 #import "VEIMDemoFriendBlackListController.h"
 #import "VEIMDemoChatViewController.h"
+#import "VEIMDemoRobotListController.h"
 #import "VEIMDemoDefine.h"
 #import "UIAlertController+Dismiss.h"
 
@@ -120,7 +121,8 @@
         // 好友申请 && 黑名单 Cell
         [sectionTitles addObject:@""];
         [sectionData addObject:@[@(BIMFriendListHeaderApply),
-                                 @(BIMFriendListHeaderBlackList)]];
+                                 @(BIMFriendListHeaderBlackList),
+                                 @(BIMFriendListHeaderRobotList)]];
         
         // 按首字母分组
         // 初始化
@@ -234,6 +236,10 @@
                                                  animated:YES];
         } else if (cell.type == BIMFriendListHeaderBlackList) {
             VEIMDemoFriendBlackListController *vc = [[VEIMDemoFriendBlackListController alloc] init];
+            [self.navigationController pushViewController:vc
+                                                 animated:YES];
+        } else if (cell.type == BIMFriendListHeaderRobotList) {
+            VEIMDemoRobotListController *vc = [[VEIMDemoRobotListController alloc] init];
             [self.navigationController pushViewController:vc
                                                  animated:YES];
         }

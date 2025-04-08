@@ -11,6 +11,7 @@
 #import "UIImage+BTDAdditions.h"
 #import "BIMToastView.h"
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <im-uikit-tob/BIMUICommonUtility.h>
 
 #import <Masonry/Masonry.h>
 
@@ -63,23 +64,29 @@
         make.left.equalTo(self.name);
     }];
 }
-- (void)refreshWithUser:(BIMUserProfile *)user{
+- (void)refreshWithUser:(BIMUserProfile *)user {
     _user = user;
     if (!user) {
         self.portrait.image = [UIImage btd_imageWithColor:[UIColor lightGrayColor]];
         self.name.text = @"未登录";
         self.uidLabel.text = @"";
-    }else{
+    } else {
         [self.portrait sd_setImageWithURL:[NSURL URLWithString:user.portraitUrl] placeholderImage:[UIImage imageNamed:[[VEIMDemoUserManager sharedManager] portraitForTestUser:user.uid]]];
-        self.name.text = user.nickName.length ? user.nickName : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:user.uid];
-        self.uidLabel.text = [NSString stringWithFormat:@"UID: %lld",user.uid];
+        if ([BIMClient sharedInstance].isUseStringUid) {
+            self.name.text = user.nickName.length ? user.nickName : [[VEIMDemoUserManager sharedManager] nickNameForUserIDString:[BIMClient sharedInstance].getCurrentUserIDString]; // zj--trick，绑定了当前用户
+            self.uidLabel.text = [NSString stringWithFormat:@"UID: %@",[BIMClient sharedInstance].getCurrentUserIDString];
+        } else {
+            self.name.text = user.nickName.length ? user.nickName : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:user.uid];
+            self.uidLabel.text = [NSString stringWithFormat:@"UID: %lld",user.uid];
+        }
+        
     }
 }
 
 - (void)copyUid
 {
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-    pasteboard.string = @(self.user.uid).stringValue;
+    pasteboard.string = [BIMClient sharedInstance].getCurrentUserIDString;
     [BIMToastView toast:[NSString stringWithFormat:@"已复制UID:%@", pasteboard.string] withDuration:0.5];
 }
 

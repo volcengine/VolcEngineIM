@@ -8,4 +8,7 @@
 #import "BIMBaseConversationListController.h"
 
 @interface BIMConversationListController : BIMBaseConversationListController
+
+@property (nonatomic, copy, nullable) NSNumber *stickOnTopRobotUserID;
+
 @end

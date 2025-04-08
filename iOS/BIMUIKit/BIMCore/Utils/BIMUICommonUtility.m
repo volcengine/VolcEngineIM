@@ -16,18 +16,22 @@
 
 @implementation BIMUICommonUtility
 
-/// 好友备注 > 用户资料 > 兜底 userID
+/// 好友备注 > 用户资料 > 兜底 字符串userIDString > 兜底 数字userID
 + (NSString *)getShowNameWithUser:(BIMUser *)user
 {
     if (!user) {
         return @"";
     }
     
-    NSString *showName = [NSString stringWithFormat:@"用户%lld", user.userID];
+    NSString *showName = nil;
     if (!BTD_isEmptyString(user.alias)) {
         showName = user.alias;
     } else if (!BTD_isEmptyString(user.nickName)) {
         showName = user.nickName;
+    } else if (!BTD_isEmptyString(user.userIDString)) {
+        showName = [NSString stringWithFormat:@"用户%@", user.userIDString];
+    } else {
+        showName = [NSString stringWithFormat:@"用户%lld", user.userID];
     }
     return showName;
 }
@@ -48,20 +52,24 @@
     return showName;
 }
 
-/// 好友备注 > 群内备注 > 用户资料 > 兜底 userID
+/// 好友备注 > 群内备注 > 用户资料 > 兜底 字符串userIDString > 兜底 数字userID
 + (NSString *)getShowNameInGroupWithUser:(BIMUser *)user member:(id<BIMMember>)member
 {
     if (!user && !member) {
         return @"";
     }
     
-    NSString *showName = [NSString stringWithFormat:@"用户%lld", (user ?: member).userID];
+    NSString *showName = nil;
     if (!BTD_isEmptyString(user.alias)) {
         showName = user.alias;
     } else if (!BTD_isEmptyString(member.alias)) {
         showName = member.alias;
     } else if (!BTD_isEmptyString(user.nickName)) {
         showName = user.nickName;
+    } else if (!BTD_isEmptyString((user.userIDString ?: member.userIDString))) {
+        showName = [NSString stringWithFormat:@"用户%@", (user.userIDString ?: member.userIDString)];
+    } else {
+        showName = [NSString stringWithFormat:@"用户%lld", (user.userID ?: member.userID)];
     }
     return showName;
 }
@@ -90,34 +98,59 @@
     return showName;
 }
 
-/// 用户资料 > 兜底 userID
+/// 用户资料 > 兜底 字符串userIDString > 兜底 数字userID
 + (NSString *)getSystemMessageUserNameWithUser:(BIMUser *)user
 {
     if (!user) {
         return @"";
     }
     
-    NSString *showName = [NSString stringWithFormat:@"用户%lld", user.userID];
+    NSString *showName = nil;
     if (!BTD_isEmptyString(user.nickName)) {
         showName = user.nickName;
+    } else if (!BTD_isEmptyString(user.userIDString)) {
+        showName = [NSString stringWithFormat:@"用户%@", user.userIDString];
+    } else {
+        showName = [NSString stringWithFormat:@"用户%lld", user.userID];
     }
     return showName;
 }
 
-/// 群内备注 > 用户资料 > 兜底 userID
+/// 群内备注 > 用户资料 > 兜底 字符串userIDString > 兜底 数字userID
 + (NSString *)getSystemMessageUserNameWithUser:(BIMUser *)user member:(id<BIMMember>)member
 {
     if (!user && !member) {
         return @"";
     }
     
-    NSString *showName = [NSString stringWithFormat:@"用户%lld", (user ?: member).userID];
+    NSString *showName = nil;
     if (!BTD_isEmptyString(member.alias)) {
         showName = member.alias;
     } else if (!BTD_isEmptyString(user.nickName)) {
         showName = user.nickName;
+    } else if (!BTD_isEmptyString((user.userIDString ?: member.userIDString))) {
+        showName = [NSString stringWithFormat:@"用户%@", (user.userIDString ?: member.userIDString)];
+    } else {
+        showName = [NSString stringWithFormat:@"用户%lld", (user.userID ?: member.userID)];
     }
     return showName;
+}
+
++ (BOOL)isRobotConversation:(BIMConversation *)conversation
+{
+    if (!conversation) {
+        return NO;
+    }
+    
+    BOOL isRobot = NO;
+    if (conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
+        long long oppositeUserID = conversation.oppositeUserID;
+        if (oppositeUserID > 0) {
+            BIMUser *user = [BIMUIClient sharedInstance].userProvider(oppositeUserID);
+            isRobot = user.isRobot;
+        }
+    }
+    return isRobot;
 }
 
 @end

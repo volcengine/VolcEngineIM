@@ -54,6 +54,8 @@
         self.nameLabel.text = @"好友申请";
     } else if (type == BIMFriendListHeaderBlackList) {
         self.nameLabel.text = @"黑名单";
+    } else if (type == BIMFriendListHeaderRobotList) {
+        self.nameLabel.text = @"机器人列表";
     }
     [self.portrait setImage:[UIImage imageNamed:@"icon_recommend_user_default"]];
 }

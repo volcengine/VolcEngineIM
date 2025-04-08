@@ -10,6 +10,7 @@
 #import "BIMConversationListManager.h"
 #import <imsdk-tob/BIMSDK.h>
 #import <OneKit/BTDMacros.h>
+#import <OneKit/NSArray+BTDAdditions.h>
 
 @interface BIMConversationListDataSource () <BIMConversationListListener, BIMConversationListManagerDelegate, BIMMessageListener>
 
@@ -27,7 +28,7 @@
 
 @implementation BIMConversationListDataSource
 
-@synthesize delegate = _delegate, pageSize = _pageSize;
+@synthesize delegate = _delegate, pageSize = _pageSize, filterBlock = _filterBlock;
 
 - (instancetype)init
 {
@@ -107,6 +108,14 @@
             [self.delegate conversationDataSourceDidReloadAllConversations:self];
         }
     });
+}
+
+- (BOOL)filterConversation:(BIMConversation *)conversation
+{
+    if (!self.filterBlock) {
+        return YES;
+    }
+    return self.filterBlock(conversation);
 }
 
 #pragma mark - BIMMessageListener

@@ -21,6 +21,7 @@
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *settings;
 @property (nonatomic, strong) BIMUserProfile *userInfo;
+@property (nonatomic, copy) NSString *userIdString;
 @end
 
 @implementation VEIMDemoProfileEditViewController
@@ -34,17 +35,29 @@
     return self;
 }
 
+- (instancetype)initWithUserIdString:(NSString *)userIdString
+{
+    if (self = [super init]) {
+        self.title = @"个人资料";
+        _userIdString = userIdString;
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self.view addSubview:self.tableView];
     [self createSettingModels];
     @weakify(self);
-    [[VEIMDemoUserManager sharedManager] getUserFullInfoList:@[@(self.userInfo.uid)] syncServer:YES completion:^(NSArray<BIMUserFullInfo *> * _Nullable infos, BIMError * _Nullable error) {
-        @strongify(self);
-        self.userInfo = infos.lastObject.userProfile;
-        [self createSettingModels];
-    }];
+    if (!self.userIdString) {
+        [[VEIMDemoUserManager sharedManager] getUserFullInfoList:@[@(self.userInfo.uid)] syncServer:YES completion:^(NSArray<BIMUserFullInfo *> * _Nullable infos, BIMError * _Nullable error) {
+            @strongify(self);
+            self.userInfo = infos.lastObject.userProfile;
+            [self createSettingModels];
+        }];
+    }
+    
 }
 
 - (void)createSettingModels
@@ -60,7 +73,6 @@
 - (VEIMDemoAvatarSettingModel *)createAvatarModel
 {
     // 设置头像
-//    VEIMDemoSettingModel *model = [VEIMDemoSettingModel settingWithTitle:@"头像" detail:nil isNeedSwitch:NO switchOn:NO];
     VEIMDemoAvatarSettingModel *model = [[VEIMDemoAvatarSettingModel alloc] init];
     model.title = @"头像";
     model.avatarUrl = self.userInfo.portraitUrl;
@@ -86,7 +98,14 @@
 
 - (VEIMDemoSettingModel *)createNickModel
 {
-    NSString *nickName = self.userInfo.nickName.length ? self.userInfo.nickName : [[VEIMDemoUserManager sharedManager] nicknameForTestUser:self.userInfo.uid];
+    
+    NSString *nickName = nil;
+    if (self.userInfo.nickName.length) {
+        nickName = self.userInfo.nickName;
+    } else {
+        nickName = [[VEIMDemoUserManager sharedManager] nickNameForUserIDString:self.userIdString] ?: [[VEIMDemoUserManager sharedManager] nicknameForTestUser:self.userInfo.uid];
+    }
+    
     VEIMDemoSettingModel *model = [VEIMDemoSettingModel settingWithTitle:@"昵称" detail:nickName isNeedSwitch:NO switchOn:NO];
     @weakify(self);
     model.clickHandler = ^{
@@ -169,10 +188,6 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    long long currentUID = [VEIMDemoUserManager sharedManager].currentUser.userID;
-    if (currentUID != self.userInfo.uid) {
-        return;
-    }
     if (!self.canSelfEdit) {
         return;
     }
