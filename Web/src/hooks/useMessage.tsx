@@ -14,6 +14,7 @@ import {
 import { CalcVideo, getImageSize, getMessagePreview } from '../utils';
 import { Message as ArcoMessage } from '@arco-design/web-react';
 import { EXT_ALIAS_NAME, EXT_AVATAR_URL } from '../constant';
+import { isBotConversion } from '../utils/bot';
 
 let markReadTimer: any = null;
 let toMarkReadList: Array<{ key: number; value: Message }> = [];

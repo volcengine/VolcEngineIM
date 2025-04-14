@@ -2,10 +2,13 @@ import React, { memo, useMemo } from 'react';
 import classNames from 'classnames';
 import { Avatar, Badge } from '@arco-design/web-react';
 import { Conversation } from '@volcengine/im-web-sdk';
+import { useRecoilValue } from 'recoil';
 
 import ListItem from './Styles';
 
+import { SpecialBotConvStickOnTop } from '../../store';
 import { getLastTime, getConversationAvatar } from '../../utils';
+import { isSpecialBotConversion } from '../../utils/bot';
 import { ReactComponent as MuteIcon } from '../../assets/svgs/Mute.svg';
 import { ReactComponent as PinIcon } from '../../assets/svgs/Pin.svg';
 
@@ -20,14 +23,25 @@ interface ConversationItemPropsType {
 }
 
 const ConversationItem: React.FC<ConversationItemPropsType> = memo(props => {
-  const { conversation = {} as any, isActive, onClick, title, description } = props;
+  const { conversation = {} as Conversation, isActive, onClick, title, description } = props;
   const lastMessage = conversation?.lastVisibleMessage;
+
+  const specialBotConvStickOnTop = useRecoilValue(SpecialBotConvStickOnTop);
 
   const wrapClass = useMemo(() => {
     return classNames('conversation-item', {
       'is-active': isActive,
     });
   }, [isActive]);
+
+  const showStickOnTopIcon = useMemo(() => {
+    const isSpecialBotConv = isSpecialBotConversion(conversation.id);
+    if (isSpecialBotConv) {
+      return specialBotConvStickOnTop;
+    } else {
+      return conversation.isStickOnTop;
+    }
+  }, [conversation.isStickOnTop, specialBotConvStickOnTop]);
 
   return (
     <ListItem className={wrapClass} onClick={onClick}>
@@ -47,7 +61,7 @@ const ConversationItem: React.FC<ConversationItemPropsType> = memo(props => {
       <div className="conversation-right">
         <div className="convesation-header">
           <div className="convesation-user">{title}</div>
-          {conversation.isStickOnTop && <PinIcon />}
+          {showStickOnTopIcon && <PinIcon />}
           <div className="convesation-time">{getLastTime(lastMessage?.createdAt)}</div>
         </div>
         <div className="message-preview-container">

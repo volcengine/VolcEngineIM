@@ -8,6 +8,7 @@ import {
   IMEvent,
   LivePlugin,
   ContactPlugin,
+  BotPlugin,
   Message,
   Friend,
 } from '@volcengine/im-web-sdk';
@@ -29,6 +30,7 @@ import {
   LiveConversationMemberCount,
   LiveConversationOwner,
   ReadReceiptVersion,
+  ClearBotContextMessages,
 } from '../store';
 import {
   APP_ID,
@@ -43,6 +45,10 @@ import { Storage, computedVisibleTime } from '../utils';
 import { useLive } from './useLive';
 import { useNavigate } from '@modern-js/runtime/router';
 import { sleep } from '../utils/sleep';
+import useMessage from './useMessage';
+import useConversation from './useConversation';
+import singletonData from '../utils/singleton';
+import { isSpecialBotConversion } from '../utils/bot';
 
 const { ConversationType } = im_proto;
 
@@ -53,7 +59,7 @@ const init = ({ userId, deviceId }) => {
     ...option,
     deviceId: deviceId ?? userId, // 影响推送，
     userId,
-    debug: true,
+    debug: true, // todo: 上线前打开
     debugEnablePollRequestLog: true,
     
     disableAppLog: Boolean(localStorage.getItem('im_option_disable_app_log')),
@@ -65,7 +71,7 @@ const init = ({ userId, deviceId }) => {
       }),
   };
 
-  const plugins = [LivePlugin, MultimediaPlugin, ContactPlugin];
+  const plugins = [LivePlugin, MultimediaPlugin, ContactPlugin, BotPlugin];
 
   return new BytedIM(params, plugins);
 };
@@ -101,6 +107,11 @@ const useInit = () => {
   const [liveMessagesMap, setLiveMessagesMap] = useState(new Map());
   const setLiveConversationOwner = useSetRecoilState(LiveConversationOwner);
   const setReadReceiptVersion = useSetRecoilState(ReadReceiptVersion);
+
+  const [clearBotContextMessages, setClearBotContextMessages] = useRecoilState(ClearBotContextMessages);
+
+  const { sendSystemMessage } = useMessage();
+  const { getConversationList } = useConversation();
 
   /**
    * 获取会话最新消息列表
@@ -187,6 +198,8 @@ const useInit = () => {
             setParticipants([]);
             setConversations([]);
 
+            singletonData.getInstance().resetAllData();
+
             clearCurrentLiveConversationStatus();
 
             navigate('/login');
@@ -196,9 +209,15 @@ const useInit = () => {
         });
       }
     });
-
-    const conversationChangeHandler = bytedIMInstance?.event?.subscribe?.(IMEvent.ConversationChange, () => {
-      setConversations(bytedIMInstance.getConversationList());
+    console.log(`订阅会话列表事件 useEffect: ${singletonData.getInstance().getData('isFistLoad')}`);
+    const conversationChangeHandler = bytedIMInstance?.event?.subscribe?.(IMEvent.ConversationChange, async () => {
+      const isFistLoad = singletonData.getInstance().getData('isFistLoad');
+      console.log(`会话列表事件有变更, isFistLoad: ${isFistLoad}`);
+      if (isFistLoad) {
+        singletonData.getInstance().setData('isFistLoad', false);
+      }
+      const conversations = await getConversationList(isFistLoad);
+      setConversations(conversations);
     });
 
     return () => {
@@ -221,7 +240,13 @@ const useInit = () => {
           setCurrentConversationUnreadCount(conversation.unreadCount);
         }
 
-        setCurrentConversation(lang.cloneDeep(currentConversation));
+        let cloneConv = lang.cloneDeep(currentConversation);
+        // const isSpecialConv = isSpecialBotConversion(cloneConv.id);
+        // if (!cloneConv.lastMessage && !isSpecialConv) {
+        //   cloneConv = null;
+        // }
+        setCurrentConversation(cloneConv);
+        console.log('conversationUpsertHandler setCurrentConversation', cloneConv);
       }
     });
 
@@ -265,6 +290,7 @@ const useInit = () => {
         currentConversation.coreInfo.blockStatus = conversation.coreInfo.blockStatus;
         currentConversation.coreInfo.blockNormalOnly = conversation.coreInfo.blockNormalOnly;
         setCurrentConversation(lang.cloneDeep(currentConversation));
+        console.log('conversationBlockHandler setCurrentConversation', lang.cloneDeep(currentConversation));
       }
     });
 
@@ -313,6 +339,15 @@ const useInit = () => {
         setLiveConversationOwner(String(newOwnerId));
       }
     );
+
+    // const botContextClearHandle = bytedIMInstance?.event?.subscribe?.(IMEvent.BotContextClear, msg => {
+    //   console.log('收到 清除上下文 的通知', msg);
+    //   // 标记AI新会话
+    //   if (!clearBotContextMessages.includes(msg.clientId)) {
+    //     setClearBotContextMessages([...clearBotContextMessages, msg.clientId]);
+    //     sendSystemMessage(currentConversation, '已清除上下文');
+    //   }
+    // });
 
     const upsertHandle = bytedIMInstance?.event?.subscribe?.(IMEvent.MessageUpsert, msg => {
       if (msg.conversationId !== currentConversation?.id) {
@@ -436,6 +471,7 @@ const useInit = () => {
       bytedIMInstance?.event.unsubscribe(IMEvent.ParticipantJoin, participantJoinHandle);
       bytedIMInstance?.event.unsubscribe(IMEvent.ParticipantLeave, participantLeaveHandle);
       bytedIMInstance?.event.unsubscribe(IMEvent.ConversationOwnerChange, ownerChangeHandle);
+      // bytedIMInstance?.event.unsubscribe(IMEvent.BotContextClear, botContextClearHandle);
 
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendApply, friendApplyHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendApplyRefuse, friendApplyRefuseHandler);

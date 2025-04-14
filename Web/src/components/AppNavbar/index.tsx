@@ -28,9 +28,10 @@ import { BytedIMInstance, Conversations, Messages, Participants, UnReadTotal, Us
 import { useLive } from '../../hooks/useLive';
 import { useRequest, useTimeout } from 'ahooks';
 import { deleteAccount } from '../../apis/app';
-import { useAccountsInfo, useUnreadFriendApplyCount } from '../../hooks';
+import { useAccountsInfo, useUnreadFriendApplyCount, useConversation } from '../../hooks';
 import DefaultAvatar from '../../assets/images/default_avatar.png';
 import ProfilePopover from '../ProfilePopover';
+import singletonData from '../../utils/singleton';
 
 interface AppNavBarProps {}
 const avatars = Array(6)
@@ -42,12 +43,15 @@ function DeleteAccountModal({ visible, setVisible }: { visible: boolean; setVisi
 
   const [progress, setProgress] = useState('');
 
+  const { getConversationList } = useConversation();
+
   const { run, loading } = useRequest(
     async () => {
       try {
         await Promise.race([
           (async () => {
-            let entries = [...bytedIMInstance.getConversationList().entries()];
+            const conversations = await getConversationList();
+            let entries = [...conversations.entries()];
             let total = entries.length + 1;
             setProgress(`${0}/${total}`);
             for (let [index, conversation] of entries) {
@@ -243,6 +247,8 @@ const AppNavBar: FC<AppNavBarProps> = props => {
             setMessages([]);
             setParticipants([]);
             setConversations([]);
+
+            singletonData.getInstance().resetAllData();
 
             clearCurrentLiveConversationStatus();
 

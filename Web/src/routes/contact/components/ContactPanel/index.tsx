@@ -4,7 +4,7 @@ import Styles from './Styles';
 import { Avatar, NoMessage, ProfilePopover } from '../../../../components';
 import { ContactPanelHeader } from '../ContactPanelHeader';
 import { getConversationAvatar } from '../../../../utils';
-import { Button, Form, Input, List, Message, Modal, Tooltip } from '@arco-design/web-react';
+import { Button, Form, Input, List, Message, Modal, Popover, Typography } from '@arco-design/web-react';
 import { useRequest } from 'ahooks';
 import { useRecoilValue } from 'recoil';
 import { BytedIMInstance } from '../../../../store';
@@ -472,6 +472,66 @@ function BlackList() {
   );
 }
 
+function BotList() {
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
+  const ACCOUNTS_INFO = useAccountsInfo();
+  const { createBotOneOneConversation, getBotList } = useConversation();
+  const navigate = useNavigate();
+
+  const {
+    data = [],
+    loading,
+    refresh,
+  } = useRequest(async () => {
+    // await sleep(200);
+    const list = await getBotList();
+    return list;
+  }, {});
+
+  const onCreateBotConversation = async (uid: string) => {
+    createBotOneOneConversation(uid);
+    navigate('/');
+  };
+
+  return (
+    <List
+      size="small"
+      dataSource={data}
+      loading={loading}
+      style={{ border: 'none' }}
+      render={(item, index) => (
+        <List.Item
+          key={item.uid || index}
+          onClick={() => {
+            onCreateBotConversation(item.uid);
+          }}
+        >
+          <List.Item.Meta
+            // avatar={
+            //   <Popover
+            //     content={
+            //       <div>
+            //         <div>{item.nick_name}</div>
+            //         <div>
+            //           ID: <Typography.Text copyable>{item.uid}</Typography.Text>
+            //         </div>
+            //       </div>
+            //     }
+            //   >
+            //     <div>
+            //       <Avatar url={item.portrait} size={36} />
+            //     </div>
+            //   </Popover>
+            // }
+            avatar={<Avatar url={item.portrait} size={36} />}
+            title={`${item.nick_name} ID: ${item.uid}`}
+          />
+        </List.Item>
+      )}
+    />
+  );
+}
+
 export const ContactPanel: React.FC<ChatPanelPropsType> = memo(({ selectedPanel }) => {
   /** 无消息 */
   const renderNoMessage = useMemo(() => {
@@ -488,6 +548,7 @@ export const ContactPanel: React.FC<ChatPanelPropsType> = memo(({ selectedPanel 
               {selectedPanel === 'apply' && <ApplyList></ApplyList>}
               {selectedPanel === 'my' && <FriendList></FriendList>}
               {selectedPanel === 'black' && <BlackList></BlackList>}
+              {selectedPanel === 'bot' && <BotList></BotList>}
             </div>
           </div>
         </>

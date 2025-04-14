@@ -1,15 +1,22 @@
-import React, { memo, useState, useRef, useMemo, useCallback } from 'react';
+import React, { memo, useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Message } from '@volcengine/im-web-sdk';
 
 import MessageList from '../MessageList';
 import { IconDown } from '../Icon';
 import ChatHeaderBox from '../ChatHeaderBox';
-import { AccountsInfo, CurrentConversation, CurrentConversationUnreadCount, ScrollRef } from '../../store';
+import {
+  AccountsInfo,
+  CurrentConversation,
+  CurrentConversationUnreadCount,
+  ScrollRef,
+  BytedIMInstance,
+} from '../../store';
 import { useMessage, useConversation } from '../../hooks';
 import { Iui } from '../../types';
 import Styles from './Styles';
 import ChatOperation from '../ChatOperation';
+import { isBotConversion } from '../../utils/bot';
 
 interface ChatPanelPropsType extends Iui {}
 
@@ -37,6 +44,7 @@ const ChatPanel: React.FC<ChatPanelPropsType> = memo(props => {
 
   const accountsInfo = useRecoilValue(AccountsInfo);
   const scrollRef = useRecoilValue(ScrollRef);
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
 
   const [showScrollIcon, setShowScrollIcon] = useState(false);
   const listRef = useRef<any>(null);
@@ -54,6 +62,18 @@ const ChatPanel: React.FC<ChatPanelPropsType> = memo(props => {
       return await loadMoreMessage(messages?.[0]?.indexInConversation);
     } catch (error) {}
   };
+
+  // useEffect(() => {
+  //   // todo 这样写删除会话的时候会立即发送开场白
+  //   console.log('当前会话消息数量：', messages?.length, currentConversation?.id);
+  //   if (currentConversation?.id && !messages?.length) {
+  //     // 机器人会话发送开场白消息
+  //     if (isBotConversion(currentConversation.id)) {
+  //       console.log('当前会话没有历史消息，发送开场白消息');
+  //       bytedIMInstance.markNewChat({ conversation: currentConversation, sendNotice: true });
+  //     }
+  //   }
+  // }, [messages]);
 
   /** 滚动底部 */
   const handleScrollIconClick = useCallback(() => {

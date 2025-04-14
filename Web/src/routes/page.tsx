@@ -44,7 +44,13 @@ const SidebarMap = {
 };
 
 const Home: FC<PCFePropsType> = memo(() => {
-  const { selectConversation, createGroupConversation, createOneOneConversation } = useConversation();
+  const {
+    selectConversation,
+    createGroupConversation,
+    createOneOneConversation,
+    createBotGroupConversation,
+    createBotOneOneConversation,
+  } = useConversation();
 
   const conversations = useRecoilValue(Conversations);
   const currentConversation = useRecoilValue(CurrentConversation);
@@ -125,6 +131,8 @@ const Home: FC<PCFePropsType> = memo(() => {
         <ConversationHeader
           createGroupConversation={createGroupConversation}
           createOneOneConversation={createOneOneConversation}
+          createBotGroupConversation={createBotGroupConversation}
+          createBotOneOneConversation={createBotOneOneConversation}
         />
 
         <ConversationTab

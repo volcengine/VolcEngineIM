@@ -1,0 +1,17 @@
+.input-wrapper {
+  //width: 300px;
+  margin-bottom: 24px;
+}
+
+.user-input-wrapper {
+  :global(.arco-input-group-addafter) {
+    padding: 0;
+  }
+}
+
+.user-list-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}

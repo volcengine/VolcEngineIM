@@ -6,7 +6,10 @@ import { IMAccountInfoTypes } from '../../types';
 import Styles from './Styles';
 import { BytedIMInstance, CurrentConversation, EditMessage, Participants, ReferenceMessage } from '../../store';
 import { useAccountsInfo, useMessage } from '../../hooks';
+import { isBotConversion } from '../../utils/bot';
+
 import { im_proto } from '@volcengine/im-web-sdk';
+import { Message as ArcoMessage } from '@arco-design/web-react';
 
 interface ChatOperationPropsType {
   userInfo?: IMAccountInfoTypes;
@@ -25,6 +28,8 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
   const [referenceMessage, setReferenceMessage] = useRecoilState(ReferenceMessage);
   const [editingMessage, setEditingMessage] = useRecoilState(EditMessage);
 
+  const { sendFileMessage, sendImageMessage, sendVideoMessage, sendAudioMessage, sendVolcMessage, sendCouponMessage } =
+    useMessage();
   const ACCOUNTS_INFO = useAccountsInfo();
   const suggestions = participants.map(item => {
     return {
@@ -32,6 +37,9 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
       username: ACCOUNTS_INFO[item.userId]?.name,
     };
   });
+
+  const { id } = currentConversation;
+  const isBotConv = useMemo(() => isBotConversion(id), [id]);
 
   // 获取 富文本内容
   const handleSendClick = () => {
@@ -45,6 +53,10 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
   
   const handleSubmit = useCallback(
     (richText: IRichText) => {
+      if (!richText.text?.trim()) {
+        ArcoMessage.error('不能发送空白消息');
+        return;
+      }
       sendTextMessage?.({ ...richText });
       scrollRef?.current?.scrollToBottom();
     },
@@ -66,6 +78,76 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
     }
   };
 
+  const getToolBarList = useCallback((): any => {
+    if (isBotConv) {
+      return [
+        {
+          key: 'Emoji',
+          use: true,
+        },
+      ];
+    }
+    return [
+      {
+        key: 'Emoji',
+        use: true,
+      },
+      {
+        key: 'Mention',
+        use: true,
+        params: {
+          suggestions: suggestions,
+        },
+      },
+      {
+        key: 'Image',
+        use: true,
+        params: {
+          sendMessage: sendImageMessage,
+        },
+      },
+      {
+        key: 'Video',
+        use: true,
+        params: {
+          sendMessage: sendVideoMessage,
+        },
+      },
+      {
+        key: 'File',
+        use: true,
+        params: {
+          sendMessage: sendFileMessage,
+        },
+      },
+      {
+        key: 'Audio',
+        use: true,
+        params: {
+          sendMessage: sendAudioMessage,
+        },
+      },
+      {
+        key: 'Volc',
+        use: true,
+        params: {
+          sendMessage: sendVolcMessage,
+        },
+      },
+      {
+        key: 'Coupon',
+        use: true,
+        params: {
+          sendMessage: sendCouponMessage,
+        },
+      },
+      {
+        key: 'MorePanel',
+        use: false,
+      },
+    ];
+  }, [sendImageMessage, sendFileMessage, sendAudioMessage, sendVolcMessage]);
+
   return (
     <Styles>
       <ImEditor
@@ -80,6 +162,7 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
         ref={imEditorRef}
         suggestions={suggestions}
         onMessageTyping={onMessageTyping}
+        toolBarList={getToolBarList()}
       />
 
       <div className="input-footer">
