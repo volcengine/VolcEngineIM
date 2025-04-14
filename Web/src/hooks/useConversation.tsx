@@ -421,10 +421,7 @@ const useConversation = () => {
       const BOT_DEBUG = localStorage.getItem('BOT_DEBUG');
       console.log('lllllll BotList', BOT_DEBUG, resp.list);
       let list = resp.list;
-      // 正式环境只展示两个机器人
-      if (BOT_DEBUG !== '1') {
-        list = list.filter(item => ['999880', '999881'].includes(item.uid));
-      }
+      
       // 特殊机器人会话999880 强制置顶最上方
       // list = list.filter(item => item.uid === '999880').concat(list.filter(item => item.uid !== '999880'));
       return list;
