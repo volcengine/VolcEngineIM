@@ -2,16 +2,23 @@ package com.bytedance.im.app.member.group;
 
 import android.app.Activity;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.bytedance.im.core.api.BIMClient;
+import com.bytedance.im.core.api.enums.BIMConversationType;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
+import com.bytedance.im.core.api.interfaces.BIMResultCallback;
+import com.bytedance.im.core.api.interfaces.BIMSendCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
-import com.bytedance.im.core.api.model.BIMMember;
+import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.ui.BIMUIClient;
+import com.bytedance.im.ui.api.BIMUIUser;
+import com.bytedance.im.ui.message.adapter.ui.custom.BIMGroupNotifyElement;
+import com.bytedance.im.ui.message.adapter.ui.widget.pop.DialogUtil;
 
 public class VEDetailController {
     /**
@@ -43,6 +50,63 @@ public class VEDetailController {
                 });
             }
         });
+    }
+
+    public static void initMarkNewChat(View markNewChatView, BIMConversation conversation, Activity activity) {
+        markNewChatView.setVisibility(View.GONE);
+        markNewChatView.setOnClickListener(v -> {
+            DialogUtil.showMarkNewChatDialog(activity, new BIMResultCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean aBoolean) {
+                    BIMGroupNotifyElement content = new BIMGroupNotifyElement();
+                    String text = " 已清除上下文 ";
+                    content.setText(text);
+
+                    BIMMessage markNewChatMessage = BIMUIClient.getInstance().createCustomMessage(content);
+                    BIMClient.getInstance().sendMessage(markNewChatMessage, conversation.getConversationID(), new BIMSendCallback() {
+                        @Override
+                        public void onSuccess(BIMMessage bimMessage) {
+                            BIMClient.getInstance().markNewChat(conversation.getConversationID(), true, new BIMSimpleCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(activity, "操作成功", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onFailed(BIMErrorCode code) {
+                                    Toast.makeText(activity, "操作失败", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onError(BIMMessage bimMessage, BIMErrorCode code) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailed(BIMErrorCode code) {
+
+                }
+            });
+        });
+        if (conversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
+            BIMUIClient.getInstance().getUserProvider().getUserInfoAsync(conversation.getOppositeUserID(), new BIMResultCallback<BIMUIUser>() {
+                @Override
+                public void onSuccess(BIMUIUser bimuiUser) {
+                    if (bimuiUser.getIsRobot()) {
+                        markNewChatView.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onFailed(BIMErrorCode code) {
+                    markNewChatView.setVisibility(View.GONE);
+                }
+            });
+        }
     }
 
     public static void initMuteSwitch(Switch muteSwitch, BIMConversation conversation, Activity activity) {

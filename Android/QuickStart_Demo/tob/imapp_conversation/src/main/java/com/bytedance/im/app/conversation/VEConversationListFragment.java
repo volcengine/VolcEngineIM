@@ -53,6 +53,7 @@ public class VEConversationListFragment extends Fragment implements BIMSupportUn
     private int REQUEST_CODE_CRETE_UID_LIST = 1000;
     private int REQUEST_CODE_CRETE_UID = 1001;
     private int REQUEST_CODE_CLEAR_UNREAD = 1002;
+    private int REQUEST_CODE_CRETE_ROBOT_UID = 1003;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,6 +125,7 @@ public class VEConversationListFragment extends Fragment implements BIMSupportUn
         LinearLayout createSingle = contentView.findViewById(R.id.ll_create_single);
         LinearLayout createGroup = contentView.findViewById(R.id.ll_create_group);
         LinearLayout clearUnread = contentView.findViewById(R.id.ll_clear_all_unread);
+        LinearLayout createRobotChat = contentView.findViewById(R.id.ll_create_robot_single_chat);
         PopupWindow popupWindow = new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
         popupWindow.setOutsideTouchable(true);
         popupWindow.showAsDropDown(createBtn, 0, 10);
@@ -135,6 +137,8 @@ public class VEConversationListFragment extends Fragment implements BIMSupportUn
                     BIMUIClient.getInstance().getModuleStarter().startMemberSelectSingle(VEConversationListFragment.this, "发起单聊", REQUEST_CODE_CRETE_UID);
                 } else if (id == R.id.ll_create_group) {
                     BIMUIClient.getInstance().getModuleStarter().startMemberModuleAddForResult(VEConversationListFragment.this, "发起群聊", REQUEST_CODE_CRETE_UID_LIST);
+                } else if (id == R.id.ll_create_robot_single_chat) {
+                    BIMUIClient.getInstance().getModuleStarter().startRobotSelectSingle(VEConversationListFragment.this, "发起机器人单聊", REQUEST_CODE_CRETE_ROBOT_UID);
                 } else if (id == R.id.ll_clear_all_unread) {
                     DialogUtil.showBottomConfirmDialog(v.getContext(), "确定要清除所有未读提醒？", "确定",
                             view -> BIMClient.getInstance().markAllConversationsRead(null));
@@ -145,6 +149,7 @@ public class VEConversationListFragment extends Fragment implements BIMSupportUn
         createSingle.setOnClickListener(listener);
         createGroup.setOnClickListener(listener);
         clearUnread.setOnClickListener(listener);
+        createRobotChat.setOnClickListener(listener);
         //弹窗显示时添加全局阴影
         WindowManager.LayoutParams lp = getActivity().getWindow().getAttributes();
         lp.alpha = 0.7f;
@@ -256,10 +261,10 @@ public class VEConversationListFragment extends Fragment implements BIMSupportUn
                 if (uidList != null && !uidList.isEmpty()) {
                     createGroupConversationAndStart(uidList);
                 }
-            } else if (requestCode == REQUEST_CODE_CRETE_UID) {
+            } else if (requestCode == REQUEST_CODE_CRETE_UID || requestCode == REQUEST_CODE_CRETE_ROBOT_UID) {
                 Long uid = data.getLongExtra(ModuleStarter.MODULE_KEY_UID, 0);
                 if (uid != null && uid > 0) {
-                    createSingleConversationAndStart(uid);
+                    createSingleConversationAndStart(uid, requestCode == REQUEST_CODE_CRETE_ROBOT_UID);
                 }
             }
         }
@@ -343,10 +348,13 @@ public class VEConversationListFragment extends Fragment implements BIMSupportUn
         });
     }
 
-    private void createSingleConversationAndStart(Long uid) {
+    private void createSingleConversationAndStart(Long uid, boolean isRobot) {
         BIMUIClient.getInstance().createSingleConversation(uid, new BIMResultCallback<BIMConversation>() {
             @Override
             public void onSuccess(BIMConversation bimConversation) {
+                if (isRobot) {
+                    BIMClient.getInstance().markNewChat(bimConversation.getConversationID(), true, null);
+                }
                 BIMUIClient.getInstance().getModuleStarter().startMessageModule(getActivity(), bimConversation.getConversationID());
 
             }

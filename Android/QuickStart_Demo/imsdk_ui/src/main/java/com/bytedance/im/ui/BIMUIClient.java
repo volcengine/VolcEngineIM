@@ -22,7 +22,7 @@ import com.bytedance.im.core.api.model.BIMMember;
 import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.core.api.model.BIMUnReadInfo;
-import com.bytedance.im.core.internal.utils.IMLog;
+import com.bytedance.im.imcloud.internal.utils.IMLog;
 import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 import com.bytedance.im.ui.api.interfaces.BIMUserExistChecker;
 import com.bytedance.im.ui.member.BIMGroupMemberProvider;
@@ -503,7 +503,7 @@ public class BIMUIClient {
     }
 
     public BIMUserExistChecker getUserExistChecker() {
-        if (userExistChecker == null) {
+//        if (userExistChecker == null) {
             return new BIMUserExistChecker() {
                 @Override
                 public void check(List<Long> uidList, BIMResultCallback<Map<Long, Boolean>> callback) {
@@ -516,8 +516,8 @@ public class BIMUIClient {
                     callback.onSuccess(map);
                 }
             };
-        }
-        return userExistChecker;
+//        }
+//        return userExistChecker;
     }
 
     public void setUserExistChecker(BIMUserExistChecker userExistChecker) {

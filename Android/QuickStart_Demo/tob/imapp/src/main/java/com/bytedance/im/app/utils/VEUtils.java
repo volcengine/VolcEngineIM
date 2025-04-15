@@ -22,7 +22,7 @@ public class VEUtils {
 
     //实验功能，暂时屏蔽
     public static boolean isShield() {
-        return !BuildConfig.DEBUG || isSourceCode();
+        return  isSourceCode();
     }
 
     public static boolean isSourceCode(){

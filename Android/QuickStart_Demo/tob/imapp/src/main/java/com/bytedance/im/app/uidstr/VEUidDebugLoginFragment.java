@@ -20,7 +20,7 @@ import com.bytedance.im.app.R;
 import com.bytedance.im.app.constants.Constants;
 import com.bytedance.im.app.constants.SpUtils;
 import com.bytedance.im.app.uidstr.token.TokenHelper;
-import com.bytedance.im.core.internal.utils.IMLog;
+import com.bytedance.im.imcloud.internal.utils.IMLog;
 import com.bytedance.im.ui.api.interfaces.BIMAuthProvider;
 import com.bytedance.im.ui.api.interfaces.BIMLoginListener;
 import com.bytedance.im.ui.api.interfaces.BIMUidStrLoginListener;
@@ -116,7 +116,7 @@ public class VEUidDebugLoginFragment extends Fragment implements BIMAuthProvider
 
         TokenHelper tokenHelper = new TokenHelper(getActivity().getApplicationContext(), SpUtils.getInstance().getEnv(), SpUtils.getInstance().getPpeSwimLane());
         long finalUid = uid;
-        tokenHelper.getToken(uid, Constants.APP_ID, new TokenHelper.GetTokenListener() {
+        tokenHelper.getToken(uid, VEUidStringAccountProvider.appID, new TokenHelper.GetTokenListener() {
 
             @Override
             public void onGetToken(String token) {
@@ -126,7 +126,9 @@ public class VEUidDebugLoginFragment extends Fragment implements BIMAuthProvider
 
             @Override
             public void onFailed(Throwable e) {
-                Toast.makeText(getActivity(), "获取token失败", Toast.LENGTH_SHORT).show();
+                if(isAdded()){
+                    Toast.makeText(getActivity(), "获取token失败", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -136,7 +138,7 @@ public class VEUidDebugLoginFragment extends Fragment implements BIMAuthProvider
     private void loginUidStr(String uidStr) {
         Log.i(TAG,"loginUidStr: "+uidStr);
         TokenHelper tokenHelper = new TokenHelper(getActivity().getApplicationContext(), SpUtils.getInstance().getEnv(), SpUtils.getInstance().getPpeSwimLane());
-        tokenHelper.getTokenWithStrUid(uidStr, Constants.APP_ID, new TokenHelper.GetTokenListener() {
+        tokenHelper.getTokenWithStrUid(uidStr, VEUidStringAccountProvider.appID, new TokenHelper.GetTokenListener() {
 
             @Override
             public void onGetToken(String token) {

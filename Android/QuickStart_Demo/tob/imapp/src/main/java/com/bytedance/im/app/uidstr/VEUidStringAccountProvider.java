@@ -15,9 +15,12 @@ import java.util.Map;
  * 使用 uid 为 string 的账号体系
  */
 public class VEUidStringAccountProvider implements BIMAccountProvider {
+    public static int appID = 0;
+    public static int env = 0;
     @Override
     public void init(Application application, int appID, int env) {
-
+        VEUidStringAccountProvider.appID  = appID;
+        VEUidStringAccountProvider.env = env;
     }
 
     @Override

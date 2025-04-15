@@ -58,6 +58,11 @@ public class VEUserProfileEditActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ve_im_activity_mine_edit_layout);
+
+        if (BIMClient.getInstance().isUseStringUid()) {
+            finish();
+        }
+
         showUid = getIntent().getLongExtra(ModuleStarter.MODULE_KEY_UID, 0);
         conversationId = getIntent().getStringExtra(ModuleStarter.MODULE_KEY_CID);
         boolean editAble = BIMClient.getInstance().getCurrentUserID() == showUid;

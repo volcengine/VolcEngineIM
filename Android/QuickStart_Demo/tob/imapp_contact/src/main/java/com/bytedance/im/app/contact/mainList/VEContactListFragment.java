@@ -1,5 +1,6 @@
 package com.bytedance.im.app.contact.mainList;
 
+import static android.app.Activity.RESULT_OK;
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_ADD_SELF_FRIEND_NOT_ALLOW;
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_ALIAS_ILLEGAL;
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_ALIAS_TOO_LONG;
@@ -36,6 +37,7 @@ import com.bytedance.im.app.contact.R;
 import com.bytedance.im.app.contact.blockList.VEContactBlockListActivity;
 import com.bytedance.im.app.contact.inviteList.VEContactInviteActivity;
 import com.bytedance.im.app.contact.mainList.item.ContactListActionItem;
+import com.bytedance.im.app.contact.robotList.VERobotListActivity;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
@@ -97,6 +99,10 @@ public class VEContactListFragment extends Fragment implements BIMSupportUnread 
                             Log.e(TAG, "create conversation failed: " + friendInfo.getUid());
                         }
                     });
+                }
+            } else if (ContactListItemType.TYPE_ROBOT_LIST == data.getType()) {
+                if (null!= getActivity()) {
+                    VERobotListActivity.start(getActivity());
                 }
             }
         }
@@ -198,6 +204,7 @@ public class VEContactListFragment extends Fragment implements BIMSupportUnread 
         List<ContactListDataInfo<?>> stickTopData = new ArrayList<>();
         stickTopData.add(ContactListDataInfo.create(ContactListItemType.TYPE_INVITE_LIST));
         stickTopData.add(ContactListDataInfo.create(ContactListItemType.TYPE_BLACK_LIST));
+        stickTopData.add(ContactListDataInfo.create(ContactListItemType.TYPE_ROBOT_LIST));
         adapter.setStickUpItem(stickTopData);
     }
 

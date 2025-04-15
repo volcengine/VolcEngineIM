@@ -43,15 +43,15 @@ import com.bytedance.im.core.api.model.BIMMessageListResult;
 import com.bytedance.im.core.api.model.BIMMessageNewPropertyModify;
 import com.bytedance.im.core.api.model.BIMMessageReadReceipt;
 import com.bytedance.im.core.api.model.BIMReadReceipt;
-import com.bytedance.im.core.client.IMEnum;
-import com.bytedance.im.core.client.IMInfoKeys;
-import com.bytedance.im.core.model.LocalPropertyItem;
-import com.bytedance.im.core.model.Message;
+import com.bytedance.im.imcloud.client.IMEnum;
+import com.bytedance.im.imcloud.client.IMInfoKeys;
+import com.bytedance.im.imcloud.model.LocalPropertyItem;
+import com.bytedance.im.imcloud.model.Message;
 import com.bytedance.im.core.model.inner.msg.BIMTextElement;
 import com.bytedance.im.core.service.BIMINService;
 import com.bytedance.im.core.service.BIMMessageService;
 import com.bytedance.im.core.service.manager.BIMMessageManager;
-import com.bytedance.im.core.stream.interfaces.StreamMessageListener;
+import com.bytedance.im.imcloud.stream.interfaces.StreamMessageListener;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.api.BIMUIUser;
@@ -378,6 +378,7 @@ public class BIMMessageListFragment extends Fragment {
                 String name = "";
                 String draft = bimConversation.getDraftText();
                 initInputView(conversation);
+                initRobotChatInputView(conversation);
                 if (!TextUtils.isEmpty(draft) && TextUtils.isEmpty(inPutView.getmInputEt().getText())) {
                     inPutView.setEditDraft(draft);
                 }
@@ -1069,6 +1070,24 @@ public class BIMMessageListFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void initRobotChatInputView(BIMConversation conversation) {
+        if (conversation != null && conversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
+            BIMUIClient.getInstance().getUserProvider().getUserInfoAsync(conversation.getOppositeUserID(), new BIMResultCallback<BIMUIUser>() {
+                @Override
+                public void onSuccess(BIMUIUser bimuiUser) {
+                    if (bimuiUser.getIsRobot()) {
+                        inPutView.switchToOnlyText();
+                    }
+                }
+
+                @Override
+                public void onFailed(BIMErrorCode code) {
+
+                }
+            });
+        }
     }
 
     private void scrollBottom() {
