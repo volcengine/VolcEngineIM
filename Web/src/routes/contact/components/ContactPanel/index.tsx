@@ -18,7 +18,7 @@ import {
   BlackUserInfo,
 } from '@volcengine/im-web-sdk';
 import { sortBy } from 'lodash';
-import { useAccountsInfo, useConversation } from '../../../../hooks';
+import { useAccountsInfo, useConversation, useBot } from '../../../../hooks';
 import { useNavigate } from '@modern-js/runtime/router';
 import { sleep } from '../../../../utils/sleep';
 
@@ -475,7 +475,8 @@ function BlackList() {
 function BotList() {
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
   const ACCOUNTS_INFO = useAccountsInfo();
-  const { createBotOneOneConversation, getBotList } = useConversation();
+  const { createBotOneOneConversation } = useConversation();
+  const { getBotList } = useBot();
   const navigate = useNavigate();
 
   const {

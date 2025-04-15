@@ -2,5 +2,3 @@ dist
 log
 node_modules
 output
-*.scss.d.ts
-*.css.d.ts

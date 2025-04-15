@@ -48,7 +48,6 @@ import { sleep } from '../utils/sleep';
 import useMessage from './useMessage';
 import useConversation from './useConversation';
 import singletonData from '../utils/singleton';
-import { isSpecialBotConversion } from '../utils/bot';
 
 const { ConversationType } = im_proto;
 
@@ -241,10 +240,6 @@ const useInit = () => {
         }
 
         let cloneConv = lang.cloneDeep(currentConversation);
-        // const isSpecialConv = isSpecialBotConversion(cloneConv.id);
-        // if (!cloneConv.lastMessage && !isSpecialConv) {
-        //   cloneConv = null;
-        // }
         setCurrentConversation(cloneConv);
         console.log('conversationUpsertHandler setCurrentConversation', cloneConv);
       }
@@ -340,14 +335,7 @@ const useInit = () => {
       }
     );
 
-    // const botContextClearHandle = bytedIMInstance?.event?.subscribe?.(IMEvent.BotContextClear, msg => {
-    //   console.log('收到 清除上下文 的通知', msg);
-    //   // 标记AI新会话
-    //   if (!clearBotContextMessages.includes(msg.clientId)) {
-    //     setClearBotContextMessages([...clearBotContextMessages, msg.clientId]);
-    //     sendSystemMessage(currentConversation, '已清除上下文');
-    //   }
-    // });
+    
 
     const upsertHandle = bytedIMInstance?.event?.subscribe?.(IMEvent.MessageUpsert, msg => {
       if (msg.conversationId !== currentConversation?.id) {
@@ -471,7 +459,7 @@ const useInit = () => {
       bytedIMInstance?.event.unsubscribe(IMEvent.ParticipantJoin, participantJoinHandle);
       bytedIMInstance?.event.unsubscribe(IMEvent.ParticipantLeave, participantLeaveHandle);
       bytedIMInstance?.event.unsubscribe(IMEvent.ConversationOwnerChange, ownerChangeHandle);
-      // bytedIMInstance?.event.unsubscribe(IMEvent.BotContextClear, botContextClearHandle);
+      
 
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendApply, friendApplyHandler);
       bytedIMInstance?.event.unsubscribe(IMEvent.FriendApplyRefuse, friendApplyRefuseHandler);

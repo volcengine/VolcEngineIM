@@ -16,14 +16,13 @@ import {
 } from './components';
 import { IconReply, IconDelete, IconRevocation, IconFillPin, IconLike } from '../Icon';
 import { getMessageComponent } from '../MessageCards';
-import { useAccountsInfo } from '../../hooks';
+import { useAccountsInfo, useBot } from '../../hooks';
 import { getMessageTimeFormat } from '../../utils/formatTime';
 import MessageWrap from './Styles';
 import { BytedIMInstance, CurrentConversation, UserId } from '../../store';
 import { getMsgStatusIcon } from '../../utils';
 import { IconEdit, IconEye } from '@arco-design/web-react/icon';
 import { ENABLE_MESSAGE_INSPECTOR } from '../../constant';
-import { isBotConversion } from '../../utils/bot';
 
 import { useInViewport, useRequest } from 'ahooks';
 import Row from '@arco-design/web-react/es/Grid/row';
@@ -152,8 +151,11 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
   const messageItemRef = useRef();
   const [isInview] = useInViewport(messageItemRef, { threshold: 0.7 });
 
-  const { id } = currentConversation;
-  const isBotConv = useMemo(() => isBotConversion(id), [id]);
+  const { id, toParticipantUserId } = currentConversation;
+
+  const { isBotConversion } = useBot();
+
+  const isBotConv = useMemo(() => isBotConversion(toParticipantUserId), [isBotConversion, toParticipantUserId]);
 
   useEffect(() => {
     (async () => {

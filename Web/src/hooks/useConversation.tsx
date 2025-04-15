@@ -7,7 +7,7 @@ import useMessage from './useMessage';
 import { Message } from '@arco-design/web-react';
 import { useAccountsInfo } from './useProfileUpdater';
 import singletonData from '../utils/singleton';
-import { isSpecialBotConversion } from '../utils/bot';
+import useBot from './useBot';
 
 const { ConversationOperationStatus, ConversationType } = im_proto;
 
@@ -20,6 +20,8 @@ const useConversation = () => {
 
   const { sendSystemMessage, editMessage, replyMessage } = useMessage();
   const ACCOUNTS_INFO = useAccountsInfo();
+
+  const { isSpecialBotConversion } = useBot();
 
   /**
    * 获取会话列表
@@ -35,7 +37,7 @@ const useConversation = () => {
       });
       console.log(`获取会话列，排序后的Conv, isFist:`, isFist, conversations);
       if (isFist) {
-        // 特殊机器人会话999880
+        // 特殊机器人会话
         const hasSpecialConv = conversations?.[0]?.id && isSpecialBotConversion(conversations?.[0]?.id);
         if (hasSpecialConv) {
           const specialConv: Conversation = conversations[0];
@@ -45,21 +47,10 @@ const useConversation = () => {
           // 置顶机器人会话
           configConversationStickOnTop(specialConv.id, true);
         } else {
-          // 创建新的特殊机器人会话 uid: 999880
-          createBotOneOneConversation('999880');
+          
         }
       } else {
-        // 移除本地已经删除的特殊机器人会话（频繁发消息删不掉会话兜底，是否需要兜底根据实际业务诉求来做决策，做过滤的边界case：机器人还未回复完时做删除，新消息来时没有提醒，下次重新登录会把之前未读的消息拉回来）
-        const isDeleteSpecialBotConv = singletonData.getInstance().getData('isDeleteSpecialBotConv');
-        // if (isDeleteSpecialBotConv) {
-        //   conversations = conversations.filter(conv => {
-        //     if (conv?.id && isSpecialBotConversion(conv?.id)) {
-        //       return false;
-        //     }
-        //     return true;
-        //   });
-        // }
-        console.log(`获取会话列，not is Fist，isDeleteSpecialBotConv:`, isDeleteSpecialBotConv);
+        
       }
       return conversations;
     } catch (error) {
@@ -230,9 +221,8 @@ const useConversation = () => {
               localOnly: true,
             }),
           ]);
-          // await bytedIMInstance?.clearConversationMessage({ conversation: conv });
           setTimeout(() => {
-            // 删会话会触发ConversationChange和ConversationUpsert,偶现会话被重置回来的问题。方案1: 延迟1s再置空；方案2:ConversationChange做过滤(该方案在机器人还未回复完时做删除，新消息来时没有提醒，下次重新登录会把之前未读的消息拉回来)
+            
             setCurrentConversation(null);
           }, 1000);
           setCurrentConversation(null);
@@ -243,7 +233,7 @@ const useConversation = () => {
           conversation: conv,
         });
         setTimeout(() => {
-          // 删会话会触发ConversationChange和ConversationUpsert,偶现会话被重置回来的问题。方案1: 延迟1s再置空；方案2:ConversationChange做补偿判空（该方案暂未实践，可能还有其他未知边界case）
+          
           setCurrentConversation(null);
         }, 1000);
         console.log('removeConversation setCurrentConversation', null);
@@ -394,7 +384,7 @@ const useConversation = () => {
   };
 
   /**
-   * 清空AI机器人聊天的上下文
+   * 清空AI机器人会话聊天的上下文
    * @param id
    */
   const clearConversationContext = async (id: string, sendNotice?: boolean) => {
@@ -409,24 +399,6 @@ const useConversation = () => {
       } catch (error) {
         Message.error('清空上下文失败');
       }
-    }
-  };
-
-  /**
-   * 获取机器列表（api先放到这里）
-   */
-  const getBotList = async () => {
-    try {
-      const resp = await bytedIMInstance.getBotListOnline();
-      const BOT_DEBUG = localStorage.getItem('BOT_DEBUG');
-      console.log('lllllll BotList', BOT_DEBUG, resp.list);
-      let list = resp.list;
-      
-      // 特殊机器人会话999880 强制置顶最上方
-      // list = list.filter(item => item.uid === '999880').concat(list.filter(item => item.uid !== '999880'));
-      return list;
-    } catch (e) {
-      console.error('获取机器列表失败', e);
     }
   };
 
@@ -447,7 +419,6 @@ const useConversation = () => {
     clearConversationMessage,
     clearConversationContext,
     getConversationList,
-    getBotList,
   };
 };
 

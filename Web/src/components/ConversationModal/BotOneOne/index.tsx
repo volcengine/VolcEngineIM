@@ -1,9 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Button, Form, Input, Message, Modal, Select, Radio, Spin } from '@arco-design/web-react';
-import { useRecoilValue } from 'recoil';
 
-import { BytedIMInstance } from '../../../store';
-import useConversation from '../../../hooks/useConversation';
+import { useBot } from '../../../hooks';
 import { useRequest } from 'ahooks';
 import Avatar from '../../Avatar';
 import styles from './index.module.scss';
@@ -22,7 +20,7 @@ const { Option } = Select;
 
 const CreateConversationModel: FC<CreateConversationModelProps> = props => {
   const [botId, setBotId] = useState('999880');
-  const { getBotList } = useConversation();
+  const { getBotList } = useBot();
 
   const hanleCreate = async () => {
     if (!data?.length) {

@@ -5,8 +5,7 @@ import ImEditor, { IRichText } from '../MessageEditor';
 import { IMAccountInfoTypes } from '../../types';
 import Styles from './Styles';
 import { BytedIMInstance, CurrentConversation, EditMessage, Participants, ReferenceMessage } from '../../store';
-import { useAccountsInfo, useMessage } from '../../hooks';
-import { isBotConversion } from '../../utils/bot';
+import { useAccountsInfo, useMessage, useBot } from '../../hooks';
 
 import { im_proto } from '@volcengine/im-web-sdk';
 import { Message as ArcoMessage } from '@arco-design/web-react';
@@ -38,8 +37,10 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
     };
   });
 
-  const { id } = currentConversation;
-  const isBotConv = useMemo(() => isBotConversion(id), [id]);
+  const { id, toParticipantUserId } = currentConversation;
+
+  const { isBotConversion } = useBot();
+  const isBotConv = useMemo(() => isBotConversion(toParticipantUserId), [isBotConversion, toParticipantUserId]);
 
   // 获取 富文本内容
   const handleSendClick = () => {

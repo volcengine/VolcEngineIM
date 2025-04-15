@@ -8,7 +8,7 @@ import ListItem from './Styles';
 
 import { SpecialBotConvStickOnTop } from '../../store';
 import { getLastTime, getConversationAvatar } from '../../utils';
-import { isSpecialBotConversion } from '../../utils/bot';
+import useBot from '../../hooks/useBot';
 import { ReactComponent as MuteIcon } from '../../assets/svgs/Mute.svg';
 import { ReactComponent as PinIcon } from '../../assets/svgs/Pin.svg';
 
@@ -28,6 +28,8 @@ const ConversationItem: React.FC<ConversationItemPropsType> = memo(props => {
 
   const specialBotConvStickOnTop = useRecoilValue(SpecialBotConvStickOnTop);
 
+  const { isSpecialBotConversion } = useBot();
+
   const wrapClass = useMemo(() => {
     return classNames('conversation-item', {
       'is-active': isActive,
@@ -41,7 +43,7 @@ const ConversationItem: React.FC<ConversationItemPropsType> = memo(props => {
     } else {
       return conversation.isStickOnTop;
     }
-  }, [conversation.isStickOnTop, specialBotConvStickOnTop]);
+  }, [conversation.isStickOnTop, specialBotConvStickOnTop, isSpecialBotConversion, conversation.id]);
 
   return (
     <ListItem className={wrapClass} onClick={onClick}>

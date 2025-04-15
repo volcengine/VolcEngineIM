@@ -16,7 +16,6 @@ import { useMessage, useConversation } from '../../hooks';
 import { Iui } from '../../types';
 import Styles from './Styles';
 import ChatOperation from '../ChatOperation';
-import { isBotConversion } from '../../utils/bot';
 
 interface ChatPanelPropsType extends Iui {}
 

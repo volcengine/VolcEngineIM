@@ -8,12 +8,9 @@ import { IconEdit, IconRight } from '../Icon';
 import GroupInfoModal from './GroupInfoModal';
 import GroupMemberManageModal from './GroupMemberManageModal';
 import ChatSettingBox from './Styles';
-import { useAccountsInfo, useConversation, useMessage } from '../../hooks';
+import { useAccountsInfo, useConversation, useParticipant, useBot } from '../../hooks';
 import { CurrentConversation, Participants, UserId, BytedIMInstance, SpecialBotConvStickOnTop } from '../../store';
 import { getConversationAvatar, getConversationName } from '../../utils';
-import { useParticipant } from '../../hooks/useParticipant';
-import { CheckCode } from '../../constant';
-import { isBotConversion, isSpecialBotConversion } from '../../utils/bot';
 
 interface ChatSettingProps {
   messageItems?: any[];
@@ -53,7 +50,7 @@ const ChatSetting: FC<ChatSettingProps> = props => {
   } = useConversation();
   // const { messages } = useMessage();
 
-  const { id, isStickOnTop, coreInfo, isMuted } = currentConversation;
+  const { id, isStickOnTop, coreInfo, isMuted, toParticipantUserId } = currentConversation;
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalInfo, setModalInfo] = useState<any>(null);
@@ -72,7 +69,8 @@ const ChatSetting: FC<ChatSettingProps> = props => {
 
   const isOwner = useMemo(() => owner === userId, [owner, userId]);
   const isGroup = useMemo(() => !/\d:1:/.test(id), [id]);
-  const isBotConv = useMemo(() => isBotConversion(id), [id]);
+  const { isBotConversion, isSpecialBotConversion } = useBot();
+  const isBotConv = useMemo(() => isBotConversion(toParticipantUserId), [isBotConversion, toParticipantUserId]);
 
   const __isStickOnTop = useMemo(() => {
     const isSpecialBotConv = isSpecialBotConversion(id);
@@ -81,7 +79,7 @@ const ChatSetting: FC<ChatSettingProps> = props => {
     } else {
       return isStickOnTop;
     }
-  }, [isStickOnTop, specialBotConvStickOnTop]);
+  }, [isStickOnTop, specialBotConvStickOnTop, isSpecialBotConversion, id]);
 
   const handleClearContext = useCallback(() => {
     Modal.confirm({
