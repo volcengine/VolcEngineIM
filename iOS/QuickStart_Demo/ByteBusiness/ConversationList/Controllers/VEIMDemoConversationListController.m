@@ -21,6 +21,7 @@
 #import <Masonry/View+MASShorthandAdditions.h>
 #import "VEIMDemoGlobalSearchResultController.h"
 #import "VEIMDemoRobotListController.h"
+#import "VEIMDemoIMManager.h"
 
 @interface VEIMDemoConversationListController () <VEIMDemoUserSelectionControllerDelegate, BIMConversationListControllerDelegate, VEIMDemoConversationListSelectionDelegate>
 @property (nonatomic, strong) VEIMDemoCommonMenu *menu;
@@ -62,7 +63,10 @@
 {
     BIMConversationListController *allConvListController = [[BIMConversationListController alloc] init];
     allConvListController.delegate = self;
-    allConvListController.stickOnTopRobotUserID = @(999880);
+    if ([VEIMDemoIMManager sharedManager].accountProvider.accountType != VEIMDemoAccountTypeOpenSource) {
+        allConvListController.stickOnTopRobotUserID = @(999880);
+    }
+    
     self.allConvListController = allConvListController;
     /// 默认选择全部会话列表
     self.curConvListController = self.allConvListController;

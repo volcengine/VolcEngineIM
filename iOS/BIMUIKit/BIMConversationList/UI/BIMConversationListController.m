@@ -90,6 +90,10 @@
         @weakify(self);
         [[BIMClient sharedInstance] createSingleConversation:self.stickOnTopRobotUserID completion:^(BIMConversation * _Nullable conversation, BIMError * _Nullable error) {
             @strongify(self);
+            if (!conversation || error) {
+                return;
+            }
+            
             self.stickOnTopRobotCoverastion = conversation;
             [self reloadData];
             /// 马上判断会话是否有消息可能因为缓存层问题，导致取到的 lastMessage 为 nil
