@@ -34,12 +34,12 @@ interface ImEditorProps {
   editorType?: string;
   className?: string;
   placeholder?: string;
-  toolBarList?: IToolBar[];
   renderHeader?: () => React.ReactNode;
   renderExtra?: () => React.ReactNode;
   updateEditorType?: (editType: string) => void;
   editorContentChange?: (isEmpty?: boolean) => void;
   onMessageTyping?: () => void;
+  toolBarList: IToolBar[];
   suggestions: any;
 }
 

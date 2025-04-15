@@ -23,7 +23,7 @@ interface ImEditorProps {
   onEditorStateChange?: (richText?: IRichText) => void;
   onMessageTyping?: () => void;
   suggestions: any;
-  toolBarList?: any;
+  toolBarList: any;
   editorType?: EDITOR_TYPE;
 }
 
@@ -46,8 +46,8 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
   const focusAnimationFrame = useRef<any>(null);
   const focusAtEndAnimationFrame = useRef<any>(null);
   const isEditorIsEmpty = useRef(true);
-  const { sendFileMessage, sendImageMessage, sendVideoMessage, sendAudioMessage, sendVolcMessage, sendCouponMessage } =
-    useMessage();
+  // const { sendFileMessage, sendImageMessage, sendVideoMessage, sendAudioMessage, sendVolcMessage, sendCouponMessage } =
+  //   useMessage();
 
   const focus = () => {
     cancelAnimationFrame(focusAnimationFrame.current);
@@ -62,68 +62,68 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
     baseEditor.current?.blur();
   };
 
-  const getToolBarList = useCallback(
-    (): any => [
-      {
-        key: 'Emoji',
-        use: true,
-      },
-      {
-        key: 'Mention',
-        use: true,
-        params: {
-          suggestions: suggestions,
-        },
-      },
-      {
-        key: 'Image',
-        use: true,
-        params: {
-          sendMessage: sendImageMessage,
-        },
-      },
-      {
-        key: 'Video',
-        use: true,
-        params: {
-          sendMessage: sendVideoMessage,
-        },
-      },
-      {
-        key: 'File',
-        use: true,
-        params: {
-          sendMessage: sendFileMessage,
-        },
-      },
-      {
-        key: 'Audio',
-        use: true,
-        params: {
-          sendMessage: sendAudioMessage,
-        },
-      },
-      {
-        key: 'Volc',
-        use: true,
-        params: {
-          sendMessage: sendVolcMessage,
-        },
-      },
-      {
-        key: 'Coupon',
-        use: true,
-        params: {
-          sendMessage: sendCouponMessage,
-        },
-      },
-      {
-        key: 'MorePanel',
-        use: false,
-      },
-    ],
-    [sendImageMessage, sendFileMessage, sendAudioMessage, sendVolcMessage]
-  );
+  // const getToolBarList = useCallback(
+  //   (): any => [
+  //     {
+  //       key: 'Emoji',
+  //       use: true,
+  //     },
+  //     {
+  //       key: 'Mention',
+  //       use: true,
+  //       params: {
+  //         suggestions: suggestions,
+  //       },
+  //     },
+  //     {
+  //       key: 'Image',
+  //       use: true,
+  //       params: {
+  //         sendMessage: sendImageMessage,
+  //       },
+  //     },
+  //     {
+  //       key: 'Video',
+  //       use: true,
+  //       params: {
+  //         sendMessage: sendVideoMessage,
+  //       },
+  //     },
+  //     {
+  //       key: 'File',
+  //       use: true,
+  //       params: {
+  //         sendMessage: sendFileMessage,
+  //       },
+  //     },
+  //     {
+  //       key: 'Audio',
+  //       use: true,
+  //       params: {
+  //         sendMessage: sendAudioMessage,
+  //       },
+  //     },
+  //     {
+  //       key: 'Volc',
+  //       use: true,
+  //       params: {
+  //         sendMessage: sendVolcMessage,
+  //       },
+  //     },
+  //     {
+  //       key: 'Coupon',
+  //       use: true,
+  //       params: {
+  //         sendMessage: sendCouponMessage,
+  //       },
+  //     },
+  //     {
+  //       key: 'MorePanel',
+  //       use: false,
+  //     },
+  //   ],
+  //   [sendImageMessage, sendFileMessage, sendAudioMessage, sendVolcMessage]
+  // );
 
   /** 退出回复消息状态 */
   const clearReply = useCallback(() => {
@@ -226,7 +226,7 @@ const ImEditor: FC<ImEditorProps> = React.forwardRef((props, ref) => {
       ref={baseEditor}
       placeholder={placeholder}
       editorType={editorType}
-      toolBarList={toolBarList || getToolBarList()}
+      toolBarList={toolBarList}
       renderHeader={editingMessage || repliedMessage ? renderReplyTitle : null}
       suggestions={suggestions}
       onMessageTyping={onMessageTyping}

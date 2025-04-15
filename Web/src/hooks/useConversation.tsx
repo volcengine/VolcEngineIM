@@ -1,20 +1,63 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { im_proto, ConversationSettingWeakMuteInfo, PushStatus } from '@volcengine/im-web-sdk';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { im_proto, ConversationSettingWeakMuteInfo, PushStatus, Conversation } from '@volcengine/im-web-sdk';
 
-import { BytedIMInstance, CurrentConversation, UserId } from '../store';
+import { BytedIMInstance, CurrentConversation, Conversations, UserId, SpecialBotConvStickOnTop } from '../store';
 import { CheckCode } from '../constant';
 import useMessage from './useMessage';
 import { Message } from '@arco-design/web-react';
 import { useAccountsInfo } from './useProfileUpdater';
+import singletonData from '../utils/singleton';
+import useBot from './useBot';
 
 const { ConversationOperationStatus, ConversationType } = im_proto;
 
 const useConversation = () => {
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
   const setCurrentConversation = useSetRecoilState(CurrentConversation);
+  const setConversations = useSetRecoilState(Conversations);
+  const setSpecialBotConvStickOnTop = useSetRecoilState(SpecialBotConvStickOnTop);
   const userId = useRecoilValue(UserId);
+
   const { sendSystemMessage, editMessage, replyMessage } = useMessage();
   const ACCOUNTS_INFO = useAccountsInfo();
+
+  const { isSpecialBotConversion } = useBot();
+
+  /**
+   * 获取会话列表
+   */
+  const getConversationList = async (isFist?: boolean) => {
+    try {
+      let conversations: Conversation[] = await bytedIMInstance.getConversationList();
+      conversations.sort((a, b) => {
+        // 特殊机器人会话强制置顶最上方
+        const aIsSpecialConv = isSpecialBotConversion(a.id);
+        const bIsSpecialConv = isSpecialBotConversion(b.id);
+        return aIsSpecialConv ? -1 : bIsSpecialConv ? 1 : b.rankScore - a.rankScore;
+      });
+      console.log(`获取会话列，排序后的Conv, isFist:`, isFist, conversations);
+      if (isFist) {
+        // 特殊机器人会话
+        const hasSpecialConv = conversations?.[0]?.id && isSpecialBotConversion(conversations?.[0]?.id);
+        if (hasSpecialConv) {
+          const specialConv: Conversation = conversations[0];
+          // 是否发送开场白
+          const sendNotice = specialConv.lastMessage ? false : true;
+          bytedIMInstance.markNewChat({ conversation: specialConv, sendNotice });
+          // 置顶机器人会话
+          configConversationStickOnTop(specialConv.id, true);
+        } else {
+          
+        }
+      } else {
+        
+      }
+      return conversations;
+    } catch (error) {
+      console.log(`获取会话列表失败 getConversationList error`);
+      throw Error(`获取会话列表失败 getConversationList error`);
+    }
+  };
 
   /**
    * 根据id获取会话
@@ -94,6 +137,54 @@ const useConversation = () => {
   };
 
   /**
+   * todo: 创建机器人群聊
+   * @param ids
+   * @param bizExt
+   */
+  const createBotGroupConversation = async (ids, bizExt) => {
+    const params = {
+      type: ConversationType.GROUP_CHAT,
+      participants: [bizExt.userId, ...ids],
+      name: bizExt.name,
+    };
+    try {
+      // todo 二期支持
+      return true;
+    } catch (e) {
+      console.error('创建群聊失败', e);
+    }
+    return false;
+  };
+
+  /**
+   * 创建机器人单聊
+   * @param uid
+   */
+  const createBotOneOneConversation = async (uid: string) => {
+    try {
+      const { payload } = await bytedIMInstance.createConversation({
+        type: ConversationType.ONE_TO_ONE_CHAT,
+        participants: uid,
+      });
+      setCurrentConversation(payload);
+      console.log('createBotOneOneConversation setCurrentConversation', payload);
+      // 是否发送开场白
+      const sendNotice = payload.lastMessage ? false : true;
+      bytedIMInstance.markNewChat({ conversation: payload, sendNotice });
+      const isSpecialConv = isSpecialBotConversion(payload.id);
+      if (isSpecialConv) {
+        singletonData.getInstance().setData('isDeleteSpecialBotConv', false);
+        // 置顶机器人会话
+        configConversationStickOnTop(payload.id, true);
+      }
+      return true;
+    } catch (e) {
+      console.error('创建机器人单聊失败', e);
+      return false;
+    }
+  };
+
+  /**
    * 设置当前选中会话
    * @param id
    */
@@ -101,6 +192,7 @@ const useConversation = () => {
     const conv = getConversation(id);
     if (conv?.id) {
       setCurrentConversation(conv);
+      console.log('selectConversation setCurrentConversation', conv);
       if (conv.type === im_proto.ConversationType.ONE_TO_ONE_CHAT)
         void bytedIMInstance.markConversationMessagesRead({ conversation: conv });
       editMessage(null);
@@ -116,10 +208,40 @@ const useConversation = () => {
     const conv = getConversation(id);
 
     if (conv?.id) {
-      await bytedIMInstance?.deleteConversation({
-        conversation: conv,
-      });
-      setCurrentConversation(null);
+      const isSpecialConv = isSpecialBotConversion(conv.id);
+      // console.log(`删除会话：`, isSpecialConv, conv?.id);
+      try {
+        if (isSpecialConv) {
+          singletonData.getInstance().setData('isDeleteSpecialBotConv', true);
+          // 清空会话历史消息不删除server会话
+          await Promise.all([
+            bytedIMInstance?.clearConversationMessage({ conversation: conv }),
+            bytedIMInstance?.deleteConversation({
+              conversation: conv,
+              localOnly: true,
+            }),
+          ]);
+          setTimeout(() => {
+            
+            setCurrentConversation(null);
+          }, 1000);
+          setCurrentConversation(null);
+          console.log('removeConversation isSpecialConv setCurrentConversation', null);
+          return;
+        }
+        await bytedIMInstance?.deleteConversation({
+          conversation: conv,
+        });
+        setTimeout(() => {
+          
+          setCurrentConversation(null);
+        }, 1000);
+        console.log('removeConversation setCurrentConversation', null);
+      } catch (error) {
+        Message.error('删除会话失败，请刷新重试');
+      }
+    } else {
+      Message.error('会话id不存在，请刷新重试');
     }
   };
 
@@ -136,6 +258,7 @@ const useConversation = () => {
         conversation: conv,
       });
       setCurrentConversation(null);
+      console.log('leaveGroupConversation setCurrentConversation', null);
     }
   };
 
@@ -152,6 +275,7 @@ const useConversation = () => {
         conversation: conv,
       });
       setCurrentConversation(null);
+      console.log('dissolveGroupConversation setCurrentConversation', null);
     }
   };
 
@@ -210,6 +334,24 @@ const useConversation = () => {
   };
 
   /**
+   * 设置会话置顶
+   */
+  const configConversationStickOnTop = async (id: string, stickOnTop?: boolean) => {
+    const isSpecialConv = isSpecialBotConversion(id);
+    if (isSpecialConv) {
+      if (stickOnTop) {
+        setSpecialBotConvStickOnTop(true);
+        configConversationSettingInfo(id, { stickOnTop });
+      } else {
+        // 特殊会话 取消置顶，仅在本地内存记录
+        setSpecialBotConvStickOnTop(false);
+      }
+    } else {
+      configConversationSettingInfo(id, { stickOnTop });
+    }
+  };
+
+  /**
    * 设置低打扰模式
    * @param id
    * @param config
@@ -241,18 +383,42 @@ const useConversation = () => {
     }
   };
 
+  /**
+   * 清空AI机器人会话聊天的上下文
+   * @param id
+   */
+  const clearConversationContext = async (id: string, sendNotice?: boolean) => {
+    const conv = getConversation(id);
+    if (conv?.id) {
+      // 清空AI机器人聊天的上下文
+      try {
+        console.log('清空AI机器人聊天的上下文 clearConversationContext', conv);
+        await sendSystemMessage(conv, '已清除上下文');
+        await bytedIMInstance?.markNewChat({ conversation: conv, sendNotice });
+        Message.success('清空上下文成功');
+      } catch (error) {
+        Message.error('清空上下文失败');
+      }
+    }
+  };
+
   return {
     getConversation,
     selectConversation,
     removeConversation,
     createGroupConversation,
     createOneOneConversation,
+    createBotGroupConversation,
+    createBotOneOneConversation,
     leaveGroupConversation,
     dissolveGroupConversation,
     configGroupConversationCoreInfo,
     configConversationSettingInfo,
+    configConversationStickOnTop,
     configConversationWeakMute,
     clearConversationMessage,
+    clearConversationContext,
+    getConversationList,
   };
 };
 

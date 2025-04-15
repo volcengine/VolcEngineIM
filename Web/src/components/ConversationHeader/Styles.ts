@@ -131,4 +131,14 @@ export default styled.div`
       margin-left: 5px;
     }
   }
+
+  // .btn-group {
+  //   display: flex;
+  //   align-items: center;
+  //   justify-content: space-between;
+  //   width: 100%;
+  //   & > div {
+  //     flex: 1;
+  //   }
+  // }
 `;

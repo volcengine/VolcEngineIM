@@ -114,6 +114,8 @@ export const ACCOUNTS_INFO = new Proxy(
       url: string;
       /* 用户昵称，默认名称 */ realName: string;
       hasFriendAlias: boolean;
+      /** 是否是机器人 */
+      isRobot?: boolean;
     };
   },
   {
@@ -137,6 +139,7 @@ export const ACCOUNTS_INFO = new Proxy(
           hasFriendAlias: Boolean(friendAlias),
           realName: realName,
           url: PROFILE.value[id]?.profile?.portrait || DefaultAvatar,
+          isRobot: PROFILE.value[id]?.profile?.isRobot,
         };
       }
       return target[id];

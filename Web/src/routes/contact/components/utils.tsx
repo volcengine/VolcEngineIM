@@ -39,4 +39,11 @@ export const contactSublist = [
       return '黑名单';
     },
   },
+  {
+    key: 'bot',
+    title: '机器人列表',
+    menuRender: () => {
+      return '机器人列表';
+    },
+  },
 ] as const;

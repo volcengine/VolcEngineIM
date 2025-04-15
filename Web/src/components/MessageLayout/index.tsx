@@ -16,13 +16,14 @@ import {
 } from './components';
 import { IconReply, IconDelete, IconRevocation, IconFillPin, IconLike } from '../Icon';
 import { getMessageComponent } from '../MessageCards';
-import { useAccountsInfo } from '../../hooks';
+import { useAccountsInfo, useBot } from '../../hooks';
 import { getMessageTimeFormat } from '../../utils/formatTime';
 import MessageWrap from './Styles';
 import { BytedIMInstance, CurrentConversation, UserId } from '../../store';
 import { getMsgStatusIcon } from '../../utils';
 import { IconEdit, IconEye } from '@arco-design/web-react/icon';
 import { ENABLE_MESSAGE_INSPECTOR } from '../../constant';
+
 import { useInViewport, useRequest } from 'ahooks';
 import Row from '@arco-design/web-react/es/Grid/row';
 import Col from '@arco-design/web-react/es/Grid/col';
@@ -150,6 +151,12 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
   const messageItemRef = useRef();
   const [isInview] = useInViewport(messageItemRef, { threshold: 0.7 });
 
+  const { id, toParticipantUserId } = currentConversation;
+
+  const { isBotConversion } = useBot();
+
+  const isBotConv = useMemo(() => isBotConversion(toParticipantUserId), [isBotConversion, toParticipantUserId]);
+
   useEffect(() => {
     (async () => {
       const { MESSAGE_TYPE_AUDIO, MESSAGE_TYPE_IMAGE, MESSAGE_TYPE_VIDEO, MESSAGE_TYPE_FILE } = im_proto.MessageType;
@@ -175,7 +182,7 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
         message: message,
       });
     }
-  }, [isInview, markMessageRead, index, message]);
+  }, [isInview, index, message]);
 
   useEffect(() => {
     if (referenceInfo) {
@@ -287,7 +294,8 @@ const MessageLayout: FC<MessageLayoutProps> = props => {
       currentConversation.toParticipantUserId !== userId &&
       currentConversation.isEnableReadReceipt
     ) {
-      return <MessageReadReceiptState message={message} />;
+      // 机器人会话过滤掉已读状态
+      return isBotConv ? null : <MessageReadReceiptState message={message} />;
     }
     if (!MessageStatusEle) {
       return null;

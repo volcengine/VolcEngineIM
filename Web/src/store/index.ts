@@ -157,6 +157,19 @@ const ReadReceiptVersion = atom({
   default: 0,
 });
 
+const ClearBotContextMessages = atom<string[]>({
+  key: 'ClearBotContextMessages',
+  default: [],
+});
+// const DeleteSpecialBotConv = atom<boolean>({
+//   key: 'DeleteSpecialBotConv',
+//   default: false,
+// });
+const SpecialBotConvStickOnTop = atom<boolean>({
+  key: 'SpecialBotConvStickOnTop',
+  default: true,
+});
+
 export {
   UserId,
   DefaultUserIds,
@@ -182,4 +195,7 @@ export {
   SendMessagePriority,
   AccountsInfoVersion,
   ReadReceiptVersion,
+  ClearBotContextMessages,
+  // DeleteSpecialBotConv,
+  SpecialBotConvStickOnTop,
 };

@@ -1,0 +1,25 @@
+.radio-group {
+    &> :not(:first-child) {
+        margin-top: 20px;
+    }
+}
+
+.radio-item {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+}
+
+.radio-item-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &> :first-child {
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
+}

@@ -10,6 +10,7 @@ import { useAccountsInfo, useMessage } from '../../../../hooks';
 import Styles from './Styles';
 import { Select } from '@arco-design/web-react';
 import { im_proto } from '@volcengine/im-web-sdk';
+import { Message as ArcoMessage } from '@arco-design/web-react';
 
 interface ChatOperationPropsType {
   userInfo?: IMAccountInfoTypes;
@@ -106,6 +107,10 @@ export const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
   
   const handleSubmit = useCallback(
     (richText: IRichText) => {
+      if (!richText.text?.trim()) {
+        ArcoMessage.error('不能发送空白消息');
+        return;
+      }
       sendTextMessage?.({ ...richText });
       scrollRef?.current?.scrollToBottom();
     },
