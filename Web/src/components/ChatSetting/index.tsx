@@ -1,18 +1,16 @@
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
-import { Button, Message, Tooltip } from '@arco-design/web-react';
+import { Button, Message, Tooltip, Modal } from '@arco-design/web-react';
 import { useRecoilValue } from 'recoil';
 
-import { Avatar, CheckBox, Dialog as Modal } from '..';
+import { Avatar, CheckBox, Dialog } from '..';
 import { IconEdit, IconRight } from '../Icon';
 
 import GroupInfoModal from './GroupInfoModal';
 import GroupMemberManageModal from './GroupMemberManageModal';
 import ChatSettingBox from './Styles';
-import { useAccountsInfo, useConversation } from '../../hooks';
-import { CurrentConversation, Participants, UserId } from '../../store';
+import { useAccountsInfo, useConversation, useParticipant, useBot } from '../../hooks';
+import { CurrentConversation, Participants, UserId, BytedIMInstance, SpecialBotConvStickOnTop } from '../../store';
 import { getConversationAvatar, getConversationName } from '../../utils';
-import { useParticipant } from '../../hooks/useParticipant';
-import { CheckCode } from '../../constant';
 
 interface ChatSettingProps {
   messageItems?: any[];
@@ -43,17 +41,22 @@ const ChatSetting: FC<ChatSettingProps> = props => {
   const { removeGroupParticipants, updateGroupParticipantWithTips } = useParticipant();
   const {
     configConversationSettingInfo,
+    configConversationStickOnTop,
     leaveGroupConversation,
     dissolveGroupConversation,
     configGroupConversationCoreInfo,
     clearConversationMessage,
+    clearConversationContext,
   } = useConversation();
+  // const { messages } = useMessage();
 
-  const { id, isStickOnTop, coreInfo, isMuted } = currentConversation;
+  const { id, isStickOnTop, coreInfo, isMuted, toParticipantUserId } = currentConversation;
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalInfo, setModalInfo] = useState<any>(null);
   const userId = useRecoilValue(UserId);
+  const bytedIMInstance = useRecoilValue(BytedIMInstance);
+  const specialBotConvStickOnTop = useRecoilValue(SpecialBotConvStickOnTop);
 
   const modalType = useRef<ModalType>();
   const childRef = useRef<any>();
@@ -66,6 +69,27 @@ const ChatSetting: FC<ChatSettingProps> = props => {
 
   const isOwner = useMemo(() => owner === userId, [owner, userId]);
   const isGroup = useMemo(() => !/\d:1:/.test(id), [id]);
+  const { isBotConversion, isSpecialBotConversion } = useBot();
+  const isBotConv = useMemo(() => isBotConversion(toParticipantUserId), [isBotConversion, toParticipantUserId]);
+
+  const __isStickOnTop = useMemo(() => {
+    const isSpecialBotConv = isSpecialBotConversion(id);
+    if (isSpecialBotConv) {
+      return specialBotConvStickOnTop;
+    } else {
+      return isStickOnTop;
+    }
+  }, [isStickOnTop, specialBotConvStickOnTop, isSpecialBotConversion, id]);
+
+  const handleClearContext = useCallback(() => {
+    Modal.confirm({
+      title: '清除上下文',
+      content: '是否确认清除上下文内容，开始新的会话？',
+      onOk: () => {
+        clearConversationContext(id, true);
+      },
+    });
+  }, [id]);
 
   const showModal = useCallback(() => {
     setModalVisible(true);
@@ -148,6 +172,7 @@ const ChatSetting: FC<ChatSettingProps> = props => {
   };
   useAccountsInfo();
   return (
+    // console.log('lllll isBot ', isBot, id),
     <ChatSettingBox className="chat-setting">
       <div className="chat-setting-header">
         <div className="chat-setting-title">设置</div>
@@ -197,9 +222,9 @@ const ChatSetting: FC<ChatSettingProps> = props => {
 
           <CheckBox
             onChange={() => {
-              configConversationSettingInfo(id, { stickOnTop: !isStickOnTop });
+              configConversationStickOnTop(id, !__isStickOnTop);
             }}
-            checked={isStickOnTop}
+            checked={__isStickOnTop}
           >
             <p className="setting-item-title">置顶聊天</p>
           </CheckBox>
@@ -211,11 +236,18 @@ const ChatSetting: FC<ChatSettingProps> = props => {
             }}
           >
             <div className="item-name-wrapper">清空聊天记录</div>
-
             <div className="item-icon-wrapper">
               <IconRight />
             </div>
           </div>
+          {isBotConv && (
+            <div className="select-item-wrapper" onClick={handleClearContext}>
+              <div className="item-name-wrapper">清除上下文</div>
+              <div className="item-icon-wrapper">
+                <IconRight />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -233,7 +265,7 @@ const ChatSetting: FC<ChatSettingProps> = props => {
         </div>
       )}
 
-      <Modal
+      <Dialog
         title={modalInfo?.title}
         visible={modalVisible}
         modalStyle={{ width: modalInfo?.width }}
@@ -243,7 +275,7 @@ const ChatSetting: FC<ChatSettingProps> = props => {
         footer={modalType.current === ModalType.Member ? null : false}
       >
         {modalVisible && renderTypeModal()}
-      </Modal>
+      </Dialog>
     </ChatSettingBox>
   );
 };

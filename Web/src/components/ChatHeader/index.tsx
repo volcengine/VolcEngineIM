@@ -13,7 +13,7 @@ import { useParticipant } from '../../hooks/useParticipant';
 import { BytedIMInstance, Participants, UserId } from '../../store';
 import { ROLE } from '../../constant';
 import { useAccountsInfo } from '../../hooks';
-import { useDebounceFn } from 'ahooks';
+import { useDebounceFn, useThrottleFn } from 'ahooks';
 
 interface ChatInfoPropsTypes {
   conversation?: Conversation;
@@ -35,9 +35,17 @@ const ChatHeader: React.FC<ChatInfoPropsTypes> = memo(props => {
     return getParticipantById(userId);
   }, [participants, userId]);
 
-  const handleCloseConversation = useCallback(() => {
-    onCloseConversation?.();
-  }, [onCloseConversation]);
+  // const handleCloseConversation = useCallback(() => {
+  //   onCloseConversation?.();
+  // }, [onCloseConversation]);
+
+  const { run: handleCloseConversation } = useThrottleFn(
+    () => {
+      console.log('onCloseConversation:', Date.now());
+      onCloseConversation?.();
+    },
+    { wait: 1000 }
+  );
 
   const handleAddParticipant = useCallback(async () => {
     if (selectedParticipant.length) {

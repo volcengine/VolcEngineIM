@@ -17,7 +17,7 @@
     "@better-scroll/observe-image": "^2.4.2",
     "@better-scroll/scroll-bar": "^2.4.2",
     "@modern-js/runtime": "2.27.0",
-    "@volcengine/im-web-sdk": "1.20.0",
+    "@volcengine/im-web-sdk": "1.21.0",
     "ahooks": "^3.7.0",
     "axios": "^0.24.0",
     "classnames": "^2.3.1",
