@@ -76,6 +76,9 @@ let SDK_CONFIG_ONLINE = {
 
 export const BUSINESS_BACKEND_TOKEN_ENABLE = Boolean(BUSINESS_BACKEND_DOMAIN);
 
+export const IS_EXTERNAL_DEMO =
+   true;
+
 export const SMS_ENABLE =
    false;
 export const ACCOUNT_CHECK_ENABLE =

@@ -28,7 +28,7 @@ const ConversationItem: React.FC<ConversationItemPropsType> = memo(props => {
 
   const specialBotConvStickOnTop = useRecoilValue(SpecialBotConvStickOnTop);
 
-  const { isSpecialBotConversion } = useBot();
+  const { isSpecialBotConversionV2 } = useBot();
 
   const wrapClass = useMemo(() => {
     return classNames('conversation-item', {
@@ -37,13 +37,13 @@ const ConversationItem: React.FC<ConversationItemPropsType> = memo(props => {
   }, [isActive]);
 
   const showStickOnTopIcon = useMemo(() => {
-    const isSpecialBotConv = isSpecialBotConversion(conversation.id);
+    const isSpecialBotConv = isSpecialBotConversionV2(conversation.toParticipantUserId);
     if (isSpecialBotConv) {
       return specialBotConvStickOnTop;
     } else {
       return conversation.isStickOnTop;
     }
-  }, [conversation.isStickOnTop, specialBotConvStickOnTop, isSpecialBotConversion, conversation.id]);
+  }, [conversation.isStickOnTop, specialBotConvStickOnTop, isSpecialBotConversionV2, conversation.toParticipantUserId]);
 
   return (
     <ListItem className={wrapClass} onClick={onClick}>
