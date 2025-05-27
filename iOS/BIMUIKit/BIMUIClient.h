@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * @type api
  * @brief 初始化 SDK。
- * @param sdkAppID 从[控制台](https://console.volcengine.com/rtc/im/appManage)获取的应用 ID。
+ * @param sdkAppID 从[控制台](https://console.volcengine.com/rtc/im/appManage?from=doc)获取的应用 ID。
  *                 不同应用 ID 无法进行互通。
  * @param config 配置信息，参看 BIMSDKConfig{@link #BIMSDKConfig}。
  * @return  <br>
@@ -53,6 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)initSDK:(int)sdkAppID config:(BIMSDKConfig *)config;
 
 /**
+ * @hidden
  * @type api
  * @brief 初始化 SDK。
  * @param sdkAppID 从[控制台](https://console.volcengine.com/rtc/im/appManage)获取的应用 ID。

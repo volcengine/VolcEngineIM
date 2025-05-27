@@ -90,7 +90,7 @@
         @weakify(self);
         [[BIMClient sharedInstance] createSingleConversation:self.stickOnTopRobotUserID completion:^(BIMConversation * _Nullable conversation, BIMError * _Nullable error) {
             @strongify(self);
-            if (!conversation || error) {
+            if (!conversation || error || self.stickOnTopRobotCoverastion) {
                 return;
             }
             
@@ -112,6 +112,13 @@
         }];
         
     }
+}
+
+- (void)userDidLogout
+{
+    [super userDidLogout];
+    
+    self.stickOnTopRobotCoverastion = nil;
 }
 
 - (BIMConversation *)conversationAtIndexPath:(NSIndexPath *)indexPath

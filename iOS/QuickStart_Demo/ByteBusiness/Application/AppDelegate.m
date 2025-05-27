@@ -11,6 +11,8 @@
 #import "VEIMDemoUserManager.h"
 #import <OneKit/UIImage+BTDAdditions.h>
 #import <OneKit/OneKitApp.h>
+#import <RangersAppLog/BDAutoTrackSchemeHandler.h>
+#import "SSDebugManager.h"
 
 @interface AppDelegate ()
 
@@ -43,7 +45,12 @@
     }
     
     
-    Class cls = NSClassFromString(@"VEIMDemoSMSAccountManager");
+    Class cls;
+    if ([SSDebugManager sharedInstance].uidLogin) {
+        cls = NSClassFromString(@"VEIMDemoUIDAccountManager");
+    } else {
+        cls = NSClassFromString(@"VEIMDemoSMSAccountManager");
+    }
     if (cls) {
         [VEIMDemoIMManager sharedManager].accountProvider = [cls performSelector:@selector(sharedManager)];
     } else {
