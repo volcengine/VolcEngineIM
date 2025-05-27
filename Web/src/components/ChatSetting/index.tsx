@@ -69,17 +69,17 @@ const ChatSetting: FC<ChatSettingProps> = props => {
 
   const isOwner = useMemo(() => owner === userId, [owner, userId]);
   const isGroup = useMemo(() => !/\d:1:/.test(id), [id]);
-  const { isBotConversion, isSpecialBotConversion } = useBot();
+  const { isBotConversion, isSpecialBotConversionV2 } = useBot();
   const isBotConv = useMemo(() => isBotConversion(toParticipantUserId), [isBotConversion, toParticipantUserId]);
 
   const __isStickOnTop = useMemo(() => {
-    const isSpecialBotConv = isSpecialBotConversion(id);
+    const isSpecialBotConv = isSpecialBotConversionV2(toParticipantUserId);
     if (isSpecialBotConv) {
       return specialBotConvStickOnTop;
     } else {
       return isStickOnTop;
     }
-  }, [isStickOnTop, specialBotConvStickOnTop, isSpecialBotConversion, id]);
+  }, [isStickOnTop, specialBotConvStickOnTop, isSpecialBotConversionV2, toParticipantUserId]);
 
   const handleClearContext = useCallback(() => {
     Modal.confirm({

@@ -58,7 +58,7 @@ const CreateConversationModel: FC<CreateConversationModelProps> = props => {
                 <Radio value={item.uid} className={styles['radio-item']}>
                   <div className={styles['radio-item-content']}>
                     <Avatar url={item.portrait} size={36} />
-                    {item.nick_name}
+                    {item.nick_name || item.uid}
                   </div>
                 </Radio>
               ))}

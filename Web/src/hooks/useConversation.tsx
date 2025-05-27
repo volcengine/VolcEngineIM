@@ -21,7 +21,7 @@ const useConversation = () => {
   const { sendSystemMessage, editMessage, replyMessage } = useMessage();
   const ACCOUNTS_INFO = useAccountsInfo();
 
-  const { isSpecialBotConversion } = useBot();
+  const { isSpecialBotConversionV2 } = useBot();
 
   /**
    * 获取会话列表
@@ -31,14 +31,14 @@ const useConversation = () => {
       let conversations: Conversation[] = await bytedIMInstance.getConversationList();
       conversations.sort((a, b) => {
         // 特殊机器人会话强制置顶最上方
-        const aIsSpecialConv = isSpecialBotConversion(a.id);
-        const bIsSpecialConv = isSpecialBotConversion(b.id);
+        const aIsSpecialConv = isSpecialBotConversionV2(a.toParticipantUserId);
+        const bIsSpecialConv = isSpecialBotConversionV2(b.toParticipantUserId);
         return aIsSpecialConv ? -1 : bIsSpecialConv ? 1 : b.rankScore - a.rankScore;
       });
       console.log(`获取会话列，排序后的Conv, isFist:`, isFist, conversations);
       if (isFist) {
         // 特殊机器人会话
-        const hasSpecialConv = conversations?.[0]?.id && isSpecialBotConversion(conversations?.[0]?.id);
+        const hasSpecialConv = isSpecialBotConversionV2(conversations?.[0]?.toParticipantUserId);
         if (hasSpecialConv) {
           const specialConv: Conversation = conversations[0];
           // 是否发送开场白
@@ -171,7 +171,8 @@ const useConversation = () => {
       // 是否发送开场白
       const sendNotice = payload.lastMessage ? false : true;
       bytedIMInstance.markNewChat({ conversation: payload, sendNotice });
-      const isSpecialConv = isSpecialBotConversion(payload.id);
+      const isSpecialConv = isSpecialBotConversionV2(payload.toParticipantUserId);
+      console.log(`创建机器人会话， isSpecialConv：`, isSpecialConv, payload.id);
       if (isSpecialConv) {
         singletonData.getInstance().setData('isDeleteSpecialBotConv', false);
         // 置顶机器人会话
@@ -208,8 +209,8 @@ const useConversation = () => {
     const conv = getConversation(id);
 
     if (conv?.id) {
-      const isSpecialConv = isSpecialBotConversion(conv.id);
-      // console.log(`删除会话：`, isSpecialConv, conv?.id);
+      const isSpecialConv = isSpecialBotConversionV2(conv.toParticipantUserId);
+      console.log(`删除会话， isSpecialConv：`, isSpecialConv, conv?.id);
       try {
         if (isSpecialConv) {
           singletonData.getInstance().setData('isDeleteSpecialBotConv', true);
@@ -337,7 +338,8 @@ const useConversation = () => {
    * 设置会话置顶
    */
   const configConversationStickOnTop = async (id: string, stickOnTop?: boolean) => {
-    const isSpecialConv = isSpecialBotConversion(id);
+    const conv = getConversation(id);
+    const isSpecialConv = isSpecialBotConversionV2(conv.toParticipantUserId);
     if (isSpecialConv) {
       if (stickOnTop) {
         setSpecialBotConvStickOnTop(true);

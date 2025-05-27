@@ -1,5 +1,6 @@
 import { useAccountsInfo } from './useProfileUpdater';
 import { BytedIMInstance } from '../store';
+import { IS_EXTERNAL_DEMO } from '../constant';
 
 import { useRecoilValue } from 'recoil';
 
