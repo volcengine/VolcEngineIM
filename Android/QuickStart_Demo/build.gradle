@@ -6,8 +6,8 @@ buildscript {
         im_buildToolsVersion = "28.0.3"
         im_minSdkVersion = 19
         im_targetSdkVersion = 28
-        im_versionCode = 12200
-        im_versionName = "1.22.0"
+        im_versionCode = 12300
+        im_versionName = "1.23.0"
         im_ui_sdk_remote = "com.bytedance.im:im-uikit-tob:1.23.0-alpha.0"
         im_sdk_remote = "com.bytedance.im:imsdk-tob:1.23.0-alpha.0"
         // 国内上报组件
