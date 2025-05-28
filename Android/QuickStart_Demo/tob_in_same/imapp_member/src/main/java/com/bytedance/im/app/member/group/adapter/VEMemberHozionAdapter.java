@@ -95,7 +95,8 @@ public class VEMemberHozionAdapter extends RecyclerView.Adapter<VEMemberHozionAd
             });
         } else if (type == TYPE_ADD) {
             viewHolder.headImg.setImageResource(R.drawable.icon_im_conversation_member_add);
-            viewHolder.userName.setVisibility(View.INVISIBLE);
+            viewHolder.userName.setVisibility(View.VISIBLE);
+            viewHolder.userName.setText("添加");
             viewHolder.itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onAddClick();
@@ -103,7 +104,8 @@ public class VEMemberHozionAdapter extends RecyclerView.Adapter<VEMemberHozionAd
             });
         } else if (type == TYPE_DELETE) {
             viewHolder.headImg.setImageResource(R.drawable.icon_im_conversation_member_delete);
-            viewHolder.userName.setVisibility(View.INVISIBLE);
+            viewHolder.userName.setVisibility(View.VISIBLE);
+            viewHolder.userName.setText("移除");
             viewHolder.itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onDeleteClick();

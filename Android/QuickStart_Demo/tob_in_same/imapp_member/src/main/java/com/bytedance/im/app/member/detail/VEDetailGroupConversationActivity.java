@@ -640,6 +640,7 @@ public class VEDetailGroupConversationActivity extends Activity {
             @Override
             public void onSuccess() {
                 Toast.makeText(VEDetailGroupConversationActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
+                refreshDetailView();
             }
 
             @Override

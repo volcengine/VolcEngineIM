@@ -162,7 +162,7 @@ public class VELiveGroupListActivity extends Activity {
             return;
         }
         isSyncing = true;
-        BIMClient.getInstance().getService(BIMLiveExpandService.class).getAllLiveGroupList(cursor, 20,new BIMResultCallback<BIMLiveGroupListResult>() {
+        BIMClient.getInstance().getService(BIMLiveExpandService.class).getAllLiveGroupList(cursor, 200,new BIMResultCallback<BIMLiveGroupListResult>() {
             @Override
             public void onSuccess(BIMLiveGroupListResult BIMLiveGroupListResult) {
                 BIMLog.i(TAG, "onSuccess() nextCursor: " + BIMLiveGroupListResult.getNextCursor() + " conversationList size:" + BIMLiveGroupListResult.getConversationList().size());

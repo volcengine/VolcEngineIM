@@ -125,20 +125,21 @@ public class VELiveMemberSilentListActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQUEST_EDIT_UID) {
+            long blocktime = 24 * 60 * 60;//one day
+            String uidStr = data.getStringExtra(VEEditCommonActivity.RESULT_TEXT);
             BIMSimpleCallback addSilentCallback = new BIMSimpleCallback() {
                 @Override
                 public void onSuccess() {
-                    Toast.makeText(VELiveMemberSilentListActivity.this, "添加禁言黑名单成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VELiveMemberSilentListActivity.this, "添加禁言黑名单成功"+uidStr, Toast.LENGTH_SHORT).show();
                     initData();
                 }
 
                 @Override
                 public void onFailed(BIMErrorCode code) {
-                    Toast.makeText(VELiveMemberSilentListActivity.this, "添加禁言黑名单失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VELiveMemberSilentListActivity.this, "添加禁言黑名单失败"+uidStr, Toast.LENGTH_SHORT).show();
                 }
             };
-            long blocktime = 24 * 60 * 60;//one day
-            String uidStr = data.getStringExtra(VEEditCommonActivity.RESULT_TEXT);
+
             BIMClient.getInstance().getService(BIMLiveExpandService.class).addLiveGroupMemberSilentListString(conversationShortId, Collections.singletonList(uidStr), blocktime, addSilentCallback);
         }
     }

@@ -344,7 +344,12 @@ public class VELiveDetailActivity extends Activity {
         BIMClient.getInstance().getService(BIMLiveExpandService.class).setLiveGroupSilent(conversationShortId, isChecked, new BIMSimpleCallback() {
             @Override
             public void onSuccess() {
-                Toast.makeText(VELiveDetailActivity.this, "会话禁言成功", Toast.LENGTH_SHORT).show();
+                if(isChecked){
+                    Toast.makeText(VELiveDetailActivity.this, "会话禁言成功", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(VELiveDetailActivity.this, "解除禁言成功", Toast.LENGTH_SHORT).show();
+                }
+
                 updateConvSilentWLUI(isChecked);
             }
 

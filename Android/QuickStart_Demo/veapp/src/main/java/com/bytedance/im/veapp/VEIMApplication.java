@@ -4,7 +4,7 @@ import android.util.Log;
 
 import androidx.multidex.MultiDexApplication;
 
-import com.bytedance.im.core.BuildConfig;
+import com.bytedance.im.imcloud.BuildConfig;
 import com.bytedance.im.core.api.BIMClient;
 import com.bytedance.im.ui.BIMUIClient;
 

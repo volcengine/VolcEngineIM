@@ -80,12 +80,12 @@ public class VELiveMemberBlockListActivity extends Activity {
         dialogInfo.add(new android.util.Pair("移出成员", (VELiveGroupDialogUtils.BottomInputDialogListener) (v, text) -> {
             BIMSimpleCallback removeBlockCallback = new BIMSimpleCallback() {
                 public void onSuccess() {
-                    Toast.makeText(VELiveMemberBlockListActivity.this, "移出禁言黑名单成功" + BIMUINameUtils.getShowNameInGroup(memberWrapper.getMember(), memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VELiveMemberBlockListActivity.this, "移出进群黑名单成功" + BIMUINameUtils.getShowNameInGroup(memberWrapper.getMember(), memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
                     adapter.remove(memberWrapper.getMember().getUserID());
                 }
 
                 public void onFailed(BIMErrorCode code) {
-                    Toast.makeText(VELiveMemberBlockListActivity.this, "移出禁言黑名单失败" + BIMUINameUtils.getShowNameInGroup(memberWrapper.getMember(), memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VELiveMemberBlockListActivity.this, "移出进群黑名单失败" + BIMUINameUtils.getShowNameInGroup(memberWrapper.getMember(), memberWrapper.getFullInfo()), Toast.LENGTH_SHORT).show();
                 }
             };
             BIMClient.getInstance().getService(BIMLiveExpandService.class).removeLiveGroupMemberBlockListString(conversationShortId, Collections.singletonList(memberWrapper.getMember().getUserIDString()), removeBlockCallback);

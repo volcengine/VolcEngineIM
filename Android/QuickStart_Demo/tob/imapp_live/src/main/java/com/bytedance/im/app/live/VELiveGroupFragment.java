@@ -128,7 +128,7 @@ public class VELiveGroupFragment extends Fragment {
             return;
         }
         isSyncing = true;
-        BIMClient.getInstance().getService(BIMLiveExpandService.class).getOwnerLiveGroupList(cursor, 20, new BIMResultCallback<BIMLiveGroupListResult>() {
+        BIMClient.getInstance().getService(BIMLiveExpandService.class).getOwnerLiveGroupList(cursor, 200, new BIMResultCallback<BIMLiveGroupListResult>() {
             @Override
             public void onSuccess(BIMLiveGroupListResult BIMLiveGroupListResult) {
                 if(callback!=null){
