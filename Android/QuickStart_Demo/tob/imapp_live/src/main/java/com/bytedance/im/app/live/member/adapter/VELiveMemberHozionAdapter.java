@@ -96,7 +96,8 @@ public class VELiveMemberHozionAdapter extends RecyclerView.Adapter<VELiveMember
             });
         } else if (type == TYPE_ADD) {
             viewHolder.headImg.setImageResource(R.drawable.icon_im_conversation_member_add);
-            viewHolder.userName.setVisibility(View.INVISIBLE);
+            viewHolder.userName.setText("添加");
+            viewHolder.userName.setVisibility(View.VISIBLE);
             viewHolder.itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onAddClick();
@@ -104,7 +105,8 @@ public class VELiveMemberHozionAdapter extends RecyclerView.Adapter<VELiveMember
             });
         } else if (type == TYPE_DELETE) {
             viewHolder.headImg.setImageResource(R.drawable.icon_im_conversation_member_delete);
-            viewHolder.userName.setVisibility(View.INVISIBLE);
+            viewHolder.userName.setText("移除");
+            viewHolder.userName.setVisibility(View.VISIBLE);
             viewHolder.itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onDeleteClick();

@@ -229,7 +229,15 @@ public class VEContactListFragment extends Fragment implements BIMSupportUnread 
                 } else {
                     if (null != service) {
                         BIMApplyInfo apply = new BIMApplyInfo();
-                        apply.setUid(Long.parseLong(et.getText().toString()));
+                        long uid = 0;
+                        try {
+                            uid = Long.parseLong(et.getText().toString());
+                        } catch (Exception e) {
+                            Toast.makeText(getActivity(), "uid不存在，请重新输入", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        apply.setUid(uid);
                         BIMUIClient.getInstance().getUserExistChecker().check(Collections.singletonList(apply.getUid()), new BIMResultCallback<Map<Long, Boolean>>() {
                             @Override
                             public void onSuccess(Map<Long, Boolean> longBooleanMap) {
