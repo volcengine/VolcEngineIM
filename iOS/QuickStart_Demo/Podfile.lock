@@ -2,17 +2,17 @@ PODS:
   - Bolts/Tasks (1.9.1)
   - FSCalendar (2.8.4)
   - IGListDiffKit (5.0.0)
-  - im-uikit-tob (1.23.0):
+  - im-uikit-tob (1.23.1):
     - Masonry
     - MJRefresh
     - SDWebImage
-  - imsdk-tob/Config/CN (1.23.1-alpha.0):
+  - imsdk-tob/Config/CN (1.23.1):
     - RangersAPM/CN
     - RangersAppLog/Host/CN
-  - imsdk-tob/Core (1.23.1-alpha.0):
+  - imsdk-tob/Core (1.23.1):
     - imsdk-tob/Core_Common
     - TTSDK/Uploader (<= 1.46.2.9-premium, >= 1.43.1.9-premium)
-  - imsdk-tob/Core_Common (1.23.1-alpha.0):
+  - imsdk-tob/Core_Common (1.23.1):
     - Bolts/Tasks
     - IGListDiffKit
     - imsdk-tob/Feature_EssentialPB
@@ -33,7 +33,7 @@ PODS:
     - TTNetworkManager (~> 4.1)
     - WCDB (~> 1.0.6)
     - YYCache
-  - imsdk-tob/Feature_EssentialPB (1.23.1-alpha.0):
+  - imsdk-tob/Feature_EssentialPB (1.23.1):
     - Protobuf (= 3.21.9)
   - libextobjc (0.6):
     - libextobjc/EXTADT (= 0.6)
@@ -204,8 +204,8 @@ PODS:
 DEPENDENCIES:
   - FSCalendar
   - im-uikit-tob (from `../`)
-  - imsdk-tob/Config/CN (= 1.23.1-alpha.0)
-  - imsdk-tob/Core (= 1.23.1-alpha.0)
+  - imsdk-tob/Config/CN (= 1.23.1)
+  - imsdk-tob/Core (= 1.23.1)
   - Masonry
   - MBProgressHUD
   - MJRefresh
@@ -248,8 +248,8 @@ SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   FSCalendar: 2d1d0d9398f12d439f55c1fe0f01525b151b8260
   IGListDiffKit: 02d937d7e714d6f558771f284ed80668d483b522
-  im-uikit-tob: 7643ab3ee067c4989ec28bc19dd85ec69d04ba74
-  imsdk-tob: 3b35ebe6798753ccc0e37598f24b51de55b2dfae
+  im-uikit-tob: 2ad9c78ab0a6dd4c1e511477ea7d6f0a072a1f65
+  imsdk-tob: 76abbaa16a2e071bd399dd6fffd2a9dd950e1acd
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
@@ -271,6 +271,6 @@ SPEC CHECKSUMS:
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: 8ec31148e1466aa7c144f92dee7a15309e0768b4
+PODFILE CHECKSUM: f739128b742238cd01b635dd6caef572b1216a7c
 
 COCOAPODS: 1.16.2
