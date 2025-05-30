@@ -6,13 +6,13 @@ PODS:
     - Masonry
     - MJRefresh
     - SDWebImage
-  - imsdk-tob/Config/CN (1.23.0):
+  - imsdk-tob/Config/CN (1.23.1-alpha.0):
     - RangersAPM/CN
     - RangersAppLog/Host/CN
-  - imsdk-tob/Core (1.23.0):
+  - imsdk-tob/Core (1.23.1-alpha.0):
     - imsdk-tob/Core_Common
-    - TTSDK/Uploader (< 1.99, >= 1.43.1.9-premium)
-  - imsdk-tob/Core_Common (1.23.0):
+    - TTSDK/Uploader (<= 1.46.2.9-premium, >= 1.43.1.9-premium)
+  - imsdk-tob/Core_Common (1.23.1-alpha.0):
     - Bolts/Tasks
     - IGListDiffKit
     - imsdk-tob/Feature_EssentialPB
@@ -33,7 +33,7 @@ PODS:
     - TTNetworkManager (~> 4.1)
     - WCDB (~> 1.0.6)
     - YYCache
-  - imsdk-tob/Feature_EssentialPB (1.23.0):
+  - imsdk-tob/Feature_EssentialPB (1.23.1-alpha.0):
     - Protobuf (= 3.21.9)
   - libextobjc (0.6):
     - libextobjc/EXTADT (= 0.6)
@@ -177,22 +177,24 @@ PODS:
     - WCDBOptimizedSQLCipher (~> 1.2.0)
   - SSZipArchive (2.4.3)
   - TTNetworkManager (4.2.210.20)
-  - TTSDK/Core (1.46.3.9-premium):
+  - TTSDK/Core (1.46.2.9-premium):
     - RangersAppLog/Core (~> 6.16.8)
     - RangersAppLog/Host/CN (~> 6.16.8)
-  - TTSDK/Model (1.46.3.9-premium)
-  - TTSDK/SSL (1.46.3.9-premium)
-  - TTSDK/Tools (1.46.3.9-premium):
+  - TTSDK/HttpDNS (1.46.2.9-premium)
+  - TTSDK/Model (1.46.2.9-premium)
+  - TTSDK/SSL (1.46.2.9-premium)
+  - TTSDK/Tools (1.46.2.9-premium):
     - TTSDK/SSL
-  - TTSDK/TopSignature (1.46.3.9-premium)
-  - TTSDK/Uploader (1.46.3.9-premium):
+  - TTSDK/TopSignature (1.46.2.9-premium)
+  - TTSDK/Uploader (1.46.2.9-premium):
     - SSZipArchive (~> 2.2)
     - TTSDK/Core
+    - TTSDK/HttpDNS
     - TTSDK/Model
     - TTSDK/Tools
     - TTSDK/TopSignature
     - TTSDK/VCN
-  - TTSDK/VCN (1.46.3.9-premium)
+  - TTSDK/VCN (1.46.2.9-premium)
   - WCDB (1.0.7.5):
     - SQLiteRepairKit (~> 1.2.0)
     - WCDBOptimizedSQLCipher (~> 1.2.0)
@@ -202,8 +204,8 @@ PODS:
 DEPENDENCIES:
   - FSCalendar
   - im-uikit-tob (from `../`)
-  - imsdk-tob/Config/CN (= 1.23.0)
-  - imsdk-tob/Core (= 1.23.0)
+  - imsdk-tob/Config/CN (= 1.23.1-alpha.0)
+  - imsdk-tob/Core (= 1.23.1-alpha.0)
   - Masonry
   - MBProgressHUD
   - MJRefresh
@@ -247,7 +249,7 @@ SPEC CHECKSUMS:
   FSCalendar: 2d1d0d9398f12d439f55c1fe0f01525b151b8260
   IGListDiffKit: 02d937d7e714d6f558771f284ed80668d483b522
   im-uikit-tob: 7643ab3ee067c4989ec28bc19dd85ec69d04ba74
-  imsdk-tob: 50ae3c02227e5f0a36e0279f70847ef96832436d
+  imsdk-tob: 3b35ebe6798753ccc0e37598f24b51de55b2dfae
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
@@ -264,11 +266,11 @@ SPEC CHECKSUMS:
   SQLiteRepairKit: 35aaae5a8838adb85f5b1eb4d796055be6060a4b
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   TTNetworkManager: 6e3c1022cdea9757936b42c20db91477eb0d62ac
-  TTSDK: c3a8766c0cd5a2bd5e592cc0059b5ace095bcd06
+  TTSDK: 4b8447f3179aa8d514b55fab311e566152d2006e
   WCDB: 8e90babdeb7784c569353a4bd22a66c0a175a882
   WCDBOptimizedSQLCipher: baf44493b0c7a3d49e97bc5b64a3856f6428ddd1
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: 1e68944c618e7f8d9720eaa7692ce077fe7487b0
+PODFILE CHECKSUM: 8ec31148e1466aa7c144f92dee7a15309e0768b4
 
 COCOAPODS: 1.16.2
