@@ -74,7 +74,7 @@
 - (void)setupConstraints{
     [super setupConstraints];
     
-    if (self.message.msgType == BIM_MESSAGE_TYPE_IMAGE || self.message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
+    if (self.message.msgType == BIM_MESSAGE_TYPE_IMAGE || self.message.msgType == BIM_MESSAGE_TYPE_VIDEO || self.message.msgType == BIM_MESSAGE_TYPE_VIDEO_V2) {
         CGFloat width = 0;
         CGFloat height = 0;
         
@@ -214,7 +214,7 @@
                 }];
             };
         }
-    } else if (message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
+    } else if (message.msgType == BIM_MESSAGE_TYPE_VIDEO || message.msgType == BIM_MESSAGE_TYPE_VIDEO_V2) {
         BIMVideoElement *element = BTD_DYNAMIC_CAST(BIMVideoElement, message.element);
         self.playBtn.hidden = message.msgStatus == BIM_MESSAGE_STATUS_SENDING_FILE_PARTS;
         
@@ -275,7 +275,7 @@
         } else {
             [self.imageContent sd_cancelCurrentImageLoad];
         }
-    } else if (message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
+    } else if (message.msgType == BIM_MESSAGE_TYPE_VIDEO || message.msgType == BIM_MESSAGE_TYPE_VIDEO_V2) {
         BIMVideoElement *file = (BIMVideoElement *)message.element;
         self.playBtn.hidden = message.msgStatus == BIM_MESSAGE_STATUS_SENDING_FILE_PARTS;
         

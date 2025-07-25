@@ -69,6 +69,8 @@ static NSInteger VEIMDemoGlobalSearchCellMaxShowCount = 3;
     [self.view addSubview:self.txtfSearch];
     [self.view addSubview:self.tblResult];
     [self.view addSubview:self.emptyLabel];
+    
+    [self.txtfSearch becomeFirstResponder];
 }
 
 - (void)setupUIElements

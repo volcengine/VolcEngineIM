@@ -18,6 +18,7 @@ typedef NS_ENUM(NSInteger, BIMInputMenuType) {
     BIMInputMenuTypeVideoCover,
     BIMInputMenuTypeCustomMessage,
     BIMInputMenuTypeCoupon,
+    BIMInputMenuTypeVideoV2,
 };
 
 

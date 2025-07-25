@@ -84,8 +84,11 @@
 
 - (void)setupMsgs
 {
-    
-    BIMGetMessageByTypeOption *option = [self createOptionWithAnchorMessage:nil limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
+    NSArray<NSNumber *> *messageTypes = @[@(self.msgType)];
+    if (self.msgType == BIM_MESSAGE_TYPE_VIDEO) {
+        messageTypes = @[@(BIM_MESSAGE_TYPE_VIDEO), @(BIM_MESSAGE_TYPE_VIDEO_V2)];
+    }
+    BIMGetMessageByTypeOption *option = [self createOptionWithAnchorMessage:nil limit:self.limit messageTypeList:messageTypes direction:self.direction];
     @weakify(self);
     [[BIMClient sharedInstance] getLocalMessageListByType:self.conversationID option:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable anchorMessage, BIMError * _Nullable error) {
         @strongify(self);
@@ -243,7 +246,7 @@
     VEIMDemoMediaCollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
+        if (message.msgType == BIM_MESSAGE_TYPE_VIDEO || message.msgType == BIM_MESSAGE_TYPE_VIDEO_V2) {
             [self playVideoWithMessage:message];
         } else if (message.msgType == BIM_MESSAGE_TYPE_IMAGE) {
             BIMImageElement *element = BTD_DYNAMIC_CAST(BIMImageElement, message.element);
@@ -397,7 +400,11 @@
         return;
     }
     
-    BIMGetMessageByTypeOption *option = [self createOptionWithAnchorMessage:self.anchorMessage.anchorMessage.message limit:self.limit messageTypeList:@[@(self.msgType)] direction:self.direction];
+    NSArray<NSNumber *> *messageTypes = @[@(self.msgType)];
+    if (self.msgType == BIM_MESSAGE_TYPE_VIDEO) {
+        messageTypes = @[@(BIM_MESSAGE_TYPE_VIDEO), @(BIM_MESSAGE_TYPE_VIDEO_V2)];
+    }
+    BIMGetMessageByTypeOption *option = [self createOptionWithAnchorMessage:self.anchorMessage.anchorMessage.message limit:self.limit messageTypeList:messageTypes direction:self.direction];
     @weakify(self);
     [[BIMClient sharedInstance] getLocalMessageListByType:self.conversationID option:option completion:^(NSArray<BIMMessage *> * _Nullable messages, BOOL hasMore, BIMMessage * _Nullable anchorMessage, BIMError * _Nullable error) {
         @strongify(self);

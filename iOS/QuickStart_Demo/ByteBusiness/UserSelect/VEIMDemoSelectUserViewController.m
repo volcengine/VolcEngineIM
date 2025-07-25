@@ -171,6 +171,9 @@ static NSInteger const kMaxCount = 5;
             }
             [self dismiss];
             break;
+        case VEIMDemoSelectUserShowTypeCreateTempConv:
+            [self createTempConversation];
+            break;
 
         default:
             break;
@@ -179,7 +182,7 @@ static NSInteger const kMaxCount = 5;
 
 #pragma mark - event
 
-- (void)createSingleConversation
+- (void)validateUserIDWithCompletion:(void(^)(BOOL exist))completion
 {
     if (!self.textField.text.length) {
         [BIMToastView toast:@"请输入用户ID"];
@@ -192,24 +195,47 @@ static NSInteger const kMaxCount = 5;
     // 远端校验
     [self checkUserExist:uid completion:^(BOOL exist) {
         weakself.navigationItem.rightBarButtonItem.enabled = YES;
-        if (!exist) {
-            return;
+        if (completion) {
+            completion(exist);
         }
-        [weakself p_createSingleConversation];
     }];
 }
 
-- (void)p_createSingleConversation
+- (void)createSingleConversation
 {
-    UINavigationController *nav = self.navigationController;
-    [self.navigationController popViewControllerAnimated:NO]; // 适配iOS18.x，如果animated:YES则会crash
-    [[BIMClient sharedInstance] createSingleConversation:@(self.textField.text.longLongValue) completion:^(BIMConversation * _Nonnull conversation, BIMError * _Nullable error) {
-        if (error) {
-            [BIMToastView toast:[NSString stringWithFormat:@"创建聊天失败: %@",error.localizedDescription]];
-        } else {
-            VEIMDemoChatViewController *chatVC = [VEIMDemoChatViewController chatVCWithConversation:conversation];
-            [nav pushViewController:chatVC animated:YES];
+    kWeakSelf(self);
+    [self validateUserIDWithCompletion:^(BOOL exist) {
+        kStrongSelf(self);
+        if (!exist) {
+            return;
         }
+        
+        UINavigationController *nav = self.navigationController;
+        [self.navigationController popViewControllerAnimated:NO]; // 适配iOS18.x，如果animated:YES则会crash
+        [[BIMClient sharedInstance] createSingleConversation:@(self.textField.text.longLongValue) completion:^(BIMConversation * _Nonnull conversation, BIMError * _Nullable error) {
+            if (error) {
+                [BIMToastView toast:[NSString stringWithFormat:@"创建聊天失败: %@",error.localizedDescription]];
+            } else {
+                VEIMDemoChatViewController *chatVC = [VEIMDemoChatViewController chatVCWithConversation:conversation];
+                [nav pushViewController:chatVC animated:YES];
+            }
+        }];
+    }];
+}
+
+- (void)createTempConversation
+{
+    kWeakSelf(self);
+    [self validateUserIDWithCompletion:^(BOOL exist) {
+        kStrongSelf(self);
+        if (!exist) {
+            return;
+        }
+        
+        UINavigationController *nav = self.navigationController;
+        [self.navigationController popViewControllerAnimated:NO]; // 适配iOS18.x，如果animated:YES则会crash
+        VEIMDemoChatViewController *chatVC = [VEIMDemoChatViewController chatVCWithToUserID:@(self.textField.text.longLongValue).stringValue];
+        [nav pushViewController:chatVC animated:YES];
     }];
 }
 

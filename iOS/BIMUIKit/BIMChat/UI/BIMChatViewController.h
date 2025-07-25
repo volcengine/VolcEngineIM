@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BIMChatViewController : BIMBaseTableViewController
 
 + (instancetype)chatVCWithConversation:(BIMConversation *)conversation;
++ (instancetype)chatVCWithToUserID:(NSString *)toUserID;
 
 @property (nonatomic, strong) BIMMessage *anchorMessage;
 @property (nonatomic, strong) NSArray<NSNumber *> *inputToolMenuTypeArray;

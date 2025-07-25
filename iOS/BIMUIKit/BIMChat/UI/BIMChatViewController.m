@@ -79,6 +79,7 @@
 //TIM related
 
 @property (nonatomic, strong) BIMConversation *conversation;
+@property (nonatomic, strong) NSString *toUserID;
 
 //@property (nonatomic, strong) TIMOMessagesInConversationDataSource *msgDataSource;
 @property (nonatomic, strong) BIMChatViewDataSource *messageDataSource;
@@ -96,6 +97,13 @@
 + (instancetype)chatVCWithConversation:(BIMConversation *)conversation{
     BIMChatViewController *chatVC = [[BIMChatViewController alloc] init];
     chatVC.conversation = conversation;
+    return chatVC;
+}
+
++ (instancetype)chatVCWithToUserID:(NSString *)toUserID
+{
+    BIMChatViewController *chatVC = [[BIMChatViewController alloc] init];
+    chatVC.toUserID = toUserID;
     return chatVC;
 }
 
@@ -208,6 +216,10 @@
 #pragma mark - private
 
 - (void)setupMsgs{
+    if (!self.conversation) {
+        return;
+    }
+    
     if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
         [[BIMClient sharedInstance] markConversationMessagesRead:self.conversation.conversationID completion:^(BIMError * _Nullable error) {}];
     }
@@ -266,9 +278,9 @@
     self.inputTool.delegate = self;
     self.inputTool.maxWordLimit = 500;
     if (!self.inputToolMenuTypeArray) {
-        self.inputTool.menuTypeArray = @[@(BIMInputToolMenuTypePhoto), @(BIMInputToolMenuTypeCamera), @(BIMInputToolMenuTypeFile)];
+        self.inputTool.menuTypeArray = @[@(BIMInputToolMenuTypePhoto), @(BIMInputToolMenuTypeVideoV2), @(BIMInputToolMenuTypeCamera), @(BIMInputToolMenuTypeFile)];
 #ifdef UI_INTERNAL
-        self.inputTool.menuTypeArray = @[@(BIMInputToolMenuTypePhoto), @(BIMInputToolMenuTypeCamera), @(BIMInputToolMenuTypeFile), @(BIMInputToolMenuTypeCustomMessage), @(BIMInputToolMenuTypeCoupon)];
+        self.inputTool.menuTypeArray = @[@(BIMInputToolMenuTypePhoto), @(BIMInputToolMenuTypeVideoV2), @(BIMInputToolMenuTypeCamera), @(BIMInputToolMenuTypeFile), @(BIMInputToolMenuTypeCustomMessage), @(BIMInputToolMenuTypeCoupon)];
 #endif
     } else {
         self.inputTool.menuTypeArray = self.inputToolMenuTypeArray;
@@ -562,6 +574,18 @@
             }
         }];
     } else {
+        // 单聊，并且本地仅有假会话
+        if (self.toUserID) {
+            [[BIMClient sharedInstance] sendMessage:sendMessage toUserID:self.toUserID saved:nil progress:progress completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+                @strongify(self);
+                if (error) {
+                    [self sendMessageToastWithError:error message:message];
+                }
+            }];
+            
+            return;
+        }
+        
         // 普通群聊 单聊
         // 发送消息前判断用户是否在会话中
         if (!self.conversation.isMember) {
@@ -658,7 +682,7 @@
 //    BIMMessage *msg = [self.msgDataSource itemAtIndex:indexPath.row];
     BIMMessage *msg = [self.messageDataSource itemAtIndex:indexPath.row];
     /// 语音和视频消息需要点开才发送已读回执，可以根据需求调整。
-    if (msg.msgType != BIM_MESSAGE_TYPE_VIDEO && msg.msgType != BIM_MESSAGE_TYPE_AUDIO && self.conversation.conversationType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+    if (msg.msgType != BIM_MESSAGE_TYPE_VIDEO && msg.msgType != BIM_MESSAGE_TYPE_VIDEO_V2 && msg.msgType != BIM_MESSAGE_TYPE_AUDIO && self.conversation.conversationType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
         [[BIMClient sharedInstance] sendMessageReadReceipts:@[msg] completion:^(BIMError * _Nullable error) {}];
     }
 
@@ -713,7 +737,7 @@
         }
     } else if (msg.msgType == BIM_MESSAGE_TYPE_TEXT) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"BIMTextChatCell"];
-    } else if (msg.msgType == BIM_MESSAGE_TYPE_IMAGE || msg.msgType == BIM_MESSAGE_TYPE_VIDEO){
+    } else if (msg.msgType == BIM_MESSAGE_TYPE_IMAGE || msg.msgType == BIM_MESSAGE_TYPE_VIDEO || msg.msgType == BIM_MESSAGE_TYPE_VIDEO_V2){
         cell = [tableView dequeueReusableCellWithIdentifier:@"BIMImageVideoChatCell"];
     } else if (msg.msgType == BIM_MESSAGE_TYPE_FILE) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"BIMFileChatCell"];
@@ -752,6 +776,25 @@
 }
 
 #pragma mark - BIMConversationListListener
+- (void)onNewConversation:(NSArray<BIMConversation *> *)conversationList
+{
+    if (!self.conversation) {
+        [conversationList enumerateObjectsUsingBlock:^(BIMConversation * _Nonnull conv, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (conv.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
+                NSArray<NSString *> *userIDs = [conv.conversationID componentsSeparatedByString:@":"];
+                if ([userIDs containsObject:self.toUserID]) {
+                    self.conversation = conv;
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self setupMsgs];
+                    });
+                    *stop = YES;
+                }
+            }
+        }];
+    }
+}
+
 - (void)onConversationChanged:(NSArray<BIMConversation *> *)conversationList
 {
     for (BIMConversation *con in conversationList) {
@@ -809,6 +852,21 @@
             }
         }];
     } else {
+        if (self.toUserID) {
+            [[BIMClient sharedInstance] sendMessage:sendMessage toUserID:self.toUserID saved:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+                if (error) {
+                    [BIMToastView toast:[NSString stringWithFormat:@"消息储存失败:%@",error.localizedDescription]];
+                }
+            } progress:progressBlock completion:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
+                @strongify(self);
+                if (error) {
+                    [self sendMessageToastWithError:error message:message];
+                }
+            }];
+            
+            return;
+        }
+        
         [[BIMClient sharedInstance] sendMessage:sendMessage conversationId:self.conversation.conversationID saved:^(BIMMessage * _Nullable message, BIMError * _Nullable error) {
                 if (error) {
                     [BIMToastView toast:[NSString stringWithFormat:@"消息储存失败:%@",error.localizedDescription]];
@@ -864,7 +922,7 @@
 
 - (void)cell:(BIMFileChatCell *)cell didClickNormalConvImageContent:(BIMMessage *)message
 {
-    if (message.msgType == BIM_MESSAGE_TYPE_VIDEO) {
+    if (message.msgType == BIM_MESSAGE_TYPE_VIDEO || message.msgType == BIM_MESSAGE_TYPE_VIDEO_V2) {
         [self playVideoWithMessage:message];
     } else if (message.msgType == BIM_MESSAGE_TYPE_IMAGE) {
         BIMImageElement *element = BTD_DYNAMIC_CAST(BIMImageElement, message.element);

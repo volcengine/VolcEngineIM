@@ -14,8 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedManager;
 
-@property (nonatomic, weak) id<VEIMDemoAccountProtocol> accountProvider;
+@property (nonatomic, weak, readonly) id<VEIMDemoAccountProtocol> accountProvider;
 
+- (void)updateAccountProvider;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -89,8 +89,8 @@ static NSString *kUIDStringLogin = @"kUIDStringLogin";
     
     
     BIMSDKConfig *config = [[BIMSDKConfig alloc] init];
-    config.enableAPM = ![BDIMDebugNetworkManager sharedManager].disableApm;
-    config.enableAppLog = ![BDIMDebugNetworkManager sharedManager].disableApplog;
+//    config.enableAPM = ![BDIMDebugNetworkManager sharedManager].disableApm;
+//    config.enableAppLog = ![BDIMDebugNetworkManager sharedManager].disableApplog;
     [config setLogListener:^(BIMLogLevel logLevel, NSString * _Nonnull logContent) {
             // 日志 输出
         NSLog(@"TIM--%@", logContent);
@@ -129,6 +129,13 @@ static NSString *kUIDStringLogin = @"kUIDStringLogin";
     [[BIMClient sharedInstance] getDid:^(NSString * _Nullable did) {
         NSLog(@"TIM--did:%@", did);
     }];
+}
+
+- (void)unInitSDK
+{
+    [[BIMClient sharedInstance] removeConnectListener:self];
+    [[BIMClient sharedInstance] removeFriendListener:self];
+    [[BIMUIClient sharedInstance] unInitSDK];
 }
 
 - (void)setStringUidLogin:(BOOL)stringUidLogin
@@ -179,6 +186,9 @@ static NSString *kUIDStringLogin = @"kUIDStringLogin";
 
 - (void)logoutWithCompletion:(BIMCompletion)completion
 {
+    if (![self isLogedIn]) {
+        return;
+    }
     [self.progressHUD showAnimated:YES];
     @weakify(self);
     [[BIMUIClient sharedInstance] logoutWithCompletion:^(BIMError * _Nullable error) {
@@ -396,10 +406,13 @@ static NSString *kUIDStringLogin = @"kUIDStringLogin";
 {
     if ([noti.name isEqualToString:BDIMDebugNetworkChangeNotification]) {
         [[BTDResponder topViewController] dismissViewControllerAnimated:NO completion:^{
+            if (![self isLogedIn]) {
+                return;
+            }
             @weakify(self);
             [self logoutWithCompletion:^(BIMError * _Nullable error) {
                 @strongify(self);
-                [[BIMUIClient sharedInstance] unInitSDK];
+                [self unInitSDK];
                 [self initSDK];
 #if __has_include(<imsdk-tob/BIMDebugManager.h>)
                 [[BIMDebugManager sharedInstance] removeAllData];

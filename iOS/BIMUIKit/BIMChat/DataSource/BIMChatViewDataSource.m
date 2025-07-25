@@ -153,7 +153,16 @@
                 self.earliestMessage = earliestMessage;
                 [self addOlderMessages:messages];
                 self.hasOlderMessages = hasMore;
+            } else {
+                if (messages.count > 0) {
+                    [self addOlderMessages:messages];
+                }
+                if (earliestMessage) {
+                    self.earliestMessage = earliestMessage;
+                }
+                self.hasOlderMessages = hasMore;
             }
+            
             [self getMessagesReadReceipt:messages];
             dispatch_async(dispatch_get_main_queue(), ^{
                 @synchronized (self.lock) {
@@ -168,7 +177,7 @@
 }
 
 - (void)addOlderMessages:(NSArray<BIMMessage *> *)messages {
-    
+    NSMutableArray<BIMMessage *> *deduplicatedMessages = [NSMutableArray array];
     for (BIMMessage *message in messages) {
         NSString *senderUID = message.senderUIDString ?: @(message.senderUID).stringValue;
         if (self.conversation.conversationType == BIM_CONVERSATION_TYPE_LIVE_GROUP && [BIMClient sharedInstance].isUseStringUid) {
@@ -181,11 +190,16 @@
             user = @{kAliasName: message.ext[kAliasName]?:@"",kAvatarUrl: message.ext[kAvatarUrl] ?:@""};
             [self.userDict setObject:user forKey:senderUID];
         }
+        if (message.uuid && ![self.messageDict objectForKey:message.uuid]) {
+            [deduplicatedMessages addObject:message];
+        } else {
+            NSLog(@"Find deduplicated message, message ID: %@", message.uuid);
+        }
     }
     
     @synchronized (self.lock) {
-        [self.p_messageList addObjectsFromArray:messages];
-        [messages enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self.p_messageList addObjectsFromArray:deduplicatedMessages];
+        [deduplicatedMessages enumerateObjectsUsingBlock:^(BIMMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             self.messageDict[obj.uuid] = obj;
         }];
     }

@@ -164,7 +164,15 @@
         oneRobotModel.titleStr = @"发起机器人单聊";
         oneRobotModel.imgStr = @"icon_oneToOne";
         
-        NSArray *ary = @[ oneModel, groupModel, clearAllUnreacCountModel, oneRobotModel ];
+        NSArray *ary = nil;
+        if ([VEIMDemoIMManager sharedManager].accountProvider.accountType == VEIMDemoAccountTypeInternal) {
+            VEIMDemoCommonMenuItemModel *createLocalConv = [[VEIMDemoCommonMenuItemModel alloc] init];
+            createLocalConv.titleStr = @"创建本地临时会话";
+            createLocalConv.imgStr = @"icon_oneToOne";
+            ary = @[ oneModel, groupModel, clearAllUnreacCountModel, oneRobotModel , createLocalConv];
+        } else {
+            ary = @[ oneModel, groupModel, clearAllUnreacCountModel, oneRobotModel];
+        }
         
         kWeakSelf(self);
         self.menu = [[VEIMDemoCommonMenu alloc] initWithListArray:ary selectBlock:^(NSInteger index) {
@@ -203,6 +211,10 @@
         [self.navigationController pushViewController:robotListVC
                                              animated:YES];
         return;
+    } else if (index == 4) {
+        vc.conversationType = BIM_CONVERSATION_TYPE_ONE_CHAT;
+        vc.showType = VEIMDemoSelectUserShowTypeCreateTempConv;
+        vc.title = @"发起单聊并发消息";
     }
     [self.navigationController pushViewController:vc animated:YES];
 }

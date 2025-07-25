@@ -22,6 +22,7 @@ typedef NS_ENUM(NSInteger, BIMInputToolMenuType) {
     BIMInputToolMenuTypeFile = 2,
     BIMInputToolMenuTypeCustomMessage = 3,
     BIMInputToolMenuTypeCoupon = 4,
+    BIMInputToolMenuTypeVideoV2 = 5,
 };
 
 typedef NS_ENUM(NSUInteger, BIMInputToolRecordStatus) {

@@ -11,8 +11,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, VEIMDemoAccountType) {
-    VEIMDemoAccountTypeInHouse,
+    VEIMDemoAccountTypeInternal,
     VEIMDemoAccountTypeOpenSource,
+    VEIMDemoAccountTypeAppstore,
 };
 
 @protocol VEIMDemoAccountProtocol <NSObject>

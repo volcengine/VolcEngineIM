@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showDebugEntrance: (UIViewController *)vc;
 
+- (void)showDebugVC;
+
 @end
 
 NS_ASSUME_NONNULL_END

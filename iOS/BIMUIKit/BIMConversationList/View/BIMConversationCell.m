@@ -173,7 +173,8 @@
                 case BIM_MESSAGE_TYPE_IMAGE: {
                     displayStr = [NSString stringWithFormat:@"%@: %@", msgSenderNickname, @"[图片]"];
                 } break;
-                case BIM_MESSAGE_TYPE_VIDEO: {
+                case BIM_MESSAGE_TYPE_VIDEO:
+                case BIM_MESSAGE_TYPE_VIDEO_V2: {
                     displayStr = [NSString stringWithFormat:@"%@: %@", msgSenderNickname, @"[视频]"];
                 } break;
                 case BIM_MESSAGE_TYPE_FILE: {

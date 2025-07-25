@@ -7,12 +7,14 @@
 
 #import "AppDelegate.h"
 #import "VEIMDemoIMManager.h"
-#import "VEIMDemoAccountManager.h"
 #import "VEIMDemoUserManager.h"
 #import <OneKit/UIImage+BTDAdditions.h>
 #import <OneKit/OneKitApp.h>
 #import <RangersAppLog/BDAutoTrackSchemeHandler.h>
-#import "SSDebugManager.h"
+
+#if __has_include(<imsdk-tob/BIMDebugManager.h>)
+#import <imsdk-tob/BIMDebugManager.h>
+#endif
 
 @interface AppDelegate ()
 
@@ -45,20 +47,6 @@
     }
     
     
-    Class cls;
-    if ([SSDebugManager sharedInstance].uidLogin) {
-        cls = NSClassFromString(@"VEIMDemoUIDAccountManager");
-    } else {
-        cls = NSClassFromString(@"VEIMDemoSMSAccountManager");
-    }
-    if (cls) {
-        [VEIMDemoIMManager sharedManager].accountProvider = [cls performSelector:@selector(sharedManager)];
-    } else {
-        [VEIMDemoIMManager sharedManager].accountProvider = [VEIMDemoAccountManager sharedManager];
-    }
-    
-    
-    
     // 同意了隐私协议才能初始化SDK
     if ([VEIMDemoIMManager sharedManager].accountProvider.isAgreeUserPirvacyAgreement) {
         [self agreeUserPirvacyAgreement];
@@ -69,10 +57,6 @@
         };
     }
     
-    
-//    [[UIBarButtonItem appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor clearColor]}forState:UIControlStateNormal];//将title 文字的颜色改为透明
-//    [[UIBarButtonItem appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor clearColor]}forState:UIControlStateHighlighted];//将title 文字的颜色改为透明
-    
     return YES;
 }
 
@@ -81,4 +65,12 @@
     [[VEIMDemoUserManager sharedManager] initSDK];
 }
 
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
+#if __has_include(<imsdk-tob/BIMDebugManager.h>)
+    if ([[BDAutoTrackSchemeHandler sharedHandler] handleURL:url appID:[BIMDebugManager sharedInstance].trackAppID scene:nil]) {
+        return YES;
+    }
+#endif
+    return NO;
+}
 @end

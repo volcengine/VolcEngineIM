@@ -18,8 +18,9 @@
 
 NSString * const DEFAULT_CONV_TITLE = @"defaultTitle";
 
-@interface VEIMDemoChatViewController ()<BIMChatViewControllerDelegate, BIMP2PMessageListener, BIMMessageListener>
+@interface VEIMDemoChatViewController ()<BIMChatViewControllerDelegate, BIMP2PMessageListener, BIMMessageListener, BIMConversationListListener>
 @property (nonatomic, strong) BIMConversation *conversation;
+@property (nonatomic, copy) NSString *toUserID;
 @property (nonatomic, strong) NSTimer *timer;
 @end
 
@@ -33,7 +34,13 @@ NSString * const DEFAULT_CONV_TITLE = @"defaultTitle";
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_back"] style:UIBarButtonItemStylePlain target:self action:@selector(backItemClicked:)];
     
-    BIMChatViewController *chatVC = [BIMChatViewController chatVCWithConversation:self.conversation];
+    BIMChatViewController *chatVC;
+    if (self.conversation) {
+        chatVC = [BIMChatViewController chatVCWithConversation:self.conversation];
+    } else {
+        chatVC = [BIMChatViewController chatVCWithToUserID:self.toUserID];
+    }
+    
     chatVC.anchorMessage = self.anchorMessage; // 搜索时指定目标message
     chatVC.delegate = self;
     [self addChildViewController:chatVC];
@@ -51,6 +58,14 @@ NSString * const DEFAULT_CONV_TITLE = @"defaultTitle";
 {
     VEIMDemoChatViewController *vc = [[VEIMDemoChatViewController alloc] init];
     vc.conversation = conversation;
+    [vc addListener];
+    return vc;
+}
+
++ (instancetype)chatVCWithToUserID:(NSString *)toUserID
+{
+    VEIMDemoChatViewController *vc = [[VEIMDemoChatViewController alloc] init];
+    vc.toUserID = toUserID;
     [vc addListener];
     return vc;
 }
@@ -144,12 +159,14 @@ NSString * const DEFAULT_CONV_TITLE = @"defaultTitle";
 {
     [[BIMClient sharedInstance] addP2PMessageListener:self];
     [[BIMClient sharedInstance] addMessageListener:self];
+    [[BIMClient sharedInstance] addConversationListener:self];
 }
 
 - (void)removeLisener
 {
     [[BIMClient sharedInstance] removeP2PMessageListener:self];
     [[BIMClient sharedInstance] removeMessageListener:self];
+    [[BIMClient sharedInstance] removeConversationListener:self];
 }
 
 #pragma mark - 收发消息回调
@@ -191,4 +208,25 @@ NSString * const DEFAULT_CONV_TITLE = @"defaultTitle";
     });
 }
 
+- (void)onNewConversation:(NSArray<BIMConversation *> *)conversationList
+{
+    if (self.conversation) {
+        return;
+    }
+    
+    [conversationList enumerateObjectsUsingBlock:^(BIMConversation * _Nonnull conv, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (conv.conversationType == BIM_CONVERSATION_TYPE_ONE_CHAT) {
+            NSArray<NSString *> *userIDs = [conv.conversationID componentsSeparatedByString:@":"];
+            NSAssert(userIDs.count == 4, @"single chat conversationId should contain 4 component");
+            if (userIDs.count != 4) {
+                *stop = YES;
+            }
+            
+            if ([userIDs[2] isEqualToString:self.toUserID] || [userIDs[3] isEqualToString:self.toUserID]) {
+                self.conversation = conv;
+                *stop = YES;
+            };
+        }
+    }];
+}
 @end

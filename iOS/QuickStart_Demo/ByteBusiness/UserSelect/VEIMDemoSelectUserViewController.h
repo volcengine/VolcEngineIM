@@ -14,6 +14,7 @@ typedef NS_ENUM(NSUInteger, VEIMDemoSelectUserShowType) {
     VEIMDemoSelectUserShowTypeCreateChat,      // 创建聊天
     VEIMDemoSelectUserShowTypeAddParticipants, // 群聊添加成员
     VEIMDemoSelectUserShowTypeMarkUser,        // 标记用户
+    VEIMDemoSelectUserShowTypeCreateTempConv   // 创建临时会话页面
 };
 
 @protocol VEIMDemoSelectUserViewControllerDelegate <NSObject>

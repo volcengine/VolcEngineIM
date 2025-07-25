@@ -19,8 +19,9 @@
 #import <imsdk-tob/BIMClient.h>
 #import <im-uikit-tob/BIMToastView.h>
 #import <MBProgressHUD/MBProgressHUD.h>
-
-//FOUNDATION_EXTERN NSString * const kVEIMDemoAppID;
+#if __has_include("BDIMDebugManager.h")
+#import "BDIMDebugManager.h"
+#endif
 
 typedef enum : NSUInteger {
     VEIMDemoMyinfoSectionTypeInfo,
@@ -28,6 +29,7 @@ typedef enum : NSUInteger {
     VEIMDemoMyinfoSectionTypeCancelAccountAndLogout,
 } VEIMDemoMyinfoSectionType;
 
+static NSString *const VEIMMyInfoDebug = @"高级调试";
 static NSString *const VEIMMyInfoAppid = @"AppId";
 static NSString *const VEIMMyInfoAppVersionName = @"App Version Name";
 static NSString *const VEIMMyInfoIMSDKVersion = @"IMSDK Version Name";
@@ -101,6 +103,9 @@ static NSString *const VEIMMyInfoLogout = @"退出登录";
     [super setupUIElements];
     
     NSMutableArray *appInfoArr = [NSMutableArray array];
+    if ([VEIMDemoIMManager sharedManager].accountProvider.accountType == VEIMDemoAccountTypeInternal) {
+        [appInfoArr addObject:VEIMMyInfoDebug];
+    }
     [appInfoArr addObject:VEIMMyInfoAppid];
     [appInfoArr addObject:VEIMMyInfoAppVersionName];
     [appInfoArr addObject:VEIMMyInfoIMSDKVersion];
@@ -161,6 +166,9 @@ static NSString *const VEIMMyInfoLogout = @"退出登录";
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             } else if ([title isEqualToString:VEIMMyInfoICP]) {
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            } else if ([title isEqualToString:VEIMMyInfoDebug]) {
+                info = @"摇一摇更便捷";
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             }
             [cell configCellWithTitle:title info:info];
             return cell;
@@ -185,51 +193,9 @@ static NSString *const VEIMMyInfoLogout = @"退出登录";
     if (indexPath.section == VEIMDemoMyinfoSectionTypeCancelAccountAndLogout) {
         NSString *title = [self.cancelAccountArray objectAtIndex:indexPath.row];
         if ([title isEqualToString:VEIMMyInfoCancelAccount]) {
-            NSString *msg = @"注销后，当前账户的所有数据将会被删除且无法找回。\n注销后，当前账户所创建的群聊将自动转让群主后退出。\n注销一经开始将无法撤回。";
-            NSMutableAttributedString *attMsg = [[NSMutableAttributedString alloc] initWithString:msg];
-            NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
-            [paragraph setLineSpacing:3];
-            [paragraph setParagraphSpacingBefore:5];
-            [paragraph setAlignment:NSTextAlignmentLeft];
-            [paragraph setBaseWritingDirection:NSWritingDirectionLeftToRight];
-            [attMsg addAttribute:NSParagraphStyleAttributeName value:paragraph range:NSMakeRange(0, msg.length)];
-            UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:nil message:msg preferredStyle:UIAlertControllerStyleAlert];
-            [alertVC setValue:attMsg forKey:@"attributedMessage"];
-            UIAlertAction *sureAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-                VEIMDemoUser *curUser = [[VEIMDemoUserManager sharedManager] currentUser];
-                NSString *token = curUser.userToken;
-                NSString *uid = [NSString stringWithFormat:@"%lld", curUser.userIDNumber];
-            
-                [self showLoading]; // 展示loading动画
-                @weakify(self);
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    [[VEIMDemoAccountCancellationManager sharedInstance] cancelAccountWithUid:uid token:token completion:^(BOOL success){
-                        @strongify(self);
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [self hideLoading];
-                        });
-                        if (success) {
-                            [[VEIMDemoUserManager sharedManager] logout];
-                            [BIMToastView toast:@"注销成功"];
-                        } else {
-                            [BIMToastView toast:@"注销失败"];
-                        }
-                    }];
-                });
-            }];
-            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
-            [alertVC addAction:sureAction];
-            [alertVC addAction:cancelAction];
-            [self presentViewController:alertVC animated:YES completion:nil];
+            [self clickCancelAccountCell];
         } else if ([title isEqualToString:VEIMMyInfoLogout]) {
-            UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"确定要退出登录吗？" message:nil preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *sureAction = [UIAlertAction actionWithTitle:@"登出" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-                [[VEIMDemoUserManager sharedManager] logout];
-            }];
-            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
-            [alertVC addAction:sureAction];
-            [alertVC addAction:cancelAction];
-            [self presentViewController:alertVC animated:YES completion:nil];
+            [self clickLogoutCell];
         }
     } else if (indexPath.section == VEIMDemoMyinfoSectionTypeAppInfo) {
         NSString *title = [self.appInfoArr objectAtIndex:indexPath.row];
@@ -240,23 +206,14 @@ static NSString *const VEIMMyInfoLogout = @"退出登录";
         } else if ([title isEqualToString:VEIMMyInfoICP]) {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kVEIMDemoICP] options:nil completionHandler:nil];
         } else if ([title isEqualToString:VEIMMyInfoIMSDKDid]) {
-            if (!self.did.length) return;
-            UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = self.did;
-            [BIMToastView toast:[NSString stringWithFormat:@"已复制Did:%@", self.did] withDuration:0.5];
+            [self clickDidCell];
+        } else if ([title isEqualToString:VEIMMyInfoDebug]) {
+#if __has_include("BDIMDebugManager.h")
+            [[BDIMDebugManager sharedManager] showDebugVC];
+#endif
         }
     } else if (indexPath.section == VEIMDemoMyinfoSectionTypeInfo) {
-        BOOL isUidStringLogin = [BIMClient sharedInstance].isUseStringUid;
-        if (isUidStringLogin) {
-            VEIMDemoProfileEditViewController *vc = [[VEIMDemoProfileEditViewController alloc] initWithUserIdString:[BIMClient sharedInstance].getCurrentUserIDString];
-            vc.canSelfEdit = NO;
-            [self.navigationController pushViewController:vc animated:YES];
-        } else {
-            BIMUserProfile *profile = [VEIMDemoUserManager sharedManager].currentUserFullInfo.userProfile;
-            VEIMDemoProfileEditViewController *vc = [[VEIMDemoProfileEditViewController alloc] initWithUserProfile:profile];
-            vc.canSelfEdit = YES;
-            [self.navigationController pushViewController:vc animated:YES];
-        }
+        [self clickMyInfoCell];
      }
 }
 
@@ -290,6 +247,84 @@ static NSString *const VEIMMyInfoLogout = @"退出登录";
     [self.progressHUD hideAnimated:YES];
     [self.progressHUD removeFromSuperview];
 }
+
+#pragma mark - event
+
+- (void)clickCancelAccountCell
+{
+    NSString *msg = @"注销后，当前账户的所有数据将会被删除且无法找回。\n注销后，当前账户所创建的群聊将自动转让群主后退出。\n注销一经开始将无法撤回。";
+    NSMutableAttributedString *attMsg = [[NSMutableAttributedString alloc] initWithString:msg];
+    NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+    [paragraph setLineSpacing:3];
+    [paragraph setParagraphSpacingBefore:5];
+    [paragraph setAlignment:NSTextAlignmentLeft];
+    [paragraph setBaseWritingDirection:NSWritingDirectionLeftToRight];
+    [attMsg addAttribute:NSParagraphStyleAttributeName value:paragraph range:NSMakeRange(0, msg.length)];
+    UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:nil message:msg preferredStyle:UIAlertControllerStyleAlert];
+    [alertVC setValue:attMsg forKey:@"attributedMessage"];
+    UIAlertAction *sureAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        VEIMDemoUser *curUser = [[VEIMDemoUserManager sharedManager] currentUser];
+        NSString *token = curUser.userToken;
+        NSString *uid = [NSString stringWithFormat:@"%lld", curUser.userIDNumber];
+    
+        [self showLoading]; // 展示loading动画
+        @weakify(self);
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [[VEIMDemoAccountCancellationManager sharedInstance] cancelAccountWithUid:uid token:token completion:^(BOOL success){
+                @strongify(self);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self hideLoading];
+                });
+                if (success) {
+                    [[VEIMDemoUserManager sharedManager] logout];
+                    [BIMToastView toast:@"注销成功"];
+                } else {
+                    [BIMToastView toast:@"注销失败"];
+                }
+            }];
+        });
+    }];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+    [alertVC addAction:sureAction];
+    [alertVC addAction:cancelAction];
+    [self presentViewController:alertVC animated:YES completion:nil];
+}
+
+- (void)clickLogoutCell
+{
+    UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"确定要退出登录吗？" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *sureAction = [UIAlertAction actionWithTitle:@"登出" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [[VEIMDemoUserManager sharedManager] logout];
+    }];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+    [alertVC addAction:sureAction];
+    [alertVC addAction:cancelAction];
+    [self presentViewController:alertVC animated:YES completion:nil];
+}
+
+- (void)clickDidCell
+{
+    if (!self.did.length) return;
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = self.did;
+    [BIMToastView toast:[NSString stringWithFormat:@"已复制Did:%@", self.did] withDuration:0.5];
+}
+
+- (void)clickMyInfoCell
+{
+    BOOL isUidStringLogin = [BIMClient sharedInstance].isUseStringUid;
+    if (isUidStringLogin) {
+        VEIMDemoProfileEditViewController *vc = [[VEIMDemoProfileEditViewController alloc] initWithUserIdString:[BIMClient sharedInstance].getCurrentUserIDString];
+        vc.canSelfEdit = NO;
+        [self.navigationController pushViewController:vc animated:YES];
+    } else {
+        BIMUserProfile *profile = [VEIMDemoUserManager sharedManager].currentUserFullInfo.userProfile;
+        VEIMDemoProfileEditViewController *vc = [[VEIMDemoProfileEditViewController alloc] initWithUserProfile:profile];
+        vc.canSelfEdit = YES;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+}
+#pragma mark - getter
 
 - (MBProgressHUD *)progressHUD
 {

@@ -9,6 +9,10 @@
 #import "VEIMDemoDefine.h"
 #import "BDIMDebugNetworkManager.h"
 #import "VEIMDemoUserManager.h"
+#if __has_include("SSDebugManager.h")
+#import "SSDebugManager.h"
+#endif
+#import "VEIMDemoAccountManager.h"
 
 #import <OneKit/UIDevice+BTDAdditions.h>
 
@@ -16,6 +20,7 @@
 
 @property (nonatomic, strong) NSString *deviceID;
 @property (nonatomic, strong) NSString *installID;
+@property (nonatomic, weak) id<VEIMDemoAccountProtocol> accountProvider;
 
 @end
 
@@ -31,5 +36,34 @@
         }
     });
     return _sharedInstance;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        [self updateAccountProvider];
+    }
+    return self;
+}
+
+- (void)updateAccountProvider
+{
+    Class cls;
+    BOOL isUidLogin = NO;
+    
+#if __has_include("SSDebugManager.h")
+    isUidLogin = [SSDebugManager sharedInstance].uidLogin;
+#endif
+    if (isUidLogin) {
+        cls = NSClassFromString(@"VEIMDemoUIDAccountManager");
+    } else {
+        cls = NSClassFromString(@"VEIMDemoSMSAccountManager");
+    }
+    if (cls) {
+        self.accountProvider = [cls performSelector:@selector(sharedManager)];
+    } else {
+        self.accountProvider = [VEIMDemoAccountManager sharedManager];
+    }
 }
 @end

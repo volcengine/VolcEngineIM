@@ -26,11 +26,11 @@
 {
     self = [super init];
     if (self) {
-        self.name = [coder decodeObjectForKey:@"name"];
+        self.name = [coder decodeObjectOfClass:[NSString class] forKey:@"name"];
         self.portrait = [coder decodeObjectForKey:@"portrait"];
         self.userIDNumber = [coder decodeInt64ForKey:@"userID"];
-        self.userIDString = [coder decodeObjectForKey:@"userIDString"];
-        self.userToken = [coder decodeObjectForKey:@"userToken"];
+        self.userIDString = [coder decodeObjectOfClass:[NSString class] forKey:@"userIDString"];
+        self.userToken = [coder decodeObjectOfClass:[NSString class] forKey:@"userToken"];
     }
     return self;
 }

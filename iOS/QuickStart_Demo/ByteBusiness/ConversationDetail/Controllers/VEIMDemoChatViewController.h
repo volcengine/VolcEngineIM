@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class BIMConversation, BIMMessage;
 @interface VEIMDemoChatViewController : UIViewController
 + (instancetype)chatVCWithConversation:(BIMConversation *)conversation;
++ (instancetype)chatVCWithToUserID:(NSString *)toUserID;
 @property (nonatomic, strong) BIMMessage *anchorMessage;
 @end
 

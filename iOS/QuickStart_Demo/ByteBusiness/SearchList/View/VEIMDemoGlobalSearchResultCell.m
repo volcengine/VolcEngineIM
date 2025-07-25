@@ -74,6 +74,16 @@
     BIMUser *user = [BIMUIClient sharedInstance].userProvider(memberInfo.member.userID);
     if (!user) {
         [self.portrait sd_setImageWithURL:nil placeholderImage:[UIImage imageNamed:@"icon_recommend_user_default"]];
+        @weakify(self)
+        if ([[BIMUIClient sharedInstance].userInfoDataSource respondsToSelector:@selector(getUserInfoWithUserId:completion:)]) {
+            [[BIMUIClient sharedInstance].userInfoDataSource getUserInfoWithUserId:memberInfo.member.userID completion:^(BIMUser *u) {
+                @strongify(self);
+                if (memberInfo.member.userID != u.userID) {
+                    return;
+                }
+                [self reloadWithMemberInfo:memberInfo];
+            }];
+        }
     } else {
         [self.portrait sd_setImageWithURL:[NSURL URLWithString:user.portraitUrl] placeholderImage:user.placeholderImage];
     }
@@ -97,6 +107,16 @@
     BIMUser *user = [BIMUIClient sharedInstance].userProvider(friendInfo.userInfo.uid);
     if (!user) {
         [self.portrait sd_setImageWithURL:nil placeholderImage:[UIImage imageNamed:@"icon_recommend_user_default"]];
+        @weakify(self)
+        if ([[BIMUIClient sharedInstance].userInfoDataSource respondsToSelector:@selector(getUserInfoWithUserId:completion:)]) {
+            [[BIMUIClient sharedInstance].userInfoDataSource getUserInfoWithUserId:friendInfo.userInfo.uid completion:^(BIMUser *u) {
+                @strongify(self);
+                if (friendInfo.userInfo.uid != u.userID) {
+                    return;
+                }
+                [self reloadWithFriendInfo:friendInfo];
+            }];
+        }
     } else {
         [self.portrait sd_setImageWithURL:[NSURL URLWithString:friendInfo.userInfo.portraitUrl] placeholderImage:user.placeholderImage];
     }
@@ -140,6 +160,16 @@
         BIMUser *user = [BIMUIClient sharedInstance].userProvider(chatUID);
         if (!user) {
             [self.portrait sd_setImageWithURL:nil placeholderImage:[UIImage imageNamed:@"icon_recommend_user_default"]];
+            @weakify(self)
+            if ([[BIMUIClient sharedInstance].userInfoDataSource respondsToSelector:@selector(getUserInfoWithUserId:completion:)]) {
+                [[BIMUIClient sharedInstance].userInfoDataSource getUserInfoWithUserId:chatUID completion:^(BIMUser *u) {
+                    @strongify(self);
+                    if (chatUID != u.userID) {
+                        return;
+                    }
+                    [self reloadWithMsgInConvInfo:msgInConvInfo];
+                }];
+            }
         } else {
             [self.portrait sd_setImageWithURL:[NSURL URLWithString:user.portraitUrl] placeholderImage:user.placeholderImage];
         }
@@ -170,6 +200,16 @@
     BIMUser *user = [BIMUIClient sharedInstance].userProvider(sendId);
     if (!user) {
         [self.portrait sd_setImageWithURL:nil placeholderImage:[UIImage imageNamed:@"icon_recommend_user_default"]];
+        @weakify(self)
+        if ([[BIMUIClient sharedInstance].userInfoDataSource respondsToSelector:@selector(getUserInfoWithUserId:completion:)]) {
+            [[BIMUIClient sharedInstance].userInfoDataSource getUserInfoWithUserId:sendId completion:^(BIMUser *u) {
+                @strongify(self);
+                if (sendId != u.userID) {
+                    return;
+                }
+                [self reloadWithMsgInfo:msgInfo conversation:conversation];
+            }];
+        }
     } else {
         [self.portrait sd_setImageWithURL:[NSURL URLWithString:user.portraitUrl] placeholderImage:user.placeholderImage];
     }

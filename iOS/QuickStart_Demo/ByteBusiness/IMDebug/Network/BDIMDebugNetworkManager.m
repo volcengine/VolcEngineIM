@@ -223,7 +223,6 @@ static NSString *kApmDisableKey = @"kApmDisableKey";
     } else {
         _country = BDIMDebugNetworkCountryTypeOverseas;
     }
-    
     _env = [[[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkEnv] intValue];
     _netLane = [[NSUserDefaults standardUserDefaults] objectForKey:kBDIMDebugNetworkLane];
     

@@ -13,6 +13,7 @@
 #import "BIMUIDefine.h"
 #import "BIMToastView.h"
 #import "BIMUIClient.h"
+#import "BIMUICommonUtility.h"
 
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <Photos/PHPhotoLibrary.h>
@@ -69,6 +70,8 @@ typedef NS_ENUM(NSInteger, IMTextAudioType) {
 @property (nonatomic, assign) BIMInputToolRecordStatus recordStatus;
 @property (nonatomic, assign) double audioReportInterval;
 @property (nonatomic, strong) NSTimer *audioReportTimer;
+
+@property (nonatomic, assign) BOOL isSelectingVideoV2;
 @end
 
 
@@ -214,7 +217,7 @@ typedef NS_ENUM(NSInteger, IMTextAudioType) {
 }
 
 - (void)addMentionUser:(NSNumber *)userID{
-    NSString *name = [BIMUIClient sharedInstance].userProvider(userID.longLongValue).nickName;
+    NSString *name = [BIMUICommonUtility getSystemMessageUserNameWithUser:[BIMUIClient sharedInstance].userProvider(userID.longLongValue)];
     if (userID.longLongValue > 0 && name.length) {
         NSMutableString *str = [self.tempTextView.text mutableCopy];
         NSInteger location = str.length+1;
@@ -339,7 +342,8 @@ typedef NS_ENUM(NSInteger, IMTextAudioType) {
             case BIM_MESSAGE_TYPE_IMAGE: {
                 [hint appendString:@"[图片]"];
             } break;
-            case BIM_MESSAGE_TYPE_VIDEO: {
+            case BIM_MESSAGE_TYPE_VIDEO:
+            case BIM_MESSAGE_TYPE_VIDEO_V2: {
                 [hint appendString:@"[视频]"];
             } break;
             case BIM_MESSAGE_TYPE_AUDIO: {
@@ -632,36 +636,31 @@ static CGFloat textHei = 0;
 
     switch (model.type) {
         case BIMInputMenuTypeAlbum: {
-            PHAuthorizationStatus photoStatus = [PHPhotoLibrary authorizationStatus];
-
-            if ((photoStatus == PHAuthorizationStatusRestricted || photoStatus == PHAuthorizationStatusDenied)) {
-                [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
-                    if (status == PHAuthorizationStatusAuthorized) {
-                        [self showPhotoLibraraOrCamera:NO];
-                    } else {
-                        [BIMToastView toast:@"无法拍摄照片并发送出去，请前往系统设置中开启相机权限"];
-                    }
-                }];
-            } else {
-                [self showPhotoLibraraOrCamera:NO];
-            }
+            self.isSelectingVideoV2 = NO;
+            [self __showAlbumWithImage:YES];
+        } break;
+            
+        case BIMInputMenuTypeVideoV2: {
+            self.isSelectingVideoV2 = YES;
+            [self __showAlbumWithImage:NO];
         } break;
 
         case BIMInputMenuTypeCamera: {
+            self.isSelectingVideoV2 = NO;
             AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo]; //读取设备授权状态
 
             if (authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied || authStatus == AVAuthorizationStatusNotDetermined) {
                 [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         if (granted) {
-                            [self showPhotoLibraraOrCamera:YES];
+                            [self showPhotoLibraraOrCamera:YES shouldContainImage:YES shouldContainVideo:YES];
                         } else {
                             [BIMToastView toast:@"无法拍摄照片并发送出去，请前往系统设置中开启相机权限"];
                         }
                     });
                 }];
             } else {
-                [self showPhotoLibraraOrCamera:YES];
+                [self showPhotoLibraraOrCamera:YES shouldContainImage:YES shouldContainVideo:YES];
             }
         } break;
 
@@ -703,12 +702,28 @@ static CGFloat textHei = 0;
     }
 }
 
+- (void)__showAlbumWithImage:(BOOL)shouldContainImage
+{
+    PHAuthorizationStatus photoStatus = [PHPhotoLibrary authorizationStatus];
+    if ((photoStatus == PHAuthorizationStatusRestricted || photoStatus == PHAuthorizationStatusDenied)) {
+        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+            if (status == PHAuthorizationStatusAuthorized) {
+                [self showPhotoLibraraOrCamera:NO shouldContainImage:shouldContainImage shouldContainVideo:YES];
+            } else {
+                [BIMToastView toast:@"无法拍摄照片并发送出去，请前往系统设置中开启相机权限"];
+            }
+        }];
+    } else {
+        [self showPhotoLibraraOrCamera:NO shouldContainImage:shouldContainImage shouldContainVideo:YES];
+    }
+}
+
 - (void)sendLocationMessage
 {
 
 }
 
-- (void)showPhotoLibraraOrCamera:(BOOL)isCamera
+- (void)showPhotoLibraraOrCamera:(BOOL)isCamera shouldContainImage:(BOOL)shouldContainImage shouldContainVideo:(BOOL)shouldContainVideo
 {
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = (id<UINavigationControllerDelegate, UIImagePickerControllerDelegate>)self;
@@ -726,7 +741,14 @@ static CGFloat textHei = 0;
             if (self.isBroadCast) {
                 picker.mediaTypes = @[ (NSString *)kUTTypeImage ];
             } else {
-                picker.mediaTypes = @[ (NSString *)kUTTypeMovie, (NSString *)kUTTypeImage ];
+                NSMutableArray *mediaTypeArray = @[].mutableCopy;
+                if (shouldContainImage) {
+                    [mediaTypeArray addObject:(NSString *)kUTTypeImage];
+                }
+                if (shouldContainVideo) {
+                    [mediaTypeArray addObject:(NSString *)kUTTypeMovie];
+                }
+                picker.mediaTypes = mediaTypeArray.copy;
             }
         }
     }
@@ -745,7 +767,21 @@ static CGFloat textHei = 0;
     BIMMessage *sendMsg = nil;
     if ([mediaType isEqualToString:(NSString *)kUTTypeMovie]) {
         NSURL *url = info[UIImagePickerControllerMediaURL];
-        sendMsg = [[BIMClient sharedInstance] createVideoMessage:url.absoluteString];
+        if (!self.conversationID) {
+            // 使用 toUserID 进行发消息，会在创建会话的回调中执行发送消息逻辑，此时已经会从imagePicker所在的主线程，切换到另外的线程
+            // 然而切换线程后，苹果会收回对应 url 资源的读权限，导致读取视频失败，所以需要先copy到本地
+            NSString *path = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%lld.%@", (long long)([[NSDate date] timeIntervalSince1970] * 1000), url.pathExtension]];
+            NSError *copyError = nil;
+            BOOL copySuccess = [[NSFileManager defaultManager] copyItemAtURL:url toURL:[NSURL fileURLWithPath:path] error:&copyError];
+            url = [NSURL URLWithString:path];
+        }
+        
+        if (self.isSelectingVideoV2) {
+            sendMsg = [[BIMClient sharedInstance] createVideoMessageV2:url.absoluteString];
+            self.isSelectingVideoV2 = NO;
+        } else {
+            sendMsg = [[BIMClient sharedInstance] createVideoMessage:url.absoluteString];
+        }
     } else {
         UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
         NSString *path = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%lld", (long long)([[NSDate date] timeIntervalSince1970] * 1000)]];
@@ -1022,6 +1058,17 @@ static CGFloat textHei = 0;
                 phoneModel.iconStr = @"icon_photo";
                 phoneModel.type = BIMInputMenuTypeAlbum;
                 [_menuMAry btd_addObject:phoneModel];
+            }
+                break;
+            case BIMInputToolMenuTypeVideoV2:
+            {
+                if (self.convType != BIM_CONVERSATION_TYPE_LIVE_GROUP) {
+                    BIMInputMenuModel *phoneModel = [[BIMInputMenuModel alloc] init];
+                    phoneModel.titleStr = @"视频V2";
+                    phoneModel.iconStr = @"icon_photo";
+                    phoneModel.type = BIMInputMenuTypeVideoV2;
+                    [_menuMAry btd_addObject:phoneModel];
+                }
             }
                 break;
             case BIMInputToolMenuTypeCamera:

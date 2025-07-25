@@ -20,7 +20,6 @@
 - (void)setupUIElemets
 {
     [super setupUIElemets];
-//    self.userInteractionEnabled = NO;
     
     self.titleLabel = [UILabel new];
     [self.titleLabel setTextColor:[UIColor blackColor]];
@@ -31,15 +30,25 @@
     [self.infoLabel setTextColor:[UIColor grayColor]];
     [self.infoLabel setFont:[UIFont systemFontOfSize:18]];
     [self.contentView addSubview:self.infoLabel];
+}
+
+- (void)setupConstraints
+{
+    [super setupConstraints];
     
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.mas_equalTo(self.contentView);
         make.left.mas_equalTo(self.contentView.mas_left).offset(20);
     }];
     
-    [self.infoLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.infoLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.centerY.mas_equalTo(self.contentView);
-        make.right.mas_equalTo(self.contentView.mas_right).offset(-20);
+        if (self.accessoryType == UITableViewCellAccessoryDisclosureIndicator) {
+            make.right.mas_equalTo(self.contentView.mas_right).offset(-5);
+        } else {
+            make.right.mas_equalTo(self.contentView.mas_right).offset(-20);
+        }
+        
     }];
 }
 
@@ -47,6 +56,8 @@
 {
     [self.titleLabel setText:title];
     [self.infoLabel setText:info];
+
+    [self setupConstraints];
 }
 
 @end
