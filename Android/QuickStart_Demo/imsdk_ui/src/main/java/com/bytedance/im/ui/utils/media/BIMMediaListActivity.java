@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +20,11 @@ import java.util.List;
 public class BIMMediaListActivity extends Activity implements MediaListAdapter.OnSelectMediaListener {
 
     public static final String RESULT_KEU = "select_media_info";
+    public static final String TYPE_SELECT = "type_select";
+    public static final int TYPE_VIDEO = 0;
+    public static final int TYPE_IMAGE = 1;
+    public static final int TYPE_ALL = 2;
+
     private int MAX_SIZE = 50 * 1000 * 1000;
     private RecyclerView mRecyclerView;
     private MediaHelper mediaHelper;
@@ -33,23 +40,56 @@ public class BIMMediaListActivity extends Activity implements MediaListAdapter.O
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
         MediaListAdapter adapter = new MediaListAdapter(this);
         mRecyclerView.setAdapter(adapter);
-        mediaHelper.getAllMedia(this, new MediaHelper.OnMediaLoadListener() {
-            @Override
-            public void onMediaLoad(List<MediaInfo> mediaInfoList) {
-                adapter.setData(mediaInfoList);
-            }
+        int type = getIntent().getIntExtra(TYPE_SELECT, TYPE_ALL);
+        if (type == TYPE_ALL) {
+            mediaHelper.getAllMedia(this, new MediaHelper.OnMediaLoadListener() {
+                @Override
+                public void onMediaLoad(List<MediaInfo> mediaInfoList) {
+                    adapter.setData(mediaInfoList);
+                }
 
-            @Override
-            public void onError() {
+                @Override
+                public void onError() {
 
-            }
-        });
+                }
+            });
+        } else if (type == TYPE_VIDEO) {
+            mediaHelper.getVideoMedia(this, new MediaHelper.OnMediaLoadListener() {
+                @Override
+                public void onMediaLoad(List<MediaInfo> mediaInfoList) {
+                    adapter.setData(mediaInfoList);
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+        } else if (type == TYPE_IMAGE) {
+            mediaHelper.getImageMedia(this, new MediaHelper.OnMediaLoadListener() {
+                @Override
+                public void onMediaLoad(List<MediaInfo> mediaInfoList) {
+                    adapter.setData(mediaInfoList);
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+        }
     }
 
     public static void startForResultMedia(Fragment fragment, int requestCode) {
+        startForResultMedia(fragment, requestCode, TYPE_ALL);
+    }
+
+    public static void startForResultMedia(Fragment fragment, int requestCode, int selectType) {
         Intent intent = new Intent(fragment.getActivity(), BIMMediaListActivity.class);
+        intent.putExtra(TYPE_SELECT, selectType);
         fragment.startActivityForResult(intent, requestCode);
     }
+
 
     @Override
     public void onSelect(MediaInfo info) {

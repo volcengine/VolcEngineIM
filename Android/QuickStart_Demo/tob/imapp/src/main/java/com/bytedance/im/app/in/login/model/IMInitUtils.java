@@ -15,6 +15,13 @@ import com.bytedance.im.app.custom.ui.BIMCouponMessageUI;
 import com.bytedance.im.app.utils.VEUtils;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.ui.BIMUIClient;
+import com.bytedance.im.ui.api.interfaces.BIMFilterToolBtnInterceptor;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.BaseToolBtn;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.VideoToolBtnV2;
+import com.bytedance.im.ui.utils.BIMUtils;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class IMInitUtils {
     private static final String TAG = "IMInitUtils";
@@ -73,6 +80,17 @@ public class IMInitUtils {
         //输入工具栏
         BIMUIClient.getInstance().registerToolBtn(new CouponToolBtn()); //优惠券
         BIMUIClient.getInstance().setUserProvider(new BIMDefaultUserProvider(500)); //需要先设置
+        BIMUIClient.getInstance().setToolBtnInterceptor(toolBtnList -> {
+            Iterator<BaseToolBtn> iterator = toolBtnList.iterator();
+            while (iterator.hasNext()) {
+                BaseToolBtn btn = iterator.next();
+                if (VEUtils.isShield() && (btn instanceof VideoToolBtnV2)) {
+                    iterator.remove();
+                }
+            }
+
+            return toolBtnList;
+        });
 
         BIMUIClient.getInstance().init(application, curAppId, env, swimLean, config);
 

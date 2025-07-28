@@ -103,10 +103,12 @@ public class TokenHelper {
     }
 
     public void getToken(long uid, int appId, GetTokenListener listener) {
+        long start = System.currentTimeMillis();
         tokenService.getToken(uid, appId)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                        Log.i(TAG, "getToken cost:" + (System.currentTimeMillis() - start));
                         try {
                             Log.i(TAG, "get token request uid: " + uid + " appId: " + appId + " url: " + call.request().url());
                             Log.i(TAG, "get token response: " + response.body() + " code: " + response.code());

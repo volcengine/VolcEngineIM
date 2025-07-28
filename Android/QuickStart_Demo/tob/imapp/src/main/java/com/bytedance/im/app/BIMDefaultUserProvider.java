@@ -57,7 +57,9 @@ public class BIMDefaultUserProvider implements BIMUserProvider {
 
             @Override
             public void onFailed(BIMErrorCode code) {
-
+                if (callback != null) {
+                    callback.onFailed(code);
+                }
             }
         });
     }

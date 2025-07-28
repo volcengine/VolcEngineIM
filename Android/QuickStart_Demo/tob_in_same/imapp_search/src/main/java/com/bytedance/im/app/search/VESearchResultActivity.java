@@ -26,6 +26,7 @@ import com.bytedance.im.ui.starter.ModuleStarter;
 import com.bytedance.im.ui.utils.BIMUIUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class VESearchResultActivity extends Activity {
@@ -55,11 +56,19 @@ public class VESearchResultActivity extends Activity {
     }
 
     private void initFragment() {
+
         searchTabList = new ArrayList<>();
         searchTabList.add(new SearchTab(this, "消息", BIMMessageType.BIM_MESSAGE_TYPE_TEXT, SearchTextFragment.create(conversationID, BIMMessageType.BIM_MESSAGE_TYPE_TEXT, pullDirection)));
         searchTabList.add(new SearchTab(this, "文件", BIMMessageType.BIM_MESSAGE_TYPE_FILE, SearchFileFragment.create(conversationID, BIMMessageType.BIM_MESSAGE_TYPE_FILE, pullDirection)));
-        searchTabList.add(new SearchTab(this, "图片", BIMMessageType.BIM_MESSAGE_TYPE_IMAGE, TypeMediaFragment.create(conversationID, BIMMessageType.BIM_MESSAGE_TYPE_IMAGE, pullDirection)));
-        searchTabList.add(new SearchTab(this, "视频", BIMMessageType.BIM_MESSAGE_TYPE_VIDEO, TypeMediaFragment.create(conversationID, BIMMessageType.BIM_MESSAGE_TYPE_VIDEO, pullDirection)));
+
+        List<BIMMessageType> imageTypeList = new ArrayList<>();
+        imageTypeList.add(BIMMessageType.BIM_MESSAGE_TYPE_IMAGE);
+        searchTabList.add(new SearchTab(this, "图片", BIMMessageType.BIM_MESSAGE_TYPE_IMAGE, TypeMediaFragment.create(conversationID, imageTypeList, pullDirection)));
+
+        List<BIMMessageType> videoTypeList = new ArrayList<>();
+        videoTypeList.add(BIMMessageType.BIM_MESSAGE_TYPE_VIDEO);
+        videoTypeList.add(BIMMessageType.BIM_MESSAGE_TYPE_VIDEO_V2);
+        searchTabList.add(new SearchTab(this, "视频", BIMMessageType.BIM_MESSAGE_TYPE_VIDEO, TypeMediaFragment.create(conversationID, videoTypeList, pullDirection)));
         searchTabList.add(new SearchTab(this, "日期", BIMMessageType.BIM_MESSAGE_TYPE_CUSTOM, SearchDayFragment.create(conversationID)));
         tabLinearLayout = findViewById(R.id.tab_container);
         tabLinearLayout.setWeightSum(searchTabList.size());

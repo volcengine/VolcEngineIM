@@ -23,6 +23,7 @@ import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.api.model.BIMSDKConfig;
 import com.bytedance.im.core.api.model.BIMUnReadInfo;
 import com.bytedance.im.imcloud.internal.utils.IMLog;
+import com.bytedance.im.ui.api.interfaces.BIMFilterToolBtnInterceptor;
 import com.bytedance.im.ui.api.interfaces.BIMMessageOperation;
 import com.bytedance.im.ui.api.interfaces.BIMUserExistChecker;
 import com.bytedance.im.ui.member.BIMGroupMemberProvider;
@@ -59,7 +60,7 @@ public class BIMUIClient {
     private BIMUserExistChecker userExistChecker;
 
     private BIMGroupMemberProvider bimGroupMemberProvider = new BIMGroupMemberProvider();
-
+    private BIMFilterToolBtnInterceptor toolBtnInterceptor = null;
     /**
      * @hidden
      */
@@ -503,7 +504,7 @@ public class BIMUIClient {
     }
 
     public BIMUserExistChecker getUserExistChecker() {
-//        if (userExistChecker == null) {
+        if (userExistChecker == null) {
             return new BIMUserExistChecker() {
                 @Override
                 public void check(List<Long> uidList, BIMResultCallback<Map<Long, Boolean>> callback) {
@@ -516,12 +517,22 @@ public class BIMUIClient {
                     callback.onSuccess(map);
                 }
             };
-//        }
-//        return userExistChecker;
+        }
+        return userExistChecker;
     }
 
     public void setUserExistChecker(BIMUserExistChecker userExistChecker) {
         this.userExistChecker = userExistChecker;
+    }
+
+    public void setToolBtnInterceptor(BIMFilterToolBtnInterceptor interceptor) {
+        this.toolBtnInterceptor = interceptor;
+    }
+    public BIMFilterToolBtnInterceptor getToolBtnInterceptor() {
+        if (toolBtnInterceptor == null) {
+            return toolBtnList -> toolBtnList;
+        }
+        return toolBtnInterceptor;
     }
 
     public BIMGroupMemberProvider getBimGroupMemberProvider() {

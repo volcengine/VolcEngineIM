@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +52,8 @@ public class BIMMessageListActivity extends Activity {
     private ImageView more;
     private BIMConversation bimConversation;
     private String conversationId;
+    private String toUserId;
+    private boolean isTemp = false;
     private int REQUEST_CODE_CONVERSATION_DETAIL = 5;
     private String titleName;
     private static final int MSG_WHAT_CHECK_TYPING = 100;
@@ -100,7 +103,9 @@ public class BIMMessageListActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
+        isTemp = intent.getBooleanExtra(BIMMessageListFragment.TARGET_IS_TEMP, false);
         conversationId = intent.getStringExtra(BIMMessageListFragment.TARGET_CID);
+        toUserId = intent.getStringExtra(BIMMessageListFragment.TARGET_USER_ID);
         setContentView(R.layout.ve_im_activity_message_list);
         back = findViewById(R.id.iv_back);
         tvTitle = findViewById(R.id.message_list_title);
@@ -201,7 +206,10 @@ public class BIMMessageListActivity extends Activity {
 
         @Override
         public void onSendMessage(BIMMessage message) {
-
+            if (message != null && TextUtils.isEmpty(conversationId) && !TextUtils.isEmpty(message.getConversationID())) {
+                conversationId = message.getConversationID();
+                refreshConversation();
+            }
         }
 
         @Override
@@ -216,7 +224,9 @@ public class BIMMessageListActivity extends Activity {
 
         @Override
         public void onUpdateMessage(BIMMessage message) {
-
+            if (isTemp) {
+                refreshConversation();
+            }
         }
 
         @Override
@@ -311,6 +321,14 @@ public class BIMMessageListActivity extends Activity {
             @Override
             public void onSuccess(BIMConversation conversation) {
                 bimConversation = conversation;
+                if (bimConversation.getConversationShortID() <= 0) {
+                    isTemp = true;
+                    more.setVisibility(View.GONE);
+                } else {
+                    isTemp = false;
+                    more.setVisibility(View.VISIBLE);
+                }
+
                 if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_ONE_CHAT) {
                     BIMUIClient.getInstance().getUserProvider().getUserInfoAsync(conversation.getOppositeUserID(), new BIMResultCallback<BIMUIUser>() {
                         @Override
@@ -321,7 +339,8 @@ public class BIMMessageListActivity extends Activity {
 
                         @Override
                         public void onFailed(BIMErrorCode code) {
-
+                            titleName = "用户" + conversation.getOppositeUserID();
+                            tvTitle.setText(titleName);
                         }
                     });
                 } else if (bimConversation.getConversationType() == BIMConversationType.BIM_CONVERSATION_TYPE_GROUP_CHAT
@@ -334,7 +353,10 @@ public class BIMMessageListActivity extends Activity {
 
             @Override
             public void onFailed(BIMErrorCode code) {
-
+                if (!TextUtils.isEmpty(toUserId) && TextUtils.isEmpty(conversationId)) {
+                    tvTitle.setText("用户" + toUserId);
+                    more.setVisibility(View.GONE);
+                }
             }
         });
     }

@@ -18,14 +18,14 @@ public class MsgListViewModel {
     private static final String TAG = "MsgListViewModel";
     private BIMMessage anchor = null;
     private String conversationId;
-    private BIMMessageType messageType;
+    private List<BIMMessageType> messageTypeList;
     private boolean hasMore = true;
     private boolean isPulling;
     private BIMPullDirection bimPullDirection;
 
-    public MsgListViewModel(String conversationID, BIMMessageType messageType,BIMPullDirection bimPullDirection) {
+    public MsgListViewModel(String conversationID, List<BIMMessageType> messageTypeList,BIMPullDirection bimPullDirection) {
         this.conversationId = conversationID;
-        this.messageType = messageType;
+        this.messageTypeList = messageTypeList;
         this.bimPullDirection = bimPullDirection;
     }
 
@@ -38,7 +38,7 @@ public class MsgListViewModel {
                 .Builder()
                 .anchorMessage(anchor)
                 .limit(32)
-                .messageTypeList(Collections.singletonList(messageType))
+                .messageTypeList(messageTypeList)
                 .direction(bimPullDirection)
                 .build();
         BIMClient.getInstance().getLocalMessageListByType(conversationId, option, new BIMResultCallback<BIMMessageListResult>() {
@@ -46,7 +46,7 @@ public class MsgListViewModel {
             public void onSuccess(BIMMessageListResult bimMessageListResult) {
                 hasMore = bimMessageListResult.isHasMore();
                 anchor = bimMessageListResult.getAnchorMessage();
-                Log.i(TAG, "loadMore onSuccess messageType: " + messageType + " hasMore: " + hasMore);
+                Log.i(TAG, "loadMore onSuccess messageType: " + messageTypeList.get(0) + " hasMore: " + hasMore);
                 isPulling = false;
                 callback.onSuccess(bimMessageListResult.getMessageList());
             }
@@ -64,9 +64,5 @@ public class MsgListViewModel {
 
     public boolean isPulling() {
         return isPulling;
-    }
-
-    public BIMMessageType getMessageType() {
-        return messageType;
     }
 }

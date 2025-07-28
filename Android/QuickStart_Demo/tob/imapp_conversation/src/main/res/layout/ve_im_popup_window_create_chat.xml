@@ -115,4 +115,33 @@
             android:textSize="16sp"
             android:text="清除未读" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/business_im_e8e8"/>
+
+    <LinearLayout
+        android:id="@+id/ll_send_msg_with_create_conv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="24dp"
+        android:paddingTop="17dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="17dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/icon_im_create_conversation_group" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7dp"
+            android:textColor="@color/business_im_222"
+            android:textSize="16sp"
+            android:text="创建本地临时单聊" />
+    </LinearLayout>
 </LinearLayout>

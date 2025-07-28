@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -35,7 +34,6 @@ import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSendCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
 import com.bytedance.im.core.api.interfaces.BIMStreamMessageListener;
-import com.bytedance.im.core.api.model.BIMConvTag;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMGetMessageOption;
 import com.bytedance.im.core.api.model.BIMMessage;
@@ -46,12 +44,9 @@ import com.bytedance.im.core.api.model.BIMReadReceipt;
 import com.bytedance.im.imcloud.client.IMEnum;
 import com.bytedance.im.imcloud.client.IMInfoKeys;
 import com.bytedance.im.imcloud.model.LocalPropertyItem;
-import com.bytedance.im.imcloud.model.Message;
 import com.bytedance.im.core.model.inner.msg.BIMTextElement;
 import com.bytedance.im.core.service.BIMINService;
-import com.bytedance.im.core.service.BIMMessageService;
 import com.bytedance.im.core.service.manager.BIMMessageManager;
-import com.bytedance.im.imcloud.stream.interfaces.StreamMessageListener;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.api.BIMUIUser;
@@ -67,6 +62,7 @@ import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.BaseToolBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.CustomToolBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.FileToolBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.ImageToolBtn;
+import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.VideoToolBtnV2;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.PhotoTooBtn;
 import com.bytedance.im.ui.message.adapter.ui.widget.pop.BIMMessageOptionPopupWindow;
 import com.bytedance.im.ui.user.BIMUserProvider;
@@ -80,7 +76,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -90,6 +85,8 @@ public class BIMMessageListFragment extends Fragment {
     private static final String TAG = "VEMessageListFragment";
     public static final String TARGET_CID = "target_cid";
     public static final String TARGET_MSG_ID = "target_msg_id";
+    public static final String TARGET_USER_ID = "target_user_id";
+    public static final String TARGET_IS_TEMP = "target_is_temp";
     public static final String ACTION = "com.bytedance.im.page.message_list";
     private static String CHECK_MSG_KEY = "s:send_response_check_msg";
     private static String CHECK_CODE_KEY = "s:send_response_check_code";
@@ -104,6 +101,8 @@ public class BIMMessageListFragment extends Fragment {
     private boolean isSyncingOlder = false;
     private boolean isSyncingNewer = false;
     private VEInPutView inPutView;
+    private boolean isTemp = false;
+    private String toUserId = "";
 
     private OnPortraitClickListener onPortraitClickListener;
     private VEInPutView.OnInputListener onInputListener;
@@ -127,7 +126,9 @@ public class BIMMessageListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getActivity().getIntent();
+        toUserId = intent.getStringExtra(TARGET_USER_ID);
         conversationId = intent.getStringExtra(TARGET_CID);
+        isTemp = intent.getBooleanExtra(TARGET_IS_TEMP, false);
         startMsgId = intent.getStringExtra(BIMMessageListFragment.TARGET_MSG_ID);
         BIMLog.i(TAG, "onCreate() conversationId: " + conversationId + " startMsgId: " + startMsgId);
     }
@@ -327,6 +328,19 @@ public class BIMMessageListFragment extends Fragment {
 
             }
         }));
+        if (BIMClient.getInstance().isToB()) {//优化视频消息发送
+            toolBtnList.add(new VideoToolBtnV2(new BIMResultCallback<MediaInfo>() {
+                @Override
+                public void onSuccess(MediaInfo mediaInfo) {
+                    sendVideoMessageV2(mediaInfo.getFilePath(), mediaInfo.getUri());
+                }
+
+                @Override
+                public void onFailed(BIMErrorCode code) {
+
+                }
+            }));
+        }
         toolBtnList.add(new PhotoTooBtn(new BIMResultCallback<MediaInfo>() {
             @Override
             public void onSuccess(MediaInfo info) {
@@ -360,8 +374,23 @@ public class BIMMessageListFragment extends Fragment {
 
             }
         }));
+
+        for (BaseToolBtn btn: customToolBtnList) {
+            btn.setSendMessageCallback(new BIMResultCallback<BIMMessage>() {
+                @Override
+                public void onSuccess(BIMMessage message) {
+                    sendMessage(message);
+                }
+
+                @Override
+                public void onFailed(BIMErrorCode code) {
+
+                }
+            });
+        }
+
         toolBtnList.addAll(customToolBtnList);
-        return toolBtnList;
+        return BIMUIClient.getInstance().getToolBtnInterceptor().onFilterToolBtn(toolBtnList);
     }
 
     @Override
@@ -374,6 +403,11 @@ public class BIMMessageListFragment extends Fragment {
         BIMClient.getInstance().getConversation(conversationId, new BIMResultCallback<BIMConversation>() {
             @Override
             public void onSuccess(BIMConversation conversation) {
+                if (conversation.getConversationShortID() <= 0) {
+                    isTemp = true;
+                } else {
+                    isTemp = false;
+                }
                 bimConversation = conversation;
                 String name = "";
                 String draft = bimConversation.getDraftText();
@@ -390,7 +424,9 @@ public class BIMMessageListFragment extends Fragment {
 
             @Override
             public void onFailed(BIMErrorCode code) {
-
+                if (isTemp) {
+                    initInputView(null);
+                }
             }
         });
     }
@@ -665,6 +701,12 @@ public class BIMMessageListFragment extends Fragment {
         sendMessage(videoMessage);
     }
 
+    private void sendVideoMessageV2(String path, Uri uri) {
+        BIMLog.i(TAG, "sendVideoMessageV2() path: " + path + " uri: " + uri);
+        BIMMessage videoMessageV2 = BIMClient.getInstance().createVideoMessageV2(path);
+        sendMessage(videoMessageV2);
+    }
+
     private void sendFileMessage(Uri uri, String path, String fileName, long length) {
         BIMLog.i(TAG, "sendFileMessage() uri: " + uri + " path: " + path + " fileName: " + fileName + " length: " + length);
         BIMMessage fileMessage = BIMClient.getInstance().createFileMessage(uri, path, fileName, length);
@@ -746,16 +788,17 @@ public class BIMMessageListFragment extends Fragment {
             Toast.makeText(getActivity(), "消息为空", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (bimConversation == null || bimConversation.isDissolved()) {
+        if (!isTemp && (bimConversation == null || bimConversation.isDissolved())) {
             Toast.makeText(getActivity(), "群聊已解散", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (!bimConversation.isMember()) {
+        if (!isTemp && !bimConversation.isMember()) {
             Toast.makeText(getActivity(), "已退出群组", Toast.LENGTH_SHORT).show();
             return;
         }
         BIMLog.i(TAG, "sendMessage() uuid: " + msg.getUuid());
-        BIMClient.getInstance().sendMessage(msg, bimConversation.getConversationID(), new BIMSendCallback() {
+
+        BIMSendCallback callback = new BIMSendCallback() {
 
             @Override
             public void onProgress(BIMMessage message, int progress) {
@@ -777,6 +820,8 @@ public class BIMMessageListFragment extends Fragment {
                 if (adapter.insertOrUpdateMessage(bimMessage) == BIMMessageAdapter.APPEND) {
                     scrollBottom();
                 }
+
+                checkConversation(bimMessage.getConversationID());
             }
 
             @Override
@@ -813,7 +858,13 @@ public class BIMMessageListFragment extends Fragment {
                     scrollBottom();
                 }
             }
-        });
+        };
+
+        if (isTemp) {
+            BIMClient.getInstance().sendMessageWithUserId(msg, "" + toUserId, callback);
+        } else {
+            BIMClient.getInstance().sendMessage(msg, bimConversation.getConversationID(), callback);
+        }
     }
 
     private void addTipsMessage(String tips) {
@@ -1014,6 +1065,10 @@ public class BIMMessageListFragment extends Fragment {
     }
 
     private void initInputView(BIMConversation bimConversation) {
+        if (inPutView.isInit() && bimConversation != null) {
+            inPutView.changeConversationId(bimConversation.getConversationID());
+            return;
+        }
         inPutView.initFragment(this, bimConversation, initToolbtns(), new VoiceInputButton.OnAudioRecordListener() {
             @Override
             public void onStart() {
@@ -1164,5 +1219,12 @@ public class BIMMessageListFragment extends Fragment {
 
     public static void registerCustomToolBtn(BaseToolBtn toolBtn) {
         customToolBtnList.add(toolBtn);
+    }
+
+    private void checkConversation(String msgConversationId) {
+        if (isTemp && bimConversation == null && TextUtils.isEmpty(conversationId) && !TextUtils.isEmpty(msgConversationId)) {
+            conversationId = msgConversationId;
+            refreshConversation();
+        }
     }
 }

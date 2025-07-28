@@ -52,7 +52,7 @@ public class VESelectSingleActivity extends Activity {
                 checker.check(uidList, new BIMResultCallback<Map<Long, Boolean>>() {
                     @Override
                     public void onSuccess(Map<Long, Boolean> longBooleanMap) {
-                        if (longBooleanMap.get(uid)!=null) {
+                        if (longBooleanMap.get(uid)!=null && true == longBooleanMap.get(uid)) {
                             Intent intent  = new Intent();
                             intent.putExtra(ModuleStarter.MODULE_KEY_UID, uid);
                             setResult(RESULT_OK,intent);

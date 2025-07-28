@@ -89,6 +89,9 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
             public boolean onLongClick(View v) {
                 if (onItemLongClickListener != null) {
                     int p = veViewHolder.getAdapterPosition();
+                    if (p < 0 || p >= data.size()) {
+                        return false;
+                    }
                     return onItemLongClickListener.onItemLongClick(data.get(p), veViewHolder.getAdapterPosition());
                 }
                 return false;

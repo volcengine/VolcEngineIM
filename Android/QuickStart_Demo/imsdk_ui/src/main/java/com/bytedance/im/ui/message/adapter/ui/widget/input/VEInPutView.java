@@ -173,13 +173,21 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
         return tvPriority;
     }
 
+    public void changeConversationId(String conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    public boolean isInit() {
+        return isInit;
+    }
+
     public void initFragment(Fragment fragment, BIMConversation conversation, List<BaseToolBtn> baseToolBtns, VoiceInputButton.OnAudioRecordListener audioRecordListener, OnInputListener inputListener) {
-        if (isInit || conversation == null) {
+        if (isInit) {
             return;
         }
         isInit = true;//仅可以初始化一次
         this.fragment = fragment;
-        this.conversationId = conversation.getConversationID();
+        this.conversationId = conversation == null ? "" : conversation.getConversationID();
         baseToolBtnList = baseToolBtns;
         mVoiceInputTv.init(fragment, audioRecordListener);
         this.listener = inputListener;
@@ -295,7 +303,7 @@ public class VEInPutView extends FrameLayout implements View.OnClickListener, Em
                 sendBtn.setVisibility(View.VISIBLE);
             }
             boolean isSameLast = last != null && s != null && s.toString().equals(last);
-            if (!isSameLast && s.toString().endsWith("@")) {
+            if (!isSameLast && s.toString().endsWith("@") && !TextUtils.isEmpty(conversationId)) {
                 //跳转选择
                 BIMLog.i(TAG, "onAtClick()");
                 BIMGroupMemberListActivity.startForResult(fragment, conversationId, REQUEST_CODE_SELECT_USER_FOR_AT);

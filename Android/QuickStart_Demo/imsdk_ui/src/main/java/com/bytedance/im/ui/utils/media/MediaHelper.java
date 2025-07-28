@@ -63,6 +63,67 @@ public class MediaHelper {
         }).start();
     }
 
+    public void getVideoMedia(Context context, OnMediaLoadListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<MediaInfo> allList = new ArrayList<>();
+                allList.addAll(getVideos(context));
+                Collections.sort(allList, new Comparator<MediaInfo>() {
+                    @Override
+                    public int compare(MediaInfo o1, MediaInfo o2) {
+                        if (o2.getFileLastModified() > o1.getFileLastModified()) {
+                            return 1;
+                        } else if (o2.getFileLastModified() == o1.getFileLastModified()) {
+                            return 0;
+                        } else {
+                            return -1;
+                        }
+                    }
+                });
+
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    if (allList == null) {
+                        listener.onError();
+                    } else {
+                        listener.onMediaLoad(allList);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    public void getImageMedia(Context context, OnMediaLoadListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<MediaInfo> allList = new ArrayList<>();
+                allList.addAll(getImages(context));
+                Collections.sort(allList, new Comparator<MediaInfo>() {
+                    @Override
+                    public int compare(MediaInfo o1, MediaInfo o2) {
+                        if (o2.getFileLastModified() > o1.getFileLastModified()) {
+                            return 1;
+                        } else if (o2.getFileLastModified() == o1.getFileLastModified()) {
+                            return 0;
+                        } else {
+                            return -1;
+                        }
+                    }
+                });
+
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    if (allList == null) {
+                        listener.onError();
+                    } else {
+                        listener.onMediaLoad(allList);
+                    }
+                });
+            }
+        }).start();
+    }
+
+
     private List<MediaInfo> getImages(Context context) {
         Cursor cursor = null;
         List<MediaInfo> result = new ArrayList<>();

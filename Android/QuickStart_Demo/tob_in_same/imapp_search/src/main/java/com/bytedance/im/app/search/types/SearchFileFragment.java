@@ -9,12 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import androidx.annotation.ArrayRes;
 import androidx.annotation.Nullable;
 
 import com.bytedance.im.app.search.R;
 import com.bytedance.im.app.search.types.widget.SearchBar;
 import com.bytedance.im.core.api.enums.BIMMessageType;
 import com.bytedance.im.core.api.enums.BIMPullDirection;
+
+import java.util.ArrayList;
 
 public class SearchFileFragment extends Fragment {
     private SearchBar searchBar;
@@ -61,7 +64,9 @@ public class SearchFileFragment extends Fragment {
             }
         });
         searchMsgFragment = new SearchMsgFragment();    //搜索fragment
-        typeMediaFragment = TypeMediaFragment.create(conversationID, bimMessageType,bimPullDirection);    //媒体列表fragment
+        ArrayList<BIMMessageType> fileTypeList = new ArrayList<>();
+        fileTypeList.add(bimMessageType);
+        typeMediaFragment = TypeMediaFragment.create(conversationID, fileTypeList, bimPullDirection);    //媒体列表fragment
         FragmentManager fragmentManager = getChildFragmentManager();
         fragmentManager.beginTransaction().add(R.id.frame_layout, searchMsgFragment)
                 .add(R.id.frame_layout, typeMediaFragment)
