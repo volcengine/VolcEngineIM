@@ -6,13 +6,13 @@ PODS:
     - Masonry
     - MJRefresh
     - SDWebImage
-  - imsdk-tob/Config/CN (1.24.0-alpha.0):
+  - imsdk-tob/Config/CN (1.24.0):
     - RangersAPM/CN
     - RangersAppLog/Host/CN
-  - imsdk-tob/Core (1.24.0-alpha.0):
+  - imsdk-tob/Core (1.24.0):
     - imsdk-tob/Core_Common
     - TTSDK/Uploader (<= 1.46.2.9-premium, >= 1.43.1.9-premium)
-  - imsdk-tob/Core_Common (1.24.0-alpha.0):
+  - imsdk-tob/Core_Common (1.24.0):
     - Bolts/Tasks
     - IGListDiffKit
     - imsdk-tob/Feature_EssentialPB
@@ -33,7 +33,7 @@ PODS:
     - TTNetworkManager (~> 4.1)
     - WCDB.objc (~> 2.1.11)
     - YYCache
-  - imsdk-tob/Feature_EssentialPB (1.24.0-alpha.0):
+  - imsdk-tob/Feature_EssentialPB (1.24.0):
     - Protobuf (= 3.21.9)
   - libextobjc (0.6):
     - libextobjc/EXTADT (= 0.6)
@@ -201,8 +201,8 @@ PODS:
 DEPENDENCIES:
   - FSCalendar
   - im-uikit-tob (from `../`)
-  - imsdk-tob/Config/CN (= 1.24.0-alpha.0)
-  - imsdk-tob/Core (= 1.24.0-alpha.0)
+  - imsdk-tob/Config/CN (= 1.24.0)
+  - imsdk-tob/Core (= 1.24.0)
   - Masonry
   - MBProgressHUD
   - MJRefresh
@@ -245,7 +245,7 @@ SPEC CHECKSUMS:
   FSCalendar: 2d1d0d9398f12d439f55c1fe0f01525b151b8260
   IGListDiffKit: 02d937d7e714d6f558771f284ed80668d483b522
   im-uikit-tob: 36e1f82e73be7b0610714836d2e551e21334196b
-  imsdk-tob: 04c4e60e813662143276b82a260f70159ca24e63
+  imsdk-tob: 1d53ad673a9efe23fa7de4fca2b9037c31230336
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
@@ -266,6 +266,6 @@ SPEC CHECKSUMS:
   WCDBOptimizedSQLCipher: 9bceac087eff9625b151838d3a30364f53f71ad9
   YYCache: 8105b6638f5e849296c71f331ff83891a4942952
 
-PODFILE CHECKSUM: 87be36453d12363cbd5b37e310a525da56421457
+PODFILE CHECKSUM: 75e46b7aa1f6e9a982364e2bd508102312608de2
 
 COCOAPODS: 1.16.2
