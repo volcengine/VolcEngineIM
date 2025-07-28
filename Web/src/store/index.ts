@@ -169,6 +169,13 @@ const SpecialBotConvStickOnTop = atom<boolean>({
   key: 'SpecialBotConvStickOnTop',
   default: true,
 });
+const SendSingleMsgType = atom<{ useToUserId?: boolean; conversationId: string }>({
+  key: 'sendSingleMsgType',
+  default: {
+    useToUserId: false,
+    conversationId: '',
+  },
+});
 
 export {
   UserId,
@@ -198,4 +205,5 @@ export {
   ClearBotContextMessages,
   // DeleteSpecialBotConv,
   SpecialBotConvStickOnTop,
+  SendSingleMsgType,
 };

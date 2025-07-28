@@ -1,5 +1,5 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { FileType, im_proto, IMEvent, Message } from '@volcengine/im-web-sdk';
+import { Conversation, FileType, im_proto, IMEvent, Message } from '@volcengine/im-web-sdk';
 
 import {
   BytedIMInstance,
@@ -10,6 +10,7 @@ import {
   SendMessagePriority,
   UserId,
   EditMessage,
+  SendSingleMsgType,
 } from '../store';
 import { CalcVideo, getImageSize, getMessagePreview } from '../utils';
 import { Message as ArcoMessage } from '@arco-design/web-react';
@@ -51,6 +52,7 @@ const useMessage = () => {
   const setFileUploadProcess = useSetRecoilState(FileUploadProcessStore);
   const userId = useRecoilValue(UserId);
   const priority = useRecoilValue(SendMessagePriority);
+  const sendSingleMsgType = useRecoilValue(SendSingleMsgType);
 
   /**
    * 重发消息
@@ -79,9 +81,18 @@ const useMessage = () => {
    * 发送普通文本消息
    * @param msg
    */
-  const sendTextMessage = async (msg: object) => {
+  const sendTextMessage = async (msg: any) => {
     if (editingMessage && editingMessage.type === im_proto.MessageType.MESSAGE_TYPE_TEXT) {
       await editTextMessage(editingMessage, JSON.stringify(msg));
+      return;
+    }
+
+    if (
+      currentConversation.type == im_proto.ConversationType.ONE_TO_ONE_CHAT &&
+      sendSingleMsgType.useToUserId &&
+      sendSingleMsgType.conversationId === currentConversation.id
+    ) {
+      sendTextMessageUseToUserId(currentConversation.toParticipantUserId, msg.text);
       return;
     }
 
@@ -102,6 +113,7 @@ const useMessage = () => {
     sendMessageCheckCode(result);
     setReferenceMessage(null);
   };
+
   const editTextMessage = async (message: Message, content: string) => {
     const resp = await bytedIMInstance.modifyMessage({
       message,
@@ -109,11 +121,40 @@ const useMessage = () => {
     });
     setEditingMessage(null);
   };
+
+  /**
+   * 通过指定toUserId，通过server发送普通文本消息(目前仅支持单聊、 int64类型uid)
+   * @param toUserId
+   * @param messageText
+   */
+  const sendTextMessageUseToUserId = async (toUserId: string, messageText: string) => {
+    const params = {
+      toUserId,
+      content: JSON.stringify({ text: messageText }),
+    };
+    const message = await bytedIMInstance.createTextMessage(params);
+    console.log('sendTextMessageUseToUserId message', message);
+    const result = await bytedIMInstance.sendMessage({ message, priority });
+    console.log('sendTextMessageUseToUserId result', result);
+    const conversationId = result?.body?.conversation?.conversation_id;
+    sendMessageCheckCode(result);
+    return { success: result?.success, conversationId: conversationId || result?.payload?.conversationId };
+  };
+
   /**
    * 发送文件消息
    * @param file
    */
   const sendFileMessage = async (file: File) => {
+    if (
+      currentConversation.type == im_proto.ConversationType.ONE_TO_ONE_CHAT &&
+      sendSingleMsgType.useToUserId &&
+      sendSingleMsgType.conversationId === currentConversation.id
+    ) {
+      sendFileMessageUseToUserId(currentConversation.toParticipantUserId, file);
+      return;
+    }
+
     const message = await bytedIMInstance.createFileMessage({
       conversation: currentConversation,
       fileInfo: {
@@ -132,11 +173,42 @@ const useMessage = () => {
   };
 
   /**
+   * 通过指定toUserId，通过server发送文件消息(目前仅支持单聊、 int64类型uid)
+   * @param toUserId
+   * @param file
+   */
+  const sendFileMessageUseToUserId = async (toUserId: string, file: File) => {
+    const params = {
+      toUserId,
+      fileInfo: {
+        type: FileType.CommonFile,
+        fileHandler: file,
+        displayType: 'media',
+        onUploadProcess: res => setFileUploadProcess(cur => ({ ...cur, [message.clientId]: res })),
+      },
+    };
+    const message = await bytedIMInstance.createFileMessage(params);
+    console.log('sendFileMessageUseToUserId message', message);
+    const result = await bytedIMInstance.sendMessage({ message, priority });
+    console.log('sendFileMessageUseToUserId result', result);
+    sendMessageCheckCode(result);
+  };
+
+  /**
    * 发送图片消息
    * @param file
    * @param encrypt
    */
   const sendImageMessage = async (file: File, encrypt?: boolean) => {
+    if (
+      currentConversation.type == im_proto.ConversationType.ONE_TO_ONE_CHAT &&
+      sendSingleMsgType.useToUserId &&
+      sendSingleMsgType.conversationId === currentConversation.id
+    ) {
+      sendImageMessageUseToUserId(currentConversation.toParticipantUserId, file, encrypt);
+      return;
+    }
+
     const objectUrl = URL?.createObjectURL(file);
     const { width, height } = (await getImageSize(objectUrl)) || {};
     const message = await bytedIMInstance.createImageMessage({
@@ -164,10 +236,53 @@ const useMessage = () => {
   };
 
   /**
+   * 通过指定toUserId，通过server发送图片消息(目前仅支持单聊、 int64类型uid)
+   * @param toUserId
+   * @param file
+   * @param encrypt
+   */
+  const sendImageMessageUseToUserId = async (toUserId: string, file: File, encrypt?: boolean) => {
+    const objectUrl = URL?.createObjectURL(file);
+    const { width, height } = (await getImageSize(objectUrl)) || {};
+
+    const message = await bytedIMInstance.createImageMessage({
+      toUserId,
+      fileInfo: {
+        type: FileType.Image,
+        fileHandler: file,
+        displayType: 'media', // image
+        encrypt: encrypt ? true : undefined,
+        onUploadProcess: res => setFileUploadProcess(cur => ({ ...cur, [message.clientId]: res })),
+      },
+      ext: {
+        's:file_ext_key_original_width': width?.toString(),
+        's:file_ext_key_original_height': height?.toString(),
+      },
+    });
+    console.log('sendImageMessageUseToUserId message', message);
+    const result = await bytedIMInstance.sendMessage({ message, priority });
+    console.log('sendImageMessageUseToUserId result', result);
+    sendMessageCheckCode(result);
+
+    setTimeout(() => {
+      URL.revokeObjectURL(objectUrl);
+    });
+  };
+
+  /**
    * 发送视频消息
    * @param file
    */
   const sendVideoMessage = async (file: File) => {
+    if (
+      currentConversation.type == im_proto.ConversationType.ONE_TO_ONE_CHAT &&
+      sendSingleMsgType.useToUserId &&
+      sendSingleMsgType.conversationId === currentConversation.id
+    ) {
+      sendVideoMessageUseToUserId(currentConversation.toParticipantUserId, file);
+      return;
+    }
+
     if (!calcVideoInstance) {
       calcVideoInstance = new CalcVideo();
     }
@@ -195,9 +310,123 @@ const useMessage = () => {
   };
 
   /**
+   * 通过指定toUserId，通过server发送视频消息(目前仅支持单聊、 int64类型uid)
+   * @param toUserId
+   * @param file
+   */
+  const sendVideoMessageUseToUserId = async (toUserId: string, file: File) => {
+    if (!calcVideoInstance) {
+      calcVideoInstance = new CalcVideo();
+    }
+    const { width, height, duration, coverURL } = (await calcVideoInstance.loadVideo(file, 2)) || {};
+
+    const params = {
+      toUserId,
+      fileInfo: {
+        type: FileType.Video,
+        fileHandler: file,
+        displayType: 'media',
+        onUploadProcess: res => setFileUploadProcess(cur => ({ ...cur, [message.clientId]: res })),
+      },
+      ext: {
+        duration: duration?.toString(),
+        // coverURL,
+        original_width: width?.toString(),
+        original_height: height?.toString(),
+      },
+    };
+    const message = await bytedIMInstance.createVideoMessage(params);
+    console.log('sendVideoMessageUseToUserId message', message);
+    const result = await bytedIMInstance.sendMessage({ message, priority });
+    console.log('sendVideoMessageUseToUserId result', result);
+    sendMessageCheckCode(result);
+  };
+
+  /**
+   * 发送视频消息 V1 版本 (使用 MESSAGE_TYPE_VIDEO)
+   * @param file
+   */
+  const sendVideoMessageV1 = async (file: File) => {
+    if (
+      currentConversation.type == im_proto.ConversationType.ONE_TO_ONE_CHAT &&
+      sendSingleMsgType.useToUserId &&
+      sendSingleMsgType.conversationId === currentConversation.id
+    ) {
+      sendVideoMessageV1UseToUserId(currentConversation.toParticipantUserId, file);
+      return;
+    }
+    if (!calcVideoInstance) {
+      calcVideoInstance = new CalcVideo();
+    }
+    const { width, height, duration, coverURL } = (await calcVideoInstance.loadVideo(file, 2)) || {};
+    const message = await bytedIMInstance.createVideoMessage({
+      conversation: currentConversation,
+      fileInfo: {
+        type: FileType.Video,
+        fileHandler: file,
+        displayType: 'media',
+        onUploadProcess: res => setFileUploadProcess(cur => ({ ...cur, [message.clientId]: res })),
+      },
+      ext: await insertAliasExtForMassChat({
+        duration: duration?.toString(),
+        // coverURL,
+        original_width: width?.toString(),
+        original_height: height?.toString(),
+      }),
+      videoType: 'v1',
+    });
+    if (currentConversation.type == im_proto.ConversationType.MASS_CHAT) {
+      bytedIMInstance?.event?.emit?.(IMEvent.MessageUpsert, null, message);
+    }
+
+    sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
+  };
+
+  /**
+   * 通过指定toUserId，通过server发送视频消息 V1 版本 (使用 MESSAGE_TYPE_VIDEO)
+   * @param toUserId
+   * @param file
+   */
+  const sendVideoMessageV1UseToUserId = async (toUserId: string, file: File) => {
+    if (!calcVideoInstance) {
+      calcVideoInstance = new CalcVideo();
+    }
+    const { width, height, duration, coverURL } = (await calcVideoInstance.loadVideo(file, 2)) || {};
+    const message = await bytedIMInstance.createVideoMessage({
+      toUserId,
+      fileInfo: {
+        type: FileType.Video,
+        fileHandler: file,
+        displayType: 'media',
+        onUploadProcess: res => setFileUploadProcess(cur => ({ ...cur, [message.clientId]: res })),
+      },
+      ext: {
+        duration: duration?.toString(),
+        // coverURL,
+        original_width: width?.toString(),
+        original_height: height?.toString(),
+      },
+      videoType: 'v1',
+    });
+    console.log('sendVideoMessageV1UseToUserId message', message);
+    const result = await bytedIMInstance.sendMessage({ message, priority });
+    console.log('sendVideoMessageV1UseToUserId result', result);
+    sendMessageCheckCode(result);
+  };
+
+  /**
    * 发送语音消息
    */
   const sendAudioMessage = async ({ file, duration }: { file: File; duration?: number }) => {
+    if (
+      currentConversation.type == im_proto.ConversationType.ONE_TO_ONE_CHAT &&
+      sendSingleMsgType.useToUserId &&
+      sendSingleMsgType.conversationId === currentConversation.id
+    ) {
+      sendAudioMessageUseToUserId(currentConversation.toParticipantUserId, { file, duration });
+      return;
+    }
+
     const message = await bytedIMInstance.createAudioMessage({
       conversation: currentConversation,
       fileInfo: {
@@ -217,11 +446,44 @@ const useMessage = () => {
   };
 
   /**
+   * 通过指定toUserId，通过server发送语音消息(目前仅支持单聊、 int64类型uid)
+   */
+  const sendAudioMessageUseToUserId = async (
+    toUserId: string,
+    { file, duration }: { file: File; duration?: number }
+  ) => {
+    const params = {
+      toUserId,
+      fileInfo: {
+        type: FileType.Audio,
+        fileHandler: file,
+        displayType: 'media',
+        audioDuration: duration,
+        onUploadProcess: res => setFileUploadProcess(cur => ({ ...cur, [message.clientId]: res })),
+      },
+    };
+    const message = await bytedIMInstance.createAudioMessage(params);
+    console.log('sendAudioMessageUseToUserId message', message);
+    const result = await bytedIMInstance.sendMessage({ message, priority });
+    console.log('sendAudioMessageUseToUserId result', result);
+    sendMessageCheckCode(result);
+  };
+
+  /**
    * 发送系统消息
    * @param conversation
    * @param text
    */
-  const sendSystemMessage = async (conversation, text: string) => {
+  const sendSystemMessage = async (conversation: Conversation, text: string) => {
+    if (
+      currentConversation.type == im_proto.ConversationType.ONE_TO_ONE_CHAT &&
+      sendSingleMsgType.useToUserId &&
+      sendSingleMsgType.conversationId === conversation.id
+    ) {
+      sendSystemMessageUseToUserId(currentConversation.toParticipantUserId, text);
+      return;
+    }
+
     const message = await bytedIMInstance.createCustomMessage({
       conversation,
       content: JSON.stringify({
@@ -233,9 +495,38 @@ const useMessage = () => {
   };
 
   /**
+   * 通过指定toUserId，通过server发送系统消息(目前仅支持单聊、 int64类型uid)
+   * @param toUserId
+   * @param text
+   */
+  const sendSystemMessageUseToUserId = async (toUserId: string, text: string) => {
+    const params = {
+      toUserId,
+      content: JSON.stringify({
+        type: 2,
+        text,
+      }),
+    };
+    const message = await bytedIMInstance.createCustomMessage(params);
+    console.log('sendSystemMessageUseToUserId message', message);
+    const result = await bytedIMInstance.sendMessage({ message, priority });
+    console.log('sendSystemMessageUseToUserId result', result);
+    sendMessageCheckCode(result);
+  };
+
+  /**
    * 发送自定义消息
    */
   const sendVolcMessage = async () => {
+    if (
+      currentConversation.type == im_proto.ConversationType.ONE_TO_ONE_CHAT &&
+      sendSingleMsgType.useToUserId &&
+      sendSingleMsgType.conversationId === currentConversation.id
+    ) {
+      sendVolcMessageUseToUserId(currentConversation.toParticipantUserId);
+      return;
+    }
+
     const ext = {};
     await insertAliasExtForMassChat(ext);
     const message = await bytedIMInstance.createCustomMessage({
@@ -255,9 +546,36 @@ const useMessage = () => {
   };
 
   /**
+   * 通过指定toUserId，通过server发送自定义消息(目前仅支持单聊、 int64类型uid)
+   */
+  const sendVolcMessageUseToUserId = async (toUserId: string) => {
+    const params = {
+      toUserId,
+      content: JSON.stringify({
+        type: 1,
+        link: 'https://www.volcengine.com/',
+        text: '欢迎体验火山引擎即时通讯 IM demo',
+      }),
+    };
+    const message = await bytedIMInstance.createCustomMessage(params);
+    console.log('sendVolcMessageUseToUserId message', message);
+    const result = await bytedIMInstance.sendMessage({ message, priority });
+    console.log('sendVolcMessageUseToUserId result', result);
+    sendMessageCheckCode(result);
+  };
+
+  /**
    * 发送优惠券消息
    */
   const sendCouponMessage = async () => {
+    if (
+      currentConversation.type == im_proto.ConversationType.ONE_TO_ONE_CHAT &&
+      sendSingleMsgType.useToUserId &&
+      sendSingleMsgType.conversationId === currentConversation.id
+    ) {
+      sendCouponMessageUseToUserId(currentConversation.toParticipantUserId);
+      return;
+    }
     const ext = {};
     await insertAliasExtForMassChat(ext);
     const message = await bytedIMInstance.createCustomMessage({
@@ -276,6 +594,26 @@ const useMessage = () => {
     }
 
     sendMessageCheckCode(await bytedIMInstance.sendMessage({ message, priority }));
+  };
+
+  /**
+   * 通过指定toUserId，通过server发送优惠券消息(目前仅支持单聊、 int64类型uid)
+   */
+  const sendCouponMessageUseToUserId = async (toUserId: string) => {
+    const params = {
+      toUserId,
+      content: JSON.stringify({
+        detail: '这是一张优惠券,点击此处领取',
+        start: 8,
+        end: 14,
+        type: '3',
+      }),
+    };
+    const message = await bytedIMInstance.createCustomMessage(params);
+    console.log('sendCouponMessageUseToUserId message', message);
+    const result = await bytedIMInstance.sendMessage({ message, priority });
+    console.log('sendCouponMessageUseToUserId result', result);
+    sendMessageCheckCode(result);
   };
 
   /**
@@ -402,12 +740,23 @@ const useMessage = () => {
     messages,
     resendMessage,
     sendTextMessage,
+    sendTextMessageUseToUserId,
     sendFileMessage,
+    sendFileMessageUseToUserId,
     sendImageMessage,
-    sendVideoMessage,
+    sendImageMessageUseToUserId,
     sendAudioMessage,
+    sendAudioMessageUseToUserId,
+    sendVideoMessage,
+    sendVideoMessageUseToUserId,
+    sendVideoMessageV1,
+    sendVideoMessageV1UseToUserId,
     sendVolcMessage,
+    sendVolcMessageUseToUserId,
     sendSystemMessage,
+    sendSystemMessageUseToUserId,
+    sendCouponMessage,
+    sendCouponMessageUseToUserId,
     markMessageRead,
     loadMoreMessage,
     replyMessage,
@@ -416,7 +765,6 @@ const useMessage = () => {
     recallMessage,
     deleteMessage,
     modifyMessageProperty,
-    sendCouponMessage,
   };
 };
 

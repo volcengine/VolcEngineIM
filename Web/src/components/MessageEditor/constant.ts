@@ -9,11 +9,13 @@ import {
   VolcButton,
   CouponButton,
 } from './ToolBar';
+import VideoButtonV2 from './ToolBar/VideoButtonV2';
 
 const TOOL_BAR_ITEM_MAP: any = {
   Image: ImageButton,
   Emoji: EmojiButton,
   Video: VideoButton,
+  
   Audio: AudioButton,
   File: FileButton,
   Mention: MentionButton,

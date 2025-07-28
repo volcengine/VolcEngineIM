@@ -24,7 +24,15 @@ import {
   USER_ID_KEY,
 } from '../../constant';
 import { Storage } from '../../utils/storage';
-import { BytedIMInstance, Conversations, Messages, Participants, UnReadTotal, UserId } from '../../store';
+import {
+  BytedIMInstance,
+  Conversations,
+  Messages,
+  Participants,
+  UnReadTotal,
+  UserId,
+  SendSingleMsgType,
+} from '../../store';
 import { useLive } from '../../hooks/useLive';
 import { useRequest, useTimeout } from 'ahooks';
 import { deleteAccount } from '../../apis/app';
@@ -178,6 +186,7 @@ const AppNavBar: FC<AppNavBarProps> = props => {
   const setMessages = useSetRecoilState(Messages);
   const setParticipants = useSetRecoilState(Participants);
   const setConversations = useSetRecoilState(Conversations);
+  const setSendSingleMsgType = useSetRecoilState(SendSingleMsgType);
   const { clearCurrentLiveConversationStatus } = useLive();
   const navigate = useNavigate();
   const location = useLocation();
@@ -199,6 +208,10 @@ const AppNavBar: FC<AppNavBarProps> = props => {
       icon: <IconLiveBroadcast className="im-icon" />,
       name: '直播',
       handleClick: () => {
+        setSendSingleMsgType({
+          useToUserId: false,
+          conversationId: '',
+        });
         navigate('/live');
       },
     },
@@ -208,6 +221,10 @@ const AppNavBar: FC<AppNavBarProps> = props => {
       icon: <IconUserGroup className="im-icon" />,
       name: '通讯录',
       handleClick: () => {
+        setSendSingleMsgType({
+          useToUserId: false,
+          conversationId: '',
+        });
         navigate('/contact');
       },
     },

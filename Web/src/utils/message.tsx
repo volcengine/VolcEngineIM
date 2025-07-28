@@ -111,6 +111,7 @@ export const getMessagePreview = (msg: Message): string => {
     case im_proto.MessageType.MESSAGE_TYPE_AUDIO:
       return '[语音]';
     case im_proto.MessageType.MESSAGE_TYPE_VIDEO:
+    case im_proto.MessageType.MESSAGE_TYPE_VIDEO_V2:
       return '[视频]';
     case im_proto.MessageType.MESSAGE_TYPE_IMAGE:
       return '[图片]';

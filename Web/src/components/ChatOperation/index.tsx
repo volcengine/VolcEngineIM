@@ -27,8 +27,21 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
   const [referenceMessage, setReferenceMessage] = useRecoilState(ReferenceMessage);
   const [editingMessage, setEditingMessage] = useRecoilState(EditMessage);
 
-  const { sendFileMessage, sendImageMessage, sendVideoMessage, sendAudioMessage, sendVolcMessage, sendCouponMessage } =
-    useMessage();
+  const {
+    sendFileMessage,
+    sendImageMessage,
+    sendVideoMessage,
+    sendVideoMessageV1,
+    sendAudioMessage,
+    sendVolcMessage,
+    sendCouponMessage,
+  } = useMessage();
+
+  // 创建 V2 版本的视频消息发送函数
+  const sendVideoMessageV2 = async (file: File) => {
+    // 由于 SDK 已经默认支持 V2，我们直接使用现有的 sendVideoMessage 函数
+    return sendVideoMessage(file);
+  };
   const ACCOUNTS_INFO = useAccountsInfo();
   const suggestions = participants.map(item => {
     return {
@@ -111,7 +124,14 @@ const ChatOperation: React.FC<ChatOperationPropsType> = memo(props => {
         key: 'Video',
         use: true,
         params: {
-          sendMessage: sendVideoMessage,
+          sendMessage: sendVideoMessageV1,
+        },
+      },
+      {
+        key: 'VideoV2',
+        use: true,
+        params: {
+          sendMessage: sendVideoMessageV2,
         },
       },
       {
