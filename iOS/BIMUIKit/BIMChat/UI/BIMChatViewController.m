@@ -278,9 +278,12 @@
     self.inputTool.delegate = self;
     self.inputTool.maxWordLimit = 500;
     if (!self.inputToolMenuTypeArray) {
-        self.inputTool.menuTypeArray = @[@(BIMInputToolMenuTypePhoto), @(BIMInputToolMenuTypeVideoV2), @(BIMInputToolMenuTypeCamera), @(BIMInputToolMenuTypeFile)];
-#ifdef UI_INTERNAL
+#if defined(UI_INTERNAL_TEST) // 内测
         self.inputTool.menuTypeArray = @[@(BIMInputToolMenuTypePhoto), @(BIMInputToolMenuTypeVideoV2), @(BIMInputToolMenuTypeCamera), @(BIMInputToolMenuTypeFile), @(BIMInputToolMenuTypeCustomMessage), @(BIMInputToolMenuTypeCoupon)];
+#elif defined(UI_INTERNAL) // Appstore
+        self.inputTool.menuTypeArray = @[@(BIMInputToolMenuTypePhoto), @(BIMInputToolMenuTypeCamera), @(BIMInputToolMenuTypeFile), @(BIMInputToolMenuTypeCustomMessage), @(BIMInputToolMenuTypeCoupon)];
+#else // 开源
+        self.inputTool.menuTypeArray = @[@(BIMInputToolMenuTypePhoto), @(BIMInputToolMenuTypeCamera), @(BIMInputToolMenuTypeFile)];
 #endif
     } else {
         self.inputTool.menuTypeArray = self.inputToolMenuTypeArray;
