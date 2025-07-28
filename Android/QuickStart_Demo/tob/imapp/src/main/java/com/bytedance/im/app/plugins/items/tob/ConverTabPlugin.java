@@ -5,6 +5,7 @@ import android.app.Fragment;
 import com.bytedance.im.app.R;
 import com.bytedance.im.app.conversation.VEConversationListFragment;
 import com.bytedance.im.app.plugins.items.interfaces.TabPlugin;
+import com.bytedance.im.app.utils.VEUtils;
 
 public class ConverTabPlugin implements TabPlugin {
     @Override
@@ -19,6 +20,8 @@ public class ConverTabPlugin implements TabPlugin {
 
     @Override
     public Fragment getTabFragment() {
-        return new VEConversationListFragment();
+        VEConversationListFragment convFragment = new VEConversationListFragment();
+        VEConversationListFragment.IS_SHILED = VEUtils.isShield();
+        return convFragment;
     }
 }
