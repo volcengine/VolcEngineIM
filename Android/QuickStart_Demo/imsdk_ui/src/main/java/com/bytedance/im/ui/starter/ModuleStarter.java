@@ -12,6 +12,8 @@ import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.message.BIMMessageListFragment;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 public class ModuleStarter {
@@ -63,15 +65,28 @@ public class ModuleStarter {
 
     //启动聊天页
     public boolean startMessageModule(Context context, String cid) {
-        return startMessageModule(context, null, cid);
+        return startMessageModule(context, null, cid, null);
+    }
+
+    public boolean startMessageModule(Context context, String uuid, String cid) {
+        return startMessageModule(context, uuid, cid, null);
+    }
+
+    //启动对方uid启动单聊聊天页
+    public boolean startMessageModuleWithToUserId(Context context, String cid, String toUid) {
+        return startMessageModule(context, null, cid, toUid);
     }
 
     //启动聊天页
-    public boolean startMessageModule(Context context, String uuid, String cid) {
+    public boolean startMessageModule(Context context, String uuid, String cid, String toUid) {
         Intent intent = new Intent();
         intent.putExtra(BIMMessageListFragment.TARGET_CID, cid);
         if (!TextUtils.isEmpty(uuid)) {
             intent.putExtra(BIMMessageListFragment.TARGET_MSG_ID, uuid);
+        }
+        if (!TextUtils.isEmpty(toUid)) {
+            intent.putExtra(BIMMessageListFragment.TARGET_USER_ID, toUid);
+            intent.putExtra(BIMMessageListFragment.TARGET_IS_TEMP, true);
         }
         intent.setAction(BIMMessageListFragment.ACTION);
         intent.addCategory("android.intent.category.DEFAULT");

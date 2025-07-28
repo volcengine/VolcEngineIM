@@ -36,6 +36,7 @@ import com.bytedance.im.core.api.model.BIMMessage;
 import com.bytedance.im.core.model.inner.msg.BIMFileElement;
 import com.bytedance.im.core.model.inner.msg.BIMImageElement;
 import com.bytedance.im.core.model.inner.msg.BIMVideoElement;
+import com.bytedance.im.core.model.inner.msg.BIMVideoElementV2;
 import com.bytedance.im.download.api.BIMDownloadExpandService;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.api.BIMUIUser;
@@ -44,6 +45,7 @@ import com.bytedance.im.ui.utils.media.PicturePreviewActivity;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,16 +56,21 @@ public class TypeMediaFragment extends Fragment {
     private static final String TAG = "SearchMediaFragment";
     private MsgListViewModel msgListViewModel;
     private VESearchMediaAdapter mediaAdapter;
-    private BIMMessageType bimMessageType;
+    private List<BIMMessageType> bimMessageTypeList;
     private BIMPullDirection bimPullDirection;
     private RecyclerView recyclerView;
     private View emptyView;
 
-    public static TypeMediaFragment create(String conversationID, BIMMessageType bimMessageType, BIMPullDirection bimPullDirection) {
+    public static TypeMediaFragment create(String conversationID, List<BIMMessageType> bimMessageTypeList, BIMPullDirection bimPullDirection) {
         TypeMediaFragment typeMediaFragment = new TypeMediaFragment();
         Bundle bundle = new Bundle();
+        ArrayList<Integer> msgTypeList = new ArrayList<>();
+        for (BIMMessageType type : bimMessageTypeList) {
+            msgTypeList.add(type.getValue());
+        }
+
         bundle.putString("search_cid", conversationID);
-        bundle.putInt("search_msgType", bimMessageType.getValue());
+        bundle.putIntegerArrayList("search_msgType", msgTypeList);
         bundle.putInt("pull_direction", bimPullDirection.getValue());
         typeMediaFragment.setArguments(bundle);
         return typeMediaFragment;
@@ -74,15 +81,18 @@ public class TypeMediaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ve_im_fragment_media_by_type, container, false);
         String conversationID = getArguments().getString("search_cid");
-        int msgType = getArguments().getInt("search_msgType", BIMMessageType.BIM_MESSAGE_TYPE_IMAGE.getValue());
-        bimMessageType = BIMMessageType.getType(msgType);
+        ArrayList<Integer> msgTypeList = getArguments().getIntegerArrayList("search_msgType");
+        bimMessageTypeList = new ArrayList<>();
+        for (int type : msgTypeList) {
+            bimMessageTypeList.add(BIMMessageType.getType(type));
+        }
         int direction = getArguments().getInt("pull_direction", BIMPullDirection.DESC.getValue());
         bimPullDirection = BIMPullDirection.getType(direction);
-        msgListViewModel = new MsgListViewModel(conversationID, bimMessageType,bimPullDirection);
+        msgListViewModel = new MsgListViewModel(conversationID, bimMessageTypeList, bimPullDirection);
         emptyView = view.findViewById(R.id.empty_msg);
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setItemAnimator(null);
-        if (bimMessageType == BIMMessageType.BIM_MESSAGE_TYPE_FILE) {
+        if (bimMessageTypeList.contains(BIMMessageType.BIM_MESSAGE_TYPE_FILE)) {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         } else {
             recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
@@ -121,18 +131,32 @@ public class TypeMediaFragment extends Fragment {
                         });
                     }
                 }
-            }else if(bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO){
-                BIMVideoElement videoElement = (BIMVideoElement) bimMessage.getElement();
-                String localFile = videoElement.getDownloadPath();
+            } else if (bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO ||
+                    bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO_V2) {
+                String localFile = "";
+                String localPath = "";
+                String url = "";
+                if(bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO ){
+                    BIMVideoElement videoElement = (BIMVideoElement) bimMessage.getElement();
+                     localFile = videoElement.getDownloadPath();
+                    localPath=videoElement.getLocalPath();
+                    url = videoElement.getURL();
+                }else if(bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO_V2){
+                    BIMVideoElementV2 videoElementV2 = (BIMVideoElementV2) bimMessage.getElement();
+                    localFile = videoElementV2.getDownloadPath();
+                    localPath=videoElementV2.getLocalPath();
+                    url = videoElementV2.getURL();
+                }
+
                 Uri uri = null;
                 if (new File(localFile).exists()) {
                     uri = convertUri(view.getContext(), localFile);
                 } else {
-                    if (bimMessage.isSelf() && !TextUtils.isEmpty(videoElement.getLocalPath())) {
-                        uri = convertUri(view.getContext(), videoElement.getLocalPath());
+                    if (bimMessage.isSelf() && !TextUtils.isEmpty(localPath)) {
+                        uri = convertUri(view.getContext(), localPath);
                     } else {
-                        uri = Uri.parse(videoElement.getURL());
-                        BIMClient.getInstance().downloadFile(bimMessage, videoElement.getURL(), new BIMDownloadCallback() {
+                        uri = Uri.parse(url);
+                        BIMClient.getInstance().downloadFile(bimMessage, url, new BIMDownloadCallback() {
                             @Override
                             public void onSuccess(BIMMessage bimMessage) {
                                 if (isAdded()) {
@@ -166,7 +190,7 @@ public class TypeMediaFragment extends Fragment {
                     //没有播放器可以使用
                     e.printStackTrace();
                 }
-            } else if(bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_FILE){
+            } else if (bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_FILE) {
 //                Toast.makeText(getActivity(), "暂不支持文件预览", Toast.LENGTH_SHORT).show();
                 BIMFileElement fileElement = (BIMFileElement) bimMessage.getElement();
                 String localFile = fileElement.getDownloadPath();
@@ -237,13 +261,13 @@ public class TypeMediaFragment extends Fragment {
     }
 
     private void loadMore() {
-        Log.i(TAG, "bimMessageType: " + bimMessageType + " loadMore()");
+        Log.i(TAG, "bimMessageType: " + bimMessageTypeList.get(0) + " loadMore()");
         if (msgListViewModel.isHasMore()) {
             msgListViewModel.loadMore(new BIMResultCallback<List<BIMMessage>>() {
                 @Override
                 public void onSuccess(List<BIMMessage> messageList) {
                     if (messageList != null) {
-                        Log.i(TAG, "loadMore onSuccess" + bimMessageType + " messageList: " + messageList.size());
+                        Log.i(TAG, "loadMore onSuccess" + bimMessageTypeList.get(0) + " messageList: " + messageList.size());
                         Set<Long> uidSet = new HashSet<>();
                         for (BIMMessage msg : messageList) {
                             uidSet.add(msg.getSenderUID());
@@ -277,7 +301,7 @@ public class TypeMediaFragment extends Fragment {
                         });
 
                     } else {
-                        Log.i(TAG, "loadMore onSuccess" + bimMessageType + " messageList: " + null);
+                        Log.i(TAG, "loadMore onSuccess" + bimMessageTypeList.get(0)+ " messageList: " + null);
                         showEmpty(true);
                     }
                 }

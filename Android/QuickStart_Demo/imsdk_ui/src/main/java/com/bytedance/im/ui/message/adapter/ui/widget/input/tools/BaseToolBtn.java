@@ -7,9 +7,11 @@ import android.view.View;
 
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
+import com.bytedance.im.core.api.model.BIMMessage;
 
 public abstract class BaseToolBtn<T> {
     protected BIMResultCallback<T> resultCallback;
+    protected BIMResultCallback<BIMMessage> sendMessageCallback;
 
     public BaseToolBtn() {
     }
@@ -25,4 +27,8 @@ public abstract class BaseToolBtn<T> {
     abstract public void onClick(Fragment fragment, View view, BIMConversation conversation);
 
     abstract public void onActivityResult(int requestCode, int resultCode, Intent data);
+
+    public void setSendMessageCallback(BIMResultCallback<BIMMessage> callback) {
+        this.sendMessageCallback = callback;
+    }
 }

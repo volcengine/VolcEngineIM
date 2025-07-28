@@ -7,12 +7,9 @@ import android.view.View;
 
 import com.bytedance.im.app.custom.data.BIMCouponElement;
 import com.bytedance.im.core.api.BIMClient;
-import com.bytedance.im.core.api.enums.BIMErrorCode;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
-import com.bytedance.im.core.api.interfaces.BIMSendCallback;
 import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.message.adapter.ui.widget.input.tools.BaseToolBtn;
 import com.bytedance.im.core.service.manager.BIMMessageManager;
@@ -42,17 +39,9 @@ public class CouponToolBtn extends BaseToolBtn<Boolean> {
         couponElement.setCouponDetail(detailStr);
         couponElement.setRange(detailStr.indexOf(",") + 1, detailStr.length());
         BIMMessage customMessage = BIMClient.getInstance().createCustomMessage(BIMMessageManager.getInstance().encode(couponElement));
-        BIMUIClient.getInstance().sendMessage(customMessage, conversation.getConversationID(), new BIMSendCallback() {
-            @Override
-            public void onSuccess(BIMMessage bimMessage) {
-
-            }
-
-            @Override
-            public void onError(BIMMessage bimMessage, BIMErrorCode code) {
-
-            }
-        });
+        if (sendMessageCallback != null) {
+            sendMessageCallback.onSuccess(customMessage);
+        }
     }
 
     @Override

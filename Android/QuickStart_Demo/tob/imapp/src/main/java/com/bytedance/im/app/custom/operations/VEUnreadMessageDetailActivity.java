@@ -304,7 +304,8 @@ class MessageViewHolder extends RecyclerView.ViewHolder {
                     contentText = "[文件]";
                 } else if (bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_IMAGE) {
                     contentText = "[图片]";
-                } else if (bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO) {
+                } else if (bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO
+                || bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO_V2) {
                     contentText = "[视频]";
                 } else if (bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_AUDIO) {
                     contentText = "[语音]";

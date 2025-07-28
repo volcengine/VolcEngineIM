@@ -73,6 +73,7 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
             long oppositeUID = bimConversation.getOppositeUserID();
             BIMUIUser user = getBIMUIUSerOrAsyncRefresh(oppositeUID);
             if (user == null) {
+                checkDefault(bimConversation);
                 return;
             }
             name = BIMUINameUtils.getShowName(user);
@@ -147,6 +148,18 @@ public class VEConversationViewHolder extends VEViewHolder<VEConvBaseWrapper<BIM
             conversationTop.setVisibility(View.GONE);
         }
 
+        setHint(bimConversation);
+    }
+
+    private void checkDefault(BIMConversation bimConversation) {
+        if (bimConversation != null && bimConversation.getConversationShortID() <= 0) {
+            userHeadImg.setImageResource(R.drawable.icon_recommend_user_default);
+            nickName.setText("用户" + bimConversation.getOppositeUserID());
+            setHint(bimConversation);
+        }
+    }
+
+    private void setHint(BIMConversation bimConversation) {
         //会话最新时间
         lastTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(bimConversation.getUpdatedTime()));
         //会话类型 - 轻直播

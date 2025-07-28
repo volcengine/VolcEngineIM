@@ -34,6 +34,7 @@ import com.bytedance.im.core.api.model.BIMReadReceipt;
 import com.bytedance.im.core.model.inner.msg.BIMFileElement;
 import com.bytedance.im.core.model.inner.msg.BIMImageElement;
 import com.bytedance.im.core.model.inner.msg.BIMVideoElement;
+import com.bytedance.im.core.model.inner.msg.BIMVideoElementV2;
 import com.bytedance.im.core.model.inner.msg.image.BIMImage;
 import com.bytedance.im.ui.api.BIMUIUser;
 import com.bytedance.im.ui.utils.BIMUINameUtils;
@@ -115,6 +116,9 @@ public class VESearchMediaAdapter extends RecyclerView.Adapter<VEMediaBaseViewHo
         if (viewType == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO.getValue()) {
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.ve_im_item_search_msg_video_layout, parent, false);
             viewHolder = new VEMediaVideoViewHolder(v);
+        } else if (viewType == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO_V2.getValue()) {
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.ve_im_item_search_msg_video_layout, parent, false);
+            viewHolder = new VEMediaVideoViewHolder(v);
         } else if (viewType == BIMMessageType.BIM_MESSAGE_TYPE_IMAGE.getValue()) {
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.ve_im_item_search_msg_image_layout, parent, false);
             viewHolder = new VEMediaImageViewHolder(v);
@@ -141,6 +145,9 @@ public class VESearchMediaAdapter extends RecyclerView.Adapter<VEMediaBaseViewHo
         BIMUIUser user = mediaWrapper.getBimuiUser();
         int type = bimMessage.getMsgType().getValue();
         if (type == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO.getValue()) {
+            VEMediaVideoViewHolder videoViewHolder = (VEMediaVideoViewHolder) holder;
+            loadImageUrl(videoViewHolder.imageView, bimMessage);
+        } else if (type == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO_V2.getValue()) {
             VEMediaVideoViewHolder videoViewHolder = (VEMediaVideoViewHolder) holder;
             loadImageUrl(videoViewHolder.imageView, bimMessage);
         } else if (type == BIMMessageType.BIM_MESSAGE_TYPE_IMAGE.getValue()) {
@@ -179,6 +186,17 @@ public class VESearchMediaAdapter extends RecyclerView.Adapter<VEMediaBaseViewHo
         if (bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO) {
             BIMVideoElement videoElement = (BIMVideoElement) bimMessage.getElement();
             BIMImage bimImage = videoElement.getCoverImg();
+            if (bimImage != null) {
+                String localFile = bimImage.getDownloadPath();
+                if (new File(localFile).exists()) {
+                    url = localFile;
+                } else {
+                    url = bimImage.getURL();
+                }
+            }
+        } else if (bimMessage.getMsgType() == BIMMessageType.BIM_MESSAGE_TYPE_VIDEO_V2) {
+            BIMVideoElementV2 videoElementV2 = (BIMVideoElementV2) bimMessage.getElement();
+            BIMImage bimImage = videoElementV2.getCoverImg();
             if (bimImage != null) {
                 String localFile = bimImage.getDownloadPath();
                 if (new File(localFile).exists()) {

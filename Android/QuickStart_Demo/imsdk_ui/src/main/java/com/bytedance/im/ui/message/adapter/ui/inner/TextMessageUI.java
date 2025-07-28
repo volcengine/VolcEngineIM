@@ -18,6 +18,7 @@ import com.bytedance.im.core.model.inner.msg.BIMFileElement;
 import com.bytedance.im.core.model.inner.msg.BIMImageElement;
 import com.bytedance.im.core.model.inner.msg.BIMTextElement;
 import com.bytedance.im.core.model.inner.msg.BIMVideoElement;
+import com.bytedance.im.core.model.inner.msg.BIMVideoElementV2;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.emoji.EmojiManager;
 import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
@@ -147,6 +148,10 @@ public class TextMessageUI extends BaseCustomElementUI {
                 break;
             case BIM_MESSAGE_TYPE_VIDEO:
                 BIMVideoElement videoElement = (BIMVideoElement) refMessage.getElement();
+                refHint += "[视频]";
+                break;
+            case BIM_MESSAGE_TYPE_VIDEO_V2:
+                BIMVideoElementV2 videoElementV2 = (BIMVideoElementV2) refMessage.getElement();
                 refHint += "[视频]";
                 break;
             case BIM_MESSAGE_TYPE_CUSTOM:

@@ -7,15 +7,16 @@ import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
-
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -29,25 +30,25 @@ import com.bytedance.im.core.api.enums.BIMMessageStatus;
 import com.bytedance.im.core.api.interfaces.BIMDownloadCallback;
 import com.bytedance.im.core.api.interfaces.BIMResultCallback;
 import com.bytedance.im.core.api.interfaces.BIMSimpleCallback;
+import com.bytedance.im.core.api.model.BIMMessage;
+import com.bytedance.im.core.model.inner.msg.BIMVideoElementV2;
 import com.bytedance.im.core.model.inner.msg.image.BIMImage;
 import com.bytedance.im.ui.R;
 import com.bytedance.im.ui.log.BIMLog;
 import com.bytedance.im.ui.message.adapter.BIMMessageViewHolder;
-import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
-import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.message.adapter.ui.model.BIMMessageWrapper;
 import com.bytedance.im.ui.message.adapter.ui.widget.custom.CircleProgressView;
-import com.bytedance.im.core.api.model.BIMMessage;
-import com.bytedance.im.core.model.inner.msg.BIMVideoElement;
+import com.bytedance.im.ui.message.convert.base.annotations.CustomUIType;
+import com.bytedance.im.ui.message.convert.base.ui.BaseCustomElementUI;
 import com.bytedance.im.ui.utils.BIMUIUtils;
 import com.bytedance.im.ui.utils.media.LoadIMageUtils;
 
 import java.io.File;
 import java.util.Collections;
 
-@CustomUIType(contentCls = BIMVideoElement.class)
-public class VideoMessageUI extends BaseCustomElementUI {
-    private static final String TAG = "VideoMessageUI";
+@CustomUIType(contentCls = BIMVideoElementV2.class)
+public class VideoMessageV2UI extends BaseCustomElementUI {
+    private static final String TAG = "VideoMessageV2UI";
 
     @Override
     public int getLayoutId() {
@@ -60,7 +61,7 @@ public class VideoMessageUI extends BaseCustomElementUI {
         ImageView videoPlayIcon = itemView.findViewById(R.id.iv_play);
         TextView tvUploadStatus = itemView.findViewById(R.id.tv_upload_status);
         BIMMessage msg = messageWrapper.getBimMessage();
-        BIMVideoElement videoElement = (BIMVideoElement) msg.getElement();
+        BIMVideoElementV2 videoElement = (BIMVideoElementV2) msg.getElement();
         CircleProgressView circleProgressView = itemView.findViewById(R.id.pv_circle_view);
         if (msg.isSelf()) {
             if (msg.getMsgStatus() == BIMMessageStatus.BIM_MESSAGE_STATUS_PENDING
@@ -123,7 +124,7 @@ public class VideoMessageUI extends BaseCustomElementUI {
     }
 
     private void showByDownload(BIMMessageViewHolder holder,ImageView imageView, BIMMessage msg) {
-        BIMVideoElement videoElement = (BIMVideoElement) msg.getElement();
+        BIMVideoElementV2 videoElement = (BIMVideoElementV2) msg.getElement();
         BIMImage coverImg = videoElement.getCoverImg();
 
         if (coverImg != null && new File(coverImg.getDownloadPath()).exists()) {
@@ -132,6 +133,7 @@ public class VideoMessageUI extends BaseCustomElementUI {
         } else {
             if (coverImg != null) {
                 imageView.setImageDrawable(null);
+                BIMLog.i(TAG, "showByDownload coverUrl:"+coverImg.getURL());
                 holder.getDownloadListener().downLoadMessage(msg, coverImg.getURL(), false, null);   //下载
             }
         }
@@ -139,7 +141,7 @@ public class VideoMessageUI extends BaseCustomElementUI {
 
     @Override
     public void onClick(BIMMessageViewHolder holder, View v, BIMMessageWrapper messageWrapper) {
-        BIMVideoElement videoElement = (BIMVideoElement) messageWrapper.getBimMessage().getElement();
+        BIMVideoElementV2 videoElement = (BIMVideoElementV2) messageWrapper.getBimMessage().getElement();
         BIMClient.getInstance().sendMessageReadReceipts(Collections.singletonList(messageWrapper.getBimMessage()), new BIMSimpleCallback() {
             @Override
             public void onSuccess() {
@@ -241,7 +243,7 @@ public class VideoMessageUI extends BaseCustomElementUI {
     }
 
     private void showRemote(ImageView imageView, BIMMessage msg) {
-        BIMVideoElement videoElement = (BIMVideoElement) msg.getElement();
+        BIMVideoElementV2 videoElement = (BIMVideoElementV2) msg.getElement();
         Drawable placeDrawable = imageView.getDrawable();
         BIMImage coverImg = videoElement.getCoverImg();
         if (coverImg == null){

@@ -94,17 +94,18 @@ public class ImageMessageUI extends BaseCustomElementUI {
             if (thumImg != null) {
                 String savePath = thumImg.getDownloadPath();
                 String url = bimImage.getURL();
+                imgContent.setImageDrawable(null);
                 if (bimMessage.getConversationType() != BIMConversationType.BIM_CONVERSATION_TYPE_LIVE_CHAT) {
                     if (!new File(savePath).exists()) {
                         holder.getDownloadListener().downLoadMessage(bimMessage, bimImage.getURL(), false, null); //下载
                     } else {
-                        Glide.with(imgContent.getContext()).load(savePath).dontAnimate().placeholder(placeDrawable).into(imgContent);   //加载本地文件
+                        Glide.with(imgContent.getContext()).load(savePath).dontAnimate().placeholder(null).into(imgContent);   //加载本地文件
                     }
                 } else {
                     Glide.with(imgContent.getContext())
                             .load(url)
                             .dontAnimate()
-                            .placeholder(placeDrawable)
+                            .placeholder(null)
                             .listener(new RequestListener<Drawable>() {
                                 @Override
                                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
