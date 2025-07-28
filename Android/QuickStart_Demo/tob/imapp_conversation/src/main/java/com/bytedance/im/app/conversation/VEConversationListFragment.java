@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class VEConversationListFragment extends Fragment implements BIMSupportUnread {
+    public static boolean IS_SHILED = false;
     private static final String TAG = "VEConvFragment";
     private ImageView createIv;
     private FrameLayout convListContainer;
@@ -131,6 +132,9 @@ public class VEConversationListFragment extends Fragment implements BIMSupportUn
         LinearLayout clearUnread = contentView.findViewById(R.id.ll_clear_all_unread);
         LinearLayout createRobotChat = contentView.findViewById(R.id.ll_create_robot_single_chat);
         LinearLayout sendMsgWithCreateChat = contentView.findViewById(R.id.ll_send_msg_with_create_conv);
+        if (IS_SHILED) {
+            sendMsgWithCreateChat.setVisibility(View.GONE);
+        }
         PopupWindow popupWindow = new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
         popupWindow.setOutsideTouchable(true);
         popupWindow.showAsDropDown(createBtn, 0, 10);
