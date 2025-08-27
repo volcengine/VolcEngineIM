@@ -44,6 +44,8 @@ import com.bytedance.im.ui.user.OnUserInfoUpdateListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 public class BIMConversationListFragment extends Fragment {
@@ -194,16 +196,14 @@ public class BIMConversationListFragment extends Fragment {
             public void onSuccess(BIMConversationListResult bimConversationListResult) {
                 BIMLog.i(TAG, "onSuccess() hasMore: " + bimConversationListResult.isHasMore() + " nextCursor: " + bimConversationListResult.getNextCursor() + " conversationList size:" + bimConversationListResult.getConversationList().size());
                 List<BIMConversation> conversationList = bimConversationListResult.getConversationList();
-
+                if(conversationList==null)return;
                 for (BIMConversation conversation : conversationList) {
                     if (isStickTopConversation(conversation)) {
-                        conversationList.remove(conversation);
-                        adapter.insertOrUpdateTopConversation(conversation);
-                        break;
+                        conversation.getConversation().setSortOrder(Long.MAX_VALUE);
                     }
                 }
 
-                adapter.appendConversation(conversationList);
+                adapter.addNewConversation(conversationList);
                 if (cursor == -1) {
                     //首次查询前收到delete信息
                     if (initNeedDeleteConversation != null) {
@@ -310,9 +310,7 @@ public class BIMConversationListFragment extends Fragment {
 
                 for (BIMConversation conversation : conversationList) {
                     if (isStickTopConversation(conversation)) {
-                        adapter.insertOrUpdateTopConversation(conversation);
-                        conversationList.remove(conversation);
-                        break;
+                        conversation.getConversation().setSortOrder(Long.MAX_VALUE);
                     }
                 }
                 adapter.addNewConversation(conversationList);
@@ -326,17 +324,11 @@ public class BIMConversationListFragment extends Fragment {
                 List<BIMConversation> updateList = new ArrayList<>();
                 if (conversationList != null) {
                     for (BIMConversation conversation : conversationList) {
-                        if (conversation != null && !isStickTopConversation(conversation)) {
-                            updateList.add(conversation);
-                        } else if (isStickTopConversation(conversation)) {
-                            stickTopConversation = conversation;
+                        if (isStickTopConversation(conversation)) {
+                            conversation.getConversation().setSortOrder(Long.MAX_VALUE);
                         }
                     }
-                }
-                adapter.updateConversation(updateList);
-
-                if (stickTopConversation != null) {
-                    adapter.insertOrUpdateTopConversation(stickTopConversation);
+                    adapter.updateConversation(conversationList);
                 }
             }
 

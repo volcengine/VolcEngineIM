@@ -22,7 +22,7 @@ public class VEContactListActionViewHolder extends VEContactListBaseViewHolder {
         tvNickName = itemView.findViewById(R.id.tv_nick_name);
     }
 
-    public void onBind(ContactListDataInfo<?> dataInfo, ContactListDataInfo<?> preData) {
+    public void onBind(ContactListDataInfo<?> dataInfo, ContactListDataInfo<?> preData, boolean isOnline) {
         if (dataInfo.getData() instanceof ContactListActionItem) {
             ContactListActionItem contactListActionItem = (ContactListActionItem) dataInfo.getData();
 

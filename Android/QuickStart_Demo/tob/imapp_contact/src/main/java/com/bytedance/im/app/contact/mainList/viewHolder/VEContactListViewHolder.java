@@ -18,21 +18,24 @@ public class VEContactListViewHolder extends VEContactListBaseViewHolder {
     private static final String TAG = "VEContactListViewHolder";
 
     private ImageView ivIcon;
+    private ImageView ivOnline;
     private TextView tvNickName, tvContactTitle;
 
     public VEContactListViewHolder(@NonNull View itemView) {
         super(itemView);
 
         ivIcon = itemView.findViewById(R.id.iv_head);
+        ivOnline = itemView.findViewById(R.id.iv_online);
         tvNickName = itemView.findViewById(R.id.tv_nick_name);
         tvContactTitle = itemView.findViewById(R.id.tv_contact_title);
     }
 
-    public void onBind(ContactListDataInfo<?> dataInfo, ContactListDataInfo<?> preData) {
+    public void onBind(ContactListDataInfo<?> dataInfo, ContactListDataInfo<?> preData, boolean isOnline) {
         if (dataInfo.getData() instanceof BIMUserFullInfo) {
             BIMUserFullInfo fullInfo = (BIMUserFullInfo) dataInfo.getData();
 
             tvNickName.setText(ContactNameUtils.getShowName(fullInfo));
+            ivOnline.setVisibility(isOnline ? View.VISIBLE : View.GONE);
             ivIcon.setImageResource(R.drawable.icon_recommend_user_default);
             Glide.with(ivIcon.getContext())
                     .load(fullInfo.getPortraitUrl())

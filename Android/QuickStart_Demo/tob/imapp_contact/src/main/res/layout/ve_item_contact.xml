@@ -36,6 +36,15 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:src="@drawable/icon_recommend_user_default" />
+            
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_online"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                app:layout_constraintEnd_toEndOf="@id/iv_head"
+                android:background="@drawable/ve_im_online_status"
+                app:layout_constraintBottom_toBottomOf="@id/iv_head" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

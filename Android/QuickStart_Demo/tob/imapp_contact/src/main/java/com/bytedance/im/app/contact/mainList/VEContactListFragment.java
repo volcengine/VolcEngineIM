@@ -1,6 +1,5 @@
 package com.bytedance.im.app.contact.mainList;
 
-import static android.app.Activity.RESULT_OK;
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_ADD_SELF_FRIEND_NOT_ALLOW;
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_ALIAS_ILLEGAL;
 import static com.bytedance.im.core.api.enums.BIMErrorCode.BIM_SERVER_ALIAS_TOO_LONG;
@@ -48,12 +47,14 @@ import com.bytedance.im.ui.api.interfaces.BIMSupportUnread;
 import com.bytedance.im.ui.api.interfaces.BIMUnreadListener;
 import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.BIMFriendListener;
+import com.bytedance.im.user.api.enums.BIMFriendOnlineStatus;
 import com.bytedance.im.user.api.model.BIMApplyInfo;
 import com.bytedance.im.user.api.model.BIMFriendApplyInfo;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +63,9 @@ public class VEContactListFragment extends Fragment implements BIMSupportUnread 
     private static final int PAGE_SIZE = 20;
     private static final int MAX_NICKNAME_BYTE_SIZE = 96;
 
+    private final VEContactListAdapter.ContactStatusProvider provider = new VEContactListAdapter.ContactStatusProvider();
+    private final VEContactListAdapter adapter = new VEContactListAdapter(provider);
+
     private long mCursor = 0;
     private TextView addContact;
     private boolean mHasMore = true;
@@ -69,7 +73,6 @@ public class VEContactListFragment extends Fragment implements BIMSupportUnread 
     private RecyclerView rvContactList;
     private SwipeRefreshLayout swipeRefreshLayout;
     private BIMUnreadListener unreadListener;
-    private final VEContactListAdapter adapter = new VEContactListAdapter();
     private BIMContactExpandService service;
 
     private final OnClickListener contactClickListener = new OnClickListener() {
@@ -440,6 +443,15 @@ public class VEContactListFragment extends Fragment implements BIMSupportUnread 
 
         @Override
         public void onUserProfileUpdate(BIMUserFullInfo userFullInfo) {
+        }
+
+        @Override
+        public void onFriendOnlineStatusChanged(long uid, BIMFriendOnlineStatus status) {
+            if (adapter != null) {
+                Map<Long, BIMFriendOnlineStatus> map = new HashMap<>();
+                map.put(uid, status);
+                adapter.onStatusChanged(map);
+            }
         }
     };
 

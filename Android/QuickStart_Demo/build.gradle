@@ -8,12 +8,12 @@ buildscript {
         im_targetSdkVersion = 28
         im_versionCode = 12400
         im_versionName = "1.24.0"
-        im_ui_sdk_remote = "com.bytedance.im:im-uikit-tob:1.24.1"
-        im_sdk_remote = "com.bytedance.im:imsdk-tob:1.24.1"
+        im_ui_sdk_remote = "com.bytedance.im:im-uikit-tob:1.25.0-alpha.2"
+        im_sdk_remote = "com.bytedance.im:imsdk-tob:1.25.0-alpha.2"
         // 国内上报组件
-        im_sdk_log_remote = "com.bytedance.im:imsdk-tob-log:1.24.1"
+        im_sdk_log_remote = "com.bytedance.im:imsdk-tob-log:1.25.0-alpha.2"
         // 海外上报组件
-        im_sdk_log_remote_global = "com.bytedance.im:imsdk-tob-log-global:1.24.1"
+        im_sdk_log_remote_global = "com.bytedance.im:imsdk-tob-log-global:1.25.0-alpha.2"
     }
     repositories {
         maven {
