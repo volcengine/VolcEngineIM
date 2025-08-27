@@ -23,32 +23,15 @@
 #import "BDIMDebugManager.h"
 #endif
 
-typedef enum : NSUInteger {
-    VEIMDemoMyinfoSectionTypeInfo,
-    VEIMDemoMyinfoSectionTypeAppInfo,
-    VEIMDemoMyinfoSectionTypeCancelAccountAndLogout,
-} VEIMDemoMyinfoSectionType;
-
-static NSString *const VEIMMyInfoDebug = @"高级调试";
-static NSString *const VEIMMyInfoAppid = @"AppId";
-static NSString *const VEIMMyInfoAppVersionName = @"App Version Name";
-static NSString *const VEIMMyInfoIMSDKVersion = @"IMSDK Version Name";
-static NSString *const VEIMMyInfoIMSDKDid = @"Did";
-static NSString *const VEIMMyInfoLongConnectStauts = @"长连接状态";
-static NSString *const VEIMMyInfoPrivacy = @"隐私政策";
-static NSString *const VEIMMyInfoPermissionList = @"权限清单";
-static NSString *const VEIMMyInfoICP = @"ICP备案号：京ICP备20018813号-193A";
-
-
-static NSString *const VEIMMyInfoCancelAccount = @"注销账户";
-static NSString *const VEIMMyInfoLogout = @"退出登录";
+#import "VEIMDemoMineItem.h"
 
 @interface VEIMDemoMyinfoController ()<BIMFriendListener>
 
-@property (nonatomic, copy) NSArray *appInfoArr;
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
 @property (nonatomic, copy) NSString *did;
-@property (nonatomic, copy) NSArray *cancelAccountArray;
+@property (nonatomic, strong) NSMutableArray *dataSectionList;
+@property (nonatomic, strong) VEIMDemoMineItem *didItem;
+@property (nonatomic, strong) VEIMDemoMineItem *connectItem;
 
 @end
 
@@ -78,21 +61,29 @@ static NSString *const VEIMMyInfoLogout = @"退出登录";
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:kVEIMDemoUserDidLoginNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNoti:) name:@"LongConnectStatusChanged" object:nil];
+    [[BIMClient sharedInstance] addFriendListener:self];
     
+    [self getDid];
+}
+
+- (void)getDid
+{
     @weakify(self);
     [[BIMClient sharedInstance] getDid:^(NSString * _Nullable did) {
         @strongify(self);
         self.did = did;
+        self.didItem.subTitle = did;
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableview reloadData];
         });
     }];
-    
-    [[BIMClient sharedInstance] addFriendListener:self];
 }
 
-- (void)didReceiveNoti: (NSNotification *)noti{
+- (void)didReceiveNoti:(NSNotification *)noti {
     if ([noti.name isEqualToString:kVEIMDemoUserDidLoginNotification] || [noti.name isEqualToString:@"LongConnectStatusChanged"]) {
+        if ([noti.name isEqualToString:@"LongConnectStatusChanged"]) {
+            self.connectItem.subTitle = [[BIMClient sharedInstance] getConnectStatus] == BIM_CONNECT_STATUS_CONNECTED ? @"[已连接]" : @"[未连接]";
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableview reloadData];
         });
@@ -102,141 +93,161 @@ static NSString *const VEIMMyInfoLogout = @"退出登录";
 - (void)setupUIElements{
     [super setupUIElements];
     
-    NSMutableArray *appInfoArr = [NSMutableArray array];
-    if ([VEIMDemoIMManager sharedManager].accountProvider.accountType == VEIMDemoAccountTypeInternal) {
-        [appInfoArr addObject:VEIMMyInfoDebug];
-    }
-    [appInfoArr addObject:VEIMMyInfoAppid];
-    [appInfoArr addObject:VEIMMyInfoAppVersionName];
-    [appInfoArr addObject:VEIMMyInfoIMSDKVersion];
-    [appInfoArr addObject:VEIMMyInfoIMSDKDid];
-    [appInfoArr addObject:VEIMMyInfoLongConnectStauts];
-    if ([VEIMDemoIMManager sharedManager].accountProvider.accountType != VEIMDemoAccountTypeOpenSource) {
-        [appInfoArr addObject:VEIMMyInfoPrivacy];
-        [appInfoArr addObject:VEIMMyInfoPermissionList];
-        [appInfoArr addObject:VEIMMyInfoICP];
-    }
-    self.appInfoArr = [appInfoArr copy];
-    
-    
-    NSMutableArray *cancelAccountArray = [NSMutableArray array];
-    if ([VEIMDemoIMManager sharedManager].accountProvider.accountType != VEIMDemoAccountTypeOpenSource) {
-        [cancelAccountArray addObject:VEIMMyInfoCancelAccount];
-    }
-    [cancelAccountArray addObject:VEIMMyInfoLogout];
-    self.cancelAccountArray = [cancelAccountArray copy];
-    
-
+    [self setupData];
     [self.tableview registerClass:[VEIMDemoMyinfoHeaderCell class] forCellReuseIdentifier:@"VEIMDemoMyinfoHeaderCell"];
-    [self.tableview registerClass:[UITableViewCell class] forCellReuseIdentifier:@"UITableViewCell"];
     [self.tableview registerClass:[VEIMDemoAppInfoCell class] forCellReuseIdentifier:@"VEIMDemoAppInfoCell"];
+}
+
+#pragma mark - data
+
+- (void)setupData
+{
+    self.dataSectionList = [NSMutableArray array];
     
+    // 分组
+    [self setupDataMyInfoSection];
+    [self setupDataDebugSection];
+    [self setupDataBasicInfoSection];
+    [self setupDataAccountSection];
 }
 
-- (void)refreshWithUser{
-    [self.tableview reloadData];
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    switch (indexPath.section) {
-        case VEIMDemoMyinfoSectionTypeInfo:{
-            VEIMDemoMyinfoHeaderCell *cell = [tableView dequeueReusableCellWithIdentifier:@"VEIMDemoMyinfoHeaderCell"];
-            [cell refreshWithUser:[VEIMDemoUserManager sharedManager].currentUserFullInfo.userProfile];
-            return cell;
-            break;
-        }
-        case VEIMDemoMyinfoSectionTypeAppInfo:{
-            VEIMDemoAppInfoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"VEIMDemoAppInfoCell"];
-            cell.accessoryType = UITableViewCellAccessoryNone;
-            NSString *title = [self.appInfoArr objectAtIndex:indexPath.row];
-            NSString *info = nil;
-            if ([title isEqualToString:VEIMMyInfoAppid]) {
-                info = kVEIMDemoAppID;
-            } else if ([title isEqualToString:VEIMMyInfoAppVersionName]) {
-                info = UIApplication.btd_versionName;
-            } else if ([title isEqualToString:VEIMMyInfoIMSDKVersion]) {
-                info = [[BIMClient sharedInstance] getVersion];
-            } else if ([title isEqualToString:VEIMMyInfoIMSDKDid]) {
-                info = self.did;
-            } else if ([title isEqualToString:VEIMMyInfoLongConnectStauts]) {
-                info = [[BIMClient sharedInstance] getConnectStatus] == BIM_CONNECT_STATUS_CONNECTED ? @"[已连接]" : @"[未连接]";
-            } else if ([title isEqualToString:VEIMMyInfoPrivacy]) {
-                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            } else if ([title isEqualToString:VEIMMyInfoPermissionList]) {
-                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            } else if ([title isEqualToString:VEIMMyInfoICP]) {
-                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            } else if ([title isEqualToString:VEIMMyInfoDebug]) {
-                info = @"摇一摇更便捷";
-                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            }
-            [cell configCellWithTitle:title info:info];
-            return cell;
-            break;
-        }
-        case VEIMDemoMyinfoSectionTypeCancelAccountAndLogout:{
-            NSString *title = [self.cancelAccountArray objectAtIndex:indexPath.row];
-            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UITableViewCell"];
-            cell.textLabel.text = title;
-            
-            return cell;
-            break;
-        }
-        default:
-            break;
-    }
-    return [UITableViewCell new];
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (indexPath.section == VEIMDemoMyinfoSectionTypeCancelAccountAndLogout) {
-        NSString *title = [self.cancelAccountArray objectAtIndex:indexPath.row];
-        if ([title isEqualToString:VEIMMyInfoCancelAccount]) {
-            [self clickCancelAccountCell];
-        } else if ([title isEqualToString:VEIMMyInfoLogout]) {
-            [self clickLogoutCell];
-        }
-    } else if (indexPath.section == VEIMDemoMyinfoSectionTypeAppInfo) {
-        NSString *title = [self.appInfoArr objectAtIndex:indexPath.row];
-        if ([title isEqualToString:VEIMMyInfoPrivacy]) {
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kVEIMDemoPrivacyAgreement] options:nil completionHandler:nil];
-        } else if ([title isEqualToString:VEIMMyInfoPermissionList]) {
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kVEIMDemoPermissionList] options:nil completionHandler:nil];
-        } else if ([title isEqualToString:VEIMMyInfoICP]) {
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kVEIMDemoICP] options:nil completionHandler:nil];
-        } else if ([title isEqualToString:VEIMMyInfoIMSDKDid]) {
-            [self clickDidCell];
-        } else if ([title isEqualToString:VEIMMyInfoDebug]) {
-#if __has_include("BDIMDebugManager.h")
-            [[BDIMDebugManager sharedManager] showDebugVC];
-#endif
-        }
-    } else if (indexPath.section == VEIMDemoMyinfoSectionTypeInfo) {
+- (void)setupDataMyInfoSection
+{
+    //TODO:后期改造为tableHeaderView
+    NSMutableArray *myInfoSectionArray = [NSMutableArray array];
+    @weakify(self);
+    VEIMDemoMineItem *myInfoItem = [VEIMDemoMineItem itemWithTitle:nil subTitle:nil accessoryType:UITableViewCellAccessoryNone clickBlock:^(VEIMDemoMineItem *item) {
+        @strongify(self);
         [self clickMyInfoCell];
-     }
+    }];
+    myInfoItem.cellClass = NSClassFromString(@"VEIMDemoMyinfoHeaderCell");
+    [myInfoSectionArray addObject:myInfoItem];
+    
+    [self.dataSectionList addObject:myInfoSectionArray];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    switch (section) {
-        case VEIMDemoMyinfoSectionTypeInfo:
-            return 1;
-            break;
-        case VEIMDemoMyinfoSectionTypeAppInfo:
-            return self.appInfoArr.count;
-            break;
-        case VEIMDemoMyinfoSectionTypeCancelAccountAndLogout:
-            return self.cancelAccountArray.count;
-            break;
-        default:
-            break;
+- (void)setupDataDebugSection
+{
+    if ([VEIMDemoIMManager sharedManager].accountProvider.accountType != VEIMDemoAccountTypeInternal) {
+        return;
     }
-    return 0;
+    NSMutableArray *debugSectionArray = [NSMutableArray array];
+    VEIMDemoMineItem *debugItem = [VEIMDemoMineItem itemWithTitle:@"高级调试" subTitle:@"摇一摇更便捷" accessoryType:UITableViewCellAccessoryDisclosureIndicator clickBlock:^(VEIMDemoMineItem *item) {
+        #if __has_include("BDIMDebugManager.h")
+        [[BDIMDebugManager sharedManager] showDebugVC];
+        #endif
+    }];
+    [debugSectionArray addObject:debugItem];
+    
+    [self.dataSectionList addObject:debugSectionArray];
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return 3;
+- (void)setupDataBasicInfoSection
+{
+    NSMutableArray *basicInfoSectionArray = [NSMutableArray array];
+    @weakify(self);
+    VEIMDemoMineItem *appIdItem = [VEIMDemoMineItem itemWithTitle:@"AppId" subTitle:kVEIMDemoAppID accessoryType:UITableViewCellAccessoryNone clickBlock:nil];
+    [basicInfoSectionArray addObject:appIdItem];
+    
+    VEIMDemoMineItem *appVersionItem = [VEIMDemoMineItem itemWithTitle:@"App Version Name" subTitle:UIApplication.btd_versionName accessoryType:UITableViewCellAccessoryNone clickBlock:nil];
+    [basicInfoSectionArray addObject:appVersionItem];
+    
+    VEIMDemoMineItem *sdkVersionItem = [VEIMDemoMineItem itemWithTitle:@"IMSDK Version Name" subTitle:[[BIMClient sharedInstance] getVersion] accessoryType:UITableViewCellAccessoryNone clickBlock:nil];
+    [basicInfoSectionArray addObject:sdkVersionItem];
+    
+    VEIMDemoMineItem *didItem = [VEIMDemoMineItem itemWithTitle:@"Did" subTitle:self.did accessoryType:UITableViewCellAccessoryNone clickBlock:^(VEIMDemoMineItem *item) {
+        @strongify(self);
+        [self clickDidCell];
+    }];
+    self.didItem = didItem;
+    
+    [basicInfoSectionArray addObject:didItem];
+    
+    
+    VEIMDemoMineItem *longConnectItem = [VEIMDemoMineItem itemWithTitle:@"长连接状态" subTitle:[[BIMClient sharedInstance] getConnectStatus] == BIM_CONNECT_STATUS_CONNECTED ? @"[已连接]" : @"[未连接]" accessoryType:UITableViewCellAccessoryNone clickBlock:nil];
+    [basicInfoSectionArray addObject:longConnectItem];
+    
+    if ([VEIMDemoIMManager sharedManager].accountProvider.accountType != VEIMDemoAccountTypeOpenSource) {
+        VEIMDemoMineItem *privacyItem = [VEIMDemoMineItem itemWithTitle:@"隐私政策" subTitle:nil accessoryType:UITableViewCellAccessoryDisclosureIndicator clickBlock:^(VEIMDemoMineItem *item) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kVEIMDemoPrivacyAgreement] options:nil completionHandler:nil];
+        }];
+        [basicInfoSectionArray addObject:privacyItem];
+        
+        VEIMDemoMineItem *permissionListItem = [VEIMDemoMineItem itemWithTitle:@"权限清单" subTitle:nil accessoryType:UITableViewCellAccessoryDisclosureIndicator clickBlock:^(VEIMDemoMineItem *item) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kVEIMDemoPermissionList] options:nil completionHandler:nil];
+        }];
+        [basicInfoSectionArray addObject:permissionListItem];
+        
+        VEIMDemoMineItem *ICPItem = [VEIMDemoMineItem itemWithTitle:@"ICP备案号：京ICP备20018813号-193A" subTitle:nil accessoryType:UITableViewCellAccessoryDisclosureIndicator clickBlock:^(VEIMDemoMineItem *item) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:kVEIMDemoICP] options:nil completionHandler:nil];
+        }];
+        [basicInfoSectionArray addObject:ICPItem];
+    }
+    
+    [self.dataSectionList addObject:basicInfoSectionArray];
 }
+
+- (void)setupDataAccountSection
+{
+    NSMutableArray *accountSectionArray = [NSMutableArray array];
+    @weakify(self);
+    if ([VEIMDemoIMManager sharedManager].accountProvider.accountType != VEIMDemoAccountTypeOpenSource) {
+        VEIMDemoMineItem *cancelAccountItem = [VEIMDemoMineItem itemWithTitle:@"注销账户" subTitle:nil accessoryType:UITableViewCellAccessoryNone clickBlock:^(VEIMDemoMineItem *item) {
+            @strongify(self);
+            [self clickCancelAccountCell];
+        }];
+        [accountSectionArray addObject:cancelAccountItem];
+    }
+    
+    VEIMDemoMineItem *logoutItem = [VEIMDemoMineItem itemWithTitle:@"退出登录" subTitle:nil accessoryType:UITableViewCellAccessoryNone clickBlock:^(VEIMDemoMineItem *item) {
+        @strongify(self);
+        [self clickLogoutCell];
+    }];
+    [accountSectionArray addObject:logoutItem];
+    
+    [self.dataSectionList addObject:accountSectionArray];
+}
+
+#pragma mark - UITableViewDataSource & UITableViewDelegate
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    VEIMDemoMineItem *item = self.dataSectionList[indexPath.section][indexPath.row];
+    if (item.cellClass && item.cellClass == NSClassFromString(@"VEIMDemoMyinfoHeaderCell")) {
+        VEIMDemoMyinfoHeaderCell *cell = [tableView dequeueReusableCellWithIdentifier:@"VEIMDemoMyinfoHeaderCell"];
+        [cell refreshWithUser:[VEIMDemoUserManager sharedManager].currentUserFullInfo.userProfile];
+        return cell;
+    } else {
+        VEIMDemoAppInfoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"VEIMDemoAppInfoCell"];
+        cell.accessoryType = item.accessoryType;
+        [cell configCellWithTitle:item.title info:item.subTitle];
+        return cell;
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    NSArray *sectionArray = self.dataSectionList[indexPath.section];
+    VEIMDemoMineItem *item = sectionArray[indexPath.row];
+    if (item.clickBlock) {
+        item.clickBlock(item);
+    }
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    NSArray *sectionArray = self.dataSectionList[section];
+    return sectionArray.count;
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return self.dataSectionList.count;
+}
+
+#pragma mark - event
 
 - (void)showLoading {
     [self.view.window addSubview:self.progressHUD];
@@ -247,8 +258,6 @@ static NSString *const VEIMMyInfoLogout = @"退出登录";
     [self.progressHUD hideAnimated:YES];
     [self.progressHUD removeFromSuperview];
 }
-
-#pragma mark - event
 
 - (void)clickCancelAccountCell
 {

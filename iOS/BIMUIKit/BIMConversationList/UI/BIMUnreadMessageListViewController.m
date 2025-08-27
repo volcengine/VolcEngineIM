@@ -7,6 +7,7 @@
 
 #import "BIMUnreadMessageListViewController.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <imsdk-tob/BIMClient.h>
 #import <Masonry/Masonry.h>
 #import <OneKit/UIButton+BTDAdditions.h>

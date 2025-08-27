@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import "BIMUser.h"
 
 FOUNDATION_EXPORT NSString * _Nullable const kBIMUserProfileUpdateNotification;

@@ -9,6 +9,7 @@
 #import "VEIMDemoProfileEditViewController.h"
 #import "VEIMDemoSelectAvatarViewController.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import "VEIMDemoConversationSettingCell.h"
 #import "VEIMDemoDefine.h"
 #import "VEIMDemoUserManager.h"

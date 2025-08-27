@@ -9,6 +9,7 @@
 #import "BIMChatViewDataSource.h"
 #import "BIMUIDefine.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <OneKit/BTDMacros.h>
 
 @interface BIMChatViewDataSource () <BIMMessageListener>

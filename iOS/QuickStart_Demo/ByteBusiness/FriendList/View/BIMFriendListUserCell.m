@@ -12,7 +12,11 @@
 #import <imsdk-tob/BIMClient+Friend.h>
 #import <im-uikit-tob/BIMUICommonUtility.h>
 
+#define BIMFriendListUserCellOnlineStatusViewWidthHeigh 10.f
+
 @interface BIMFriendListUserCell ()
+
+@property (nonatomic, strong) UIView *onlineView;
 
 @end
 
@@ -23,6 +27,17 @@
     
     UILongPressGestureRecognizer *longpPressGes = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress)];
     [self.contentView addGestureRecognizer:longpPressGes];
+    
+    _onlineView = [UIView new];
+    _onlineView.backgroundColor = [UIColor greenColor];
+    _onlineView.layer.cornerRadius = BIMFriendListUserCellOnlineStatusViewWidthHeigh / 2;
+    _onlineView.hidden = YES;
+    
+    [self.portrait.superview addSubview:_onlineView];
+    [_onlineView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.bottom.equalTo(self.portrait);
+        make.size.mas_equalTo(BIMFriendListUserCellOnlineStatusViewWidthHeigh);
+    }];
 }
 
 - (void)setFriendInfo:(BIMUserFullInfo *)friendInfo{
@@ -33,6 +48,11 @@
     self.subTitleLabel.text = nil;
 
     [self setupConstraints];
+}
+
+- (void)setIsOnline:(BOOL)isOnline
+{
+    _onlineView.hidden = !isOnline;
 }
 
 - (void)longPress

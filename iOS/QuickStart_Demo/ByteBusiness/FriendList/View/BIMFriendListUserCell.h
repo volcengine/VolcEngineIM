@@ -21,6 +21,7 @@
 
 //@property (nonatomic, strong) BIMUser *user;
 @property (nonatomic, strong) BIMUserFullInfo *friendInfo;
+@property (nonatomic, assign) BOOL isOnline;//在线状态
 @property (nonatomic, weak) id<BIMFriendListUserCellDelegate> delegate;
 
 @end

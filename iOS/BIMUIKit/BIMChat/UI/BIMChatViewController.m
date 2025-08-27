@@ -1,6 +1,6 @@
 //
 //  BIMChatViewController.m
-//  
+//
 //
 //  Created by Weibai on 2022/11/4.
 //
@@ -36,6 +36,7 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 
 // 兼容直播群
 @interface BIMMember : NSObject<BIMMember>
@@ -818,7 +819,7 @@
 }
 
 #pragma mark - User Selection
-- (void)userSelectVC:(BIMUserSelectionController *)vc didChooseUser:(BIMUser *)user 
+- (void)userSelectVC:(BIMUserSelectionController *)vc didChooseUser:(BIMUser *)user
 {
     [self.inputTool addMentionUser:@(user.userID)];
     

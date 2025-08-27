@@ -9,6 +9,7 @@
 #import "VEIMDemoUserListItem.h"
 #import "VEIMDemoDefine.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import "BIMUIClient.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <im-uikit-tob/BIMUICommonUtility.h>

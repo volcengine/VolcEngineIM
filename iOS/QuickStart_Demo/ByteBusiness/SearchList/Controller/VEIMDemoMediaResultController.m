@@ -12,6 +12,7 @@
 #import <Masonry/Masonry.h>
 #import <OneKit/BTDMacros.h>
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <im-uikit-tob/BIMScanImage.h>
 #import <im-uikit-tob/BIMUIDefine.h>
 #import <im-uikit-tob/BIMToastView.h>

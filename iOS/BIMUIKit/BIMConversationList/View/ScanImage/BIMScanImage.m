@@ -9,6 +9,7 @@
 #import "BIMScanImage.h"
 #import "BIMUIDefine.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 
 #define kTag 2020

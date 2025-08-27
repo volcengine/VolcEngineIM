@@ -25,7 +25,7 @@
 #import <im-uikit-tob/BIMToastView.h>
 #import <im-uikit-tob/BIMUICommonUtility.h>
 
-@interface BIMFriendListController () <UITableViewDelegate, UITableViewDataSource, BIMFriendListUserCellDelegate, BIMFriendListDataSourceDelegate, UITextFieldDelegate>
+@interface BIMFriendListController () <UITableViewDelegate, UITableViewDataSource, BIMFriendListUserCellDelegate, BIMFriendListDataSourceDelegate, UITextFieldDelegate, BIMFriendListener>
 
 @property (nonatomic, strong) BIMFriendListDataSource *dataSource;
 @property (nonatomic, copy) NSArray<BIMUserFullInfo *> *allFriends;
@@ -36,6 +36,7 @@
 //@property (nonatomic, strong) UIView *emptyView;
 @property (nonatomic, copy) NSString *preAliasText;
 @property (nonatomic, strong) UITextRange *preAliasTextRange;
+@property (nonatomic, copy) NSDictionary<NSNumber *, NSNumber *> *friendsOnlineStatusDict;
 
 @end
 
@@ -48,8 +49,14 @@
         _allFriends = [NSArray array];
         _dataSource = [[BIMFriendListDataSource alloc] init];
         _dataSource.delegate = self;
+        [[BIMClient sharedInstance] addFriendListener:self];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [[BIMClient sharedInstance] removeFriendListener:self];
 }
 
 - (void)setupUIElements
@@ -105,12 +112,25 @@
     [self prepareAndDisplayFriendListDataWithAllFriends:nil];
 }
 
+- (void)fetchFriendsOnlineStatus
+{
+    NSArray *uidsArray = [self.allFriends valueForKey:@"uid"];
+    @weakify(self);
+    [[BIMClient sharedInstance] getFriendsOnlineStatusWithUids:uidsArray completion:^(NSDictionary<NSNumber *,NSNumber *> * _Nullable friendsOnlineStauts, BIMError * _Nullable error) {
+        @strongify(self);
+        self.friendsOnlineStatusDict = [friendsOnlineStauts copy];
+        [self.tableview reloadData];
+    }];
+}
+
 // TODO: 后续可优化，增删改。增只对该分组进行排序，删定点删除不重新分组排序，改同增
 - (void)prepareAndDisplayFriendListDataWithAllFriends:(NSArray<BIMUserFullInfo *> *)allFriends
 {
     if (!self.allFriends) {
         self.allFriends = allFriends;
     }
+    
+    [self fetchFriendsOnlineStatus];
     
     @weakify(self);
     dispatch_async(self.updateQueue, ^{
@@ -200,6 +220,7 @@
     
     BIMFriendListUserCell *cell = [tableView dequeueReusableCellWithIdentifier:@"BIMFriendListUserCell"];
     cell.friendInfo = self.sectionData[indexPath.section][indexPath.row];
+    cell.isOnline = [self.friendsOnlineStatusDict[@(cell.friendInfo.uid)] intValue] == BIM_FRIEND_ONLINE_STATUS_ONLINE;
     cell.delegate = self;
     
     return cell;
@@ -395,4 +416,26 @@
     // TODO: 可优化
     [self.tableview reloadData];
 }
+
+#pragma mark - BIMFriendListener
+
+- (void)onFriendStatusChanged:(long long)uid onlineStatus:(BIMFriendOnlineStatus)status
+{
+    @weakify(self);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        @strongify(self);
+        if (!self) { return; }
+        
+        NSMutableDictionary *dict;
+        if (self.friendsOnlineStatusDict) {
+            dict = [self.friendsOnlineStatusDict mutableCopy];
+        } else {
+            dict = [NSMutableDictionary dictionary];
+        }
+        dict[@(uid)] = @(status);
+        self.friendsOnlineStatusDict = [dict copy];
+        [self.tableview reloadData];
+    });
+}
+
 @end

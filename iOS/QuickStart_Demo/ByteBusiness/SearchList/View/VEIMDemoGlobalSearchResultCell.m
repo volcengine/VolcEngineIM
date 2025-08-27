@@ -9,6 +9,7 @@
 #import "VEIMDemoGlobalSearchResultCell.h"
 
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <OneKit/ByteDanceKit.h>
 #import <im-uikit-tob/BIMUIClient.h>
 #import <im-uikit-tob/BIMUIDefine.h>

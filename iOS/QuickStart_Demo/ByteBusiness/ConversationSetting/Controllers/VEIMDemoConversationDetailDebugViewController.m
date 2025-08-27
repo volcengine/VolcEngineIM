@@ -8,6 +8,7 @@
 #import "VEIMDemoConversationDetailDebugViewController.h"
 
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <Masonry/Masonry.h>
 #import <OneKit/BTDMacros.h>
 #import "BIMUIDefine.h"

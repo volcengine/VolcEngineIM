@@ -42,6 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)getAllRobotFullInfoWithSyncServer:(BOOL)syncServer completion:(BIMMUserFullInfoListCompletion)completion;
 
+- (void)getRobotFullInfoWithCursor:(NSInteger)cursor limit:(int32_t)limit completion:(BIMMUserPagingInfoListCompletion)completion;
+
 - (BOOL)isStringUidLogin;
 
 @end

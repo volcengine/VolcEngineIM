@@ -8,6 +8,7 @@
 
 #import "BIMBaseTableViewController.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 
 
 typedef NS_ENUM(NSUInteger, VEIMDemoSelectUserShowType) {

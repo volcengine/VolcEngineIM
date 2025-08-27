@@ -15,6 +15,7 @@
 
 #import <Masonry/Masonry.h>
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <OneKit/BTDMacros.h>
 #import <OneKit/ByteDanceKit.h>

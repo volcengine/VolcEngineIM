@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

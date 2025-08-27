@@ -18,6 +18,7 @@
 #import "VEIMDemoConversationListController.h"
 #import "VEIMDemoMyinfoController.h"
 #import "VEIMDemoFriendListController.h"
+#import "VEIMDemoIMManager.h"
 
 @interface VEIMDemoTabbarController ()
 
@@ -57,10 +58,13 @@
     
     VEIMDemoConversationListController *conversationVC = [[VEIMDemoConversationListController alloc] init];
     [self addChildVc:conversationVC title:@"消息" image:@"tabbar_conversation_normal" selectedImage:@"tabbar_conversation_sel"];
-    #if __has_include("VEIMDemoLiveGroupListController.h")
-        VEIMDemoLiveGroupListController *liveGroupVC = [[VEIMDemoLiveGroupListController alloc] init];
-        [self addChildVc:liveGroupVC title:@"直播群" image:@"tabbar_livegroup_normal" selectedImage:@"tabbar_livegroup_sel"];
-    #endif
+    
+    if ([VEIMDemoIMManager sharedManager].accountProvider.accountType == VEIMDemoAccountTypeInternal) {
+#if __has_include("VEIMDemoLiveGroupListController.h")
+    VEIMDemoLiveGroupListController *liveGroupVC = [[VEIMDemoLiveGroupListController alloc] init];
+    [self addChildVc:liveGroupVC title:@"直播群" image:@"tabbar_livegroup_normal" selectedImage:@"tabbar_livegroup_sel"];
+#endif
+    }
     
     VEIMDemoFriendListController *friendListVC = [[VEIMDemoFriendListController alloc] init];
     [self addChildVc:friendListVC title:@"通讯录" image:@"tabbar_friendlist_normal" selectedImage:@"tabbar_friendlist_sel"];

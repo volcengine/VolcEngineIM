@@ -8,6 +8,7 @@
 #import "VEIMDemoChatViewController.h"
 #import "BIMChatViewController.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import "VEIMDemoDefine.h"
 #import "VEIMDemoConversationSettingController.h"
 #import "VEIMDemoUserManager.h"

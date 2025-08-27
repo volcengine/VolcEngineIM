@@ -8,6 +8,7 @@
 #import "BIMUICommonUtility.h"
 
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <OneKit/ByteDanceKit.h>
 
 #import "BIMUser.h"

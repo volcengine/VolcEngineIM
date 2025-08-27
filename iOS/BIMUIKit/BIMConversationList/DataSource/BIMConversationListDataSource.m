@@ -9,6 +9,7 @@
 #import "BIMConversationListDataSource.h"
 #import "BIMConversationListManager.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <OneKit/BTDMacros.h>
 #import <OneKit/NSArray+BTDAdditions.h>
 

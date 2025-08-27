@@ -8,6 +8,7 @@
 #import "BIMConversationListManager.h"
 
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <OneKit/BytedanceKit.h>
 
 @interface BIMConversationListManager ()

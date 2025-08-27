@@ -13,6 +13,7 @@
 #import "VEIMDemoNetworkManager.h"
 #import <MBProgressHUD/MBProgressHUD.h>
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <OneKit/ByteDanceKit.h>
 #if __has_include(<imsdk-tob/BIMDebugManager.h>)
 #import <imsdk-tob/BIMDebugManager.h>
@@ -89,8 +90,8 @@ static NSString *kUIDStringLogin = @"kUIDStringLogin";
     
     
     BIMSDKConfig *config = [[BIMSDKConfig alloc] init];
-//    config.enableAPM = ![BDIMDebugNetworkManager sharedManager].disableApm;
-//    config.enableAppLog = ![BDIMDebugNetworkManager sharedManager].disableApplog;
+    config.enableAPM = ![BDIMDebugNetworkManager sharedManager].disableApm;
+    config.enableAppLog = ![BDIMDebugNetworkManager sharedManager].disableApplog;
     [config setLogListener:^(BIMLogLevel logLevel, NSString * _Nonnull logContent) {
             // 日志 输出
         NSLog(@"TIM--%@", logContent);
@@ -391,6 +392,17 @@ static NSString *kUIDStringLogin = @"kUIDStringLogin";
             [[BIMUIClient sharedInstance] reloadUserInfoWithUserId:info.uid];
         }
         BTD_BLOCK_INVOKE(completion, infos, bimError);
+    }];
+}
+
+- (void)getRobotFullInfoWithCursor:(NSInteger)cursor limit:(int32_t)limit completion:(BIMMUserPagingInfoListCompletion)completion
+{
+    [[BIMClient sharedInstance] getRobotFullInfoWithCursor:cursor limit:limit completion:^(NSArray<BIMUserFullInfo *> * _Nullable infos, NSInteger nextCursor, BOOL hasMore, BIMError * _Nullable bimError) {
+        for (BIMUserFullInfo *info in infos) {
+            [self.userDict setObject:info forKey:@(info.uid)];
+            [[BIMUIClient sharedInstance] reloadUserInfoWithUserId:info.uid];
+        }
+        BTD_BLOCK_INVOKE(completion, infos, nextCursor, hasMore, bimError);
     }];
 }
 

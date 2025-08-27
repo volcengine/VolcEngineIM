@@ -17,6 +17,7 @@
 #import "BIMToastView.h"
 #import "VEIMDemoConversationListSelectionCollectionView.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <im-uikit-tob/BIMFriendConversationListController.h>
 #import <Masonry/View+MASShorthandAdditions.h>
 #import "VEIMDemoGlobalSearchResultController.h"

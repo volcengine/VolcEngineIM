@@ -14,12 +14,16 @@
 #import "VEIMDemoChatViewController.h"
 
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <OneKit/ByteDanceKit.h>
 #import <im-uikit-tob/BIMToastView.h>
 
 @interface VEIMDemoRobotListController () <UITableViewDelegate, UITableViewDataSource, BIMFriendListUserCellDelegate >
 
 @property (nonatomic, copy) NSArray<BIMUserFullInfo *> *robotList;
+@property (nonatomic, assign) BOOL hasMore;
+@property (nonatomic, assign) NSInteger nextCursor;
+@property (nonatomic, assign) int32_t limit;
 
 @end
 
@@ -30,7 +34,15 @@
     [super viewDidLoad];
     
     self.navigationItem.title = @"机器人列表";
-    [self loadRobotListData];
+    self.limit = 3;
+    self.hasMore = YES;
+    self.nextCursor = 0;
+    @weakify(self);
+    self.tableview.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+        @strongify(self);
+        [self loadRobotListData];
+    }];
+    [self.tableview.mj_footer beginRefreshing];
 }
 
 - (void)setupUIElements
@@ -52,7 +64,7 @@
 - (void)userDidLogin:(NSNotification *)noti
 {
     self.robotList = nil;
-    [self loadRobotListData];
+    [self.tableview.mj_footer beginRefreshing];
 }
 
 - (void)userDidLogout:(NSNotification *)noti
@@ -64,19 +76,38 @@
 
 - (void)loadRobotListData
 {
-    [[VEIMDemoUserManager sharedManager] getAllRobotFullInfoWithSyncServer:YES completion:^(NSArray<BIMUserFullInfo *> * _Nullable infos, BIMError * _Nullable bimError) {
+    @weakify(self);
+    [[VEIMDemoUserManager sharedManager] getRobotFullInfoWithCursor:self.nextCursor limit:self.limit completion:^(NSArray<BIMUserFullInfo *> * _Nullable infos, NSInteger nextCursor, BOOL hasMore, BIMError * _Nullable bimError) {
+        @strongify(self);
         if (bimError) {
             NSError *error = [NSError errorWithDomain:kVEIMDemoErrorDomain code:bimError.code userInfo:@{NSLocalizedDescriptionKey : bimError.localizedDescription}];
-            [BIMToastView toast:[NSString stringWithFormat:@"获取所有机器人失败：%@", error.localizedDescription]];
+            [BIMToastView toast:[NSString stringWithFormat:@"分页获取机器人失败：%@", error.localizedDescription]];
+            [self.tableview.mj_footer endRefreshing];
             return;
         }
         
-        self.robotList = [infos btd_filter:^BOOL(BIMUserFullInfo * _Nonnull info) {
+        NSArray *robotList = [infos btd_filter:^BOOL(BIMUserFullInfo * _Nonnull info) {
             long long uid = info.userProfile.uid;
             return uid == 999880 || uid == 999881;
         }];
 #if DEBUG || INHOUSE
-        self.robotList = infos;
+        robotList = infos;
+        NSMutableArray *allRobotList = [NSMutableArray array];
+        if (self.robotList) {
+            [allRobotList addObjectsFromArray:self.robotList];
+        }
+        
+        if (robotList) {
+            [allRobotList addObjectsFromArray:robotList];
+        }
+        self.robotList = [allRobotList copy];
+        self.nextCursor = nextCursor;
+        self.hasMore = hasMore;
+        if (!hasMore) {
+            [self.tableview.mj_footer endRefreshingWithNoMoreData];
+        } else {
+            [self.tableview.mj_footer endRefreshing];
+        }
 #endif
         
         btd_dispatch_async_on_main_queue(^{

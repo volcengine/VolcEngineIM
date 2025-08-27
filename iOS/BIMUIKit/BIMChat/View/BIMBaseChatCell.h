@@ -9,6 +9,7 @@
 #import "BIMChatStickerReplyView.h"
 
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <Masonry/Masonry.h>
 
 NS_ASSUME_NONNULL_BEGIN

@@ -11,6 +11,7 @@
 #import "VEIMDemoChatViewController.h"
 
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <OneKit/ByteDanceKit.h>
 #import <FSCalendar/FSCalendar.h>
 #import <OneKit/UIDevice+BTDAdditions.h>

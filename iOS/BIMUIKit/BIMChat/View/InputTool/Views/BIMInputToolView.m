@@ -23,6 +23,7 @@
 #import <Masonry/Masonry.h>
 
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 
 #define kMinHei 40
 #define kMaxHei 88

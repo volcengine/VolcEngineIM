@@ -8,6 +8,7 @@
 
 #import "BIMParticipantsInConversationDataSource.h"
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <OneKit/ByteDanceKit.h>
 
 @interface BIMParticipantsInConversationDataSource ()<BIMConversationListListener, BIMGroupMemberListener>

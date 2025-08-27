@@ -10,6 +10,7 @@
 
 #import <Masonry/Masonry.h>
 #import <imsdk-tob/BIMSDK.h>
+#import <imsdk-tob/BIMClient+String.h>
 #import <MJRefresh/MJRefresh.h>
 #import <OneKit/ByteDanceKit.h>
 #import <im-uikit-tob/BIMUIDefine.h>
