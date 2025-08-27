@@ -1,7 +1,14 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { im_proto, ConversationSettingWeakMuteInfo, PushStatus, Conversation } from '@volcengine/im-web-sdk';
 
-import { BytedIMInstance, CurrentConversation, Conversations, UserId, SpecialBotConvStickOnTop } from '../store';
+import {
+  BytedIMInstance,
+  CurrentConversation,
+  Conversations,
+  UserId,
+  SpecialBotConvStickOnTop,
+  SendSingleMsgType,
+} from '../store';
 import { CheckCode } from '../constant';
 import useMessage from './useMessage';
 import { Message } from '@arco-design/web-react';
@@ -16,9 +23,10 @@ const useConversation = () => {
   const setCurrentConversation = useSetRecoilState(CurrentConversation);
   const setConversations = useSetRecoilState(Conversations);
   const setSpecialBotConvStickOnTop = useSetRecoilState(SpecialBotConvStickOnTop);
+  const setSendSingleMsgType = useSetRecoilState(SendSingleMsgType);
   const userId = useRecoilValue(UserId);
 
-  const { sendSystemMessage, editMessage, replyMessage } = useMessage();
+  const { sendSystemMessage, editMessage, replyMessage, sendTextMessageUseToUserId } = useMessage();
   const ACCOUNTS_INFO = useAccountsInfo();
 
   const { isSpecialBotConversionV2 } = useBot();
@@ -131,6 +139,30 @@ const useConversation = () => {
         participants: uid,
       });
       setCurrentConversation(payload);
+    } catch (e) {
+      console.error('发起单聊失败', e);
+    }
+  };
+
+  /**
+   * 发起单聊，并打招呼
+   * @param toUserId
+   * @param messageText
+   */
+  const createOneOneHiConversation = async (toUserId: string, messageText: string) => {
+    try {
+      const { success, conversationId } = await sendTextMessageUseToUserId(toUserId, messageText);
+      const payload = conversationId ? await bytedIMInstance.getConversation({ conversationId }) : null;
+      if (payload) {
+        setCurrentConversation(payload);
+        setSendSingleMsgType({
+          useToUserId: true,
+          conversationId: conversationId,
+        });
+      }
+      if (!success || !conversationId) {
+        console.error('通过toUserId发起单聊失败', { success, conversationId });
+      }
     } catch (e) {
       console.error('发起单聊失败', e);
     }
@@ -410,6 +442,7 @@ const useConversation = () => {
     removeConversation,
     createGroupConversation,
     createOneOneConversation,
+    createOneOneHiConversation,
     createBotGroupConversation,
     createBotOneOneConversation,
     leaveGroupConversation,

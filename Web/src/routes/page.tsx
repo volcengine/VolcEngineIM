@@ -1,6 +1,6 @@
 import React, { useCallback, memo, FC, useEffect, useRef, useMemo, useState } from 'react';
 import { Spin } from '@arco-design/web-react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import classNames from 'classnames';
 import { Conversation, im_proto, Message } from '@volcengine/im-web-sdk';
 
@@ -19,11 +19,12 @@ import {
   ConversationTab,
 } from '../components/index';
 import { useAccountsInfo, useConversation, useProfileUpdater } from '../hooks';
-import { Conversations, CurrentConversation } from '../store';
+import { Conversations, CurrentConversation, SendSingleMsgType } from '../store';
 import { Iui } from '../types';
 
 import MainContainer from './Style';
 import { FRIEND_INFO } from '../constant';
+import { useRafState } from 'ahooks';
 
 interface PCFePropsType {
   ui?: Iui;
@@ -48,9 +49,12 @@ const Home: FC<PCFePropsType> = memo(() => {
     selectConversation,
     createGroupConversation,
     createOneOneConversation,
+    createOneOneHiConversation,
     createBotGroupConversation,
     createBotOneOneConversation,
   } = useConversation();
+
+  const [sendSingleMsgType, setSendSingleMsgType] = useRecoilState(SendSingleMsgType);
 
   const conversations = useRecoilValue(Conversations);
   const currentConversation = useRecoilValue(CurrentConversation);
@@ -83,8 +87,15 @@ const Home: FC<PCFePropsType> = memo(() => {
     (item: Conversation) => {
       handleCloseMenuSidebar();
       selectConversation?.(item.id);
+      // 重置发消息方式
+      if (item.type === im_proto.ConversationType.ONE_TO_ONE_CHAT && sendSingleMsgType.conversationId !== item.id) {
+        setSendSingleMsgType({
+          useToUserId: false,
+          conversationId: item.id,
+        });
+      }
     },
-    [selectConversation, handleCloseMenuSidebar]
+    [selectConversation, handleCloseMenuSidebar, SendSingleMsgType, setSendSingleMsgType]
   );
 
   const handleOpenMenuSidebar = useCallback((key: SidebarKey | string) => {
@@ -131,6 +142,7 @@ const Home: FC<PCFePropsType> = memo(() => {
         <ConversationHeader
           createGroupConversation={createGroupConversation}
           createOneOneConversation={createOneOneConversation}
+          createOneOneHiConversation={createOneOneHiConversation}
           createBotGroupConversation={createBotGroupConversation}
           createBotOneOneConversation={createBotOneOneConversation}
         />

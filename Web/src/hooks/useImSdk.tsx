@@ -443,6 +443,7 @@ const useInit = () => {
       IMEvent.ConversationClearMessage,
       ({ conversation_id, update_min_index }) => {
         ArcoMessage.info(`会话 ${conversation_id} 消息被清空`);
+        // setCurrentConversation(null); // 如需提前一些清空会话的消息，可放开此行代码
         getMessageList();
       }
     );

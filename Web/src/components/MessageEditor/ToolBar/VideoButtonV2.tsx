@@ -6,12 +6,12 @@ import { Message, Tooltip } from '@arco-design/web-react';
 import IconButtonMask from '../../IconButtonMask';
 import { ErrorType } from '../../../types';
 
-interface VideoButtonProps {
+interface VideoButtonV2Props {
   sendMessage?: any;
   useCustomCover?: boolean;
 }
 
-const VideoButton: FC<VideoButtonProps> = props => {
+const VideoButtonV2: FC<VideoButtonV2Props> = props => {
   const { sendMessage, useCustomCover } = props;
   const inputRef = useRef<HTMLInputElement>();
   const coverInputRef = useRef<HTMLInputElement>();
@@ -32,7 +32,7 @@ const VideoButton: FC<VideoButtonProps> = props => {
   };
 
   return (
-    <Tooltip position="top" content={useCustomCover ? '视频(先选封面)' : '视频'}>
+    <Tooltip position="top" content={useCustomCover ? '视频V2(先选封面)' : '视频V2'}>
       <div
         className="toolbar-item image-item"
         onClick={() => {
@@ -40,7 +40,7 @@ const VideoButton: FC<VideoButtonProps> = props => {
         }}
       >
         <IconButtonMask>
-          <IconFileVideo style={{ fontSize: '20px' }} />
+          <IconFileVideo style={{ fontSize: '20px', color: '#1890ff' }} />
 
           <input
             ref={coverInputRef}
@@ -74,4 +74,4 @@ const VideoButton: FC<VideoButtonProps> = props => {
   );
 };
 
-export default VideoButton;
+export default VideoButtonV2;

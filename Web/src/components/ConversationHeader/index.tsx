@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useState } from 'react';
 import { Portal } from '..';
-import { GroupModal, OneOneModal, BotGroupModal, BotOneOneModal } from '../ConversationModal';
+import { GroupModal, OneOneModal, OneOneHiModal, BotGroupModal, BotOneOneModal } from '../ConversationModal';
+import { IS_EXTERNAL_DEMO } from '../../constant';
 
 import HeaderBox from './Styles';
 import { Button, Message, Modal, Tooltip } from '@arco-design/web-react';
@@ -12,22 +13,29 @@ import { useRequest } from 'ahooks';
 interface ConversationHeaderProps {
   createGroupConversation?: any;
   createOneOneConversation?: any;
+  createOneOneHiConversation?: any;
   createBotGroupConversation?: any;
   createBotOneOneConversation?: any;
 }
 const ModalMap = {
   GROUP: GroupModal,
-  ONEONE: OneOneModal,
-  BOTGROUP: BotGroupModal,
-  BOTONEONE: BotOneOneModal,
+  ONE_ONE: OneOneModal,
+  ONE_ONE_HI: OneOneHiModal,
+  BOT_GROUP: BotGroupModal,
+  BOT_ONE_ONE: BotOneOneModal,
 };
 
 const ConversationHeader: FC<ConversationHeaderProps> = props => {
-  const { createGroupConversation, createOneOneConversation, createBotGroupConversation, createBotOneOneConversation } =
-    props;
+  const {
+    createGroupConversation,
+    createOneOneConversation,
+    createOneOneHiConversation,
+    createBotGroupConversation,
+    createBotOneOneConversation,
+  } = props;
 
   const [createModalVisible, setCreateModalVisible] = useState(false);
-  const [createModal, setCreateModal] = useState<'GROUP' | 'ONEONE' | 'BOTONEONE' | 'BOTGROUP'>();
+  const [createModal, setCreateModal] = useState<'GROUP' | 'ONE_ONE' | 'ONE_ONE_HI' | 'BOT_ONE_ONE' | 'BOT_GROUP'>();
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
 
   const handleCreateModalVisibleChange = useCallback(() => {
@@ -40,17 +48,21 @@ const ConversationHeader: FC<ConversationHeaderProps> = props => {
   };
 
   const handleSingleCreate = () => {
-    setCreateModal('ONEONE');
+    setCreateModal('ONE_ONE');
+    handleCreateModalVisibleChange();
+  };
+  const handleSingleHiCreate = () => {
+    setCreateModal('ONE_ONE_HI');
     handleCreateModalVisibleChange();
   };
 
   const handleBotGroupCreate = () => {
-    setCreateModal('BOTGROUP');
+    setCreateModal('BOT_GROUP');
     handleCreateModalVisibleChange();
   };
 
   const handleBotSingleCreate = () => {
-    setCreateModal('BOTONEONE');
+    setCreateModal('BOT_ONE_ONE');
     handleCreateModalVisibleChange();
   };
 
@@ -74,13 +86,16 @@ const ConversationHeader: FC<ConversationHeaderProps> = props => {
         case 'GROUP':
           createFunc = createGroupConversation;
           break;
-        case 'ONEONE':
+        case 'ONE_ONE':
           createFunc = createOneOneConversation;
           break;
-        case 'BOTGROUP':
+        case 'ONE_ONE_HI':
+          createFunc = createOneOneHiConversation;
+          break;
+        case 'BOT_GROUP':
           createFunc = createBotGroupConversation;
           break;
-        case 'BOTONEONE':
+        case 'BOT_ONE_ONE':
           createFunc = createBotOneOneConversation;
           break;
         default:
@@ -103,6 +118,13 @@ const ConversationHeader: FC<ConversationHeaderProps> = props => {
             单聊
           </Button>
         </Tooltip>
+        {!IS_EXTERNAL_DEMO && (
+          <Tooltip content={'发起单聊，并打招呼'}>
+            <Button type="primary" icon={<IconUserAdd />} onClick={handleSingleHiCreate}>
+              单聊打招呼
+            </Button>
+          </Tooltip>
+        )}
         {/* <Tooltip content={'创建机器人群聊'}>
           <Button type="primary" icon={<IconRobotAdd />} onClick={handleBotGroupCreate}>
             群聊机器人

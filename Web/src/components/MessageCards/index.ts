@@ -21,6 +21,7 @@ const MessageCardsMap: IMessageCardsMap = {
   [`${im_proto.MessageType.MESSAGE_TYPE_IMAGE}`]: ImageMessage,
   [`${im_proto.MessageType.MESSAGE_TYPE_AUDIO}`]: AudioMessage,
   [`${im_proto.MessageType.MESSAGE_TYPE_VIDEO}`]: VideoMessage,
+  [`${im_proto.MessageType.MESSAGE_TYPE_VIDEO_V2}`]: VideoMessage,
   [`${im_proto.MessageType.MESSAGE_TYPE_FILE}`]: FileMessage,
   [`${im_proto.MessageType.MESSAGE_TYPE_CUSTOM}`]: CustomMessage,
 };
