@@ -21,29 +21,60 @@ import { sortBy } from 'lodash';
 import { useAccountsInfo, useConversation, useBot } from '../../../../hooks';
 import { useNavigate } from '@modern-js/runtime/router';
 import { sleep } from '../../../../utils/sleep';
+import Long from 'long';
 
 interface ChatPanelPropsType {
   selectedPanel: string;
 }
 
+/**
+ * 联系人项组件 - 用于渲染单个联系人条目
+ *
+ * @param {Object} props - 组件属性
+ * @param {string} props.userId - 用户ID，用于标识联系人（这里有个问题）
+ * @param {React.ReactNode} props.operation - 操作按钮区域的内容（如删除、修改备注等按钮）
+ * @param {() => void} [props.onClick] - 点击联系人项时的回调函数（可选）
+ * @param {string} [props.alias] - 联系人的备注名称（可选，优先显示备注名）
+ * @param {any} [props.fullInfo] - 联系人的完整信息（可选，包含在线状态等信息）
+ *
+ * @returns {JSX.Element} 返回联系人项的JSX元素，包含头像、姓名和操作按钮
+ */
 function ContactItem({
   userId,
   operation,
   onClick,
   alias,
+  fullInfo,
 }: {
   userId: string;
   operation: React.ReactNode;
   onClick?: () => void;
   alias?: string;
+  fullInfo?: any;
 }) {
   const ACCOUNTS_INFO = useAccountsInfo();
-
   return (
     <div key={userId} className={'contact-item'}>
       <div className={'contact-item-avatar'} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'unset' }}>
         <ProfilePopover userId={userId}>
-          <Avatar url={ACCOUNTS_INFO[userId]?.url} size={36} />
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <Avatar url={ACCOUNTS_INFO[userId]?.url} size={36} />
+            {fullInfo?.isOnline !== undefined && (
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  width: 12,
+                  height: 12,
+                  borderRadius: '50%',
+                  backgroundColor: fullInfo.isOnline ? '#00d26a' : '#86909c',
+                  border: '2px solid white',
+                  boxSizing: 'border-box',
+                }}
+              />
+            )}
+          </div>
         </ProfilePopover>
       </div>
       <div
@@ -181,11 +212,15 @@ function ApplyList() {
     const sub4 = bytedIMInstance.event.subscribe(IMEvent.FriendApplyUpdate, () => {
       refresh();
     });
+    const sub5 = bytedIMInstance.event.subscribe(IMEvent.OnlineStateChange, e => {
+      refresh();
+    });
     return () => {
       bytedIMInstance.event.unsubscribe(IMEvent.FriendApply, sub1);
       bytedIMInstance.event.unsubscribe(IMEvent.FriendApplyRefuse, sub2);
       bytedIMInstance.event.unsubscribe(IMEvent.FriendAdd, sub3);
       bytedIMInstance.event.unsubscribe(IMEvent.FriendApplyUpdate, sub4);
+      bytedIMInstance.event.unsubscribe(IMEvent.OnlineStateChange, sub5);
     };
   }, []);
   return (
@@ -297,6 +332,7 @@ function FriendItem({ i, refresh }: { i: Friend; refresh: () => void }) {
     <ContactItem
       userId={i.userId}
       alias={i.alias}
+      fullInfo={i}
       operation={
         <>
           <Button
@@ -347,6 +383,7 @@ function FriendItem({ i, refresh }: { i: Friend; refresh: () => void }) {
 function FriendList() {
   const bytedIMInstance = useRecoilValue(BytedIMInstance);
   const ACCOUNTS_INFO = useAccountsInfo();
+  const [friendList, setFriendList] = useState<Friend[]>([]);
 
   const {
     data = [],
@@ -357,7 +394,6 @@ function FriendList() {
     const resp = await bytedIMInstance.getFriendListOnline({
       limit: 500,
     });
-    console.log(resp.list);
     return sortBy(resp.list, [o => ACCOUNTS_INFO[o.userId].name]);
   }, {});
 
@@ -372,17 +408,27 @@ function FriendList() {
       refresh();
     });
 
+    const sub5 = bytedIMInstance.event.subscribe(IMEvent.OnlineStateChange, e => {
+      const info = e.contentJson;
+      const index = data.findIndex(i => i.userId == String((info as any).UserId));
+      if (index !== -1) {
+        data[index].isOnline = (info as any).Action === 'Online';
+      }
+      setFriendList([...data]);
+    });
+
     return () => {
       bytedIMInstance.event.unsubscribe(IMEvent.FriendAdd, sub1);
       bytedIMInstance.event.unsubscribe(IMEvent.FriendDelete, sub2);
       bytedIMInstance.event.unsubscribe(IMEvent.FriendUpdate, sub3);
+      bytedIMInstance.event.unsubscribe(IMEvent.OnlineStateChange, sub5);
     };
-  }, []);
+  }, [data]);
 
   return (
     <List
       size="small"
-      dataSource={data}
+      dataSource={friendList.length > 0 ? friendList : data}
       loading={loading}
       style={{ border: 'none' }}
       render={i => {
@@ -479,57 +525,98 @@ function BotList() {
   const { getBotList } = useBot();
   const navigate = useNavigate();
 
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [nextCursor, setNextCursor] = React.useState<Long | undefined>(undefined);
+  const [hasMore, setHasMore] = React.useState(false);
+
   const {
     data = [],
     loading,
     refresh,
-  } = useRequest(async () => {
-    // await sleep(200);
-    const list = await getBotList();
-    return list;
-  }, {});
+    run,
+  } = useRequest(
+    async (cursor?: Long) => {
+      // await sleep(200);
+      const result = await getBotList({
+        cursor,
+        limit: 10,
+      });
+      if (result) {
+        setNextCursor(result.next_cursor);
+        setHasMore(result.has_more || false);
+        return result.list;
+      }
+      return [];
+    },
+    {
+      manual: false,
+      defaultParams: [undefined],
+    }
+  );
 
   const onCreateBotConversation = async (uid: string) => {
     createBotOneOneConversation(uid);
     navigate('/');
   };
 
+  const handleFirstPage = () => {
+    setCurrentPage(1);
+    run(undefined); // 第一页不需要cursor
+  };
+
+  const handleSecondPage = () => {
+    if (nextCursor) {
+      setCurrentPage(2);
+      run(nextCursor); // 使用第一页返回的cursor获取第二页
+    }
+  };
+
   return (
-    <List
-      size="small"
-      dataSource={data}
-      loading={loading}
-      style={{ border: 'none' }}
-      render={(item, index) => (
-        <List.Item
-          key={item.uid || index}
-          onClick={() => {
-            onCreateBotConversation(item.uid);
-          }}
-        >
-          <List.Item.Meta
-            // avatar={
-            //   <Popover
-            //     content={
-            //       <div>
-            //         <div>{item.nick_name}</div>
-            //         <div>
-            //           ID: <Typography.Text copyable>{item.uid}</Typography.Text>
-            //         </div>
-            //       </div>
-            //     }
-            //   >
-            //     <div>
-            //       <Avatar url={item.portrait} size={36} />
-            //     </div>
-            //   </Popover>
-            // }
-            avatar={<Avatar url={item.portrait} size={36} />}
-            title={`${item.nick_name} ID: ${item.uid}`}
-          />
-        </List.Item>
-      )}
-    />
+    <div>
+      <div style={{ padding: '10px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
+        <Button type="primary" onClick={handleFirstPage} disabled={currentPage === 1}>
+          第一页
+        </Button>
+        <Button type="primary" onClick={handleSecondPage} disabled={!hasMore || currentPage === 2}>
+          第二页
+        </Button>
+      </div>
+      <List
+        size="small"
+        dataSource={data}
+        loading={loading}
+        style={{ border: 'none' }}
+        render={(item, index) => (
+          <List.Item
+            key={item.uid || index}
+            onClick={() => {
+              onCreateBotConversation(item.uid);
+            }}
+          >
+            <List.Item.Meta
+              // avatar={
+              //   <Popover
+              //     content={
+              //       <div>
+              //         <div>{item.nick_name}</div>
+              //         <div>
+              //           ID: <Typography.Text copyable>{item.uid}</Typography.Text>
+              //         </div>
+              //       </div>
+              //     }
+              //   >
+              //     <div>
+              //       <Avatar url={item.portrait} size={36} />
+              //     </div>
+              //   </Popover>
+              // }
+              avatar={<Avatar url={item.portrait} size={36} />}
+              title={`${item.nick_name} ID: ${item.uid}`}
+            />
+          </List.Item>
+        )}
+      />
+    </div>
   );
 }
 

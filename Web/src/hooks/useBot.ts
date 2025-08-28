@@ -1,6 +1,7 @@
 import { useAccountsInfo } from './useProfileUpdater';
 import { BytedIMInstance } from '../store';
 import { IS_EXTERNAL_DEMO } from '../constant';
+import Long from 'long';
 
 import { useRecoilValue } from 'recoil';
 
@@ -42,16 +43,28 @@ const useBot = () => {
   /**
    * 获取机器列表
    */
-  const getBotList = async () => {
+  const getBotList = async (params?: { cursor?: Long; limit?: number }) => {
     try {
-      const resp = await bytedIMInstance.getBotListOnline();
+      const resp = await bytedIMInstance.getBotListOnline({
+        cursor: params?.cursor,
+        limit: params?.limit || 10, // 默认每页10条
+      });
       const BOT_DEBUG = localStorage.getItem('BOT_DEBUG');
       console.log('lllllll BotList', BOT_DEBUG, resp.list);
       let list = resp.list;
       
-      return list;
+      return {
+        list,
+        next_cursor: resp.next_cursor,
+        has_more: resp.has_more,
+      };
     } catch (e) {
       console.error('获取机器列表失败', e);
+      return {
+        list: [],
+        next_cursor: undefined,
+        has_more: false,
+      };
     }
   };
 
