@@ -108,6 +108,8 @@
         } else {
             [self.tableview.mj_footer endRefreshing];
         }
+#else
+        self.robotList = robotList;
 #endif
         
         btd_dispatch_async_on_main_queue(^{
