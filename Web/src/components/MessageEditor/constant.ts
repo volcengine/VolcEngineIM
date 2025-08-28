@@ -15,7 +15,7 @@ const TOOL_BAR_ITEM_MAP: any = {
   Image: ImageButton,
   Emoji: EmojiButton,
   Video: VideoButton,
-  
+  VideoV2: VideoButtonV2,
   Audio: AudioButton,
   File: FileButton,
   Mention: MentionButton,

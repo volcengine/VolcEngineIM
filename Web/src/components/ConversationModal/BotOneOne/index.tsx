@@ -23,7 +23,7 @@ const CreateConversationModel: FC<CreateConversationModelProps> = props => {
   const { getBotList } = useBot();
 
   const hanleCreate = async () => {
-    if (!data?.length) {
+    if (!data?.list?.length) {
       Message.error('机器人候选列表为空');
       return;
     }
@@ -39,7 +39,10 @@ const CreateConversationModel: FC<CreateConversationModelProps> = props => {
     props.onClose();
   };
 
-  const { data, loading } = useRequest(getBotList);
+  const { data, loading } = useRequest(async () => {
+    const result = await getBotList();
+    return result;
+  });
   const { run, loading: btnLoading } = useRequest(hanleCreate, { manual: true });
 
   return (
@@ -54,8 +57,8 @@ const CreateConversationModel: FC<CreateConversationModelProps> = props => {
         <Form autoComplete="off">
           <FormItem required={true}>
             <Radio.Group direction="vertical" className={styles['radio-group']} value={botId} onChange={setBotId}>
-              {data?.map((item: any) => (
-                <Radio value={item.uid} className={styles['radio-item']}>
+              {data?.list?.map((item: any) => (
+                <Radio key={item.uid} value={item.uid} className={styles['radio-item']}>
                   <div className={styles['radio-item-content']}>
                     <Avatar url={item.portrait} size={36} />
                     {item.nick_name || item.uid}

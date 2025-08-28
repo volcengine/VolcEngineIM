@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { Modal, Tooltip } from '@arco-design/web-react';
+import { Modal, Tooltip, Message } from '@arco-design/web-react';
 import { Conversation, IMEvent, im_proto } from '@volcengine/im-web-sdk';
 import { IconClose, IconUserAdd } from '@arco-design/web-react/icon';
 import { useRecoilValue } from 'recoil';
@@ -75,6 +75,12 @@ const ChatHeader: React.FC<ChatInfoPropsTypes> = memo(props => {
 
   useEffect(() => {
     const sub = bytedIMInstance.event.subscribe(IMEvent.ReceiveNewP2PMessage, msg => {
+      // 显示消息内容的 toast 弹出，仅用于测试，上线需删除
+      //   if (msg.content && msg.type === im_proto.MessageType.MESSAGE_TYPE_CUSTOM_P2P) {
+      //     const messageContent = msg.content || msg.contentJson?.content || '收到新消息';
+      //     Message.info(messageContent);
+      //   }
+
       if (
         msg.conversationId === conversation.id &&
         msg.sender !== userId &&

@@ -20,10 +20,11 @@ interface ConversationItemPropsType {
   onMuteConversation?: () => void;
   title: string;
   description: string;
+  isOnline?: boolean;
 }
 
 const ConversationItem: React.FC<ConversationItemPropsType> = memo(props => {
-  const { conversation = {} as Conversation, isActive, onClick, title, description } = props;
+  const { conversation = {} as Conversation, isActive, onClick, title, description, isOnline = false } = props;
   const lastMessage = conversation?.lastVisibleMessage;
 
   const specialBotConvStickOnTop = useRecoilValue(SpecialBotConvStickOnTop);

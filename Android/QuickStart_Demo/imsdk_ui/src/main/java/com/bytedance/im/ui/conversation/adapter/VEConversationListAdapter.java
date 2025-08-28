@@ -171,17 +171,6 @@ public class VEConversationListAdapter extends RecyclerView.Adapter<VEViewHolder
         }
     }
 
-    /**
-     * 固定置顶一个conversation
-     * @param topConversation
-     */
-    public void insertOrUpdateTopConversation(BIMConversation topConversation) {
-        long orderStart = Long.MAX_VALUE;
-
-        VEConvBaseStickTopWrapper veConvBaseStickTopWrapper = new VEConvBaseStickTopWrapper(topConversation, R.layout.bim_im_item_conversation);
-        veConvBaseStickTopWrapper.setSortOrder(orderStart);
-        updateConversation(veConvBaseStickTopWrapper);
-    }
 
     private void updateConversation(VEConvBaseWrapper wrapper){
         removeIndex(finIndex(wrapper));

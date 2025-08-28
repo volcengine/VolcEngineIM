@@ -10,5 +10,5 @@ public class VEContactListBaseViewHolder extends RecyclerView.ViewHolder {
     public VEContactListBaseViewHolder(@NonNull View itemView) {
         super(itemView);
     }
-    public void onBind(ContactListDataInfo<?> data, ContactListDataInfo<?> preData) {}
+    public void onBind(ContactListDataInfo<?> data, ContactListDataInfo<?> preData, boolean isOnline) {}
 }

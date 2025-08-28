@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +25,7 @@ import com.bytedance.im.core.api.model.BIMConversation;
 import com.bytedance.im.ui.BIMUIClient;
 import com.bytedance.im.user.BIMContactExpandService;
 import com.bytedance.im.user.api.model.BIMUserFullInfo;
+import com.bytedance.im.user.api.model.BIMUserInfoListResult;
 import com.bytedance.im.user.api.model.BIMUserProfile;
 
 import java.util.ArrayList;
@@ -42,6 +44,11 @@ public class VERobotListActivity extends Activity {
     private RecyclerView rvContactList;
     private static UserChecker userChecker = null;
     private RobotListAdapter adapter = new RobotListAdapter();
+
+    private long cursor = 0;
+    private int pageSize = 3;
+    private boolean hasMore = true;
+    private boolean isLoading = false;
 
     public static void start(Context context) {
         context.startActivity(new Intent(context, VERobotListActivity.class));
@@ -64,6 +71,21 @@ public class VERobotListActivity extends Activity {
         } else {
             ((TextView)findViewById(R.id.tv_contact_list_title)).setText(configTitle);
         }
+
+        rvContactList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (!recyclerView.canScrollVertically(1)) {
+                    loadData();
+                }
+            }
+        });
 
         rvContactList.setItemAnimator(null);
         rvContactList.setAdapter(adapter);
@@ -92,22 +114,26 @@ public class VERobotListActivity extends Activity {
     }
 
     private void loadData() {
-        BIMClient.getInstance().getService(BIMContactExpandService.class).getAllRobotFullInfo(true, new BIMResultCallback<List<BIMUserFullInfo>>() {
+        if (isLoading || !hasMore) {
+            return;
+        }
+
+        BIMClient.getInstance().getService(BIMContactExpandService.class).getRobotFullInfo(cursor, pageSize, new BIMResultCallback<BIMUserInfoListResult>() {
 
             @Override
-            public void onSuccess(List<BIMUserFullInfo> profiles) {
+            public void onSuccess(BIMUserInfoListResult profiles) {
+                List<BIMUserFullInfo> newProfiles = new ArrayList<>();
                 if (userChecker != null && profiles != null) {
-                    List<BIMUserFullInfo> newProfiles = new ArrayList<>();
-
-                    for (BIMUserFullInfo profile: profiles) {
+                    for (BIMUserFullInfo profile: profiles.getFullInfoList()) {
                         if (userChecker.isValid(profile)) {
                             newProfiles.add(profile);
                         }
                     }
-                    profiles = newProfiles;
                 }
 
-                adapter.addData(profiles);
+                cursor = profiles.getNextCursor();
+                hasMore = profiles.isHasMore();
+                adapter.addData(newProfiles);
                 adapter.notifyDataSetChanged();
             }
 
