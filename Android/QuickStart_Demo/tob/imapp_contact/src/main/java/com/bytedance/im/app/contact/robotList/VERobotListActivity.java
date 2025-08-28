@@ -129,6 +129,10 @@ public class VERobotListActivity extends Activity {
                             newProfiles.add(profile);
                         }
                     }
+                } else {
+                    for (BIMUserFullInfo profile: profiles.getFullInfoList()) {
+                        newProfiles.add(profile);
+                    }
                 }
 
                 cursor = profiles.getNextCursor();
