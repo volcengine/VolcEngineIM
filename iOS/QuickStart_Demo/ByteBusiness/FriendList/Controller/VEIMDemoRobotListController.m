@@ -35,6 +35,7 @@
     
     self.navigationItem.title = @"机器人列表";
     self.limit = 3;
+    
     self.hasMore = YES;
     self.nextCursor = 0;
     @weakify(self);
@@ -92,6 +93,7 @@
         }];
 #if DEBUG || INHOUSE
         robotList = infos;
+#endif
         NSMutableArray *allRobotList = [NSMutableArray array];
         if (self.robotList) {
             [allRobotList addObjectsFromArray:self.robotList];
@@ -103,18 +105,21 @@
         self.robotList = [allRobotList copy];
         self.nextCursor = nextCursor;
         self.hasMore = hasMore;
-        if (!hasMore) {
-            [self.tableview.mj_footer endRefreshingWithNoMoreData];
-        } else {
-            [self.tableview.mj_footer endRefreshing];
-        }
-#else
-        self.robotList = robotList;
-#endif
         
-        btd_dispatch_async_on_main_queue(^{
-            [self.tableview reloadData];
-        });
+        
+        if (self.robotList.count == 0 && hasMore) {//无可展示数据且有更多时尝试拉下一页
+            [self loadRobotListData];
+        } else {
+            btd_dispatch_async_on_main_queue(^{
+                if (!hasMore) {
+                    [self.tableview.mj_footer endRefreshingWithNoMoreData];
+                } else {
+                    [self.tableview.mj_footer endRefreshing];
+                }
+                [self.tableview reloadData];
+            });
+        }
+        
     }];
 }
 
