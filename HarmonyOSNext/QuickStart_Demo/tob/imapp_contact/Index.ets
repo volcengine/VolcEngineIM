@@ -1,1 +1,0 @@
-export { VEContactListFragment } from './src/main/ets/components/VEContactListFragment'
