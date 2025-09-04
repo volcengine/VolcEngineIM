@@ -1,0 +1,1 @@
+{"name":"@imcloud/imapp_member","version":"1.0.0","description":"Please describe the basic information.","main":"Index.ets","author":"","license":"Apache-2.0","dependencies":{"long":"5.2.1","@imcloud/imapp_router":"file:../../imapp_router","@imcloud/im_sdk_ui":"file:../../im_sdk_ui","@imcloud/imsdk":"1.1.1"}}

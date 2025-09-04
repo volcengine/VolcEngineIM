@@ -1,0 +1,1 @@
+import { TypedArrayBuffer } from "./x"; export declare class TypedString extends TypedArrayBuffer { constructor(y13: string, mimeType?: string); } 

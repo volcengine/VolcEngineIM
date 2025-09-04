@@ -1,0 +1,1 @@
+import hilog from '@ohos.hilog'; import { dealErrMessage, dealMessage } from "./a3"; export default class GlobalLogger { static globalWarn(o7, p7 = "", ...q7) { hilog.warn(0x0100, 'AppLogH', `[WARN] [GlobalLog] ${dealMessage(p7, o7, q7)}`); } static globalError(k7, l7 = "", m7, ...n7) { hilog.error(0x0100, 'AppLogH', `[Error] [GlobalLog] ${dealErrMessage(l7, k7, m7, n7)}`); } } 

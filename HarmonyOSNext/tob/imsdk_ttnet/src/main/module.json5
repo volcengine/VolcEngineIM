@@ -1,0 +1,11 @@
+{
+  "module": {
+    "name": "imsdk_ttnet",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet",
+      "2in1"
+    ]
+  }
+}

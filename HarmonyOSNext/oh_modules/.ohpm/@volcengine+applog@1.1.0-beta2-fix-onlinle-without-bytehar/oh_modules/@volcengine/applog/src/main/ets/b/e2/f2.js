@@ -1,0 +1,1 @@
+export const CONFIG = "config"; export const REAL_TIME_EVENTS = "real_time_events"; export const BATCH_EVENT_INTERVAL = "batch_event_interval"; export const BAV_LOG_COLLECT = "bav_log_collect"; export const BAV_AB_CONFIG = "bav_ab_config"; export const ABTEST_FETCH_INTERVAL = "abtest_fetch_interval"; export const BLOCK_LIST = "blocklist"; export const EVENT_LIST_V3 = "v3"; 

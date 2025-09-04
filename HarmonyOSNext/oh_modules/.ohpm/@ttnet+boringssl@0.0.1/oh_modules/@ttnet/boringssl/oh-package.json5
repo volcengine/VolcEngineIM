@@ -1,0 +1,1 @@
+{"author":"quxiaodong","dependencies":{},"description":{"git":"410514a1eabba0df70f5148588d662e09da57e30","project":":boringssl","project_path":"boringssl","sha1":"git@code.byted.org:tech_client/ohos_boringssl.git"},"license":"Apache-2.0","main":"Index.js","name":"@ttnet/boringssl","version":"0.0.1","types":"Index.d.ets","artifactType":"obfuscation"}

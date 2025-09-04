@@ -1,0 +1,1 @@
+export default interface PageInfo { pageTitle: string; pageKey: string; } 

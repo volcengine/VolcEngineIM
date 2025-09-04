@@ -1,0 +1,1 @@
+import { Any } from "../k3"; export declare function dealMessage(a8: string, b8: string, c8: Any[]): string; export declare function dealErrMessage(v7: string, w7: string, x7: Error, y7: Any[]): string; 

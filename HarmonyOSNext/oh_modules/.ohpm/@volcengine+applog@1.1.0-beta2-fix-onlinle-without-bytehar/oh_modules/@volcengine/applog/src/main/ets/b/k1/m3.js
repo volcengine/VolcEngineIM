@@ -1,0 +1,1 @@
+import m16 from 'libapplogh.so'; export function l16(n16, o16) { return m16.ttEncrypt(n16, o16); } 

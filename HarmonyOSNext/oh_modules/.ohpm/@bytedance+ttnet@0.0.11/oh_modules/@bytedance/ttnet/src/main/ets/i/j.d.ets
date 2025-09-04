@@ -1,0 +1,1 @@
+import { Request } from "../ttnet/a/c"; import { ClientProvider } from "../ttnet/a/e"; import { SsCall } from "../ttnet/i1/a2"; export declare class OhosHttpClient implements ClientProvider { newSsCall(request: Request): SsCall; } 

@@ -1,0 +1,1 @@
+import { URiConfig } from "./g"; declare const TOB_CHINA_CONFIG: URiConfig; export default TOB_CHINA_CONFIG; 

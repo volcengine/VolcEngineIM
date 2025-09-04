@@ -1,0 +1,11 @@
+{
+  "module": {
+    "name": "imsdk_ws",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet",
+      "2in1"
+    ]
+  }
+}

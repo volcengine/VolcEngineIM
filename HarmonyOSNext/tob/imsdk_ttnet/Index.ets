@@ -1,0 +1,1 @@
+export { BIMNetService } from "./src/main/ets/ttnet/BIMNetService"

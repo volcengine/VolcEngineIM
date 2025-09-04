@@ -1,0 +1,1 @@
+import { str2ab } from "../p/y1"; import { TypedArrayBuffer } from "./x"; export class TypedString extends TypedArrayBuffer { constructor(y13, mimeType = 'text/plain') { super(str2ab(y13), mimeType); } } 

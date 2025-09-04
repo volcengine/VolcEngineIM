@@ -1,0 +1,1 @@
+import { ISDKContext } from "../../b/d/f1"; import BasePlugin from "../o"; declare class CrashEvent extends BasePlugin { static pluginName: string; observerId?: number; constructor(r27: ISDKContext); enablePlugin(): void; disablePlugin(): void; pluginName(): string; registerJsCrashListener(): void; } export default CrashEvent; 

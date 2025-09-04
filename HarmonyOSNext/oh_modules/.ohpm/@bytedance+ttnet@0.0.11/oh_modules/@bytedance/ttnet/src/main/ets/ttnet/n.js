@@ -1,0 +1,1 @@
+export class TTResponseCallback { onHeaderComplete(headers) { } onResponseStart(response) { } } 

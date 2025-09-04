@@ -1,0 +1,1 @@
+export { BIMUpLoadService } from './src/main/ets/uploader/BIMUpLoadService'

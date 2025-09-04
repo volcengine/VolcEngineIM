@@ -1,0 +1,1 @@
+export function checkSimulateResponseIsOk(e33) { return e33.status === 0 && "OK" === e33.message; } 

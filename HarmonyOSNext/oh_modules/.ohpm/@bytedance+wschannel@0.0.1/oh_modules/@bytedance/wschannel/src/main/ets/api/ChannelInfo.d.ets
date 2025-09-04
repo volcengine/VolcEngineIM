@@ -1,0 +1,51 @@
+import { List } from '@kit.ArkTS';
+export declare class ChannelInfo {
+    private deviceId;
+    private installId;
+    private appKey;
+    private fpid;
+    private aid;
+    private appVersion;
+    private updateVersionCode;
+    private extra;
+    private headers;
+    private urls;
+    private static readonly ACCESS_SALT;
+    constructor(a1: string, b1: string | undefined, c1: number, d1: number, e1: string, f1: number, g1: number, h1: List<string>, i1: Map<string, string>, j1: Map<string, string>);
+    private getAccessKey;
+    createCommonParams(): string;
+    getDeviceId(): string | undefined;
+    getInstallId(): string | undefined;
+    getFpid(): number;
+    getAid(): number;
+    getAppKey(): string | undefined;
+    getAppVersion(): number;
+    getExtraParam(): Map<string, string>;
+    getHeaders(): Map<string, string>;
+    getUrls(): List<string>;
+}
+export declare class ChannelInfoBuilder {
+    private aid;
+    private fpid;
+    private deviceId;
+    private appKey;
+    private installId;
+    private appVersion;
+    private updateVersionCode;
+    private extra;
+    private headers;
+    private urls;
+    constructor(t: number, u: number, v: string, w: string, x: List<string>);
+    setDeviceId(s: string): ChannelInfoBuilder;
+    setInstallId(r: string): ChannelInfoBuilder;
+    setFpid(q: number): ChannelInfoBuilder;
+    setAid(p: number): ChannelInfoBuilder;
+    setAppKey(o: string): ChannelInfoBuilder;
+    setAppVersion(n: number): ChannelInfoBuilder;
+    setUpdateVersionCode(m: number): ChannelInfoBuilder;
+    setUrls(k: List<string>): ChannelInfoBuilder;
+    setExtraParams(g: Map<string, string>): ChannelInfoBuilder;
+    setHeaders(c: Map<string, string>): ChannelInfoBuilder;
+    header(a: string, b: string): ChannelInfoBuilder;
+    build(): ChannelInfo;
+}

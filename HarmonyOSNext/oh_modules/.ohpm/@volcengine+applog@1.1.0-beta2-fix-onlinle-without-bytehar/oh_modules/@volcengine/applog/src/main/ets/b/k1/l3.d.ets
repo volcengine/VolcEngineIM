@@ -1,0 +1,1 @@
+import AppLogLogger from "../h1/n1"; import { Permissions } from '@kit.AbilityKit'; export declare function getTokenId(v16: AppLogLogger): Promise<number>; export declare function checkPermission(p16: AppLogLogger, q16: Permissions): Promise<boolean>; 

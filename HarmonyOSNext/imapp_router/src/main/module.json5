@@ -1,0 +1,11 @@
+{
+  "module": {
+    "name": "imapp_router",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet",
+      "2in1"
+    ]
+  }
+}

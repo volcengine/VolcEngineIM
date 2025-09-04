@@ -1,0 +1,1 @@
+import { ApiRequestMonitorHook } from "../g/k"; export declare class TTNetTobInit { static initTTNet(g14: boolean, h14: ApiRequestMonitorHook, i14: boolean, context: Context): Promise<void>; } 

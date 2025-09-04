@@ -1,0 +1,1 @@
+export declare function l16(n16: ArrayBuffer, o16: number): ArrayBuffer; 

@@ -1,0 +1,1 @@
+export declare function contactStr2Ab(n16: string[], o16: ArrayBuffer): ArrayBuffer; export declare function str2ab(str: string): ArrayBuffer; export declare function wildcardMatch(pattern: string, input: string): boolean; 

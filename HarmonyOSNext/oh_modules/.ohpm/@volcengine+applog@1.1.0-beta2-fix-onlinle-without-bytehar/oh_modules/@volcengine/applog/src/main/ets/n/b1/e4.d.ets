@@ -1,0 +1,1 @@
+export default interface SimulateUriData { appId: string; qrParam: string; simulateUrlPrefix: string; simulateMode: string; } 

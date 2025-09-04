@@ -1,0 +1,1 @@
+export class TTEventListener { onInitSucceed() { } onInitFailed(x11, y11) { } } 

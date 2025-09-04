@@ -1,0 +1,16 @@
+{
+  "name": "entry",
+  "version": "1.1.0",
+  "description": "Please describe the basic information.",
+  "main": "",
+  "author": "",
+  "license": "",
+  "dependencies": {
+    
+    "@imcloud/imapp_tob": "file:../tob/imapp_tob",
+    "@imcloud/imapp_member": "file:../tob_in_same/imapp_member",  //成员相关
+    "@imcloud/im_sdk_ui": "file:../im_sdk_ui",
+    "@imcloud/imapp_router": "file:../imapp_router",
+  }
+}
+

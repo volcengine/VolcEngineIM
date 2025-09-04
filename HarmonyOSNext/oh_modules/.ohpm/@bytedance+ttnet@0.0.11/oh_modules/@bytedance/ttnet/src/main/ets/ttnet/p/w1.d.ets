@@ -1,0 +1,1 @@
+export declare class JsonParams { private jsonParams; add(key: string, value: string | number | boolean | JsonParams): JsonParams; remove(key: string): JsonParams; toJsonString(): string; } 

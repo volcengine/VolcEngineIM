@@ -1,0 +1,1 @@
+export default class BridgeProxyInfo { constructor() { this.object = new Object(); this.name = ''; this.methodList = []; } } 

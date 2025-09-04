@@ -1,0 +1,32 @@
+import { DBColumn } from './DBColumn';
+export declare class MessageConfig {
+    static readonly TABLE_NAME = "msg";
+    static readonly COLUMN_MSG_UUID: DBColumn;
+    static readonly COLUMN_SERVER_ID: DBColumn;
+    static readonly COLUMN_CONVERSATION_ID: DBColumn;
+    static readonly COLUMN_CONVERSATION_SHORT_ID: DBColumn;
+    static readonly COLUMN_CONVERSATION_TYPE: DBColumn;
+    static readonly COLUMN_MSG_TYPE: DBColumn;
+    static readonly COLUMN_INDEX_V1: DBColumn;
+    static readonly COLUMN_ORDER_INDEX: DBColumn;
+    static readonly COLUMN_STATUS: DBColumn;
+    static readonly COLUMN_NET_STATUS: DBColumn;
+    static readonly COLUMN_VERSION: DBColumn;
+    static readonly COLUMN_DELETED: DBColumn;
+    static readonly COLUMN_CREATED_TIME: DBColumn;
+    static readonly COLUMN_SENDER: DBColumn;
+    static readonly COLUMN_CONTENT: DBColumn;
+    static readonly COLUMN_EXT: DBColumn;
+    static readonly COLUMN_LOCAL_INFO: DBColumn;
+    static readonly COLUMN_READ_STATUS: DBColumn;
+    static readonly COLUMN_SEC_SENDER: DBColumn;
+    static readonly COLUMN_INDEX_V2: DBColumn;
+    static readonly COLUMN_TABLE_FLAG: DBColumn;
+    static readonly COLUMN_NEED_BUILD_FTS_INDEX: DBColumn;
+    static readonly COLUMN_LABEL_LIST_STR: DBColumn;
+    static readonly COLUMN_CONTENT_BYTE: DBColumn;
+    static readonly COLUMN_LIST: DBColumn[];
+    static readonly COLUMN_LIST_BIG_INT: string[];
+    static getCreator(): string;
+    static getIndexCreator(): string[];
+}

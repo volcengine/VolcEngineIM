@@ -1,0 +1,11 @@
+IMCloud License
+
+Copyright 2024 Beijing Volcano Engine Technology Ltd. All Rights Reserved.
+
+The imsdk was developed by Beijing Volcano Engine Technology Ltd. (hereinafter “Volcanoengine”). Any copyright or patent right is owned by and proprietary material of the Volcano Engine.
+
+imsdk is available under the [Commercial Software] and licensed under the commercial license.  Here is also a link to subscription services agreement: https://www.volcengine.com/docs/6366/67075.
+
+Without Volcano Engine's prior written permission, any use of imsdk, in particular any use for commercial purposes, is prohibited. This includes, without limitation, incorporation in a commercial product, use in a commercial service, or production of other artefacts for commercial purposes.
+
+Without Volcano Engine's prior written permission, the imsdk may not be reproduced, modified and/or made available in any form to any third party.

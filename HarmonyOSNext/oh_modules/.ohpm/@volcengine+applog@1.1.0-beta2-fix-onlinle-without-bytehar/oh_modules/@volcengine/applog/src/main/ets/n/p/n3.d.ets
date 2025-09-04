@@ -1,0 +1,1 @@
+import { ABVal } from "../../b/k3"; export default interface ABTestItem { vid: string; val: ABVal; } 

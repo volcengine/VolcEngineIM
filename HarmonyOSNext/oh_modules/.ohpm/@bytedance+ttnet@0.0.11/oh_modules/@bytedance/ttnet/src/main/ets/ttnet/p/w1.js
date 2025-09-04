@@ -1,0 +1,1 @@
+import JSON from "@ohos.util.json"; export class JsonParams { constructor() { this.jsonParams = {}; } add(key, value) { this.jsonParams[key] = value; return this; } remove(key) { this.jsonParams[key] = undefined; return this; } toJsonString() { return JSON.stringify(this.jsonParams, (z14, v) => { if (v instanceof JsonParams) { return v.jsonParams; } return v; }); } } 

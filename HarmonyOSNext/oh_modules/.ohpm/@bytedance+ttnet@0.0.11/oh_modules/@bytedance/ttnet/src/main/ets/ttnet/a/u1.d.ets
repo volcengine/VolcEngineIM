@@ -1,0 +1,1 @@
+export interface RequestBodyConverter { convertRequestBody(body: object): Promise<string>; } 

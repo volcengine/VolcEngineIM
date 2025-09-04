@@ -1,0 +1,1 @@
+export declare class JsonStorage { private static readonly TAG; private innerStr?; private innerObj?; constructor(json: string | object); getJsonString(): string; getJsonObject(): object | undefined; } 

@@ -1,0 +1,56 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "veIM"
+    },
+    {
+      "name": "ve_im_in_login_title",
+      "value": "IMCloud 中台即时通讯"
+    },
+    {
+      "name": "ve_im_in_login_input_hint",
+      "value": "请输入用户uid"
+    },
+    {
+      "name": "ve_im_in_login_get_token_failed",
+      "value": "获取 token 失败"
+    },
+    {
+      "name": "ve_im_in_login_btn",
+      "value": "登录"
+    },
+    {
+      "name": "ve_im_in_main_tab_conv",
+      "value": "消息"
+    },
+    {
+      "name": "ve_im_in_main_tab_live",
+      "value": "直播群"
+    },
+    {
+      "name": "ve_im_in_main_tab_contact",
+      "value": "通讯录"
+    },
+    {
+      "name": "ve_im_in_main_tab_mine",
+      "value": "我的"
+    },
+    {
+      "name": "ve_im_in_conv_title",
+      "value": "IMCloud"
+    },
+    {
+      "name": "ve_im_in_conv_load_more_failed",
+      "value": "加载失败"
+    }
+  ]
+}

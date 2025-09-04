@@ -1,0 +1,1 @@
+export var EventType; (function (EventType) { EventType[EventType["LAUNCH"] = 1] = "LAUNCH"; EventType[EventType["TERMINATE"] = 2] = "TERMINATE"; EventType[EventType["EVENT"] = 3] = "EVENT"; EventType[EventType["PROFILE"] = 4] = "PROFILE"; })(EventType || (EventType = {})); export default EventType; 

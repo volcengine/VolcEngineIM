@@ -1,0 +1,3 @@
+/**
+ * IMMsgFTSDao
+ */

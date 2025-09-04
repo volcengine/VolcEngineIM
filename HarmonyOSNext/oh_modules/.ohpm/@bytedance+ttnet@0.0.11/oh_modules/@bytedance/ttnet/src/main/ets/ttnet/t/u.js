@@ -1,0 +1,1 @@
+export class TypedOutput { async getBuffer(maxSize) { return [new ArrayBuffer(0), true]; } fileName() { return ''; } mimeType() { return 'application/json'; } length() { return -1; } } 

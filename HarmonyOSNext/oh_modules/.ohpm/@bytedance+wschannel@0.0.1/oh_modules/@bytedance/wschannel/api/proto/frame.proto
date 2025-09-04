@@ -1,0 +1,27 @@
+// 客户端与服务端交互的数据结构
+
+// version should be same as frontier
+syntax = "proto2";
+package ws_proto;
+
+option objc_class_prefix = "TFWSPB";
+
+message Frame {
+	required uint64	seqid		= 1;
+	required uint64	logid		= 2;
+
+	//service = 0 is reserved
+	required int32 service 	= 3;
+	required int32 method		= 4;
+
+	message ExtendedEntry {
+		required string key   = 1;
+		required string value = 2;
+	}
+
+	repeated ExtendedEntry headers	= 5; 
+
+	optional string	payload_encoding= 6;  
+	optional string	payload_type	= 7;  
+	optional bytes	payload		= 8;  
+}

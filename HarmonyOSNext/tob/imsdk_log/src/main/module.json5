@@ -1,0 +1,11 @@
+{
+  "module": {
+    "name": "imsdk_log",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet",
+      "2in1"
+    ],
+  }
+}

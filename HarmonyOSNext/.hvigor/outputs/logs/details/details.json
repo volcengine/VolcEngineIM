@@ -1,0 +1,128 @@
+{
+  "HVIGOR_OHOS_PLUGIN": {
+    "MODULES": [
+      {
+        "MODULE_NAME": "1043bfc77febe75fafec0c4309faccf1",
+        "API_TYPE": "stageMode",
+        "INCREMENTAL_TASKS": {
+          "COMPILE_ARKTS": true
+        }
+      },
+      {
+        "MODULE_NAME": "619038310b03079c452f7fa6efd97d61",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "28e0936a983df79414c49f70d0934094",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "872742f71b72ff0eca9ca382bef68974",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "933160bb8f51ed5ac0442a681c458754",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "f4b8b938ffbfb37536c5d3f08aae6c7e",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "055b70e4b6d5b19ca4b1435106f68d84",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "efe9add0c0e250f72241799163c9248e",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "44174dfc4d0a0ec287b5cf3d4e478374",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "37ff9d20f43e934728c1184134f58e62",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "f64692853463ac61379f5e78432b84a9",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "f06a8f4e8a43a1174bb7225f9f3b2e44",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "09c6adabc1e653d21eaba2bc4797dba5",
+        "API_TYPE": "stageMode"
+      },
+      {
+        "MODULE_NAME": "5cf667e6784d377d58272f4df345523c",
+        "API_TYPE": "stageMode"
+      }
+    ],
+    "BUILD_MODE": "debug",
+    "USE_NORMALIZED_OHMURL": true
+  },
+  "HVIGOR": {
+    "IS_INCREMENTAL": true,
+    "IS_DAEMON": true,
+    "IS_PARALLEL": true,
+    "IS_HVIGORFILE_TYPE_CHECK": false,
+    "TASK_TIME": {
+      "1043bfc77febe75fafec0c4309faccf1": {
+        "CreateModuleInfo": 538333,
+        "PreCheckSyscap": 141250,
+        "ProcessIntegratedHsp": 195417,
+        "SyscapTransform": 1557500,
+        "GenerateLoaderJson": 38239209,
+        "ConfigureCmake": 224583,
+        "BuildJS": 1052000,
+        "BuildNativeWithCmake": 119000,
+        "BuildNativeWithNinja": 549000,
+        "CompileArkTS": 2362662792,
+        "PackageHap": 396339167,
+        "SignHap": 320318500,
+        "CollectDebugSymbol": 280416,
+        "assembleHap": 78125
+      },
+      "28e0936a983df79414c49f70d0934094": {
+        "ConfigureCmake": 99666,
+        "BuildNativeWithCmake": 154541,
+        "BuildNativeWithNinja": 479292
+      },
+      "619038310b03079c452f7fa6efd97d61": {
+        "ConfigureCmake": 130708,
+        "BuildNativeWithCmake": 84834,
+        "BuildNativeWithNinja": 325000
+      },
+      "872742f71b72ff0eca9ca382bef68974": {
+        "ConfigureCmake": 232833,
+        "BuildNativeWithCmake": 185750,
+        "BuildNativeWithNinja": 338041
+      },
+      "933160bb8f51ed5ac0442a681c458754": {
+        "ConfigureCmake": 146666,
+        "BuildNativeWithCmake": 102208,
+        "BuildNativeWithNinja": 352417
+      },
+      "055b70e4b6d5b19ca4b1435106f68d84": {
+        "ConfigureCmake": 112000,
+        "BuildNativeWithCmake": 101625,
+        "BuildNativeWithNinja": 242208
+      },
+      "44174dfc4d0a0ec287b5cf3d4e478374": {
+        "ConfigureCmake": 109667,
+        "BuildNativeWithCmake": 99708,
+        "BuildNativeWithNinja": 266625
+      },
+      "efe9add0c0e250f72241799163c9248e": {
+        "ConfigureCmake": 133416,
+        "BuildNativeWithCmake": 113375,
+        "BuildNativeWithNinja": 556083
+      }
+    },
+    "TOTAL_TIME": 3680452416,
+    "BUILD_ID": "202509041425081830"
+  }
+}

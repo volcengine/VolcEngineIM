@@ -1,0 +1,37 @@
+{
+	"app": {
+		"bundleName": "com.ericple.log4a",
+		"debug": true,
+		"versionCode": 1000000,
+		"versionName": "1.0.0",
+		"minAPIVersion": 40000010,
+		"targetAPIVersion": 50000012,
+		"apiReleaseType": "Release",
+		"compileSdkVersion": "5.0.0.71",
+		"compileSdkType": "HarmonyOS",
+		"appEnvironments": [],
+		"bundleType": "app"
+	},
+	"module": {
+		"name": "libLog4a",
+		"type": "har",
+		"description": "$string:shared_desc",
+		"requestPermissions": [
+			{
+				"name": "ohos.permission.GET_WIFI_INFO"
+			},
+			{
+				"name": "ohos.permission.INTERNET"
+			}
+		],
+		"deviceTypes": [
+			"default",
+			"tablet"
+		],
+		"packageName": "@pie/log4a",
+		"installationFree": false,
+		"virtualMachine": "ark9.0.0.0",
+		"compileMode": "esmodule",
+		"dependencies": []
+	}
+}

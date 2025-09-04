@@ -1,0 +1,1 @@
+export default class BridgeProxyInfo { object: object; name: string; methodList: string[]; } 

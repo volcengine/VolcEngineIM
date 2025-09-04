@@ -1,0 +1,1 @@
+export declare function getDensityDPI(): number; export declare function getDensityDensity(): string; 

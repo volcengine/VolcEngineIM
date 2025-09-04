@@ -1,0 +1,1 @@
+import { BaseParam } from "../k3"; import BaseEvent from "./i"; export declare function c2(l2: BaseEvent): number; export declare function d2(i2: number, j2: BaseParam): number; export declare function e2<m65>(f2: Record<string, m65>): number; 

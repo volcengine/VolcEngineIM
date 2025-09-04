@@ -1,0 +1,1 @@
+import { ISDKContext } from "../d/f1"; import { BaseWorker } from "./g2"; export default class WorkEngine { sdkContext: ISDKContext; workers: Map<string, BaseWorker>; constructor(r20: ISDKContext); waitHeaderReady(): void; addWorker(n20: BaseWorker): void; queryWorker<e65 extends BaseWorker>(m20: string): e65 | undefined; removeWorker(l20: BaseWorker): void; } 

@@ -1,0 +1,1 @@
+export class TopicReceiver { } class Dispatcher extends TopicReceiver { } export default Dispatcher; 

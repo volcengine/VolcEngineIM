@@ -1,0 +1,1 @@
+export declare abstract class TypedOutput { getBuffer(maxSize: number): Promise<[ ArrayBuffer, boolean ]>; fileName(): string; mimeType(): string; length(): number; } 

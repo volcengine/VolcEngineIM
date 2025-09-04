@@ -1,0 +1,1 @@
+export interface TypedInput { mimeType(): string; length(): number; in(): ArrayBuffer; } 

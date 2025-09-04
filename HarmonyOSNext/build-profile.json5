@@ -1,0 +1,107 @@
+{
+  "app": {
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "storePassword": "00000019F167B94EB1E085952EC536720C6D718104E99666F314CE75136A2982D59015127F36832A86",
+          "certpath": "./keystore/imcloud_harmony.cer",
+          "keyAlias": "imcloud_harmony",
+          "keyPassword": "000000197D5D8A1F879818D71D7963A47476989A19696FE366368F4549592D1AFD4F56935F249F7D78",
+          "profile": "./keystore/imcloud_demo_profileDebug.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "./keystore/imcloud_harmony_p12.p12"
+        }
+      }
+    ],
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "compatibleSdkVersion": "5.0.0(12)",
+        "runtimeOS": "HarmonyOS",
+        "buildOption": {
+          "strictMode": {
+            "useNormalizedOHMUrl": true
+          }
+        }
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug"
+      },
+      {
+        "name": "release"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "imsdk_common",
+      "srcPath": "./imsdk_common",
+    },
+    {
+      "name": "imapp_router",
+      "srcPath": "./imapp_router"
+    },
+    {
+      "name": "im_sdk_ui",
+      "srcPath": "./im_sdk_ui"
+    },
+    {
+      "name": "imapp_member",
+      "srcPath": "./tob_in_same/imapp_member",
+    },
+    {
+      "name": "imapp_live",
+      "srcPath": "./tob/imapp_live",
+    },
+    {
+      "name": "imapp_contact",
+      "srcPath": "./tob/imapp_contact",
+    },
+    //tob
+    {
+      "name": "imapp_tob",
+      "srcPath": "./tob/imapp_tob",
+    },
+    {
+      "name": "im_sms_login",
+      "srcPath": "./tob/im_sms_login",
+    },
+    {
+      "name": "imsdk_env",
+      "srcPath": "./tob/imsdk_env",
+    },
+    {
+      "name": "imsdk_ttnet",
+      "srcPath": "./tob/imsdk_ttnet",
+    },
+    {
+      "name": "imsdk_ws",
+      "srcPath": "./tob/imsdk_ws",
+    },
+    {
+      "name": "imsdk_uploader",
+      "srcPath": "./tob/imsdk_uploader",
+    },
+    {
+      "name": "imsdk_log",
+      "srcPath": "./tob/imsdk_log",
+    },
+  ]
+}

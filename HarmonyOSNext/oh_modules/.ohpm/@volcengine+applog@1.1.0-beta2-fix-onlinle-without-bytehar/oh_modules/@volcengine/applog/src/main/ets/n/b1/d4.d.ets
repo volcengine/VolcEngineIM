@@ -1,0 +1,1 @@
+import { ObjectRecord } from "../../b/k3"; export default interface SimulateResponse { status: number; message: string; data: ObjectRecord; cookies: string; } 
