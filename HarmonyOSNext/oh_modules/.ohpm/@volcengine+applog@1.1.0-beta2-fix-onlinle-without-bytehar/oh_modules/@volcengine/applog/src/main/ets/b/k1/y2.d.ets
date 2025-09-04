@@ -1,1 +1,0 @@
-import AppLogLogger from "../h1/n1"; export declare function generateAppLogIdToAsset(p15: AppLogLogger): Promise<string>; export declare function queryAssetAppLogId(j15: AppLogLogger): Promise<string>; 

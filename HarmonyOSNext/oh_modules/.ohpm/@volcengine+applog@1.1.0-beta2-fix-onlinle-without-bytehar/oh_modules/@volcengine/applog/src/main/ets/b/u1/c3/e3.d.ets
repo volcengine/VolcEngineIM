@@ -1,1 +1,0 @@
-import Response from "../h3"; import { Interceptor, InterceptorChain } from "./f3"; export declare class CompressAndEncryptInterceptor implements Interceptor { intercept(s9: InterceptorChain): Promise<Response>; } 

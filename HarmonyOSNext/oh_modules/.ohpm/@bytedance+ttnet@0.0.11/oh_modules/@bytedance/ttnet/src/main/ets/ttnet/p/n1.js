@@ -1,1 +1,0 @@
-import JSON from "@ohos.util.json"; export class TTJson { static stringify(model) { return JSON.stringify(model); } static parse(data) { const options = { bigIntMode: 1, }; const result = JSON.parse(data, undefined, options); if (result) { return result; } else { return new Object(); } } } 

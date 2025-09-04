@@ -1,1 +1,0 @@
-import Response from "../h3"; import { Interceptor, InterceptorChain } from "./f3"; export declare class TopicInterceptor implements Interceptor { intercept(j10: InterceptorChain): Promise<Response>; } 

@@ -79,9 +79,5 @@
       "name": "imapp_tob",
       "srcPath": "./tob/imapp_tob",
     },
-    {
-      "name": "im_sms_login",
-      "srcPath": "./tob/im_sms_login",
-    },
   ]
 }

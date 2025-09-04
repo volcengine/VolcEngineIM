@@ -1,2 +1,0 @@
-string shared_desc 0x02000000
-color white 0x02000001

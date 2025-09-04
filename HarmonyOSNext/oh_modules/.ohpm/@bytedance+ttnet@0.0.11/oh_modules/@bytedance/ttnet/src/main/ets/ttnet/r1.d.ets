@@ -1,1 +1,0 @@
-export declare class OhosErrorCodeMapping { static ohosCodeMapping: Map<number, number>; static convertOhosNetErrorCode(code: number): number; } 

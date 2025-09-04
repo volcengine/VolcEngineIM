@@ -1,1 +1,0 @@
-import BaseEvent from "../../b/h/i"; export default class Launch extends BaseEvent { constructor(g30: boolean, h30?: string, i30?: string); } 

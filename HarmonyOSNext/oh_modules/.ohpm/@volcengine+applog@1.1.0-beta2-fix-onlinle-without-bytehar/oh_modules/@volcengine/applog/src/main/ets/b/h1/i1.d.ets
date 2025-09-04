@@ -1,1 +1,0 @@
-import { BusinessError } from '@ohos.base'; import { Any } from "../k3"; export default class GlobalLogger { static globalWarn(o7: string, p7?: string, ...q7: Any[]): void; static globalError(k7: string, l7: string, m7: BusinessError, ...n7: Any[]): void; } 

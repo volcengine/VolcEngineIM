@@ -1,1 +1,0 @@
-export declare class TTJson { static stringify(model: object): string; static parse(data: string): object; } 

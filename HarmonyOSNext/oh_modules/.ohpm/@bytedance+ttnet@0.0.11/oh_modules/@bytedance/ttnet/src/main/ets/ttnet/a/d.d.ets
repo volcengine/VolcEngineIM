@@ -1,1 +1,0 @@
-export declare class Header { private readonly name; private readonly value; constructor(name: string, value: string); getName(): string; getValue(): string; toString(): string; } 

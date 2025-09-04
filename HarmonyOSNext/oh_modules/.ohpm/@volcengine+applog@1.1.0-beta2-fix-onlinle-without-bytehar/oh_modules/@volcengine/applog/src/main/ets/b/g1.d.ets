@@ -1,1 +1,0 @@
-import AppLog from "./c"; export declare class AppLogHelper { static appLogInstanceMap: Record<string, AppLog>; static putInstance(instanceKey: string, appLog: AppLog): void; static queryInstance(instanceKey: string): AppLog; static containsInstance(instanceKey: string): boolean; } export declare function calcInstanceKey(appId: string, multipleInstanceTag?: string): string; 

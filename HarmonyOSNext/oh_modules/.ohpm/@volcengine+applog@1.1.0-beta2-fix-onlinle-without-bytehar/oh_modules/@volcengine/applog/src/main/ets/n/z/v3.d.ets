@@ -1,1 +1,0 @@
-import { ISDKContext } from "../../b/d/f1"; import { EventDbStore } from "../../b/y1/m2"; import BaseEvent from "../../b/h/i"; export default class ProfileDbHelper { sdkContext: ISDKContext; eventDbStore: EventDbStore; constructor(s29: ISDKContext); queryProfile(): Promise<BaseEvent[]>; deleteProfiles(q29: BaseEvent[]): Promise<void>; } 

@@ -1,1 +1,0 @@
-import BaseEvent from "../../b/h/i"; export default class Terminate extends BaseEvent { constructor(l31: number, m31?: string, n31?: string); } 

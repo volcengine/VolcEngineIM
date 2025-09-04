@@ -1,1 +1,0 @@
-import { TTEventListener } from "../g/c1"; export declare class TTEventListenerManager extends TTEventListener { private static readonly TAG; private listenerList; registerEventListener(listener: TTEventListener): void; removeEventListener(listener: TTEventListener): void; onInitSucceed(): void; onInitFailed(c12: number, d12: string): void; } 

@@ -1,1 +1,0 @@
-export const ttEncrypt: (data: ArrayBuffer, length: number) => ArrayBuffer

@@ -1,1 +1,0 @@
-import { ISDKContext } from "../../b/d/f1"; import BasePlugin from "../o"; export default class b extends BasePlugin { static pluginName: string; private eventWatch; constructor(g28: ISDKContext); enablePlugin(): void; disablePlugin(): void; registerHiFreezeEventWatch(): void; registerHiCrashEventWatch(): void; registerHiAppEventWatch(): void; pluginName(): string; } 

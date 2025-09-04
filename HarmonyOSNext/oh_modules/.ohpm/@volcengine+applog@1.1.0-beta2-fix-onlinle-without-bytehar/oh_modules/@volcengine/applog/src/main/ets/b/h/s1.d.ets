@@ -1,1 +1,0 @@
-import { EventRecord } from "../k3"; import BaseEvent from "./i"; import EventType from "./j"; export declare class Event extends BaseEvent { constructor(n1: string); } export declare function createEvent(i1: string, j1: EventRecord, k1?: EventType): BaseEvent; 

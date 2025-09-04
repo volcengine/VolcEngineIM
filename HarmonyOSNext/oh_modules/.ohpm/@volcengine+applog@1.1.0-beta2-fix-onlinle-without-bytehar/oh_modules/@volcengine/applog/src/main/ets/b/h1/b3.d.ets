@@ -1,1 +1,0 @@
-import { hilog } from '@kit.PerformanceAnalysisKit'; export default interface ILogger { log: (logLevel: hilog.LogLevel, moduleTag: string, msg: string, err?: Error) => void; } 

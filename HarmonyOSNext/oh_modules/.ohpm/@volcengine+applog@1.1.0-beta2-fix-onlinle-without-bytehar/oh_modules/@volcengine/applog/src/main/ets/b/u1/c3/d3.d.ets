@@ -1,1 +1,0 @@
-import Response from "../h3"; import { Interceptor, InterceptorChain } from "./f3"; import { http } from '@kit.NetworkKit'; import { ISDKContext } from "../../d/f1"; export declare class CallServerInterceptor implements Interceptor { intercept(n9: InterceptorChain): Promise<Response>; buildResponse(k9: http.HttpResponse, l9: ISDKContext): Response; } 

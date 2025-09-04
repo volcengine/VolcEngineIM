@@ -1,3 +1,0 @@
-string page_show 0x0d000000
-string shared_desc 0x0d000001
-color white 0x0d000002

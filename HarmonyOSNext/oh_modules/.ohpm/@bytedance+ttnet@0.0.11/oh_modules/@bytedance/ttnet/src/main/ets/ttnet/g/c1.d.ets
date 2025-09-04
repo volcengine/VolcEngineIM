@@ -1,1 +1,0 @@
-export declare abstract class TTEventListener { onInitSucceed(): void; onInitFailed(x11: number, y11: string): void; } 

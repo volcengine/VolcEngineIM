@@ -1,1 +1,0 @@
-export interface ResponseBodyConverter { covertResponseBody(body: ArrayBuffer): Promise<object>; } export declare class JSONConverter implements ResponseBodyConverter { covertResponseBody(body: ArrayBuffer): Promise<object>; } export declare const jsonConverter: JSONConverter; 

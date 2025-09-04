@@ -1,1 +1,0 @@
-import display from "@ohos.display"; export function getDensityDPI() { return display.getDefaultDisplaySync().densityDPI; } export function getDensityDensity() { return display.getDefaultDisplaySync().width + " * " + display.getDefaultDisplaySync().height; } 

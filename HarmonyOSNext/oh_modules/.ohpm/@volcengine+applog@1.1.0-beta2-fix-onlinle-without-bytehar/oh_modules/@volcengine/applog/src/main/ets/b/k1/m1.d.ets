@@ -1,1 +1,0 @@
-import { ISDKContext } from "../d/f1"; export declare function registerSDKInnerTopicListener(a17: ISDKContext): void; 

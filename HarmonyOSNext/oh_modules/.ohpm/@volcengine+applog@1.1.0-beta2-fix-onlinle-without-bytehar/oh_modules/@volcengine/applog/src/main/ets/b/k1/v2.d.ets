@@ -1,1 +1,0 @@
-import { ISDKContext } from "../d/f1"; import { IHeaderManager } from "../o1/p1/z2"; export declare function getDidInfo(i16: ISDKContext): Record<string, string>; export declare function isHeaderDidReady(h16: IHeaderManager): boolean; export declare function checkDidValid(f16: string, g16?: string): boolean; 

@@ -1,1 +1,0 @@
-import SimulateResponse from "./d4"; export declare function checkSimulateResponseIsOk(e33: SimulateResponse): boolean; 

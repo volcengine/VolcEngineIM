@@ -1,1 +1,0 @@
-import { TTNetworkError } from "../l"; import { SsResponse } from "./j1"; export interface ResponseCallback { onHeaderComplete(ssResponse: SsResponse): void; onDataComplete(buffer: ArrayBuffer): void; onSucceed(ssResponse: SsResponse): void; onError(error: TTNetworkError): void; } 

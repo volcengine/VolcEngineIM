@@ -1,1 +1,0 @@
-import { http } from '@kit.NetworkKit'; export default interface Response { httpStatusCode: number; rawResponse: string; headers: object; result: string; cookies: string; performanceTiming: http.PerformanceTiming; } 

@@ -1,1 +1,0 @@
-export declare enum EventType { LAUNCH = 1, TERMINATE = 2, EVENT = 3, PROFILE = 4 } export default EventType; 

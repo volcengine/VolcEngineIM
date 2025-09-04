@@ -53,7 +53,7 @@ export struct VEMainPage {
       Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.SpaceBetween }) {
         Stack() {
           VEConvListFragment().visibility(this.currentIndex == 0 ? Visibility.Visible : Visibility.Hidden)
-          VELiveGroupFragment({currentIndex:this.currentIndex, onPageShowCount: this.onPageShowCount}).visibility(this.currentIndex == 1 ? Visibility.Visible : Visibility.Hidden)
+          // VELiveGroupFragment({currentIndex:this.currentIndex, onPageShowCount: this.onPageShowCount}).visibility(this.currentIndex == 1 ? Visibility.Visible : Visibility.Hidden)
           VEContactListFragment().visibility(this.currentIndex == 2 ? Visibility.Visible : Visibility.Hidden)
           VEMineFragment().visibility(this.currentIndex == 3 ? Visibility.Visible : Visibility.Hidden)
         }
@@ -71,15 +71,15 @@ export struct VEMainPage {
             isShowMuteUnRead: this.isShowMuteUnReadCount
           })
 
-          Tab({
-            currentIndex: this.currentIndex,
-            unreadStr: this.mineUnread,
-            nameRes: $r("app.string.ve_im_in_main_tab_live"),
-            normalImg: $r('app.media.tabbar_livegroup_normal'),
-            targetIndex: 1,
-            isShowUnread: this.isShowMineUnread,
-            isShowMuteUnRead: this.isShowMineUnread
-          })
+          // Tab({
+          //   currentIndex: this.currentIndex,
+          //   unreadStr: this.mineUnread,
+          //   nameRes: $r("app.string.ve_im_in_main_tab_live"),
+          //   normalImg: $r('app.media.tabbar_livegroup_normal'),
+          //   targetIndex: 1,
+          //   isShowUnread: this.isShowMineUnread,
+          //   isShowMuteUnRead: this.isShowMineUnread
+          // })
           Tab({
             currentIndex: this.currentIndex,
             unreadStr: this.mineUnread,

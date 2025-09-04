@@ -1,1 +1,0 @@
-export declare class TobAppCerts { static readonly base64Certs: Array<string>; } 

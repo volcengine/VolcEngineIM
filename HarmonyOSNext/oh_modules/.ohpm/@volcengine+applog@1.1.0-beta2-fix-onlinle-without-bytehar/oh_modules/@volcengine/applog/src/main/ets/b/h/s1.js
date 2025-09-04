@@ -1,1 +1,0 @@
-import BaseEvent from "./i"; import EventType from "./j"; export class Event extends BaseEvent { constructor(n1) { super(EventType.EVENT, n1); } } export function createEvent(i1, j1, k1 = EventType.EVENT) { let l1 = new Event(i1); for (let m1 of Object.entries(j1)) { l1.putCustomParam(m1[0], m1[1]); } l1.eventType = k1; return l1; } 

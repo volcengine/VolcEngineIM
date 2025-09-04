@@ -8,7 +8,6 @@
       "@imcloud/im_sdk_ui": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/im_sdk_ui",
       "@imcloud/imapp_router": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/imapp_router",
       "@imcloud/imsdk": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@imcloud+imsdk@1.1.3/oh_modules/@imcloud/imsdk",
-      "@imcloud/im_sms_login": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login",
       "@imcloud/imapp_live": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/imapp_live",
       "@imcloud/imapp_contact": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/imapp_contact",
       "@bytedance/imsdk_env": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@bytedance+imsdk_env@1.1.3/oh_modules/@bytedance/imsdk_env",
@@ -719,7 +718,6 @@
       "@imcloud/imapp_router": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/imapp_router",
       "@imcloud/im_sdk_ui": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/im_sdk_ui",
       "@imcloud/imsdk": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@imcloud+imsdk@1.1.3/oh_modules/@imcloud/imsdk",
-      "@imcloud/im_sms_login": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login",
       "@imcloud/imapp_live": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/imapp_live",
       "@imcloud/imapp_contact": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/imapp_contact",
       "@bytedance/imsdk_env": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@bytedance+imsdk_env@1.1.3/oh_modules/@bytedance/imsdk_env",
@@ -758,103 +756,6 @@
           "MANIFEST_JSON": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/imapp_tob/build/default/intermediates/manifest/default",
           "OUTPUT_METADATA_JSON": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/imapp_tob/build/default/intermediates/hap_metadata/default/output_metadata.json",
           "SOURCE_MAP_DIR": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/imapp_tob/build/default/intermediates/source_map/default"
-        },
-        "BUILD_OPTION": {
-          "debuggable": true
-        }
-      }
-    },
-    "BUILD_OPTION": {
-      "default-default": {
-        "debuggable": true,
-        "copyFrom": "default",
-        "strictMode": {
-          "useNormalizedOHMUrl": true
-        },
-        "name": "debug"
-      }
-    },
-    "BUILD_PROFILE_OPT": {
-      "apiType": "stageMode",
-      "buildOption": {},
-      "buildOptionSet": [
-        {
-          "name": "release",
-          "arkOptions": {
-            "byteCodeHar": false,
-            "obfuscation": {
-              "ruleOptions": {
-                "enable": false,
-                "files": [
-                  "./obfuscation-rules.txt"
-                ]
-              },
-              "consumerFiles": [
-                "./consumer-rules.txt"
-              ]
-            }
-          }
-        },
-        {
-          "name": "default"
-        },
-        {
-          "name": "debug"
-        }
-      ],
-      "targets": [
-        {
-          "name": "default"
-        },
-        {
-          "name": "ohosTest"
-        }
-      ]
-    },
-    "BUILD_CACHE_DIR": ""
-  },
-  "ohos-module-im_sms_login": {
-    "SELECT_TARGET": "default",
-    "MODULE_BUILD_DIR": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/build",
-    "DEPENDENCY_INFO": {
-      "@imcloud/im_sdk_ui": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/im_sdk_ui",
-      "@imcloud/imsdk": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@imcloud+imsdk@1.1.3/oh_modules/@imcloud/imsdk",
-      "@imcloud/imapp_router": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/imapp_router",
-      "@bytedance/imsdk_env": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@bytedance+imsdk_env@1.1.3/oh_modules/@bytedance/imsdk_env",
-      "@bytedance/imsdk_log": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@bytedance+imsdk_log@1.1.3/oh_modules/@bytedance/imsdk_log",
-      "@bytedance/imsdk_ttnet": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@bytedance+imsdk_ttnet@1.1.3/oh_modules/@bytedance/imsdk_ttnet",
-      "@bytedance/imsdk_uploader": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@bytedance+imsdk_uploader@1.1.3/oh_modules/@bytedance/imsdk_uploader",
-      "@bytedance/imsdk_ws": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@bytedance+imsdk_ws@1.1.3/oh_modules/@bytedance/imsdk_ws",
-      "@imcloud/imsdk_common": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/imsdk_common",
-      "@pie/log4a": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@pie+log4a@1.5.13/oh_modules/@pie/log4a",
-      "@volcengine/apmplus_crash_lite": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@volcengine+apmplus_crash_lite@2.0.8/oh_modules/@volcengine/apmplus_crash_lite",
-      "@volcengine/applog": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@volcengine+applog@1.1.0-beta2-fix-onlinle-without-bytehar/oh_modules/@volcengine/applog",
-      "@bytedance/ttnet": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@bytedance+ttnet@0.0.11/oh_modules/@bytedance/ttnet",
-      "@bytedance/bduploader": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@bytedance+bduploader@0.0.1-alpha.3-tob/oh_modules/@bytedance/bduploader",
-      "@bytedance/wschannel": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@bytedance+wschannel@0.0.1/oh_modules/@bytedance/wschannel",
-      "@bytedance/cronet": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@bytedance+cronet@0.0.11/oh_modules/@bytedance/cronet",
-      "@ttnet/boringssl": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@ttnet+boringssl@0.0.1/oh_modules/@ttnet/boringssl",
-      "@vcloud/vcbasekit": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/oh_modules/.ohpm/@vcloud+vcbasekit@0.4.1/oh_modules/@vcloud/vcbasekit"
-    },
-    "TARGETS": {
-      "default": {
-        "SOURCE_ROOT": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/src/main",
-        "RESOURCES_PATH": [
-          "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/src/main/resources"
-        ],
-        "BUILD_PATH": {
-          "OUTPUT_PATH": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/build/default/outputs/default",
-          "INTERMEDIA_PATH": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/build/default/intermediates",
-          "JS_ASSETS_PATH": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/build/default/intermediates/loader_out/default",
-          "JS_LITE_ASSETS_PATH": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/build/default/intermediates/loader_out_lite/default",
-          "RES_PATH": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/build/default/intermediates/res/default",
-          "RES_PROFILE_PATH": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/build/default/intermediates/res/default/resources/base/profile",
-          "ETS_SUPER_VISUAL_PATH": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/build/default/cache/default/default@HarCompileArkTS/esmodule",
-          "JS_SUPER_VISUAL_PATH": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/build/default/cache/default/default@HarCompileJS/jsbundle",
-          "WORKER_LOADER": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/build/default/intermediates/loader/default/loader.json",
-          "MANIFEST_JSON": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/build/default/intermediates/manifest/default",
-          "OUTPUT_METADATA_JSON": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/build/default/intermediates/hap_metadata/default/output_metadata.json",
-          "SOURCE_MAP_DIR": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login/build/default/intermediates/source_map/default"
         },
         "BUILD_OPTION": {
           "debuggable": true
@@ -965,11 +866,6 @@
         "name": "imapp_tob",
         "srcPath": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/imapp_tob",
         "belongProjectPath": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext"
-      },
-      {
-        "name": "im_sms_login",
-        "srcPath": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext/tob/im_sms_login",
-        "belongProjectPath": "/Users/bytedance/workspace/imcloud/Harmony/VolcEngineIM/HarmonyOSNext"
       }
     ],
     "PROFILE_OPT": {
@@ -1051,10 +947,6 @@
         {
           "name": "imapp_tob",
           "srcPath": "./tob/imapp_tob"
-        },
-        {
-          "name": "im_sms_login",
-          "srcPath": "./tob/im_sms_login"
         }
       ]
     },

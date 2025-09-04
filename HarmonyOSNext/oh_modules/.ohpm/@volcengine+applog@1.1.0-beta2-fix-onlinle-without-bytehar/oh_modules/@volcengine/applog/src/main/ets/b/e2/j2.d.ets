@@ -1,1 +1,0 @@
-import { BaseWorker } from "../a2/g2"; import { ISDKContext } from "../d/f1"; import Response from "../u1/h3"; export default class SettingWorker extends BaseWorker { workName: string; constructor(v: ISDKContext); getWorkName(): string; getRequestUrl(): string; parseResponse(s: Response): void; getRetryIntervals(): number[]; } 

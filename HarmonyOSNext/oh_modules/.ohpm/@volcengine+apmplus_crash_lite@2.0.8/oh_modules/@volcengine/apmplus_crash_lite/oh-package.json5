@@ -1,1 +1,0 @@
-{"name":"@volcengine/apmplus_crash_lite","version":"2.0.8","description":"Report Launch Event For ApmPlus Lite.","main":"Index.js","author":"APMPlus","license":"Apache-2.0","dependencies":{},"types":"Index.d.ets","artifactType":"obfuscation","metadata":{"sourceRoots":["./src/main"],"debug":false},"compatibleSdkVersion":11,"compatibleSdkType":"HarmonyOS","obfuscated":true}

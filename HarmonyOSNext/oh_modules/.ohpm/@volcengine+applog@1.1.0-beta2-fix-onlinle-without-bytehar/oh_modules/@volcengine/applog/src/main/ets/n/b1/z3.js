@@ -1,1 +1,0 @@
-import { BaseWorker } from "../../b/a2/g2"; export default class SimulateBaseWorker extends BaseWorker { isWorkerAutoStart() { return false; } } 
