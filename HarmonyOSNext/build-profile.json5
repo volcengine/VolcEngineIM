@@ -83,25 +83,5 @@
       "name": "im_sms_login",
       "srcPath": "./tob/im_sms_login",
     },
-    {
-      "name": "imsdk_env",
-      "srcPath": "./tob/imsdk_env",
-    },
-    {
-      "name": "imsdk_ttnet",
-      "srcPath": "./tob/imsdk_ttnet",
-    },
-    {
-      "name": "imsdk_ws",
-      "srcPath": "./tob/imsdk_ws",
-    },
-    {
-      "name": "imsdk_uploader",
-      "srcPath": "./tob/imsdk_uploader",
-    },
-    {
-      "name": "imsdk_log",
-      "srcPath": "./tob/imsdk_log",
-    },
   ]
 }

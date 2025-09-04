@@ -3,7 +3,7 @@ import { VEConvListFragment } from './conv/VEConvListFragment';
 import { VEMineFragment } from './mine/VEMineFragment';
 import { BIMUIClient } from '@imcloud/im_sdk_ui/Index';
 import { BIMConversation, BIMConversationListListener } from '@imcloud/imsdk';
-// import { VELiveGroupFragment } from '@imcloud/imapp_live';
+import { VELiveGroupFragment } from '@imcloud/imapp_live';
 import { VEContactListFragment } from '@imcloud/imapp_contact';
 
 @Component
@@ -53,7 +53,7 @@ export struct VEMainPage {
       Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.SpaceBetween }) {
         Stack() {
           VEConvListFragment().visibility(this.currentIndex == 0 ? Visibility.Visible : Visibility.Hidden)
-          // VELiveGroupFragment({currentIndex:this.currentIndex, onPageShowCount: this.onPageShowCount}).visibility(this.currentIndex == 1 ? Visibility.Visible : Visibility.Hidden)
+          VELiveGroupFragment({currentIndex:this.currentIndex, onPageShowCount: this.onPageShowCount}).visibility(this.currentIndex == 1 ? Visibility.Visible : Visibility.Hidden)
           VEContactListFragment().visibility(this.currentIndex == 2 ? Visibility.Visible : Visibility.Hidden)
           VEMineFragment().visibility(this.currentIndex == 3 ? Visibility.Visible : Visibility.Hidden)
         }

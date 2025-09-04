@@ -4,7 +4,7 @@ import { VEDefaultAccountProvider } from '../pages/login/VEDefaultAccountProvide
 
 export class VEIMAppConst {
   public static APP_ID: number = 666675
-  public static uid: string = "";
-  public static token: string = ""
+  public static uid: string = "6767";
+  public static token: string = "KOF73IooSthvYwiKbF38huwoZ81g8iiKzPc5b4iU2XaR1ktMRsagLG"
   public static provider: BIMAccountProvider = new VEDefaultAccountProvider()
 }

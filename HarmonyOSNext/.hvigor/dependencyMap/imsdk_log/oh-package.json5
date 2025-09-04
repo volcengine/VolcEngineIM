@@ -1,1 +1,0 @@
-{"name":"@bytedance/imsdk_log","version":"1.0.0","description":"Please describe the basic information.","main":"Index.ets","author":"","license":"Apache-2.0","dependencies":{"@imcloud/imsdk_common":"file:../../imsdk_common","@volcengine/applog":"1.1.0-beta2-fix-onlinle-without-bytehar","pako":"^2.1.0","@volcengine/apmplus_crash_lite":"^2.0.8","@pie/log4a":"1.5.13"}}

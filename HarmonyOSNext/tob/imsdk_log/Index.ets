@@ -1,1 +1,0 @@
-export {BIMLogService} from './src/main/ets/log/BIMLogService'
